@@ -1,22 +1,35 @@
-@extends('layouts.admin')
+@extends('layouts.scan')
 @section('title', 'Scan Jobcard')
 
 @section('content')
-<div class="container">
-    <h3>Scan Jobcard: {{ $jobcard->jobcard_no }}</h3>
-    <p>Part: {{ $jobcard->part_name ?? '-' }}</p>
-    <p>Customer: {{ $jobcard->customer ?? '-' }}</p>
+<div class="scan-card">
+    <h5>📄 Informasi Jobcard</h5>
+    <p><strong>Jobcard:</strong> {{ $jobcard->jobcard_no }}</p>
+    <p><strong>Customer:</strong> {{ $jobcard->customer }}</p>
+    <p><strong>WS No:</strong> {{ $jobcard->ws_no }}</p>
 
-    <form method="POST" action="{{ route('jobcards.scan', $jobcard->id) }}">
+    <hr>
+
+    <h5>👤 Operator</h5>
+    <p><strong>Nama:</strong> {{ auth()->user()->name }}</p>
+    <p><strong>Departemen:</strong> {{ auth()->user()->departemen ?? '-' }}</p>
+
+    <hr>
+
+    <form action="{{ route('jobcards.scan', $jobcard->id) }}" method="POST">
         @csrf
-        <label>Status:</label>
-        <select name="status" class="form-select" required>
-            <option value="Started">Started</option>
-            <option value="In Progress">In Progress</option>
-            <option value="QC Check">QC Check</option>
-            <option value="Finished">Finished</option>
-        </select>
-        <button type="submit" class="btn btn-primary mt-2">Submit</button>
+
+        <div class="mb-3">
+            <label class="form-label">Proses</label>
+            <input type="text" name="process_name" class="form-control form-control-lg" placeholder="Masukkan nama proses" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Keterangan</label>
+            <input type="text" name="remarks" class="form-control form-control-lg" placeholder="Opsional">
+        </div>
+
+        <button type="submit" class="btn btn-scan">✅ Submit Scan</button>
     </form>
 </div>
 @endsection

@@ -32,4 +32,9 @@ class JobcardHistory extends Model
     {
         return $this->belongsTo(User::class, 'scanned_by');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'scanned_by');
+    }
 }

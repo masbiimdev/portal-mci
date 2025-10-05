@@ -10,8 +10,7 @@
             <div class="hidden md:flex items-center space-x-6">
                 <a href="/" class="text-gray-700 hover:text-blue-600">Home</a>
                 <a href="/schedule" class="text-gray-700 hover:text-blue-600">Jadwal</a>
-                <a href="/dokumen" class="text-gray-700 hover:text-blue-600">Dokumen</a>
-                <a href="/statistik" class="text-gray-700 hover:text-blue-600">Tracking</a>
+                <a href="/tracking" class="text-gray-700 hover:text-blue-600">Tracking</a>
             </div>
             <!-- Right: Notif + User -->
             <div class="flex items-center space-x-4">
@@ -56,8 +55,7 @@
     <!-- Mobile Menu -->
     <div id="mobileMenu" class="hidden md:hidden px-4 pb-4 space-y-2 bg-white shadow">
         <a href="/" class="block text-gray-700 hover:text-blue-600">Home</a>
-        <a href="/jadwal" class="block text-gray-700 hover:text-blue-600">Jadwal</a>
-        <a href="/dokumen" class="block text-gray-700 hover:text-blue-600">Dokumen</a>
-        <a href="/statistik" class="block text-gray-700 hover:text-blue-600">Tracking</a>
+        <a href="/schedule" class="block text-gray-700 hover:text-blue-600">Jadwal</a>
+        <a href="/tracking" class="block text-gray-700 hover:text-blue-600">Tracking</a>
     </div>
 </nav>

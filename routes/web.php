@@ -40,9 +40,30 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('jobcards/{jobcard}', 'JobcardController@show')->name('jobcards.show');
 
-    // Scan endpoint
-    Route::post('jobcards/{jobcard}/scan', 'JobcardController@scan')->name('jobcards.scan');
+    // Form scan
+    Route::get('jobcards/{jobcard}/scan', [
+        'uses' => 'JobcardController@scanForm',
+        'as'   => 'jobcards.scan.form'
+    ]);
+
+    // Submit scan
+    Route::post('jobcards/{jobcard}/scan', [
+        'uses' => 'JobcardController@scan',
+        'as'   => 'jobcards.scan'
+    ]);
+
 
     // QR Code
     Route::get('jobcards/{jobcard}/qr', 'JobcardController@qr')->name('jobcards.qr');
+
+    // Test insert history tanpa scan
+    Route::get('jobcards/{jobcard}/test-history', 'JobcardController@testHistory')->name('jobcards.testHistory');
+
+    Route::get('jobcards/{jobcard}/scan-success/{action}', 'JobcardController@scanSuccess')
+        ->name('jobcards.scan.success');
+
+    // Tracking
+    Route::get('tracking', 'TrackingController@index')->name('tracking.index');
+    Route::get('tracking/search', 'TrackingController@ajaxSearch')->name('tracking.ajax.search');
+    Route::get('tracking/{jobcard}/history', 'TrackingController@ajaxHistory')->name('tracking.ajax.history');
 });

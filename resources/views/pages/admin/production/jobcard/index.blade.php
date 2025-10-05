@@ -25,7 +25,7 @@
                 <thead style="background-color: #f8f9fa; color: #212529; font-weight: 600;">
                     <tr>
                         <th class="text-center">No. Jobcard</th>
-                        <th class="text-center">Part Name</th>
+                        <th class="text-center">Part Type</th>
                         <th class="text-center">Customer</th>
                         <th class="text-center">WS No</th>
                         <th class="text-center">Created By</th>
@@ -37,7 +37,7 @@
                     @foreach ($jobcards as $job)
                         <tr>
                             <td>{{ $job->jobcard_no }}</td>
-                            <td>{{ $job->part_name ?? '-' }}</td>
+                            <td>{{ $job->type ?? '-' }}</td>
                             <td>{{ $job->customer ?? '-' }}</td>
                             <td>{{ $job->ws_no ?? '-' }}</td>
                             <td>{{ $job->creator->name ?? '-' }}</td>

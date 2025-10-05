@@ -78,7 +78,7 @@ class JobcardController extends Controller
      */
     public function show($id)
     {
-        $jobcard = Jobcard::with('creator')->findOrFail($id);
+        $jobcard = Jobcard::with(['creator', 'histories.user'])->findOrFail($id);
         return view('pages.admin.production.jobcard.show', compact('jobcard'));
     }
 
@@ -146,20 +146,55 @@ class JobcardController extends Controller
             ->with('success', 'Jobcard berhasil dihapus.');
     }
 
+    public function scanForm($id)
+    {
+        $jobcard = Jobcard::findOrFail($id);
+        return view('pages.admin.production.jobcard.scan', compact('jobcard'));
+    }
+
     public function scan(Request $request, $id)
     {
         $jobcard = Jobcard::findOrFail($id);
 
-        // Simpan history scan
-        JobcardHistory::create([
-            'jobcard_id'   => $jobcard->id,
-            'process_name' => $request->process_name ?? 'Unknown', // bisa dikirim dari form atau fixed
-            'action'       => $request->action ?? 'Scan',          // "Scan In" / "Scan Out"
-            'scanned_by'   => Auth::id(),
+        // Ambil scan terakhir untuk jobcard ini
+        $lastScan = $jobcard->histories()->latest('scanned_at')->first();
+
+        // Kasus 1: belum ada scan → otomatis Scan In
+        if (!$lastScan) {
+            $action = 'Scan In';
+        } else {
+            // Kasus 2: kalau terakhir "Scan In"
+            if ($lastScan->action === 'Scan In') {
+                // Cek apakah user yang sama
+                if ($lastScan->scanned_by !== auth()->id()) {
+                    return redirect()->back()->with('error', 'Jobcard ini masih diproses oleh operator lain!');
+                }
+                $action = 'Scan Out';
+            }
+            // Kasus 3: kalau terakhir "Scan Out" → mulai siklus baru (Scan In lagi)
+            else {
+                $action = 'Scan In';
+            }
+        }
+
+        // Simpan history
+        $history = $jobcard->histories()->create([
+            'process_name' => $request->process_name ?? 'Proses',
+            'action'       => $action,
+            'scanned_by'   => auth()->id(),
             'remarks'      => $request->remarks,
             'scanned_at'   => now(),
         ]);
 
-        return redirect()->back()->with('success', 'Scan berhasil dicatat.');
+        return redirect()->route('jobcards.scan.success', [$jobcard->id, $action])
+            ->with('success', "Berhasil $action Jobcard {$jobcard->jobcard_no}");
+    }
+
+
+    public function scanSuccess($id, $action)
+    {
+        $jobcard = Jobcard::findOrFail($id);
+
+        return view('pages.admin.production.jobcard.scan-success', compact('jobcard', 'action'));
     }
 }

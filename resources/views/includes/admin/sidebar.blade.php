@@ -55,7 +55,7 @@
                 <div data-i18n="Schedule">Production</div>
             </a>
             <ul class="menu-sub">
-                <li class="menu-item {{ request()->routeIs('activities.index') ? 'active' : '' }}">
+                <li class="menu-item {{ request()->routeIs('jobcards.index') ? 'active' : '' }}">
                     <a href="{{ route('jobcards.index') }}" class="menu-link">
                         <div data-i18n="Daily">Jobcard      </div>
                     </a>
@@ -63,7 +63,7 @@
             </ul>
         </li>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
         <!-- Client -->
-        <li class="menu-item {{ request()->is('client*') ? 'active open' : '' }}">
+        {{-- <li class="menu-item {{ request()->is('client*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-group"></i>
                 <div data-i18n="Client">Client</div>
@@ -80,6 +80,6 @@
                     </a>
                 </li>
             </ul>
-        </li>
+        </li> --}}
     </ul>
 </aside>
