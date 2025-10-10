@@ -19,7 +19,10 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('role', ['SUP','ADM','QC','SAL','FIN','WH','MGT'])->default('SUP');
+            $table->enum('role', ['KR', 'ADM', 'SPV', 'MGT', 'STF','SUP'])->default('SUP');
+            $table->enum('departemen', ['QC', 'ASSEMBLING', 'MACHINING', 'PACKING','PAINTING','WELDING','WAREHOUSE','PPIC','ADMIN'])
+                ->nullable();
+            $table->string('nik')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

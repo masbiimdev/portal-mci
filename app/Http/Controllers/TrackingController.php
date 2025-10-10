@@ -18,7 +18,7 @@ class TrackingController extends Controller
     {
         $keyword = $request->get('q');
 
-        $jobcards = Jobcard::where('jobcard_no', 'LIKE', "%$keyword%")
+        $jobcards = Jobcard::where('jobcard_id', 'LIKE', "%$keyword%")
             ->orWhere('id', $keyword)
             ->get();
 

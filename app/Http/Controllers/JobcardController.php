@@ -6,137 +6,148 @@ use App\Jobcard;
 use App\JobcardHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class JobcardController extends Controller
 {
-    /**
-     * Tampilkan daftar jobcard
-     */
     public function index()
     {
         $jobcards = Jobcard::with('creator')->latest()->paginate(10);
         return view('pages.admin.production.jobcard.index', compact('jobcards'));
     }
 
-    /**
-     * Form create jobcard
-     */
     public function create()
     {
         return view('pages.admin.production.jobcard.add');
     }
 
-    /**
-     * Simpan jobcard baru
-     */
     public function store(Request $request)
     {
         $request->validate([
-            'ws_no'        => 'required|string|max:50',
-            'customer'     => 'required|string|max:100',
-            'serial_no'    => 'required|string|max:100',
-            'drawing_no'   => 'required|string|max:100',
-            'disc'         => 'nullable|string|max:50',
-            'body'         => 'nullable|string|max:50',
-            'bonnet'       => 'nullable|string|max:50',
-            'size_class'   => 'nullable|string|max:50',
-            'type'         => 'nullable|string|max:100',
-            'qty_acc_po'   => 'nullable|integer|min:0',
-            'date_line'    => 'nullable|date',
-            'category'     => 'required|in:Reused,Repair,New Manufacture,Supplied',
+            'no_joborder'   => 'required|string|max:100|unique:jobcards,no_joborder',
+            'ws_no'         => 'required|string|max:50',
+            'customer'      => 'required|string|max:100',
+            'type_jobcard'  => 'required|in:Jobcard Machining,Jobcard Assembling',
+            'type_valve'    => 'nullable|string|max:50',
+            'size_class'    => 'nullable|string|max:50',
+            'drawing_no'    => 'nullable|string|max:100',
+            'remarks'       => 'nullable|string',
+            'detail'        => 'nullable|string',
+            'batch_no'      => 'nullable|string|max:50',
+            'material'      => 'nullable|string|max:50',
+            'qty'           => 'nullable|integer|min:0',
+            'part_name'     => 'nullable|string|max:100',
+            'serial_no'     => 'nullable|string|max:100',
+            'body'          => 'nullable|string|max:50',
+            'bonnet'        => 'nullable|string|max:50',
+            'disc'          => 'nullable|string|max:50',
+            'qty_acc_po'    => 'nullable|integer|min:0',
+            'date_line'     => 'nullable|date',
+            'category'      => 'required|in:Reused,Repair,New Manufacture,Supplied',
         ]);
 
-        // Generate jobcard_no otomatis
+        // Generate jobcard_id otomatis
         do {
-            $jobcardNo = 'JC-' . rand(1000, 9999);
-        } while (\App\Jobcard::where('jobcard_no', $jobcardNo)->exists());
+            $jobcardId = 'JC-' . rand(1000, 9999);
+        } while (Jobcard::where('jobcard_id', $jobcardId)->exists());
 
-        Jobcard::create([
-            'jobcard_no'   => $jobcardNo,
-            'ws_no'        => $request->ws_no,
-            'customer'     => $request->customer,
-            'serial_no'    => $request->serial_no,
-            'drawing_no'   => $request->drawing_no,
-            'disc'         => $request->disc,
-            'body'         => $request->body,
-            'bonnet'       => $request->bonnet,
-            'size_class'   => $request->size_class,
-            'type'         => $request->type,
-            'qty_acc_po'   => $request->qty_acc_po ?? 0,
-            'date_line'    => $request->date_line,
-            'category'     => $request->category,
-            'created_by'   => Auth::id(),
-        ]);
+        $jobcard = Jobcard::create(array_merge(
+            $request->only([
+                'no_joborder',
+                'ws_no',
+                'customer',
+                'type_jobcard',
+                'type_valve',
+                'size_class',
+                'drawing_no',
+                'remarks',
+                'detail',
+                'batch_no',
+                'material',
+                'qty',
+                'part_name',
+                'serial_no',
+                'body',
+                'bonnet',
+                'disc',
+                'qty_acc_po',
+                'date_line',
+                'category'
+            ]),
+            ['jobcard_id' => $jobcardId, 'created_by' => Auth::id()]
+        ));
 
         return redirect()->route('jobcards.index')
-            ->with('success', 'Jobcard berhasil dibuat dengan nomor: ' . $jobcardNo);
+            ->with('success', 'Jobcard berhasil dibuat dengan ID: ' . $jobcardId);
     }
 
-
-    /**
-     * Detail jobcard
-     */
     public function show($id)
     {
-        $jobcard = Jobcard::with(['creator', 'histories.user'])->findOrFail($id);
+        $jobcard = Jobcard::with(['creator', 'histories'])->findOrFail($id);
         return view('pages.admin.production.jobcard.show', compact('jobcard'));
     }
 
-    /**
-     * Form edit jobcard
-     */
     public function edit($id)
     {
         $jobcard = Jobcard::findOrFail($id);
-        return view('jobcards.edit', compact('jobcard'));
+        return view('pages.admin.production.jobcard.edit', compact('jobcard'));
     }
 
-    /**
-     * Update jobcard
-     */
     public function update(Request $request, $id)
     {
         $jobcard = Jobcard::findOrFail($id);
 
         $request->validate([
-            'jobcard_no'   => 'required|string|max:50|unique:jobcards,jobcard_no,' . $jobcard->id,
-            'ws_no'        => 'required|string|max:50',
-            'customer'     => 'required|string|max:100',
-            'serial_no'    => 'required|string|max:100',
-            'drawing_no'   => 'required|string|max:100',
-            'disc'         => 'nullable|string|max:50',
-            'body'         => 'nullable|string|max:50',
-            'bonnet'       => 'nullable|string|max:50',
-            'size_class'   => 'nullable|string|max:50',
-            'type'         => 'nullable|string|max:100',
-            'qty_acc_po'   => 'nullable|integer|min:0',
-            'date_line'    => 'nullable|date',
-            'category'     => 'required|in:Reused,Repair,New Manufacture,Supplied',
+            'no_joborder'   => 'required|string|max:100|unique:jobcards,no_joborder,' . $jobcard->id,
+            'ws_no'         => 'required|string|max:50',
+            'customer'      => 'required|string|max:100',
+            'type_jobcard'  => 'required|in:Jobcard Machining,Jobcard Assembling',
+            'type_valve'    => 'nullable|string|max:50',
+            'size_class'    => 'nullable|string|max:50',
+            'drawing_no'    => 'nullable|string|max:100',
+            'remarks'       => 'nullable|string',
+            'detail'        => 'nullable|string',
+            'batch_no'      => 'nullable|string|max:50',
+            'material'      => 'nullable|string|max:50',
+            'qty'           => 'nullable|integer|min:0',
+            'part_name'     => 'nullable|string|max:100',
+            'serial_no'     => 'nullable|string|max:100',
+            'body'          => 'nullable|string|max:50',
+            'bonnet'        => 'nullable|string|max:50',
+            'disc'          => 'nullable|string|max:50',
+            'qty_acc_po'    => 'nullable|integer|min:0',
+            'date_line'     => 'nullable|date',
+            'category'      => 'required|in:Reused,Repair,New Manufacture,Supplied',
         ]);
 
-        $jobcard->update([
-            'jobcard_no'   => $request->jobcard_no,
-            'ws_no'        => $request->ws_no,
-            'customer'     => $request->customer,
-            'serial_no'    => $request->serial_no,
-            'drawing_no'   => $request->drawing_no,
-            'disc'         => $request->disc,
-            'body'         => $request->body,
-            'bonnet'       => $request->bonnet,
-            'size_class'   => $request->size_class,
-            'type'         => $request->type,
-            'qty_acc_po'   => $request->qty_acc_po ?? 0,
-            'date_line'    => $request->date_line,
-            'category'     => $request->category,
-        ]);
+        $jobcard->update($request->only([
+            'no_joborder',
+            'ws_no',
+            'customer',
+            'type_jobcard',
+            'type_valve',
+            'size_class',
+            'drawing_no',
+            'remarks',
+            'detail',
+            'batch_no',
+            'material',
+            'qty',
+            'part_name',
+            'serial_no',
+            'body',
+            'bonnet',
+            'disc',
+            'qty_acc_po',
+            'date_line',
+            'category'
+        ]));
 
         return redirect()->route('jobcards.index')
             ->with('success', 'Jobcard berhasil diperbarui.');
     }
 
-    /**
-     * Hapus jobcard
-     */
     public function destroy($id)
     {
         $jobcard = Jobcard::findOrFail($id);
@@ -149,44 +160,44 @@ class JobcardController extends Controller
     public function scanForm($id)
     {
         $jobcard = Jobcard::findOrFail($id);
-        return view('pages.admin.production.jobcard.scan', compact('jobcard'));
+
+        $lastScan = $jobcard->histories()->latest('scanned_at')->first();
+
+        $action = 'Scan In';
+        if ($lastScan && $lastScan->action === 'Scan In' && optional(auth()->user())->id === $lastScan->scanned_by) {
+            $action = 'Scan Out';
+        }
+        $jobcard = Jobcard::findOrFail($id);
+        return view('pages.admin.production.jobcard.scan', compact('jobcard', 'action'));
     }
 
     public function scan(Request $request, $id)
     {
+        // Ambil jobcard
         $jobcard = Jobcard::findOrFail($id);
 
-        // Ambil scan terakhir untuk jobcard ini
+        // Ambil last scan untuk menentukan action
         $lastScan = $jobcard->histories()->latest('scanned_at')->first();
+        $action = 'Scan In';
 
-        // Kasus 1: belum ada scan → otomatis Scan In
-        if (!$lastScan) {
-            $action = 'Scan In';
-        } else {
-            // Kasus 2: kalau terakhir "Scan In"
-            if ($lastScan->action === 'Scan In') {
-                // Cek apakah user yang sama
-                if ($lastScan->scanned_by !== auth()->id()) {
-                    return redirect()->back()->with('error', 'Jobcard ini masih diproses oleh operator lain!');
-                }
-                $action = 'Scan Out';
-            }
-            // Kasus 3: kalau terakhir "Scan Out" → mulai siklus baru (Scan In lagi)
-            else {
-                $action = 'Scan In';
-            }
+        if ($lastScan && Auth::check() && $lastScan->action === 'Scan In' && $lastScan->scanned_by === auth()->id()) {
+            $action = 'Scan Out';
         }
 
-        // Simpan history
-        $history = $jobcard->histories()->create([
+        // Tentukan siapa yang melakukan scan (guest => null)
+        $scannedBy = Auth::check() ? auth()->id() : null;
+
+        // Simpan history scan
+        $jobcard->histories()->create([
             'process_name' => $request->process_name ?? 'Proses',
             'action'       => $action,
-            'scanned_by'   => auth()->id(),
+            'scanned_by'   => $scannedBy,
             'remarks'      => $request->remarks,
             'scanned_at'   => now(),
         ]);
 
-        return redirect()->route('jobcards.scan.success', [$jobcard->id, $action])
+        // Redirect ke halaman success dengan flash message
+        return redirect()->route('jobcards.scan.success', ['jobcard' => $id, 'action' => $action])
             ->with('success', "Berhasil $action Jobcard {$jobcard->jobcard_no}");
     }
 
@@ -194,7 +205,38 @@ class JobcardController extends Controller
     public function scanSuccess($id, $action)
     {
         $jobcard = Jobcard::findOrFail($id);
-
         return view('pages.admin.production.jobcard.scan-success', compact('jobcard', 'action'));
+    }
+
+    public function print($id)
+    {
+        $jobcard = Jobcard::with('creator')->findOrFail($id);
+        $jobcardUrl = route('jobcards.scan', $jobcard->id);
+
+        $qr = base64_encode(
+            QrCode::format('svg')->size(150)->generate($jobcardUrl)
+        );
+
+        $pdf = PDF::loadView('pages.admin.production.jobcard.print', compact('jobcard', 'qr', 'jobcardUrl'))
+            ->setPaper('A4', 'landscape')->set_option('defaultFont', 'DejaVu Sans');
+
+        return $pdf->stream('Jobcard-' . $jobcard->jobcard_id . '.pdf');
+    }
+
+    public function exportPdf()
+    {
+        $jobcards = Jobcard::with('creator')->latest()->get();
+
+        $pdf = Pdf::loadView('pages.admin.production.jobcard.export', compact('jobcards'))
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->stream('Daftar_Jobcard.pdf');
+    }
+
+    public function publicShow($id)
+    {
+        $jobcard = Jobcard::with(['creator', 'histories.user'])->findOrFail($id);
+
+        return view('pages.admin.production.jobcard.detail', compact('jobcard'));
     }
 }

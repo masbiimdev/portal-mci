@@ -1,5 +1,5 @@
 @extends('layouts.home')
-
+@section('title', 'MCI | Jadwal Kegiatan')
 @push('css')
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>

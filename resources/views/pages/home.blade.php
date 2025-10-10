@@ -1,94 +1,132 @@
 @extends('layouts.home')
+@section('title')
+    Home Page | Portal MCI
+@endsection
 @section('content')
-    <!-- Hero Section -->
-    <section class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-20">
-        <div class="max-w-7xl mx-auto px-4 text-center">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4">Selamat Datang di ERP System</h1>
-            <p class="text-lg md:text-xl text-blue-200">Kelola jadwal, dokumen, dan informasi penting dengan mudah.</p>
-        </div>
-    </section>
-{{-- 
-    <!-- Quick Access -->
-    <section class="py-12 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-6">
-            <a href="/schedule"
-                class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition transform hover:-translate-y-1">
-                <i data-feather="calendar" class="w-8 h-8 text-blue-600 mb-3"></i>
-                <h3 class="font-semibold">Jadwal</h3>
-                <p class="text-sm text-gray-600">Lihat dan kelola jadwal kegiatan.</p>
-            </a>
-            <a href="/dokumen"
-                class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition transform hover:-translate-y-1">
-                <i data-feather="folder" class="w-8 h-8 text-blue-600 mb-3"></i>
-                <h3 class="font-semibold">Dokumen</h3>
-                <p class="text-sm text-gray-600">Akses dokumen penting dengan mudah.</p>
-            </a>
-            <a href="/statistik"
-                class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition transform hover:-translate-y-1">
-                <i data-feather="bar-chart-2" class="w-8 h-8 text-blue-600 mb-3"></i>
-                <h3 class="font-semibold">Statistik</h3>
-                <p class="text-sm text-gray-600">Pantau progres dengan grafik interaktif.</p>
-            </a>
-            <a href="/profil"
-                class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition transform hover:-translate-y-1">
-                <i data-feather="user" class="w-8 h-8 text-blue-600 mb-3"></i>
-                <h3 class="font-semibold">Profil</h3>
-                <p class="text-sm text-gray-600">Kelola akun dan preferensi Anda.</p>
-            </a>
-        </div>
-    </section> --}}
-
-    <!-- Pengumuman Terbaru (Statik) -->
-    <section class="py-12 max-w-7xl mx-auto px-4">
-        <h2 class="text-2xl font-bold mb-6">Pengumuman Terbaru</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition transform hover:-translate-y-1">
-                <h3 class="font-semibold text-lg mb-2">Maintenance ERP System</h3>
-                <p class="text-sm text-gray-600 mb-2">Sistem ERP akan offline pada Sabtu, 5 Oktober 2025, pukul 01.00 -
-                    05.00 WIB.</p>
-                <p class="text-xs text-gray-400 mb-2">Dibuat oleh: Admin IT</p>
-                <p class="text-xs text-gray-400">Periode: 5 Okt 2025</p>
+    <!-- Header Mini -->
+    <section class="py-6 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white animate-gradient">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold tracking-wide">Selamat Datang di Portal MCI 👋</h1>
+                <p id="tanggal" class="text-xs text-blue-100 mt-1"></p>
             </div>
-            <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition transform hover:-translate-y-1">
-                <h3 class="font-semibold text-lg mb-2">Training Pengguna Baru</h3>
-                <p class="text-sm text-gray-600 mb-2">Training ERP untuk karyawan baru akan dilaksanakan pada Senin, 7
-                    Oktober 2025.</p>
-                <p class="text-xs text-gray-400 mb-2">Dibuat oleh: HR</p>
-                <p class="text-xs text-gray-400">Periode: 7 Okt 2025</p>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition transform hover:-translate-y-1">
-                <h3 class="font-semibold text-lg mb-2">Update Fitur Statistik</h3>
-                <p class="text-sm text-gray-600 mb-2">Fitur statistik telah diperbarui dengan grafik interaktif baru.</p>
-                <p class="text-xs text-gray-400 mb-2">Dibuat oleh: Tim Development</p>
-                <p class="text-xs text-gray-400">Periode: 1 Okt 2025</p>
+            <div class="text-right mt-4 md:mt-0">
+                <p class="text-3xl font-semibold" id="suhu"></p>
+                <p id="cuaca" class="text-[10px] text-blue-100 inline-flex items-center gap-1"></p>
             </div>
         </div>
     </section>
 
-    <!-- Hal Menarik Lainnya -->
-    <section class="py-12 bg-gray-50">
+    <!-- Pengumuman Terbaru -->
+    <!-- Pengumuman Terbaru -->
+    <section class="py-12 bg-gray-50 border-b animate-fadein">
         <div class="max-w-7xl mx-auto px-4">
-            <h2 class="text-2xl font-bold mb-6">Hal Menarik Lainnya</h2>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition transform hover:-translate-y-1">
-                    <h3 class="font-semibold">Tips & Trik</h3>
-                    <p class="text-sm text-gray-600">Pelajari cara memaksimalkan penggunaan ERP system.</p>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition transform hover:-translate-y-1">
-                    <h3 class="font-semibold">Fitur Baru</h3>
-                    <p class="text-sm text-gray-600">Temukan fitur terbaru untuk produktivitas lebih tinggi.</p>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition transform hover:-translate-y-1">
-                    <h3 class="font-semibold">Laporan Cepat</h3>
-                    <p class="text-sm text-gray-600">Dapatkan ringkasan laporan harian dan mingguan.</p>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition transform hover:-translate-y-1">
-                    <h3 class="font-semibold">Support</h3>
-                    <p class="text-sm text-gray-600">Hubungi tim support jika mengalami kendala.</p>
-                </div>
+            <h2 class="text-xl font-bold mb-6 text-gray-800">📢 Pengumuman Terbaru</h2>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+
+                @php
+                    $borderColors = [
+                        'high' => 'border-red-500',
+                        'medium' => 'border-yellow-500',
+                        'low' => 'border-blue-500',
+                    ];
+
+                    $bgColors = [
+                        'high' => 'bg-red-600 hover:bg-red-700',
+                        'medium' => 'bg-yellow-500 hover:bg-yellow-600',
+                        'low' => 'bg-blue-600 hover:bg-blue-700',
+                    ];
+                @endphp
+
+                @forelse ($announcements as $item)
+                    <div
+                        class="bg-white p-6 rounded-xl shadow {{ $borderColors[$item->priority] ?? 'border-blue-500' }} border-l-4 hover:shadow-lg transition transform hover:-translate-y-1">
+                        <h3 class="font-semibold text-lg mb-2 text-gray-800">{{ $item->title }}</h3>
+                        <p class="text-sm text-gray-600 mb-3">
+                            {{ Str::limit($item->content, 100, '...') }}
+                        </p>
+                        <p class="text-xs text-gray-400 mb-1">Dibuat oleh: {{ $item->author->name ?? 'Admin' }}</p>
+                        @if ($item->expiry_date)
+                            <p class="text-xs text-gray-400 mb-4">
+                                Berlaku sampai: {{ \Carbon\Carbon::parse($item->expiry_date)->translatedFormat('d M Y') }}
+                            </p>
+                        @endif
+                        <a href="{{ route('announcements.show', $item->id) }}"
+                            class="inline-block px-4 py-2 text-sm font-medium text-white rounded-lg transition {{ $bgColors[$item->priority] ?? 'bg-blue-600 hover:bg-blue-700' }}">
+                            Lihat Detail
+                        </a>
+                    </div>
+                @empty
+                    <div class="col-span-3 text-center py-10 text-gray-500">
+                        Belum ada pengumuman terbaru.
+                    </div>
+                @endforelse
+
+            </div>
+        </div>
+    </section>
+    <section class="py-12 bg-white animate-fadein">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-xl font-bold text-gray-800 mb-6">⚡ Akses Cepat</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <a href="/schedule"
+                    class="group bg-blue-50 hover:bg-blue-100 p-6 rounded-xl text-center border transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+                    <i class="fas fa-cogs text-blue-600 text-2xl mb-2 group-hover:scale-110 transition"></i>
+                    <p class="font-semibold text-gray-800">Jadwal</p>
+                </a>
+                <a href="/tracking"
+                    class="group bg-green-50 hover:bg-green-100 p-6 rounded-xl text-center border transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+                    <i class="fas fa-search text-green-600 text-2xl mb-2 group-hover:scale-110 transition"></i>
+                    <p class="font-semibold text-gray-800">Tracking</p>
+                </a>
+                <a href="/report"
+                    class="group bg-yellow-50 hover:bg-yellow-100 p-6 rounded-xl text-center border transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+                    <i class="fas fa-chart-line text-yellow-600 text-2xl mb-2 group-hover:scale-110 transition"></i>
+                    <p class="font-semibold text-gray-800">Report</p>
+                </a>
+                <a href="/announcement"
+                    class="group bg-indigo-50 hover:bg-indigo-100 p-6 rounded-xl text-center border transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+                    <i class="fas fa-bullhorn text-indigo-600 text-2xl mb-2 group-hover:scale-110 transition"></i>
+                    <p class="font-semibold text-gray-800">Pengumuman</p>
+                </a>
             </div>
         </div>
     </section>
 
-    </section>
+    <!-- Animasi -->
+    <style>
+        @keyframes gradientMove {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .animate-gradient {
+            background-size: 200% 200%;
+            animation: gradientMove 10s ease infinite;
+        }
+
+        @keyframes fadein {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fadein {
+            animation: fadein 0.8s ease both;
+        }
+    </style>
 @endsection

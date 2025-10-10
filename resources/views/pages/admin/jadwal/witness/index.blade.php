@@ -9,11 +9,14 @@
         table.dataTable td,
         table.dataTable th {
             white-space: nowrap;
-            /* biar konten tidak wrap */
             overflow: hidden;
-            /* sembunyikan overflow */
             text-overflow: ellipsis;
-            /* ganti konten panjang dengan ... */
+        }
+        .filter-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
         }
     </style>
 @endpush
@@ -21,16 +24,50 @@
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
         <h4 class="fw-bold py-3 mb-4">
-            <span class="text-muted fw-light">Activities /</span>
-            List
+            <span class="text-muted fw-light">Activities /</span> List
         </h4>
 
         <div class="card p-3">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h4 class="card-title">Daftar Kegiatan</h4>
-                <a href="{{ route('activities.create') }}" class="btn btn-primary">+</a>
+                <a href="{{ route('activities.create') }}" class="btn btn-primary">+ Tambah</a>
             </div>
 
+            {{-- 🔍 Filter Section --}}
+            <div class="filter-section">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label for="filterCustomer" class="form-label fw-semibold">Customer</label>
+                        <select id="filterCustomer" class="form-select">
+                            <option value="">Semua</option>
+                            @foreach ($activities->pluck('customer')->unique() as $cust)
+                                <option value="{{ $cust }}">{{ $cust }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="filterStatus" class="form-label fw-semibold">Status</label>
+                        <select id="filterStatus" class="form-select">
+                            <option value="">Semua</option>
+                            @foreach ($activities->pluck('status')->unique() as $status)
+                                <option value="{{ $status }}">{{ $status }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">Tanggal</label>
+                        <div class="d-flex gap-2">
+                            <input type="date" id="filterStart" class="form-control" />
+                            <input type="date" id="filterEnd" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-3 text-end">
+                    <button id="resetFilter" class="btn btn-secondary btn-sm">Reset Filter</button>
+                </div>
+            </div>
+
+            {{-- 📋 Tabel --}}
             <div class="table-responsive">
                 <table id="activitiesTable" class="table table-striped table-bordered table-hover">
                     <thead style="background-color: #f8f9fa; color: #212529; font-weight: 600;">
@@ -60,13 +97,13 @@
                         @endphp
 
                         @foreach ($activities as $activity)
-                            @php
-                                $items = json_decode($activity->items, true) ?? [];
-                            @endphp
+                            @php $items = json_decode($activity->items, true) ?? []; @endphp
                             <tr>
                                 <td>{{ ucfirst($activity->type) }}</td>
-                                <td>{{ \Carbon\Carbon::parse($activity->start_date)->format('d M Y') }} -
-                                    {{ \Carbon\Carbon::parse($activity->end_date)->format('d M Y') }}</td>
+                                <td data-start="{{ $activity->start_date }}" data-end="{{ $activity->end_date }}">
+                                    {{ \Carbon\Carbon::parse($activity->start_date)->format('d M Y') }} -
+                                    {{ \Carbon\Carbon::parse($activity->end_date)->format('d M Y') }}
+                                </td>
                                 <td>{{ $activity->kegiatan }}</td>
                                 <td>{{ $activity->customer }}</td>
                                 <td>{{ $activity->po ?? '-' }}</td>
@@ -114,17 +151,7 @@
                                         {{ $activity->material ?? '-' }}
                                     @endif
                                 </td>
-                                <td>
-                                    @if (count($items))
-                                        <ul class="mb-0">
-                                            @foreach ($items as $item)
-                                                <li>{{ $item['remarks'] ?? '-' }}</li>
-                                            @endforeach
-                                        </ul>
-                                    @else
-                                        {{ $activity->remarks ?? '-' }}
-                                    @endif
-                                </td>
+                                <td>{{ $activity->remarks ?? '-' }}</td>
                                 <td>
                                     <span class="badge bg-{{ $statusColors[$activity->status] ?? 'secondary' }}">
                                         {{ $activity->status }}
@@ -133,9 +160,7 @@
                                 <td>
                                     <div class="d-flex gap-1 justify-content-center">
                                         <a href="{{ route('activities.edit', $activity->id) }}"
-                                            class="btn btn-sm btn-primary">
-                                            Edit
-                                        </a>
+                                            class="btn btn-sm btn-primary">Edit</a>
                                         <form action="{{ route('activities.destroy', $activity->id) }}" method="POST"
                                             class="delete-form">
                                             @csrf
@@ -160,22 +185,58 @@
 
     <script>
         $(document).ready(function() {
-            // Inisialisasi DataTable
-            $('#activitiesTable').DataTable({
+            const table = $('#activitiesTable').DataTable({
                 responsive: true,
-                autoWidth: false, // biar kolom menyesuaikan isi
+                autoWidth: false,
                 pageLength: 10,
                 lengthMenu: [5, 10, 25, 50],
-                columnDefs: [{
-                    orderable: false,
-                    targets: 10
-                }]
+                columnDefs: [{ orderable: false, targets: 11 }]
             });
 
-            // Event SweetAlert untuk tombol Delete
+            // 🔍 Filter Function
+            function applyFilters() {
+                const cust = $('#filterCustomer').val().toLowerCase();
+                const status = $('#filterStatus').val().toLowerCase();
+                const startDate = $('#filterStart').val();
+                const endDate = $('#filterEnd').val();
+
+                table.rows().every(function() {
+                    const data = this.data();
+                    const $row = $(this.node());
+                    const dateCell = $row.find('td[data-start]');
+                    const rowStart = dateCell.data('start');
+                    const rowEnd = dateCell.data('end');
+
+                    const matchType = !type || data[0].toLowerCase().includes(type);
+                    const matchCust = !cust || data[3].toLowerCase().includes(cust);
+                    const matchStatus = !status || data[10].toLowerCase().includes(status);
+
+                    let matchDate = true;
+                    if (startDate || endDate) {
+                        const startCheck = !startDate || new Date(rowStart) >= new Date(startDate);
+                        const endCheck = !endDate || new Date(rowEnd) <= new Date(endDate);
+                        matchDate = startCheck && endCheck;
+                    }
+
+                    if (matchType && matchCust && matchStatus && matchDate) {
+                        $row.show();
+                    } else {
+                        $row.hide();
+                    }
+                });
+            }
+
+            $('#filterType, #filterCustomer, #filterStatus, #filterStart, #filterEnd').on('change keyup', applyFilters);
+
+            $('#resetFilter').on('click', function() {
+                $('#filterType, #filterCustomer, #filterStatus, #filterStart, #filterEnd').val('');
+                table.rows().show();
+            });
+
+            // 🗑️ Konfirmasi Delete
             $('#activitiesTable tbody').on('submit', '.delete-form', function(e) {
                 e.preventDefault();
-                var form = this;
+                const form = this;
 
                 Swal.fire({
                     title: 'Apakah kamu yakin?',
@@ -187,13 +248,11 @@
                     confirmButtonText: 'Ya, hapus!',
                     cancelButtonText: 'Batal'
                 }).then((result) => {
-                    if (result.isConfirmed) {
-                        form.submit();
-                    }
+                    if (result.isConfirmed) form.submit();
                 });
             });
 
-            // SweetAlert untuk session sukses
+            // ✅ Notifikasi sukses
             @if (session('success'))
                 Swal.fire({
                     icon: 'success',

@@ -28,12 +28,35 @@
             </li>
         @endif
         {{-- Announcement --}}
-        {{-- <li class="menu-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-            <a href="{{ route('dashboard') }}" class="menu-link">
+        <li class="menu-item {{ request()->routeIs('announcements.index') ? 'active' : '' }}">
+            <a href="{{ route('announcements.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-volume-full"></i>
-                <div data-i18n="Dashboard">Pengumuman</div>
+                <div data-i18n="Dashboard">Announcement</div>
             </a>
-        </li> --}}
+        </li>
+        {{-- Access Managemen --}}
+        @if (Auth::check() && Auth::user()->role === 'SUP')
+            <li class="menu-item {{ request()->routeIs('module.*') ? 'active open' : '' }}">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <i class="menu-icon tf-icons bx bx-key"></i>
+                    <div data-i18n="Schedule">Management Access</div>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item {{ request()->routeIs('modules.index') ? 'active' : '' }}">
+                        <a href="{{ route('modules.index') }}" class="menu-link">
+                            <div data-i18n="Daily">Module</div>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="menu-sub">
+                    <li class="menu-item {{ request()->routeIs('access.user') ? 'active' : '' }}">
+                        <a href="{{ route('access.user') }}" class="menu-link">
+                            <div data-i18n="Daily">User Access</div>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        @endif
         <!-- Schedule -->
         <li class="menu-item {{ request()->routeIs('activities.*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -47,9 +70,9 @@
                     </a>
                 </li>
             </ul>
-        </li>       
+        </li>
         <!-- Schedule -->
-        <li class="menu-item {{ request()->routeIs('activities.*') ? 'active open' : '' }}">
+        <li class="menu-item {{ request()->routeIs('jobcards.*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-building"></i>
                 <div data-i18n="Schedule">Production</div>
@@ -57,11 +80,11 @@
             <ul class="menu-sub">
                 <li class="menu-item {{ request()->routeIs('jobcards.index') ? 'active' : '' }}">
                     <a href="{{ route('jobcards.index') }}" class="menu-link">
-                        <div data-i18n="Daily">Jobcard      </div>
+                        <div data-i18n="Daily">Jobcard </div>
                     </a>
                 </li>
             </ul>
-        </li>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+        </li>
         <!-- Client -->
         {{-- <li class="menu-item {{ request()->is('client*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">

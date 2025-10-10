@@ -9,16 +9,24 @@ class Jobcard extends Model
 {
 
     protected $fillable = [
-        'jobcard_no',
+        'jobcard_id',
+        'no_joborder',     // No Job Order
         'ws_no',
         'customer',
-        'serial_no',
+        'type_jobcard',     // Jobcard Machining / Assembling
+        'type_valve',
+        'size_class',
         'drawing_no',
-        'disc',
+        'remarks',
+        'detail',
+        'batch_no',
+        'material',
+        'qty',
+        'part_name',
+        'serial_no',
         'body',
         'bonnet',
-        'size_class',
-        'type',
+        'disc',
         'qty_acc_po',
         'date_line',
         'category',
@@ -39,5 +47,10 @@ class Jobcard extends Model
     public function histories()
     {
         return $this->hasMany(JobcardHistory::class);
+    }
+
+    public static function categories()
+    {
+        return ['reused', 'new manufacture', 'repair', 'supplied'];
     }
 }

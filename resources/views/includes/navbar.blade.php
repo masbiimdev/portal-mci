@@ -8,9 +8,12 @@
             </div>
             <!-- Center: Menu -->
             <div class="hidden md:flex items-center space-x-6">
-                <a href="/" class="text-gray-700 hover:text-blue-600">Home</a>
-                <a href="/schedule" class="text-gray-700 hover:text-blue-600">Jadwal</a>
-                <a href="/tracking" class="text-gray-700 hover:text-blue-600">Tracking</a>
+                <a href="/"
+                    class="block text-gray-700 hover:text-blue-600 {{ request()->is('/') ? 'active-page' : '' }}">Home</a>
+                <a href="/schedule"
+                    class="block text-gray-700 hover:text-blue-600 {{ request()->is('schedule') ? 'active-page' : '' }}">Jadwal</a>
+                <a href="/tracking"
+                    class="block text-gray-700 hover:text-blue-600 {{ request()->is('tracking') ? 'active-page' : '' }}">Tracking</a>
             </div>
             <!-- Right: Notif + User -->
             <div class="flex items-center space-x-4">
@@ -28,10 +31,23 @@
                 </div>
                 <!-- User Menu -->
                 <div class="relative">
-                    <button id="userBtn" class="flex items-center space-x-2 p-2 text-gray-500 hover:text-blue-600">
-                        <i data-feather="user"></i>
-                        <span class="hidden sm:inline">{{ Auth::user()->name }}</span>
-                    </button>
+                    @auth
+                        <!-- Jika user sudah login -->
+                        <button id="userBtn" class="flex items-center space-x-2 p-2 text-gray-500 hover:text-blue-600">
+                            <i data-feather="user"></i>
+                            <span class="hidden sm:inline">{{ Auth::user()->name }}</span>
+                        </button>
+                    @endauth
+
+                    @guest
+                        <!-- Jika user belum login -->
+                        <a href="{{ route('login') }}"
+                            class="flex items-center space-x-2 p-2 text-gray-500 hover:text-blue-600">
+                            <i data-feather="log-in"></i>
+                            <span class="hidden sm:inline">Login</span>
+                        </a>
+                    @endguest
+
                     <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg p-2">
                         <a href="{{ route('dashboard') }}"
                             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Dashboard</a>
@@ -54,8 +70,11 @@
     </div>
     <!-- Mobile Menu -->
     <div id="mobileMenu" class="hidden md:hidden px-4 pb-4 space-y-2 bg-white shadow">
-        <a href="/" class="block text-gray-700 hover:text-blue-600">Home</a>
-        <a href="/schedule" class="block text-gray-700 hover:text-blue-600">Jadwal</a>
-        <a href="/tracking" class="block text-gray-700 hover:text-blue-600">Tracking</a>
+        <a href="/"
+            class="block text-gray-700 hover:text-blue-600 {{ request()->is('/') ? 'active-page' : '' }}">Home</a>
+        <a href="/schedule"
+            class="block text-gray-700 hover:text-blue-600 {{ request()->is('schedule') ? 'active-page' : '' }}">Jadwal</a>
+        <a href="/tracking"
+            class="block text-gray-700 hover:text-blue-600 {{ request()->is('tracking') ? 'active-page' : '' }}">Tracking</a>
     </div>
 </nav>

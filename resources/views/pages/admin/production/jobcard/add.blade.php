@@ -30,6 +30,20 @@
                     @method('PUT')
                 @endif
 
+                {{-- Type Jobcard --}}
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label">Type Jobcard</label>
+                    <div class="col-sm-10">
+                        <select id="type_jobcard" name="type_jobcard" class="form-select" required>
+                            @foreach(['Jobcard Machining','Jobcard Assembling'] as $typeJob)
+                                <option value="{{ $typeJob }}"
+                                    {{ old('type_jobcard', $jobcard->type_jobcard ?? '') == $typeJob ? 'selected' : '' }}>
+                                    {{ $typeJob }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
 
                 {{-- WS No --}}
                 <div class="mb-3 row">
@@ -49,46 +63,12 @@
                     </div>
                 </div>
 
-                {{-- Serial No --}}
+                {{-- Type Valve --}}
                 <div class="mb-3 row">
-                    <label class="col-sm-2 col-form-label">Serial No</label>
+                    <label class="col-sm-2 col-form-label">Type Valve</label>
                     <div class="col-sm-10">
-                        <input type="text" name="serial_no" class="form-control"
-                               value="{{ old('serial_no', $jobcard->serial_no ?? '') }}" required>
-                    </div>
-                </div>
-
-                {{-- Drawing No --}}
-                <div class="mb-3 row">
-                    <label class="col-sm-2 col-form-label">Drawing No</label>
-                    <div class="col-sm-10">
-                        <input type="text" name="drawing_no" class="form-control"
-                               value="{{ old('drawing_no', $jobcard->drawing_no ?? '') }}">
-                    </div>
-                </div>
-
-                {{-- Disc, Body, Bonnet --}}
-                <div class="mb-3 row">
-                    <label class="col-sm-2 col-form-label">Disc</label>
-                    <div class="col-sm-10">
-                        <input type="text" name="disc" class="form-control"
-                               value="{{ old('disc', $jobcard->disc ?? '') }}">
-                    </div>
-                </div>
-
-                <div class="mb-3 row">
-                    <label class="col-sm-2 col-form-label">Body</label>
-                    <div class="col-sm-10">
-                        <input type="text" name="body" class="form-control"
-                               value="{{ old('body', $jobcard->body ?? '') }}">
-                    </div>
-                </div>
-
-                <div class="mb-3 row">
-                    <label class="col-sm-2 col-form-label">Bonnet</label>
-                    <div class="col-sm-10">
-                        <input type="text" name="bonnet" class="form-control"
-                               value="{{ old('bonnet', $jobcard->bonnet ?? '') }}">
+                        <input type="text" name="type_valve" class="form-control"
+                               value="{{ old('type_valve', $jobcard->type_valve ?? '') }}">
                     </div>
                 </div>
 
@@ -101,18 +81,115 @@
                     </div>
                 </div>
 
-                {{-- Type --}}
+                {{-- Drawing No --}}
                 <div class="mb-3 row">
-                    <label class="col-sm-2 col-form-label">Type</label>
+                    <label class="col-sm-2 col-form-label">Drawing No</label>
                     <div class="col-sm-10">
-                        <input type="text" name="type" class="form-control"
-                               value="{{ old('type', $jobcard->type ?? '') }}">
+                        <input type="text" name="drawing_no" class="form-control"
+                               value="{{ old('drawing_no', $jobcard->drawing_no ?? '') }}">
                     </div>
                 </div>
 
-                {{-- Qty acc PO --}}
+                {{-- No Job Order --}}
                 <div class="mb-3 row">
-                    <label class="col-sm-2 col-form-label">Qty acc PO</label>
+                    <label class="col-sm-2 col-form-label">No Job Order</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="no_joborder" class="form-control"
+                               value="{{ old('no_joborder', $jobcard->no_joborder ?? '') }}">
+                    </div>
+                </div>
+
+                {{-- Remarks --}}
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label">Remarks</label>
+                    <div class="col-sm-10">
+                        <textarea name="remarks" class="form-control">{{ old('remarks', $jobcard->remarks ?? '') }}</textarea>
+                    </div>
+                </div>
+
+                {{-- Detail --}}
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label">Detail</label>
+                    <div class="col-sm-10">
+                        <textarea name="detail" class="form-control">{{ old('detail', $jobcard->detail ?? '') }}</textarea>
+                    </div>
+                </div>
+
+                {{-- Batch No --}}
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label">Batch No</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="batch_no" class="form-control"
+                               value="{{ old('batch_no', $jobcard->batch_no ?? '') }}">
+                    </div>
+                </div>
+
+                {{-- Material --}}
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label">Material</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="material" class="form-control"
+                               value="{{ old('material', $jobcard->material ?? '') }}">
+                    </div>
+                </div>
+
+                {{-- Qty --}}
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label">Qty</label>
+                    <div class="col-sm-10">
+                        <input type="number" name="qty" class="form-control"
+                               value="{{ old('qty', $jobcard->qty ?? 0) }}">
+                    </div>
+                </div>
+
+                {{-- Part Name --}}
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label">Part Name</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="part_name" class="form-control"
+                               value="{{ old('part_name', $jobcard->part_name ?? '') }}">
+                    </div>
+                </div>
+
+                {{-- Serial No --}}
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label">Serial No</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="serial_no" class="form-control"
+                               value="{{ old('serial_no', $jobcard->serial_no ?? '') }}">
+                    </div>
+                </div>
+
+                {{-- Body --}}
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label">Body</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="body" class="form-control"
+                               value="{{ old('body', $jobcard->body ?? '') }}">
+                    </div>
+                </div>
+
+                {{-- Bonnet --}}
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label">Bonnet</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="bonnet" class="form-control"
+                               value="{{ old('bonnet', $jobcard->bonnet ?? '') }}">
+                    </div>
+                </div>
+
+                {{-- Disc --}}
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label">Disc</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="disc" class="form-control"
+                               value="{{ old('disc', $jobcard->disc ?? '') }}">
+                    </div>
+                </div>
+
+                {{-- Qty Acc PO --}}
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label">Qty Acc PO</label>
                     <div class="col-sm-10">
                         <input type="number" name="qty_acc_po" class="form-control"
                                value="{{ old('qty_acc_po', $jobcard->qty_acc_po ?? 0) }}">
@@ -154,8 +231,41 @@
                         </button>
                     </div>
                 </div>
+
             </form>
         </div>
     </div>
 </div>
+
+{{-- Script untuk otomatis kosongkan field --}}
+<script>
+    function toggleFieldsByType() {
+        const typeJobcard = document.getElementById('type_jobcard').value;
+
+        // Machining => sembunyikan serial_no, body, bonnet, disc, qty_acc_po
+        const machiningFields = ['serial_no','body','bonnet','disc','qty_acc_po'];
+        machiningFields.forEach(name => {
+            const row = document.querySelector(`[name="${name}"]`).closest('.mb-3');
+            if(typeJobcard === 'Jobcard Machining') {
+                row.style.display = 'none';
+            } else {
+                row.style.display = '';
+            }
+        });
+
+        // Assembling => sembunyikan batch_no, material, qty, part_name
+        const assemblingFields = ['batch_no','material','qty','part_name'];
+        assemblingFields.forEach(name => {
+            const row = document.querySelector(`[name="${name}"]`).closest('.mb-3');
+            if(typeJobcard === 'Jobcard Assembling') {
+                row.style.display = 'none';
+            } else {
+                row.style.display = '';
+            }
+        });
+    }
+
+    document.getElementById('type_jobcard').addEventListener('change', toggleFieldsByType);
+    window.addEventListener('DOMContentLoaded', toggleFieldsByType);
+</script>
 @endsection

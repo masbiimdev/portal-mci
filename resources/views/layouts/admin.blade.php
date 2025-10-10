@@ -16,7 +16,7 @@
     <title>@yield('title')</title>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{{ asset('../assets/img/favicon/favicon.ico') }}" />
+    <link rel="icon" type="image/x-icon" href="data:image/jpeg;base64,{{ base64_encode(file_get_contents(public_path('images/metinca-logo.jpeg'))) }}" />
 
     <!-- Fonts -->
     @include('includes.admin.style')
