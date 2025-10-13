@@ -50,9 +50,8 @@ return [
 
         'public' => [
             'driver' => 'local',
-            'root' => storage_path('app/public'),
-            // 'root' => '/home/metb4532/public_html/portal.metincaprimaworks.com/storage',
-            'url' => env('APP_URL').'/storage',
+            'root' => env('PUBLIC_STORAGE_PATH', storage_path('app/public/uploads')),
+            'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
         ],
 
