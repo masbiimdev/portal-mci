@@ -19,7 +19,6 @@ use App\Http\Controllers\AccessController;
 // Route tanpa auth
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/schedule', [HomeController::class, 'jadwal'])->name('jadwal');
-Route::get('/jobcard/public/{id}', [JobcardController::class, 'publicShow'])->name('jobcards.public.show');
 
 Route::get('/login', [App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'login']);
@@ -74,6 +73,8 @@ Route::middleware(['auth', 'module.access:production'])->group(function () {
     // routes/web.php
     Route::get('jobcards/{id}/print', 'JobcardController@print')->name('jobcards.print');
     Route::get('jobcards/export/pdf', 'JobcardController@exportPdf')->name('jobcards.export.pdf');
+    Route::get('/jobcard/public/{id}', [JobcardController::class, 'publicShow'])->name('jobcards.public.show');
+
 
     // Form scan
     Route::get('jobcards/{jobcard}/scan', [
