@@ -20,7 +20,7 @@ class AdminOnly
         $jobcardId = $request->route('jobcard'); 
 
         // Jika user login dan role admin
-        if (Auth::check() && Auth::user()->role === 'ADM') {
+        if (Auth::check() && Auth::user()->role === 'KR') {
             return $next($request);
         }
 

@@ -237,12 +237,6 @@ class JobcardController extends Controller
     {
         $jobcard = Jobcard::with(['creator', 'histories.user'])->findOrFail($id);
 
-        // Cek role user
-        if (Auth::check() && Auth::user()->role === 'KR') {
-            // Jika role KR → arahkan ke scan form
-            return redirect()->route('jobcards.scan.form', $jobcard->id);
-        }
-
         return view('pages.admin.production.jobcard.detail', compact('jobcard'));
     }
 }
