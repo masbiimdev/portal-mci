@@ -85,6 +85,129 @@
                 </li>
             </ul>
         </li>
+        {{-- INVENTORY MENU --}}
+        <li class="menu-item {{ request()->routeIs('inventory.*') ? 'active open' : '' }} ">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-package"></i>
+                <div data-i18n="Inventory">Inventory</div>
+            </a>
+            <ul class="menu-sub">
+
+                {{-- Dashboard --}}
+                <li class="menu-item {{ request()->routeIs('inventory.index') ? 'active open' : '' }}">
+                    <a href="{{ route('inventory.index') }}" class="menu-link">
+                        <div data-i18n="Dashboard">Dashboard</div>
+                    </a>
+                </li>
+
+                {{-- Master Data --}}
+                <li class="menu-item {{ request()->routeIs('valves.*') ? 'active open' : '' }}">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <div data-i18n="Master Data">Master Data</div>
+                    </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item {{ request()->routeIs('spare-parts.index') ? 'active open' : '' }}">
+                            <a href="{{ route('spare-parts.index') }}" class="menu-link">
+                                <div data-i18n="Spare Part">Spare Part</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ request()->routeIs('valves.index') ? 'active open' : '' }}">
+                            <a href="{{ route('valves.index') }}" class="menu-link">
+                                <div data-i18n="Category">Valve</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ request()->routeIs('racks.index') ? 'active open' : '' }}">
+                            <a href="{{ route('racks.index') }}" class="menu-link">
+                                <div data-i18n="Rack">Rack</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ request()->routeIs('materials.index') ? 'active open' : '' }}">
+                            <a href="{{ route('materials.index') }}" class="menu-link">
+                                <div data-i18n="Material">Material</div>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                {{-- Transactions --}}
+                <li class="menu-item ">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <div data-i18n="Transactions">Transactions</div>
+                    </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item {{ request()->routeIs('material_in.index') ? 'active open' : '' }}">
+                            <a href="{{ route('material_in.index') }}" class="menu-link">
+                                <div data-i18n="Material In">Material In</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ request()->routeIs('material_out.index') ? 'active open' : '' }}">
+                            <a href="{{ route('material_out.index') }}" class="menu-link">
+                                <div data-i18n="Material Out">Material Out</div>
+                            </a>
+                        </li>
+                        {{-- <li
+                            class="menu-item ">
+                            <a href="#" class="menu-link">
+                                <div data-i18n="Transfer">Transfer</div>
+                            </a>
+                        </li> --}}
+                    </ul>
+                </li>
+
+                {{-- Stock Management --}}
+                <li class="menu-item ">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <div data-i18n="Stock Management">Stock Management</div>
+                    </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item ">
+                            <a href="{{ route('stock-card.index') }}" class="menu-link">
+                                <div data-i18n="Stock Card">Stock Card</div>
+                            </a>
+                        </li>
+                        <li class="menu-item ">
+                            <a href="{{ route('stock-opname.index') }}" class="menu-link">
+                                <div data-i18n="Stock Opname">Stock Opname</div>
+                            </a>
+                        </li>
+                        {{-- <li class="menu-item ">
+                            <a href="#" class="menu-link">
+                                <div data-i18n="Adjustment">Adjustment</div>
+                            </a>
+                        </li> --}}
+                    </ul>
+                </li>
+
+                {{-- Reports --}}
+                <li class="menu-item ">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <div data-i18n="Reports">Reports</div>
+                    </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item">
+                            <a href="#" class="menu-link">
+                                <div data-i18n="Stock Summary">Stock Summary</div>
+                            </a>
+                        </li>
+                        <li class="menu-item ">
+                            <a href="#" class="menu-link">
+                                <div data-i18n="Stock Movement">Stock Movement</div>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="#" class="menu-link">
+                                <div data-i18n="Inventory Valuation">Inventory Valuation</div>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+            </ul>
+        </li>
+
+
+
+
         <!-- Client -->
         {{-- <li class="menu-item {{ request()->is('client*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">

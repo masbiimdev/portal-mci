@@ -21,6 +21,9 @@
     <script src="{{ asset('../admin/assets/vendor/js/helpers.js') }}"></script>
     <script src="{{ asset('../admin/assets/js/config.js') }}"></script>     --}}
 
+ <!-- CSS -->
+ <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
  <link rel="preconnect" href="https://fonts.googleapis.com" />
  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap"
@@ -37,6 +40,12 @@
  <!-- Vendors CSS -->
  <link rel="stylesheet" href="/admin/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
  <link rel="stylesheet" href="/admin/assets/vendor/libs/apex-charts/apex-charts.css" />
+
+ <style>
+     select[multiple] {
+         height: 180px;
+     }
+ </style>
 
  <!-- Helpers -->
  <script src="/admin/assets/vendor/js/helpers.js"></script>

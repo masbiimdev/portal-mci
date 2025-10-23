@@ -9,6 +9,7 @@ use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\JobcardController;
 use App\Http\Controllers\AnnonController;
 use App\Http\Controllers\AccessController;
+use App\Http\Controllers\ValveController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,6 +45,30 @@ Route::middleware(['auth', 'module.access:announcement'])->group(function () {
 
 Route::middleware(['auth', 'module.access:activities'])->group(function () {
     Route::resource('activities', 'ActivityController');
+});
+
+Route::middleware(['auth', 'module.access:inventory'])->group(function () {
+    // Inventory
+    // Master Data : Valve
+    Route::resource('valves', 'ValveController');
+    // Master Date : Spare Part
+    Route::resource('spare-parts', 'SparePartController');
+    // Master Data : Rack
+    Route::resource('racks', 'RackController');
+    // Dashboard
+    Route::get('inventory', 'InventoryController@index')->name('inventory.index');
+    // Material
+    Route::resource('materials', 'MaterialController');
+    // Material In
+    Route::resource('material_in', 'MaterialInController');
+    // Material Out
+    Route::resource('material_out', 'MaterialOutController');
+    // Stock Card
+    Route::get('stock-card', 'StockCardController@index')->name('stock-card.index');
+    // Stock Opname
+    Route::resource('stock-opname', 'StockOpnameController');
+    // Adjustment
+    Route::post('stock-opname/{id}/adjust', 'StockOpnameController@adjust')->name('stock-opname.adjust');
 });
 
 Route::middleware(['auth', 'module.access:production'])->group(function () {
@@ -86,4 +111,5 @@ Route::middleware(['auth', 'module.access:production'])->group(function () {
         'uses' => 'JobcardController@scan',
         'as'   => 'jobcards.scan'
     ]);
+
 });

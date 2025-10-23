@@ -52,6 +52,7 @@
                             <div>
                                 <div class="font-medium">{{ $activity->kegiatan }}</div>
                                 <div class="text-slate-500 text-xs">{{ $activity->customer ?? '-' }}</div>
+                                <div class="text-slate-500 text-xs">{{ $activity->po ?? '-' }}</div>
                             </div>
                         </li>
                     @endforeach
