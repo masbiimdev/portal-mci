@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Activity;
+use App\ActivityItemResult;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -113,4 +114,36 @@ class ActivityController extends Controller
 
         return view('includes.navbar', compact('notifications'));
     }
+
+    public function show($id)
+    {
+        $activity = Activity::findOrFail($id);
+        $items = json_decode($activity->items, true) ?? [];
+
+        // Ambil hasil checklist dari tabel result
+        $results = ActivityItemResult::where('activity_id', $id)->get();
+
+        return view('pages.admin.activity.detail', compact('activity', 'items', 'results'));
+    }
+
+    // public function storeResult(Request $request)
+    // {
+    //     $validated = $request->validate([
+    //         'activity_id' => 'required|exists:activities,id',
+    //         'part_name' => 'required|string',
+    //         'material' => 'nullable|string',
+    //         'qty' => 'nullable|integer',
+    //         'inspector_name' => 'required|string',
+    //         'inspection_time' => 'nullable',
+    //         'result' => 'required|string',
+    //         'remarks' => 'nullable|string',
+    //     ]);
+
+    //     $validated['status'] = 'Checked';
+    //     $validated['inspection_time'] = $validated['inspection_time'] ?? now();
+
+    //     ActivityItemResult::create($validated);
+
+    //     return back()->with('success', 'Hasil pemeriksaan berhasil disimpan!');
+    // }
 }

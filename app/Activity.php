@@ -21,5 +21,9 @@ class Activity extends Model
     protected $casts = [
         'items' => 'array',
     ];
-}
 
+    public function items()
+    {
+        return $this->hasMany(ActivityItemResult::class, 'activity_id', 'id');
+    }
+}

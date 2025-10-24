@@ -10,6 +10,8 @@ use App\Http\Controllers\JobcardController;
 use App\Http\Controllers\AnnonController;
 use App\Http\Controllers\AccessController;
 use App\Http\Controllers\ValveController;
+use App\ActivityItemResult;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,6 +22,9 @@ use App\Http\Controllers\ValveController;
 // Route tanpa auth
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/schedule', [HomeController::class, 'jadwal'])->name('jadwal');
+Route::post('/schedule/result', [HomeController::class, 'storeOrUpdateResult'])->name('jadwal.store');
+// Route::get('/schedule/result/{id}', [HomeController::class, 'showResult'])
+//     ->name('jadwal.show');
 
 Route::get('/login', [App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'login']);
@@ -111,5 +116,4 @@ Route::middleware(['auth', 'module.access:production'])->group(function () {
         'uses' => 'JobcardController@scan',
         'as'   => 'jobcards.scan'
     ]);
-
 });
