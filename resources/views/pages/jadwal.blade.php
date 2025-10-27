@@ -347,18 +347,20 @@
                 showModal(viewResultModal, viewResultModal.querySelector('.bg-white'));
             }
 
-            // --- FullCalendar Setup ---
             function expandRange(activity) {
                 const events = [];
                 let start = new Date(activity.start_date);
                 let end = new Date(activity.end_date);
                 end.setDate(end.getDate() + 1); // include end date
+
                 for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
+                    const dateStr = d.toISOString().split('T')[0]; // hanya YYYY-MM-DD
                     events.push({
-                        id: activity.id + '-' + d.toISOString().split('T')[0],
+                        id: activity.id + '-' + dateStr,
                         title: activity.kegiatan,
-                        start: new Date(d),
-                        end: new Date(d),
+                        start: dateStr, // HANYA tanggal
+                        end: dateStr, // HANYA tanggal
+                        allDay: true, // pastikan full day event
                         extendedProps: {
                             id: activity.id,
                             customer: activity.customer || '-',
@@ -369,8 +371,10 @@
                         }
                     });
                 }
+
                 return events;
             }
+
 
             let initialEvents = [];
             @foreach ($activities as $activity)
