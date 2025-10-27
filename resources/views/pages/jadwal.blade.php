@@ -408,32 +408,32 @@
                     }).length;
                     const percent = items.length > 0 ? Math.round((okCount / items.length) * 100) : 0;
 
-                    let progressHTML = '';
-                    if (percent > 0) {
-                        progressHTML = `
-            <div style="display:flex; flex-direction:column; gap:2px;">
-                <div style="
-                    font-size:0.65rem;
-                    font-weight:600;
-                    color:#111827;
-                    background:#f3f4f6;
-                    padding:0 4px;
-                    border-radius:3px;
-                    align-self:flex-end;">
-                    ${percent}%
-                </div>
-                <div style="width:100%; background:#e5e7eb; border-radius:6px; height:6px; overflow:hidden;">
-                    <div style="
-                        width:${percent}%;
-                        height:100%;
-                        background:linear-gradient(90deg, #10B981, #3B82F6);
-                        border-radius:6px;
-                        transition: width 0.8s ease-in-out;">
-                    </div>
-                </div>
+                    if (percent === 0) return {
+                        html: `<div class="fc-event-title">${arg.event.title}</div>`
+                    };
+
+                    // Tentukan warna berdasarkan persen
+                    let barColor = '#10B981'; // hijau
+                    if (percent < 40) barColor = '#EF4444'; // merah
+                    else if (percent < 80) barColor = '#F59E0B'; // oranye
+
+                    const progressHTML = `
+        <div style="display:flex; flex-direction:column; gap:2px;">
+            <div style="font-size:0.65rem; font-weight:600; color:#111827; align-self:flex-end;">
+                ${percent}%
             </div>
-        `;
-                    }
+            <div style="width:100%; background:#e5e7eb; border-radius:6px; height:6px; overflow:hidden; position:relative; padding:1px;">
+                <div style="
+                    height:100%;
+                    border-radius:4px;
+                    background:${barColor};
+                    box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);
+                    animation: fillProgress 1s forwards;
+                    width:0%;
+                "></div>
+            </div>
+        </div>
+    `;
 
                     const html = `
         <div style="display:flex; flex-direction:column; gap:4px;">
@@ -442,13 +442,19 @@
             </div>
             ${progressHTML}
         </div>
+
+        <style>
+            @keyframes fillProgress {
+                from { width: 0%; }
+                to { width: ${percent}%; }
+            }
+        </style>
     `;
 
                     return {
-                        html: html
+                        html
                     };
                 },
-
                 eventDidMount: function(info) {
                     const type = info.event.extendedProps.status;
                     let color = '#6B7280'; // Default Pending (Gray)
