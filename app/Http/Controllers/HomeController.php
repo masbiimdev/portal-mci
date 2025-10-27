@@ -70,6 +70,7 @@ class HomeController extends Controller
                 'material' => $r->material,
                 'qty' => $r->qty,
                 'inspector_name' => $r->inspector_name,
+                'pic' => $r->pic,
                 'inspection_time' => $r->inspection_time,
                 'result' => $r->result,
                 'status' => $r->status,
@@ -97,6 +98,7 @@ class HomeController extends Controller
             'material' => 'nullable|string',
             'qty' => 'nullable|integer',
             'inspector_name' => 'required|string',
+            'pic' => 'required|string',
             'inspection_time' => 'nullable|date_format:Y-m-d H:i:s',
             'result' => 'required|string',
             'remarks' => 'nullable|string',
@@ -111,6 +113,7 @@ class HomeController extends Controller
                 'material' => $validated['material'] ?? null,
                 'qty' => $validated['qty'] ?? null,
                 'inspector_name' => $validated['inspector_name'],
+                'pic' => $validated['pic'],
                 'result' => $validated['result'],
                 'status' => 'Checked',
                 'remarks' => $validated['remarks'] ?? null,
@@ -126,6 +129,7 @@ class HomeController extends Controller
                 'material' => $validated['material'] ?? null,
                 'qty' => $validated['qty'] ?? null,
                 'inspector_name' => $validated['inspector_name'],
+                'pic' => $validated['pic'],
                 'inspection_time' => $inspectionTime,
                 'result' => $validated['result'],
                 'status' => 'Checked',
@@ -154,7 +158,7 @@ class HomeController extends Controller
         $results = ActivityItemResult::where('activity_id', $request->activity_id)
             ->where('part_name', $request->part_name)
             ->orderBy('inspection_time', 'desc')
-            ->get(['inspector_name', 'inspection_time', 'result', 'status', 'remarks']);
+            ->get(['part_name','inspector_name', 'inspection_time','part_name', 'result', 'status', 'remarks']);
 
         return response()->json($results);
     }

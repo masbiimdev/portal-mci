@@ -140,6 +140,11 @@
                     <input type="text" name="inspector_name" id="inspector_name"
                         class="form-control w-full border rounded-lg p-2" required>
                 </div>
+                <div class="mb-3">
+                    <label class="text-sm text-slate-600">Nama PIC</label>
+                    <input type="text" name="pic" id="pic" class="form-control w-full border rounded-lg p-2"
+                        required>
+                </div>
 
                 <div class="mb-3">
                     <label class="text-sm text-slate-600">Nama Part</label>
@@ -196,6 +201,7 @@
                         data-part-name="{{ $result->part_name }}">
                         <div class="border p-3 rounded-lg">
                             <div><strong>Inspektur:</strong> {{ $result->inspector_name }}</div>
+                            <div><strong>PIC:</strong> {{ $result->pic }}</div>
                             <div><strong>Waktu:</strong> {{ $result->inspection_time }}</div>
                             <div><strong>Hasil:</strong> {{ $result->result }}</div>
                             <div><strong>Status:</strong> {{ $result->status }}</div>
@@ -216,6 +222,9 @@
 @endsection
 
 @push('js')
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
@@ -294,6 +303,7 @@
                 if (found) {
                     document.getElementById('result_id').value = found.id;
                     document.getElementById('inspector_name').value = found.inspector_name || '';
+                    document.getElementById('pic').value = found.pic || '';
                     document.getElementById('material').value = found.material || '';
                     document.getElementById('qty').value = found.qty || '';
                     document.getElementById('result').value = found.result || 'OK';
@@ -323,7 +333,9 @@
                         div.innerHTML = `
                     <div><strong>Part Name:</strong> ${m.part_name}</div>
                     <div><strong>Material:</strong> ${m.material}</div>
-                    <div><strong>Inspektur:</strong> ${m.inspector_name}</div>
+                    <div><strong>Qty:</strong> ${m.qty}</div>
+                    <div><strong>Inspektor:</strong> ${m.inspector_name}</div>
+                    <div><strong>PIC:</strong> ${m.pic}</div>
                     <div><strong>Hasil:</strong> ${m.result}</div>
                     <div><strong>Status:</strong> ${m.status}</div>
                     <div><strong>Catatan:</strong> ${m.remarks || '-'}</div>
@@ -385,17 +397,20 @@
                 events: initialEvents,
                 eventDidMount: function(info) {
                     const type = info.event.extendedProps.status;
-                    let color = '#2563EB';
-                    if (type === 'Pending') color = '#059669';
-                    if (type === 'On Going') color = '#F59E0B';
-                    if (type === 'Reschedule') color = '#2563EB';
-                    if (type === 'Done') color = '#EF4444';
+                    let color = '#6B7280'; // Default Pending (Gray)
+
+                    if (type === 'Pending') color = '#6B7280'; // Gray
+                    if (type === 'On Going') color = '#F59E0B'; // Orange
+                    if (type === 'Reschedule') color = '#EF4444'; // Red
+                    if (type === 'Done') color = '#10B981'; // Green
+
                     info.el.style.backgroundColor = color;
                     info.el.style.borderColor = color;
                 },
                 eventClick: function(info) {
-                    const ev = info.event; // <--- harus didefinisikan dulu
+                    const ev = info.event;
 
+                    // --- Isi data modal utama ---
                     document.getElementById('mTitle').innerText = ev.title;
                     document.getElementById('mCustomer').innerText = ev.extendedProps.customer || '-';
                     document.getElementById('mType').innerText = ev.extendedProps.type || '-';
@@ -404,6 +419,7 @@
                     document.getElementById('mPO').innerText = ev.extendedProps.po || '-';
                     document.getElementById('mStatus').innerText = ev.extendedProps.status || '-';
 
+                    // --- Items ---
                     const itemsDiv = document.getElementById('mItems');
                     itemsDiv.innerHTML = '';
 
@@ -417,14 +433,41 @@
                             itemContainer.classList.add('border', 'p-2', 'mb-2', 'rounded',
                                 'flex', 'justify-between', 'items-start', 'gap-2');
 
+                            // --- LEFT: Info item + badge status ---
                             const left = document.createElement('div');
+
+                            // Ambil status item dari resultsData
+                            const foundResult = resultsData.find(r => r.activity_id == ev
+                                .extendedProps.id && r.part_name == item.part_name);
+                            const status = foundResult ? foundResult.result : '-';
+
+                            // Tentukan warna badge
+                            let badgeText = status;
+                            let badgeColor = 'gray';
+
+                            if (status === 'OK') {
+                                badgeColor = 'green';
+                            } else if (status === 'NG') {
+                                badgeColor = 'orange';
+                            } else if (status === 'Rework') {
+                                badgeColor = 'red';
+                            } else {
+                                badgeText = 'Belum Diperiksa'; // teks default
+                                badgeColor = 'gray';
+                            }
+
+                            const statusBadge =
+                                `<span class="px-2 py-1 rounded text-white text-xs" style="background-color:${badgeColor}">${badgeText}</span>`;
+
                             left.innerHTML = `
                 <div><strong>Part:</strong> ${item.part_name || '-'}</div>
                 <div><strong>Material:</strong> ${item.material || '-'}</div>
                 <div><strong>Qty:</strong> ${item.qty || '-'}</div>
                 <div><strong>Remarks:</strong> ${item.remarks || '-'}</div>
+                <div><strong>Status:</strong> ${statusBadge}</div>
             `;
 
+                            // --- RIGHT: Button ---
                             const right = document.createElement('div');
                             right.classList.add('flex', 'flex-col', 'gap-1');
 
@@ -438,23 +481,15 @@
                                 inputBtn.addEventListener('click', () => openResultModal(ev
                                     .extendedProps, item));
                                 right.appendChild(inputBtn);
-
-                                const viewBtn = document.createElement('button');
-                                viewBtn.innerText = 'Lihat Hasil';
-                                viewBtn.classList.add('bg-gray-100', 'text-gray-700', 'text-xs',
-                                    'px-2', 'py-1', 'rounded', 'hover:bg-gray-200');
-                                viewBtn.addEventListener('click', () => openViewResultModal(ev
-                                    .extendedProps.id, item.part_name));
-                                right.appendChild(viewBtn);
-                            } else {
-                                const viewBtn = document.createElement('button');
-                                viewBtn.innerText = 'Lihat Hasil';
-                                viewBtn.classList.add('bg-gray-100', 'text-gray-700', 'text-xs',
-                                    'px-2', 'py-1', 'rounded', 'hover:bg-gray-200');
-                                viewBtn.addEventListener('click', () => openViewResultModal(ev
-                                    .extendedProps.id, item.part_name));
-                                right.appendChild(viewBtn);
                             }
+
+                            const viewBtn = document.createElement('button');
+                            viewBtn.innerText = 'Lihat Hasil';
+                            viewBtn.classList.add('bg-gray-100', 'text-gray-700', 'text-xs',
+                                'px-2', 'py-1', 'rounded', 'hover:bg-gray-200');
+                            viewBtn.addEventListener('click', () => openViewResultModal(ev
+                                .extendedProps.id, item.part_name));
+                            right.appendChild(viewBtn);
 
                             itemContainer.appendChild(left);
                             itemContainer.appendChild(right);
@@ -462,17 +497,16 @@
                         });
 
                         itemsDiv.appendChild(scrollDiv);
-                        
 
-                        // ---- progress bar di bawah items ----
+                        // --- Progress Bar ---
                         const progressContainer = document.getElementById('mProgressContainer');
                         const progressBar = document.getElementById('mProgressBar');
 
-                        // default sembunyikan dulu
+                        // Reset default
                         progressContainer.classList.add('hidden');
                         progressBar.style.width = '0%';
+                        progressBar.innerText = '0%';
 
-                        // tampilkan jika ada item dengan status OK
                         const items = ev.extendedProps.items;
                         const okCount = items.filter(item => {
                             const found = resultsData.find(r => r.activity_id == ev
@@ -483,30 +517,14 @@
                         const percent = Math.round((okCount / items.length) * 100);
 
                         if (percent > 0) {
-                            const progressContainer = document.getElementById('mProgressContainer');
-                            const progressBar = document.getElementById('mProgressBar');
-
                             progressContainer.classList.remove('hidden');
 
-                            // Reset width agar animasi selalu dimulai dari 0
-                            progressBar.style.width = '0%';
-                            progressBar.innerText = '0%';
-
-                            // Gunakan setTimeout untuk trigger animasi
+                            // Animasi progress
                             setTimeout(() => {
                                 progressBar.style.width = percent + '%';
                                 progressBar.innerText = percent + '%';
                             }, 50);
-                        } else {
-                            const progressContainer = document.getElementById('mProgressContainer');
-                            const progressBar = document.getElementById('mProgressBar');
-                            progressContainer.classList.add('hidden');
-                            progressBar.style.width = '0%';
-                            progressBar.innerText = '0%';
                         }
-
-                        
-                        
 
                     } else {
                         itemsDiv.innerHTML = '<p class="text-muted mb-0">Tidak ada items</p>';
@@ -514,11 +532,21 @@
 
                     showModal(modal, modalContent);
                 }
-
             });
 
             calendar.render();
 
         });
+
+        // Notifikasi sukses
+        @if (session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ session('success') }}',
+                timer: 2500,
+                showConfirmButton: false
+            });
+        @endif
     </script>
 @endpush

@@ -12,6 +12,7 @@ class ActivityItemResult extends Model
         'material',
         'qty',
         'inspector_name',
+        'pic',
         'inspection_time',
         'result',
         'status',
