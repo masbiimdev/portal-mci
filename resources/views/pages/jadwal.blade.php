@@ -17,6 +17,17 @@
             margin-right: .5rem;
         }
     </style>
+    <style>
+        @keyframes fillProgress {
+            from {
+                width: 0%;
+            }
+
+            to {
+                width: var(--target-percent);
+            }
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -442,13 +453,6 @@
             </div>
             ${progressHTML}
         </div>
-
-        <style>
-            @keyframes fillProgress {
-                from { width: 0%; }
-                to { width: ${percent}%; }
-            }
-        </style>
     `;
 
                     return {
