@@ -399,6 +399,46 @@
                     right: "dayGridMonth,dayGridWeek,dayGridDay"
                 },
                 events: initialEvents,
+                eventContent: function(arg) {
+                    const items = arg.event.extendedProps.items || [];
+                    const okCount = items.filter(item => {
+                        const found = resultsData.find(r => r.activity_id == arg.event
+                            .extendedProps.id && r.part_name == item.part_name);
+                        return found && found.result === 'OK';
+                    }).length;
+                    const percent = items.length > 0 ? Math.round((okCount / items.length) * 100) : 0;
+
+                    // Tentukan warna progress berdasarkan % progres
+                    let progressColor = '#EF4444'; // merah default
+                    if (percent >= 70) progressColor = '#10B981'; // hijau
+                    else if (percent >= 30) progressColor = '#F59E0B'; // oranye
+
+                    const html = `
+        <div style="display:flex; flex-direction:column; gap:2px;">
+            <div class="fc-event-title" style="font-weight:600; font-size:0.85rem;">${arg.event.title}</div>
+            ${percent > 0 ? `
+                <div class="event-progress-container" 
+                     style="width:100%; background:#e2e8f0; border-radius:6px; height:6px; overflow:hidden; position:relative;">
+                    <div class="event-progress-bar" 
+                         style="width:0%; height:100%; background:${progressColor}; border-radius:6px; transition: width 0.8s ease-in-out;" 
+                         title="${percent}%"></div>
+                </div>` : ''}
+        </div>
+    `;
+
+                    // Trigger animasi progress bar jika percent > 0
+                    if (percent > 0) {
+                        setTimeout(() => {
+                            const el = document.querySelectorAll('.event-progress-bar');
+                            el.forEach(bar => bar.style.width = percent + '%');
+                        }, 10);
+                    }
+
+                    return {
+                        html: html
+                    };
+                },
+
                 eventDidMount: function(info) {
                     const type = info.event.extendedProps.status;
                     let color = '#6B7280'; // Default Pending (Gray)
