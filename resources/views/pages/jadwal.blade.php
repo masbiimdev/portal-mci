@@ -18,14 +18,22 @@
         }
     </style>
     <style>
-        @keyframes fillProgress {
-            from {
-                width: 0%;
-            }
+        .progress-container {
+            width: 100%;
+            background: #e5e7eb;
+            border-radius: 6px;
+            height: 6px;
+            overflow: hidden;
+            position: relative;
+            padding: 1px;
+        }
 
-            to {
-                width: var(--target-percent);
-            }
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            border-radius: 4px;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+            transition: width .8s ease-in-out;
         }
     </style>
 @endpush
@@ -413,45 +421,47 @@
                 eventContent: function(arg) {
                     const items = arg.event.extendedProps.items || [];
                     const okCount = items.filter(item => {
-                        const found = resultsData.find(r => r.activity_id == arg.event
-                            .extendedProps.id && r.part_name == item.part_name);
+                        const found = resultsData.find(r =>
+                            r.activity_id == arg.event.extendedProps.id &&
+                            r.part_name == item.part_name
+                        );
                         return found && found.result === 'OK';
                     }).length;
-                    const percent = items.length > 0 ? Math.round((okCount / items.length) * 100) : 0;
 
-                    if (percent === 0) return {
-                        html: `<div class="fc-event-title">${arg.event.title}</div>`
-                    };
+                    const percent = items.length > 0 ?
+                        Math.round((okCount / items.length) * 100) :
+                        0;
 
-                    // Tentukan warna berdasarkan persen
-                    let barColor = '#10B981'; // hijau
-                    if (percent < 40) barColor = '#EF4444'; // merah
-                    else if (percent < 80) barColor = '#F59E0B'; // oranye
+                    if (percent === 0) {
+                        return {
+                            html: `<div class="fc-event-title">${arg.event.title}</div>`
+                        };
+                    }
 
-                    const progressHTML = `
-        <div style="display:flex; flex-direction:column; gap:2px;">
-            <div style="font-size:0.65rem; font-weight:600; color:#111827; align-self:flex-end;">
-                ${percent}%
-            </div>
-            <div style="width:100%; background:#e5e7eb; border-radius:6px; height:6px; overflow:hidden; position:relative; padding:1px;">
-                <div style="
-                    height:100%;
-                    border-radius:4px;
-                    background:${barColor};
-                    box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);
-                    animation: fillProgress 1s forwards;
-                    width:0%;
-                "></div>
-            </div>
-        </div>
-    `;
+                    let barColor = '#10B981'; // Hijau
+                    if (percent < 40) barColor = '#EF4444'; // Merah
+                    else if (percent < 80) barColor = '#F59E0B'; // Oranye
 
                     const html = `
         <div style="display:flex; flex-direction:column; gap:4px;">
-            <div class="fc-event-title" style="font-weight:600; font-size:0.85rem; color:#111827;">
+            <div class="fc-event-title"
+                style="font-weight:600; font-size:0.85rem; color:#111827;">
                 ${arg.event.title}
             </div>
-            ${progressHTML}
+
+            <div style="display:flex; flex-direction:column; gap:2px;">
+                <div style="font-size:0.65rem; font-weight:600;
+                    color:#111827; align-self:flex-end;">
+                    ${percent}%
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-bar"
+                         data-percent="${percent}%"
+                         style="background:${barColor};">
+                    </div>
+                </div>
+            </div>
         </div>
     `;
 
@@ -599,6 +609,12 @@
             });
 
             calendar.render();
+
+            setTimeout(() => {
+                document.querySelectorAll('.progress-bar').forEach(el => {
+                    el.style.width = el.dataset.percent;
+                });
+            }, 300);
 
         });
 
