@@ -408,31 +408,41 @@
                     }).length;
                     const percent = items.length > 0 ? Math.round((okCount / items.length) * 100) : 0;
 
-                    // Tentukan warna progress berdasarkan % progres
-                    let progressColor = '#EF4444'; // merah default
-                    if (percent >= 70) progressColor = '#10B981'; // hijau
-                    else if (percent >= 30) progressColor = '#F59E0B'; // oranye
+                    let progressHTML = '';
+                    if (percent > 0) {
+                        progressHTML = `
+            <div style="display:flex; flex-direction:column; gap:2px;">
+                <div style="
+                    font-size:0.65rem;
+                    font-weight:600;
+                    color:#111827;
+                    background:#f3f4f6;
+                    padding:0 4px;
+                    border-radius:3px;
+                    align-self:flex-end;">
+                    ${percent}%
+                </div>
+                <div style="width:100%; background:#e5e7eb; border-radius:6px; height:6px; overflow:hidden;">
+                    <div style="
+                        width:${percent}%;
+                        height:100%;
+                        background:linear-gradient(90deg, #10B981, #3B82F6);
+                        border-radius:6px;
+                        transition: width 0.8s ease-in-out;">
+                    </div>
+                </div>
+            </div>
+        `;
+                    }
 
                     const html = `
-        <div style="display:flex; flex-direction:column; gap:2px;">
-            <div class="fc-event-title" style="font-weight:600; font-size:0.85rem;">${arg.event.title}</div>
-            ${percent > 0 ? `
-                <div class="event-progress-container" 
-                     style="width:100%; background:#e2e8f0; border-radius:6px; height:6px; overflow:hidden; position:relative;">
-                    <div class="event-progress-bar" 
-                         style="width:0%; height:100%; background:${progressColor}; border-radius:6px; transition: width 0.8s ease-in-out;" 
-                         title="${percent}%"></div>
-                </div>` : ''}
+        <div style="display:flex; flex-direction:column; gap:4px;">
+            <div class="fc-event-title" style="font-weight:600; font-size:0.85rem; color:#111827;">
+                ${arg.event.title}
+            </div>
+            ${progressHTML}
         </div>
     `;
-
-                    // Trigger animasi progress bar jika percent > 0
-                    if (percent > 0) {
-                        setTimeout(() => {
-                            const el = document.querySelectorAll('.event-progress-bar');
-                            el.forEach(bar => bar.style.width = percent + '%');
-                        }, 10);
-                    }
 
                     return {
                         html: html
