@@ -74,6 +74,10 @@ Route::middleware(['auth', 'module.access:inventory'])->group(function () {
     Route::resource('stock-opname', 'StockOpnameController');
     // Adjustment
     Route::post('stock-opname/{id}/adjust', 'StockOpnameController@adjust')->name('stock-opname.adjust');
+    // Report
+    Route::get('/report/stock-summary', 'InventoryController@stockSummary')->name('report.stock-summary');
+    Route::get('/report/stock-summary/pdf', 'InventoryController@reportPdf')->name('stock-summary.pdf');
+    Route::get('/report/stock-summary/excel', 'InventoryController@reportExcel')->name('stock-summary.excel');
 });
 
 Route::middleware(['auth', 'module.access:production'])->group(function () {

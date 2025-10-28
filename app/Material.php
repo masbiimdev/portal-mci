@@ -44,6 +44,11 @@ class Material extends Model
         return $this->hasMany(MaterialOut::class);
     }
 
+    public function stockOpnameLatest()
+    {
+        return $this->hasOne(StockOpname::class, 'material_id')->orderByDesc('id');
+    }
+
     public function getCurrentStockAttribute()
     {
         return $this->stock_awal
@@ -54,5 +59,16 @@ class Material extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function scopeFilter($query, $bulan, $tahun)
+    {
+        if ($bulan) {
+            $query->whereMonth('created_at', $bulan);
+        }
+        if ($tahun) {
+            $query->whereYear('created_at', $tahun);
+        }
+        return $query;
     }
 }

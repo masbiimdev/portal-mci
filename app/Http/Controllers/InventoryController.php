@@ -6,6 +6,10 @@ use App\Material;
 use App\MaterialIn;
 use App\MaterialOut;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Exports\StockExport;
+use Maatwebsite\Excel\Facades\Excel;
+
 
 use Illuminate\Http\Request;
 
@@ -88,5 +92,89 @@ class InventoryController extends Controller
             'monthlyData',
             'history',
         ));
+    }
+
+    public function stockSummary()
+    {
+        $materials = Material::with(['rack', 'incomings', 'outgoings', 'stockOpnameLatest'])
+            ->get()
+            ->map(function ($item) {
+                $qty_in = optional($item->incomings)->sum('qty_in') ?? 0;
+                $qty_out = optional($item->outgoings)->sum('qty_out') ?? 0;
+                $stock_akhir = $item->stock_awal + $qty_in - $qty_out;
+                $opname = isset($item->stockOpnameLatest) ? $item->stockOpnameLatest->stock_actual : null;
+                $selisih = $opname ? $opname - $stock_akhir : null;
+
+                return [
+                    'material' => $item,
+                    'qty_in' => $qty_in,
+                    'qty_out' => $qty_out,
+                    'stock_akhir' => $stock_akhir,
+                    'opname' => $opname,
+                    'selisih' => $selisih,
+                    'balance' => $stock_akhir - $item->stock_minimum,
+                    'warning' => $stock_akhir < $item->stock_minimum ? 'Below Minimum Stock' : '-'
+                ];
+            });
+
+        // dd($materials);
+        return view('pages.admin.inventory.report.stock-summary', compact('materials'));
+    }
+
+    public function reportExcel(Request $request)
+    {
+        return Excel::download(new StockExport($request->bulan, $request->tahun), 'Stock-Report.xlsx');
+    }
+
+    public function reportPdf(Request $request)
+    {
+        $bulan = $request->bulan;
+        $tahun = $request->tahun;
+
+        // Ambil semua data material dengan relasi
+        $materials = Material::with(['rack', 'incomings', 'outgoings', 'stockOpnameLatest'])
+            ->get()
+            ->map(function ($item) {
+                $qty_in = optional($item->incomings)->sum('qty_in') ?? 0;
+                $qty_out = optional($item->outgoings)->sum('qty_out') ?? 0;
+                $stock_akhir = $item->stock_awal + $qty_in - $qty_out;
+                $opname = isset($item->stockOpnameLatest) ? $item->stockOpnameLatest->stock_actual : null;
+                $selisih = $opname !== null ? $opname - $stock_akhir : null;
+
+                return [
+                    'material' => $item,
+                    'qty_in' => $qty_in,
+                    'qty_out' => $qty_out,
+                    'stock_akhir' => $stock_akhir,
+                    'opname' => $opname,
+                    'selisih' => $selisih,
+                    'balance' => $stock_akhir - $item->stock_minimum,
+                    'warning' => $stock_akhir < $item->stock_minimum ? 'Below Minimum Stock' : '-'
+                ];
+            });
+
+        // Jika ingin filter bulan & tahun
+        if ($bulan) {
+            $materials = $materials->filter(function ($item) use ($bulan) {
+                $itemBulan = \Carbon\Carbon::parse($item['material']->created_at)->format('m');
+                return $itemBulan === $bulan;
+            });
+        }
+
+        if ($tahun) {
+            $materials = $materials->filter(function ($item) use ($tahun) {
+                $itemTahun = \Carbon\Carbon::parse($item['material']->created_at)->format('Y');
+                return $itemTahun === $tahun;
+            });
+        }
+
+        // Load view PDF, pastikan variable compact sama
+        $pdf = Pdf::loadView('pages.admin.inventory.report.export.stock-pdf', [
+            'materials' => $materials,
+            'bulan' => $bulan,
+            'tahun' => $tahun
+        ])->setPaper('a4', 'landscape');
+
+        return $pdf->stream('Stock-Report.pdf');
     }
 }

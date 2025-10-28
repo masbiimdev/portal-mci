@@ -43,7 +43,7 @@
             <!-- Footer -->
             <footer class="content-footer footer bg-footer-theme mt-auto">
               <div class="container-xxl d-flex justify-content-between py-2">
-                <div>© <script>document.write(new Date().getFullYear());</script>, made with ❤️ by MCI</div>
+                <div>© <script>document.write(new Date().getFullYear());</script>Made With ❤️ by MCI Portal</div>
               </div>
             </footer>
           </div>

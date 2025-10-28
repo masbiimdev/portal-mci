@@ -4,7 +4,7 @@
         <div class="flex justify-between h-16">
             <!-- Left: Logo -->
             <div class="flex items-center">
-                <a href="/" class="text-xl font-bold text-blue-600">ERP System</a>
+                <a href="/" class="text-xl font-bold text-blue-600">Metinca Portal .</a>
             </div>
             <!-- Center: Menu -->
             <div class="hidden md:flex items-center space-x-6">

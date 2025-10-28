@@ -1,7 +1,7 @@
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
     <div class="app-brand demo">
         <a href="{{ route('dashboard') }}" class="app-brand-link">
-            <span class="app-brand-text demo fw-bolder ms-2">ERP System .</span>
+            <span class="app-brand-text demo fw-bolder ms-2">Metinca Portal .</span>
         </a>
         <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
             <i class="bx bx-chevron-left bx-sm align-middle"></i>
@@ -185,7 +185,7 @@
                     </a>
                     <ul class="menu-sub">
                         <li class="menu-item">
-                            <a href="#" class="menu-link">
+                            <a href="{{ route('report.stock-summary') }}" class="menu-link">
                                 <div data-i18n="Stock Summary">Stock Summary</div>
                             </a>
                         </li>
