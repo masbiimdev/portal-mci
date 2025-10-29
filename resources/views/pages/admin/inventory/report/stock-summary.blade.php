@@ -4,7 +4,6 @@
 
 @push('css')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-
     <style>
         #stockSummaryTable thead th {
             background-color: #003366 !important;
@@ -22,21 +21,8 @@
             font-size: 13px;
         }
 
-        .text-number {
-            text-align: right !important;
-            font-weight: 600;
-        }
-
         .row-warning {
             background-color: #fff2e6 !important;
-        }
-
-        .badge-warning-custom {
-            background-color: #e65c00;
-            color: #fff;
-            padding: 3px 6px;
-            border-radius: 4px;
-            font-size: 11px;
         }
     </style>
 @endpush
@@ -49,7 +35,6 @@
 
             {{-- FILTER --}}
             <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-
                 <div class="d-flex gap-2">
                     <select id="filterMonth" class="form-select form-select-sm">
                         <option value="">Semua Bulan</option>
@@ -102,53 +87,63 @@
                             <th>Stock Minimum</th>
                             <th>Balance</th>
                             <th>Posisi Barang</th>
-                            <th class="d-none">Bulan</th>
-                            <th class="d-none">Tahun</th>
+                            <th class="d-none">Bulan</th> {{-- HIDDEN --}}
+                            <th class="d-none">Tahun</th> {{-- HIDDEN --}}
                         </tr>
                     </thead>
+
                     <tbody>
-                        @forelse ($materials as $index => $row)
+                        @foreach ($materials as $index => $row)
                             @php
                                 $material = $row['material'];
-                                $bulan = \Carbon\Carbon::parse($row['tanggal'] ?? now())->format('m');
-                                $tahun = \Carbon\Carbon::parse($row['tanggal'] ?? now())->format('Y');
                                 $underMin = ($row['stock_akhir'] ?? 0) < ($material->stock_minimum ?? 0);
+
+                                // === Format Valve Name ===
+                                $codes = $material->valves->pluck('valve_name');
+
+                                if ($codes->count() > 0) {
+                                    $first = $codes->first();
+                                    $prefix = substr($first, 0, strrpos($first, '.'));
+
+                                    $allSamePrefix = $codes->every(fn($code) => strpos($code, $prefix) === 0);
+
+                                    if ($allSamePrefix) {
+                                        $codes = $codes->map(fn($code) => substr($code, strrpos($code, '.') + 1));
+                                        $valveFormatted = $prefix . '.' . $codes->join(', ');
+                                    } else {
+                                        $valveFormatted = $codes->join(', ');
+                                    }
+                                } else {
+                                    $valveFormatted = '-';
+                                }
                             @endphp
+
                             <tr class="{{ $underMin ? 'row-warning' : '' }}">
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $material->heat_lot_no ?? '-' }}</td>
                                 <td>{{ $material->no_drawing ?? '-' }}</td>
-                                <td>{{ $material->valves->pluck('valve_name')->join(', ') ?: '-' }}</td>
+                                <td>{{ $valveFormatted }}</td>
                                 <td>{{ $material->sparePart->spare_part_name ?? '-' }}</td>
                                 <td>{{ $material->dimensi ?? '-' }}</td>
-                                <td class="text-number">{{ $material->stock_awal ?? 0 }}</td>
-                                <td class="text-number">{{ $row['qty_in'] ?? 0 }}</td>
-                                <td class="text-number">{{ $row['qty_out'] ?? 0 }}</td>
-                                <td class="text-number">{{ $row['stock_akhir'] ?? 0 }}</td>
-                                <td class="text-number">{{ $row['opname'] ?? '-' }}</td>
-                                <td class="text-number">{{ $row['selisih'] ?? '-' }}</td>
-                                <td>
-                                    @if ($row['warning'])
-                                        {{ $row['warning'] }}
-                                    @else
-                                        -
-                                    @endif
-                                </td>
-                                <td class="text-number">{{ $material->stock_minimum ?? 0 }}</td>
-                                <td class="text-number">{{ $row['balance'] ?? 0 }}</td>
+                                <td>{{ $material->stock_awal ?? 0 }}</td>
+                                <td>{{ $row['qty_in'] ?? 0 }}</td>
+                                <td>{{ $row['qty_out'] ?? 0 }}</td>
+                                <td>{{ $row['stock_akhir'] ?? 0 }}</td>
+                                <td>{{ $row['opname'] ?? '-' }}</td>
+                                <td>{{ $row['selisih'] ?? '-' }}</td>
+                                <td>{{ $row['warning'] ?? '-' }}</td>
+                                <td>{{ $material->stock_minimum ?? 0 }}</td>
+                                <td>{{ $row['balance'] ?? 0 }}</td>
                                 <td>{{ $material->rack->rack_name ?? '-' }}</td>
-                                <td class="d-none">{{ $bulan }}</td>
-                                <td class="d-none">{{ $tahun }}</td>
+
+                                {{-- Hidden filter data --}}
+                                <td class="d-none">{{ $row['bulan'] ?? date('m') }}</td>
+                                <td class="d-none">{{ $row['tahun'] ?? date('Y') }}</td>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="18" class="text-center">Tidak ada data</td>
-                            </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                 </table>
             </div>
-
         </div>
     </div>
 @endsection
@@ -156,12 +151,10 @@
 @push('js')
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    {{-- ✅ Tambahkan SweetAlert2 --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         $(document).ready(function() {
-
             var table = $('#stockSummaryTable').DataTable({
                 responsive: true,
                 language: {
@@ -192,7 +185,6 @@
                 table.draw();
             });
 
-            // ✅ Export Button (harus filter dulu)
             function exportFile(type) {
                 var bulan = $('#filterMonth').val();
                 var tahun = $('#filterYear').val();

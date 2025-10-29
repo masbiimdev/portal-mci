@@ -70,17 +70,17 @@
                 <td class="title" width="60%">
                     PT. METINCA PRIMA INDUSTRIAL WORKS - VALVE DIVISION<br>
                     KONTROL BARANG (KB)<br>
-                    PERIODE {{ strtoupper((['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'])[$bulan] . ' ' . $tahun) }}
+                    PERIODE
+                    {{ strtoupper(['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'][$bulan] . ' ' . $tahun) }}
                 </td>
                 <td width="25%" class="right-info">
                     Document : F/WHS/KB/005<br>
-                    Revision N : 2<br>
+                    Revision No : 2<br>
                     Date issue : 07/10/24
                 </td>
             </tr>
         </tbody>
     </table>
-
     <br>
 
     @if ($materials->count() == 0)
@@ -113,12 +113,40 @@
                     @php
                         $material = $row['material'];
                         $underMin = ($row['stock_akhir'] ?? 0) < ($material->stock_minimum ?? 0);
+
+                        // === Format Valve Name ===
+                        $codes = $material->valves->pluck('valve_name');
+
+                        if ($codes->count() > 0) {
+                            $first = $codes->first();
+                            $prefix = substr($first, 0, strrpos($first, '.'));
+
+                            $allSamePrefix = $codes->every(function ($code) use ($prefix) {
+                                return strpos($code, $prefix) === 0;
+                            });
+
+                            if ($allSamePrefix) {
+                                $codes = $codes->map(function ($code) {
+                                    return substr($code, strrpos($code, '.') + 1);
+                                });
+
+                                $valveFormatted = $prefix . '.' . $codes->join(', ');
+                            } else {
+                                $valveFormatted = $codes->join(', ');
+                            }
+                        } else {
+                            $valveFormatted = '-';
+                        }
                     @endphp
+
                     <tr class="{{ $underMin ? 'row-warning' : '' }}">
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $material->heat_lot_no ?? '-' }}</td>
                         <td>{{ $material->no_drawing ?? '-' }}</td>
-                        <td>{{ $material->valves->pluck('valve_name')->join(', ') ?: '-' }}</td>
+
+                        <!-- ✅ Gunakan variable yang sudah diformat -->
+                        <td>{{ $valveFormatted }}</td>
+
                         <td>{{ $material->sparePart->spare_part_name ?? '-' }}</td>
                         <td>{{ $material->dimensi ?? '-' }}</td>
                         <td>{{ $material->stock_awal ?? 0 }}</td>
