@@ -30,18 +30,29 @@ class ValveController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'valve_code' => 'required|unique:valves,valve_code|max:50',
             'valve_name' => 'required|string|max:255',
             'description' => 'nullable|string',
         ]);
 
+        // ✅ Ambil kode terakhir
+        $lastCode = Valve::orderBy('id', 'DESC')->value('valve_code');
+
+        // ✅ Generate code baru
+        if ($lastCode) {
+            $number = (int) str_replace('VLV-', '', $lastCode) + 1;
+        } else {
+            $number = 1;
+        }
+
+        $newCode = 'VLV-' . str_pad($number, 3, '0', STR_PAD_LEFT);
+
         Valve::create([
-            'valve_code' => $request->valve_code,
+            'valve_code' => $newCode,
             'valve_name' => $request->valve_name,
             'description' => $request->description,
         ]);
 
-        return redirect()->route('valves.index')->with('success', 'Valve berhasil ditambahkan.');
+        return redirect()->route('valves.index')->with('success', 'Valve berhasil ditambahkan!');
     }
 
     /**
@@ -58,13 +69,11 @@ class ValveController extends Controller
     public function update(Request $request, Valve $valve)
     {
         $request->validate([
-            'valve_code' => 'required|unique:valves,valve_code,' . $valve->id . '|max:50',
             'valve_name' => 'required|string|max:255',
             'description' => 'nullable|string',
         ]);
 
         $valve->update([
-            'valve_code' => $request->valve_code,
             'valve_name' => $request->valve_name,
             'description' => $request->description,
         ]);

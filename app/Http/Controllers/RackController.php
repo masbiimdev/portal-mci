@@ -9,7 +9,7 @@ class RackController extends Controller
 {
     public function index()
     {
-        $racks = Rack::latest()->paginate(10);
+        $racks = Rack::all();
         return view('pages.admin.inventory.rack.index', compact('racks'));
     }
 
@@ -20,17 +20,30 @@ class RackController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'rack_code' => 'required|unique:racks,rack_code|max:50',
+        $request->validate([
             'rack_name' => 'required|string|max:255',
             'description' => 'nullable|string',
         ]);
+        // ✅ Ambil kode terakhir dari tabel racks
+        $lastCode = Rack::orderBy('id', 'DESC')->value('rack_code');
 
-        Rack::create($validated);
+        // ✅ Generate kode baru
+        if ($lastCode) {
+            $number = (int) str_replace('RACK-', '', $lastCode) + 1;
+        } else {
+            $number = 1;
+        }
 
-        return redirect()->route('racks.index')->with('success', 'Rack berhasil ditambahkan!');
+        $newCode = 'RACK-' . str_pad($number, 3, '0', STR_PAD_LEFT);
+
+        Rack::create([
+            'rack_code' => $newCode,
+            'rack_name' => $request->rack_name,
+            'description' => $request->description,
+        ]);
+
+        return redirect()->route('racks.create')->with('success', 'Rack berhasil ditambahkan!');
     }
-
     public function edit(Rack $rack)
     {
         return view('pages.admin.inventory.rack.update', compact('rack'));
@@ -39,7 +52,6 @@ class RackController extends Controller
     public function update(Request $request, Rack $rack)
     {
         $validated = $request->validate([
-            'rack_code' => 'required|max:50|unique:racks,rack_code,' . $rack->id,
             'rack_name' => 'required|string|max:255',
             'description' => 'nullable|string',
         ]);

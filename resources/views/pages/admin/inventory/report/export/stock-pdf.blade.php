@@ -117,23 +117,22 @@
                         // === Format Valve Name ===
                         $codes = $material->valves->pluck('valve_name');
 
-                        if ($codes->count() > 0) {
-                            $first = $codes->first();
-                            $prefix = substr($first, 0, strrpos($first, '.'));
-
-                            $allSamePrefix = $codes->every(function ($code) use ($prefix) {
-                                return strpos($code, $prefix) === 0;
+                        if ($codes->isNotEmpty()) {
+                            // 1️⃣ Group berdasarkan prefix sebelum titik terakhir (misal: "GL.2")
+                            $grouped = $codes->groupBy(function ($code) {
+                                return substr($code, 0, strrpos($code, '.'));
                             });
 
-                            if ($allSamePrefix) {
-                                $codes = $codes->map(function ($code) {
-                                    return substr($code, strrpos($code, '.') + 1);
+                            // 2️⃣ Format tiap grup: ambil semua suffix (angka terakhir) dan gabungkan
+                            $formattedGroups = $grouped->map(function ($items, $prefix) {
+                                $suffixes = $items->map(function ($c) {
+                                    return substr($c, strrpos($c, '.') + 1);
                                 });
+                                return $prefix . '.' . $suffixes->join(',');
+                            });
 
-                                $valveFormatted = $prefix . '.' . $codes->join(', ');
-                            } else {
-                                $valveFormatted = $codes->join(', ');
-                            }
+                            // 3️⃣ Gabungkan semua grup menjadi satu string (pisah dengan spasi)
+                            $valveFormatted = $formattedGroups->join(' ');
                         } else {
                             $valveFormatted = '-';
                         }

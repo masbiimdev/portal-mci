@@ -8,6 +8,7 @@ use App\Annon;
 use App\ActivityItemResult;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -75,6 +76,7 @@ class HomeController extends Controller
                 'result' => $r->result,
                 'status' => $r->status,
                 'remarks' => $r->remarks,
+                'user_name' => optional($r->user)->name ?? '-', // <-- tambahkan ini
             ];
         })->toArray();
 
@@ -105,7 +107,7 @@ class HomeController extends Controller
         ]);
 
         if (!empty($validated['result_id'])) {
-            // update
+            // 🟩 UPDATE data existing
             $res = ActivityItemResult::findOrFail($validated['result_id']);
             $res->update([
                 'activity_id' => $validated['activity_id'],
@@ -114,15 +116,17 @@ class HomeController extends Controller
                 'qty' => $validated['qty'] ?? null,
                 'inspector_name' => $validated['inspector_name'],
                 'pic' => $validated['pic'],
-                'result' => $validated['result'],
-                'status' => 'Checked',
+                'result' => $validated['result'],   // OK / NG / Rework
+                'status' => 'Checked',              // tetap pakai enum valid
                 'remarks' => $validated['remarks'] ?? null,
-                // jangan ubah inspection_time
+                'user_id' => Auth::check() ? Auth::id() : null,          // <-- simpan siapa yang update
             ]);
+
             $message = 'Hasil pemeriksaan berhasil diperbarui!';
         } else {
-            // create
+            // 🟩 CREATE data baru
             $inspectionTime = $validated['inspection_time'] ?? now()->toDateTimeString();
+
             $res = ActivityItemResult::create([
                 'activity_id' => $validated['activity_id'],
                 'part_name' => $validated['part_name'],
@@ -134,11 +138,13 @@ class HomeController extends Controller
                 'result' => $validated['result'],
                 'status' => 'Checked',
                 'remarks' => $validated['remarks'] ?? null,
+                'user_id' => Auth::check() ? Auth::id() : null,           // <-- simpan siapa yang input
             ]);
+
             $message = 'Hasil pemeriksaan berhasil disimpan!';
         }
 
-        // tandai activity has_result true (sesuaikan sesuai kebutuhan)
+        // 🟩 Tandai activity sudah punya hasil
         $activity = Activity::find($validated['activity_id']);
         if ($activity) {
             $activity->update(['has_result' => true]);
@@ -148,6 +154,7 @@ class HomeController extends Controller
     }
 
 
+
     public function getActivityResults(Request $request)
     {
         $request->validate([
@@ -155,10 +162,27 @@ class HomeController extends Controller
             'part_name' => 'required|string',
         ]);
 
-        $results = ActivityItemResult::where('activity_id', $request->activity_id)
+        $results = ActivityItemResult::with('user:id,name') // load relasi user
+            ->where('activity_id', $request->activity_id)
             ->where('part_name', $request->part_name)
             ->orderBy('inspection_time', 'desc')
-            ->get(['part_name','inspector_name', 'inspection_time','part_name', 'result', 'status', 'remarks']);
+            ->get() // ambil semua kolom, jangan batasi di get([...])
+            ->map(function ($r) {
+                return [
+                    'id' => $r->id,
+                    'activity_id' => $r->activity_id,
+                    'part_name' => $r->part_name,
+                    'material' => $r->material,
+                    'qty' => $r->qty,
+                    'inspector_name' => $r->inspector_name,
+                    'pic' => $r->pic,
+                    'inspection_time' => $r->inspection_time,
+                    'result' => $r->result,
+                    'status' => $r->status,
+                    'remarks' => $r->remarks,
+                    'user_name' => optional($r->user)->name ?? '-', // pastikan ini ada
+                ];
+            });
 
         return response()->json($results);
     }

@@ -15,13 +15,6 @@
         <div class="card-body">
             <form action="{{ route('valves.store') }}" method="POST">
                 @csrf
-                <div class="mb-3">
-                    <label for="valve_code" class="form-label">Kode Valve</label>
-                    <input type="text" class="form-control @error('valve_code') is-invalid @enderror" id="valve_code" name="valve_code" value="{{ old('valve_code') }}" placeholder="Contoh: VLV-001" required>
-                    @error('valve_code')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
 
                 <div class="mb-3">
                     <label for="valve_name" class="form-label">Nama Valve</label>

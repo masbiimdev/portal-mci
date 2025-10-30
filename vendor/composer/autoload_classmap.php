@@ -11,6 +11,7 @@ return array(
     'App\\Annon' => $baseDir . '/app/Annon.php',
     'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',
     'App\\Exceptions\\Handler' => $baseDir . '/app/Exceptions/Handler.php',
+    'App\\Exports\\StockExport' => $baseDir . '/app/Exports/StockExport.php',
     'App\\Http\\Controllers\\AccessController' => $baseDir . '/app/Http/Controllers/AccessController.php',
     'App\\Http\\Controllers\\ActivityController' => $baseDir . '/app/Http/Controllers/ActivityController.php',
     'App\\Http\\Controllers\\AnnonController' => $baseDir . '/app/Http/Controllers/AnnonController.php',

@@ -17,18 +17,18 @@
                 @csrf
                 @method('PUT')
 
+                {{-- ✅ Code tetap tampil tapi tidak bisa diubah --}}
                 <div class="mb-3">
                     <label for="spare_part_code" class="form-label">Kode Spare Part</label>
                     <input 
                         type="text" 
-                        class="form-control @error('spare_part_code') is-invalid @enderror" 
+                        class="form-control" 
                         id="spare_part_code" 
-                        name="spare_part_code" 
-                        value="{{ old('spare_part_code', $sparePart->spare_part_code) }}" 
-                        required>
-                    @error('spare_part_code')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                        value="{{ $sparePart->spare_part_code }}" 
+                        readonly>
+
+                    {{-- ✅ Hidden input untuk tetap mengirim code ke server --}}
+                    <input type="hidden" name="spare_part_code" value="{{ $sparePart->spare_part_code }}">
                 </div>
 
                 <div class="mb-3">

@@ -16,20 +16,7 @@
             <form action="{{ route('spare-parts.store') }}" method="POST">
                 @csrf
 
-                <div class="mb-3">
-                    <label for="spare_part_code" class="form-label">Kode Spare Part</label>
-                    <input 
-                        type="text" 
-                        class="form-control @error('spare_part_code') is-invalid @enderror" 
-                        id="spare_part_code" 
-                        name="spare_part_code" 
-                        value="{{ old('spare_part_code') }}" 
-                        placeholder="Contoh: SP-001" 
-                        required>
-                    @error('spare_part_code')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+                {{-- ✅ Kode Spare Part dihapus karena otomatis dibuat di controller --}}
 
                 <div class="mb-3">
                     <label for="spare_part_name" class="form-label">Nama Spare Part</label>

@@ -593,6 +593,7 @@ class ComposerStaticInitc3d88fa6639c9463d85260309c03bb68
         'App\\Annon' => __DIR__ . '/../..' . '/app/Annon.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
+        'App\\Exports\\StockExport' => __DIR__ . '/../..' . '/app/Exports/StockExport.php',
         'App\\Http\\Controllers\\AccessController' => __DIR__ . '/../..' . '/app/Http/Controllers/AccessController.php',
         'App\\Http\\Controllers\\ActivityController' => __DIR__ . '/../..' . '/app/Http/Controllers/ActivityController.php',
         'App\\Http\\Controllers\\AnnonController' => __DIR__ . '/../..' . '/app/Http/Controllers/AnnonController.php',

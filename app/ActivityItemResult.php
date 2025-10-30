@@ -17,10 +17,17 @@ class ActivityItemResult extends Model
         'result',
         'status',
         'remarks',
+        'has_result',
+        'user_id'
     ];
 
     public function activity()
     {
         return $this->belongsTo(Activity::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

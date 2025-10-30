@@ -15,7 +15,7 @@
                 @method('PUT')
                 <div class="mb-3">
                     <label for="rack_code" class="form-label">Kode Rack</label>
-                    <input type="text" class="form-control @error('rack_code') is-invalid @enderror" name="rack_code" value="{{ old('rack_code', $rack->rack_code) }}" required>
+                    <input type="text" class="form-control @error('rack_code') is-invalid @enderror" readonly name="rack_code" value="{{ old('rack_code', $rack->rack_code) }}" required>
                     @error('rack_code')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
 

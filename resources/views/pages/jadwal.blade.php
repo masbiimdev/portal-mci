@@ -186,9 +186,8 @@
                 <div class="mb-3">
                     <label class="text-sm text-slate-600">Hasil</label>
                     <select name="result" id="result" class="form-control w-full border rounded-lg p-2" required>
-                        <option value="OK">OK</option>
-                        <option value="NG">NG</option>
-                        <option value="Rework">Rework</option>
+                        <option value="OK">Accepted</option>
+                        <option value="NG">Rejected</option>
                     </select>
                 </div>
 
@@ -249,6 +248,7 @@
 
             // --- Data dari server ---
             const resultsData = @json($resultsData);
+            
 
             // --- Elemen DOM ---
             const calendarEl = document.getElementById('calendar');
@@ -358,6 +358,8 @@
                     <div><strong>Hasil:</strong> ${m.result}</div>
                     <div><strong>Status:</strong> ${m.status}</div>
                     <div><strong>Catatan:</strong> ${m.remarks || '-'}</div>
+                    <div><strong>Diinput oleh:</strong> ${m.user_name}</div>
+
                 `;
                         body.appendChild(div);
                     });
@@ -520,10 +522,10 @@
                             let badgeColor = 'gray';
 
                             if (status === 'OK') {
+                                badgeText = 'Accepted';
                                 badgeColor = 'green';
                             } else if (status === 'NG') {
-                                badgeColor = 'orange';
-                            } else if (status === 'Rework') {
+                                badgeText = 'Rejected';
                                 badgeColor = 'red';
                             } else {
                                 badgeText = 'Belum Diperiksa'; // teks default

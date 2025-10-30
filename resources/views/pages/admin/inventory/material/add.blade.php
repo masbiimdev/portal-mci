@@ -8,22 +8,29 @@
         <form action="{{ route('materials.store') }}" method="POST">
             @csrf
             <div class="card p-3">
-                <div class="mb-3">
+                {{-- <div class="mb-3">
                     <label>Kode Material</label>
                     <input type="text" name="material_code" class="form-control" required>
-                </div>
+                </div> --}}
                 {{-- <div class="mb-3">
                 <label>Nama Material</label>
                 <input type="text" name="material_name" class="form-control" required>
             </div> --}}
                 <div class="mb-3">
                     <label for="valve_id" class="form-label fw-bold">Pilih Valve</label>
-                    <select name="valve_id[]" id="valve_id" class="form-select select2" multiple>
+                    <select name="valve_id[]" id="valve_id"
+                        class="form-select select2 @error('valve_id') is-invalid @enderror" multiple>
                         @foreach ($valves as $v)
-                            <option value="{{ $v->id }}">{{ $v->valve_name }}</option>
+                            <option value="{{ $v->id }}" @if (in_array($v->id, old('valve_id', $material->valve_id ?? []))) selected @endif>
+                                {{ $v->valve_name }}
+                            </option>
                         @endforeach
                     </select>
+                    @error('valve_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
+
 
                 <div class="mb-3">
                     <label>Spare Part</label>
@@ -66,7 +73,7 @@
                     <select name="rack_id" class="form-control">
                         <option value="">-- Pilih Rak --</option>
                         @foreach ($racks as $r)
-                            <option value="{{ $r->id }}">{{ $r->rack_code }}</option>
+                            <option value="{{ $r->id }}">{{ $r->rack_code }} - {{ $r->rack_name }}</option>
                         @endforeach
                     </select>
                 </div>
