@@ -155,12 +155,12 @@
                 <input type="hidden" name="activity_id" id="activity_id">
 
                 <div class="mb-3">
-                    <label class="text-sm text-slate-600">Nama Inspektur</label>
+                    <label class="text-sm text-slate-600">Nama Inspektor Client</label>
                     <input type="text" name="inspector_name" id="inspector_name"
                         class="form-control w-full border rounded-lg p-2" required>
                 </div>
                 <div class="mb-3">
-                    <label class="text-sm text-slate-600">Nama PIC</label>
+                    <label class="text-sm text-slate-600">Nama PIC Metinca</label>
                     <input type="text" name="pic" id="pic" class="form-control w-full border rounded-lg p-2"
                         required>
                 </div>
@@ -186,7 +186,9 @@
                 <div class="mb-3">
                     <label class="text-sm text-slate-600">Hasil</label>
                     <select name="result" id="result" class="form-control w-full border rounded-lg p-2" required>
-                        <option value="OK">Accepted</option>
+                        <option value="PA">Partial Accepted</option>
+                        <option value="OH">On Hold</option>
+                        <option value="OK">All Accepted</option>
                         <option value="NG">Rejected</option>
                     </select>
                 </div>
@@ -209,34 +211,82 @@
     <!-- Modal View Hasil Pemeriksaan (rendered server-side) -->
     <div id="viewResultModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
         <div
-            class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl transform scale-90 opacity-0 transition-all duration-300 ease-out overflow-y-auto">
-            <h3 class="font-semibold text-lg mb-4 text-slate-800">Hasil Pemeriksaan</h3>
+            class="bg-white rounded-2xl w-full max-w-lg p-6 shadow-2xl transform scale-90 opacity-0 transition-all duration-300 ease-out overflow-y-auto max-h-[85vh]">
 
-            <div id="viewResultBody" class="space-y-3">
-                {{-- server-side rendered list (all results) --}}
+            <!-- Header -->
+            <div class="flex items-center justify-between border-b pb-3 mb-4">
+                <h3 class="font-semibold text-lg text-slate-800">🧾 Hasil Pemeriksaan</h3>
+                <button id="closeViewResultModal"
+                    class="text-slate-500 hover:text-red-500 transition-colors text-xl font-bold leading-none">×</button>
+            </div>
+
+            <!-- Body -->
+            <div id="viewResultBody" class="space-y-4">
                 @forelse($activityResults as $result)
-                    <div class="result-row " data-activity-id="{{ $result->activity_id }}"
-                        data-part-name="{{ $result->part_name }}">
-                        <div class="border p-3 rounded-lg">
-                            <div><strong>Inspektur:</strong> {{ $result->inspector_name }}</div>
-                            <div><strong>PIC:</strong> {{ $result->pic }}</div>
-                            <div><strong>Waktu:</strong> {{ $result->inspection_time }}</div>
-                            <div><strong>Hasil:</strong> {{ $result->result }}</div>
-                            <div><strong>Status:</strong> {{ $result->status }}</div>
-                            <div><strong>Catatan:</strong> {{ $result->remarks ?? '-' }}</div>
+                    @php
+                        $status = $result->status ?? null;
+                        // default
+                        $badgeColor = 'bg-gray-300 text-slate-700';
+
+                        if ($status === 'All Accepted') {
+                            $badgeColor = 'bg-green-500 text-white';
+                        } elseif ($status === 'Partial Accepted') {
+                            $badgeColor = 'bg-orange-500 text-white';
+                        } elseif ($status === 'On Hold') {
+                            $badgeColor = 'bg-blue-500 text-white';
+                        } elseif ($status === 'Rejected') {
+                            $badgeColor = 'bg-red-500 text-white';
+                        }
+                    @endphp
+
+                    <div class="result-row border border-slate-200 rounded-xl p-4 hover:shadow-md transition-all"
+                        data-activity-id="{{ $result->activity_id }}" data-part-name="{{ $result->part_name }}">
+
+                        <div class="flex justify-between items-center mb-2">
+                            <h4 class="font-semibold text-slate-700">{{ $result->part_name }}</h4>
+                            <span class="text-xs font-semibold px-3 py-1 rounded-full {{ $badgeColor }}">
+                                {{ $status ?? 'Belum Diperiksa' }}
+                            </span>
                         </div>
+
+                        <dl class="text-sm text-slate-600 space-y-1">
+                            <div class="flex justify-between">
+                                <dt class="font-medium">Inspektor Client:</dt>
+                                <dd>{{ $result->inspector_name }}</dd>
+                            </div>
+                            <div class="flex justify-between">
+                                <dt class="font-medium">PIC Metinca:</dt>
+                                <dd>{{ $result->pic }}</dd>
+                            </div>
+                            <div class="flex justify-between">
+                                <dt class="font-medium">Waktu:</dt>
+                                <dd>{{ $result->inspection_time }}</dd>
+                            </div>
+                            <div class="flex justify-between">
+                                <dt class="font-medium">Hasil:</dt>
+                                <dd>{{ $result->result }}</dd>
+                            </div>
+                            <div class="flex justify-between">
+                                <dt class="font-medium">Catatan:</dt>
+                                <dd class="text-slate-500 italic">{{ $result->remarks ?? '-' }}</dd>
+                            </div>
+                        </dl>
                     </div>
                 @empty
                     <p class="text-center text-slate-500 italic">Belum ada hasil pemeriksaan.</p>
                 @endforelse
             </div>
 
-            <div class="mt-4 flex justify-end">
-                <button id="closeViewResultModal"
-                    class="px-4 py-2 bg-slate-100 rounded-lg hover:bg-slate-200 text-slate-700">Tutup</button>
+            <!-- Footer -->
+            <div class="mt-6 flex justify-end">
+                <button id="closeViewResultModalBottom"
+                    class="px-4 py-2 bg-slate-100 rounded-lg hover:bg-slate-200 text-slate-700 transition">
+                    Tutup
+                </button>
             </div>
         </div>
     </div>
+
 @endsection
 
 @push('js')
@@ -248,7 +298,7 @@
 
             // --- Data dari server ---
             const resultsData = @json($resultsData);
-            
+
 
             // --- Elemen DOM ---
             const calendarEl = document.getElementById('calendar');
@@ -348,19 +398,35 @@
                 } else {
                     matches.forEach(m => {
                         const div = document.createElement('div');
-                        div.classList.add('border', 'p-3', 'rounded-lg');
-                        div.innerHTML = `
-                    <div><strong>Part Name:</strong> ${m.part_name}</div>
-                    <div><strong>Material:</strong> ${m.material}</div>
-                    <div><strong>Qty:</strong> ${m.qty}</div>
-                    <div><strong>Inspektor:</strong> ${m.inspector_name}</div>
-                    <div><strong>PIC:</strong> ${m.pic}</div>
-                    <div><strong>Hasil:</strong> ${m.result}</div>
-                    <div><strong>Status:</strong> ${m.status}</div>
-                    <div><strong>Catatan:</strong> ${m.remarks || '-'}</div>
-                    <div><strong>Diinput oleh:</strong> ${m.user_name}</div>
+                        div.classList.add(
+                            'border', 'p-4', 'rounded-xl', 'hover:shadow-md',
+                            'transition-all', 'space-y-2', 'bg-white'
+                        );
 
-                `;
+                        div.innerHTML = `
+        <!-- Bagian atas: dua kolom -->
+        <div class="grid grid-cols-2 gap-3 text-sm text-slate-700">
+            <div>
+                <div><strong>Inspektor Client:</strong> ${m.inspector_name}</div>
+                <div><strong>PIC Metinca:</strong> ${m.pic}</div>
+                <div><strong>Part Name:</strong> ${m.part_name}</div>
+            </div>
+            <div>
+                <div><strong>Material:</strong> ${m.material}</div>
+                <div><strong>Quantity:</strong> ${m.qty} Pcs</div>
+                <div><strong>Hasil Pemeriksaan:</strong> ${m.result}</div>
+            </div>
+        </div>
+
+        <!-- Garis pemisah -->
+        <div class="border-t border-slate-200 my-2"></div>
+
+        <!-- Bagian bawah: info tambahan -->
+        <div class="text-sm text-slate-600 space-y-1">
+            <div><strong>Keterangan:</strong> ${m.remarks || '-'}</div>
+            <div><strong>Disusun oleh:</strong> ${m.user_name}</div>
+        </div>
+    `;
                         body.appendChild(div);
                     });
                 }
@@ -522,13 +588,19 @@
                             let badgeColor = 'gray';
 
                             if (status === 'OK') {
-                                badgeText = 'Accepted';
-                                badgeColor = 'green';
+                                badgeText = 'All Accepted';
+                                badgeColor = 'green'; // Hijau = semua diterima
+                            } else if (status === 'PA') {
+                                badgeText = 'Partial Accepted';
+                                badgeColor = 'orange'; // Oranye = sebagian diterima
+                            } else if (status === 'OH') {
+                                badgeText = 'On Hold';
+                                badgeColor = 'blue'; // Biru = ditunda
                             } else if (status === 'NG') {
                                 badgeText = 'Rejected';
-                                badgeColor = 'red';
+                                badgeColor = 'red'; // Merah = ditolak
                             } else {
-                                badgeText = 'Belum Diperiksa'; // teks default
+                                badgeText = 'Belum Diperiksa'; // default
                                 badgeColor = 'gray';
                             }
 
