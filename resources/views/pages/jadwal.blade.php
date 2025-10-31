@@ -513,13 +513,13 @@
                     const html = `
         <div style="display:flex; flex-direction:column; gap:4px;">
             <div class="fc-event-title"
-                style="font-weight:600; font-size:0.85rem; color:#111827;">
+                style="font-weight:600; font-size:0.85rem;">
                 ${arg.event.title}
             </div>
 
             <div style="display:flex; flex-direction:column; gap:2px;">
                 <div style="font-size:0.65rem; font-weight:600;
-                    color:#111827; align-self:flex-end;">
+                    ; align-self:flex-end;">
                     ${percent}%
                 </div>
 

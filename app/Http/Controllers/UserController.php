@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -63,8 +64,8 @@ class UserController extends Controller
         $request->validate([
             'name'     => 'required|string|max:255',
             'nik'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6',
+            'email'      => ['required','email', Rule::unique('users','email')->ignore($user->id)],
+            'password' => 'nullable|string|min:6',
             'role'     => 'required|in:' . implode(',', User::ROLES),
             'departemen'     => 'required|in:' . implode(',', User::DEPARTEMEN),
         ]);
