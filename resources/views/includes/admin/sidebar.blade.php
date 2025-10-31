@@ -189,7 +189,7 @@
                                 <div data-i18n="Stock Summary">Stock Summary</div>
                             </a>
                         </li>
-                        <li class="menu-item ">
+                        {{-- <li class="menu-item ">
                             <a href="#" class="menu-link">
                                 <div data-i18n="Stock Movement">Stock Movement</div>
                             </a>
@@ -198,7 +198,7 @@
                             <a href="#" class="menu-link">
                                 <div data-i18n="Inventory Valuation">Inventory Valuation</div>
                             </a>
-                        </li>
+                        </li> --}}
                     </ul>
                 </li>
 

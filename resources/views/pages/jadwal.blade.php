@@ -62,8 +62,12 @@
                     @foreach ($weekActivities as $activity)
                         <li class="flex items-start gap-2 border-b pb-2">
                             <span class="text-sky-600 font-medium w-16">
-                                {{ \Carbon\Carbon::parse($activity->start_date)->format('d M') }} -
-                                {{ \Carbon\Carbon::parse($activity->end_date)->format('d M') }}
+                                @if (\Carbon\Carbon::parse($activity->start_date)->isSameDay(\Carbon\Carbon::parse($activity->end_date)))
+                                    {{ \Carbon\Carbon::parse($activity->start_date)->format('d M') }}
+                                @else
+                                    {{ \Carbon\Carbon::parse($activity->start_date)->format('d M') }} -
+                                    {{ \Carbon\Carbon::parse($activity->end_date)->format('d M') }}
+                                @endif
                             </span>
                             <div>
                                 <div class="font-medium">{{ $activity->kegiatan }}</div>
@@ -414,7 +418,16 @@
             <div>
                 <div><strong>Material:</strong> ${m.material}</div>
                 <div><strong>Quantity:</strong> ${m.qty} Pcs</div>
-                <div><strong>Hasil Pemeriksaan:</strong> ${m.result}</div>
+                <div>
+                <strong>Hasil Pemeriksaan:</strong>
+                ${
+                    m.result === 'OK' ? '<span style="color:#10B981;font-weight:500">All Accepted</span>' :
+                    m.result === 'NG' ? '<span style="color:#EF4444;font-weight:500">Rejected</span>' :
+                    m.result === 'OH' ? '<span style="color:#F59E0B;font-weight:500">On Hold</span>' :
+                    m.result === 'PA' ? '<span style="color:#3B82F6;font-weight:500">Partial Accepted</span>' :
+                    '<span style="color:#6B7280;font-style:italic">-</span>'
+                }
+                </div>
             </div>
         </div>
 
@@ -423,8 +436,8 @@
 
         <!-- Bagian bawah: info tambahan -->
         <div class="text-sm text-slate-600 space-y-1">
-            <div><strong>Keterangan:</strong> ${m.remarks || '-'}</div>
-            <div><strong>Disusun oleh:</strong> ${m.user_name}</div>
+            <div><strong>Keterangan:</strong> ${m.remarks || '(Tidak Ada Keterangan)'}</div>
+            <div><strong>Disusun oleh:</strong> ${m.user_name || 'Admin QC'}</div>
         </div>
     `;
                         body.appendChild(div);
@@ -608,9 +621,10 @@
                                 `<span class="px-2 py-1 rounded text-white text-xs" style="background-color:${badgeColor}">${badgeText}</span>`;
 
                             left.innerHTML = `
-                <div><strong>Part:</strong> ${item.part_name || '-'}</div>
+                <div><strong>Part Name:</strong> ${item.part_name || '-'}</div>
                 <div><strong>Material:</strong> ${item.material || '-'}</div>
-                <div><strong>Qty:</strong> ${item.qty || '-'}</div>
+                <div><strong>Heat Number:</strong> ${item.heat_no || '-'}</div>
+                <div><strong>Quantity:</strong> ${item.qty || '-'}</div>
                 <div><strong>Remarks:</strong> ${item.remarks || '-'}</div>
                 <div><strong>Status:</strong> ${statusBadge}</div>
             `;

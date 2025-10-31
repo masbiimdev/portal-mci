@@ -9,7 +9,7 @@
 
             <div class="mb-3">
                 <label>Material</label>
-                <select name="material_id" class="form-control" required>
+                <select name="material_id" id="material_id" class="form-select select2" required>
                     <option value="">-- Pilih Material --</option>
                     @foreach ($materials as $m)
                         <option value="{{ $m->id }}">
@@ -40,3 +40,19 @@
         </form>
     </div>
 @endsection
+@push('css')
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+@endpush
+
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#material_id').select2({
+                placeholder: "-- Pilih Material --",
+                allowClear: true,
+                width: '100%'
+            });
+        });
+    </script>
+@endpush
