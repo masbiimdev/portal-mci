@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Exports\StockExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Carbon\Carbon;
 
 
 use Illuminate\Http\Request;
@@ -94,15 +95,34 @@ class InventoryController extends Controller
         ));
     }
 
-    public function stockSummary()
+    public function stockSummary(Request $request)
     {
+        $bulan = $request->get('bulan');
+        $tahun = $request->get('tahun');
+
         $materials = Material::with(['rack', 'incomings', 'outgoings', 'stockOpnameLatest'])
             ->get()
-            ->map(function ($item) {
-                $qty_in = optional($item->incomings)->sum('qty_in') ?? 0;
-                $qty_out = optional($item->outgoings)->sum('qty_out') ?? 0;
+            ->map(function ($item) use ($bulan, $tahun) {
+                // Filter data masuk berdasarkan bulan & tahun
+                $filteredIncomings = $item->incomings->when($bulan && $tahun, function ($query) use ($bulan, $tahun) {
+                    return $query->filter(function ($in) use ($bulan, $tahun) {
+                        return Carbon::parse($in->created_at)->month == $bulan &&
+                            Carbon::parse($in->created_at)->year == $tahun;
+                    });
+                }, fn($q) => $q); // default: semua data jika tidak difilter
+
+                // Filter data keluar
+                $filteredOutgoings = $item->outgoings->when($bulan && $tahun, function ($query) use ($bulan, $tahun) {
+                    return $query->filter(function ($out) use ($bulan, $tahun) {
+                        return Carbon::parse($out->created_at)->month == $bulan &&
+                            Carbon::parse($out->created_at)->year == $tahun;
+                    });
+                }, fn($q) => $q);
+
+                $qty_in = $filteredIncomings->sum('qty_in') ?? 0;
+                $qty_out = $filteredOutgoings->sum('qty_out') ?? 0;
                 $stock_akhir = $item->stock_awal + $qty_in - $qty_out;
-                $opname = isset($item->stockOpnameLatest) ? $item->stockOpnameLatest->stock_actual : null;
+                $opname = optional($item->stockOpnameLatest)->stock_actual;
                 $selisih = $opname ? $opname - $stock_akhir : null;
 
                 return [
@@ -113,13 +133,15 @@ class InventoryController extends Controller
                     'opname' => $opname,
                     'selisih' => $selisih,
                     'balance' => $stock_akhir - $item->stock_minimum,
-                    'warning' => $stock_akhir < $item->stock_minimum ? 'Below Minimum Stock' : '-'
+                    'warning' => $stock_akhir < $item->stock_minimum ? 'Below Minimum Stock' : '-',
+                    'bulan' => $bulan,
+                    'tahun' => $tahun,
                 ];
             });
 
-        // dd($materials);
-        return view('pages.admin.inventory.report.stock-summary', compact('materials'));
+        return view('pages.admin.inventory.report.stock-summary', compact('materials', 'bulan', 'tahun'));
     }
+
 
     public function reportExcel(Request $request)
     {
@@ -151,14 +173,30 @@ class InventoryController extends Controller
         $bulan = $request->bulan;
         $tahun = $request->tahun;
 
-        // Ambil semua data material dengan relasi
         $materials = Material::with(['rack', 'incomings', 'outgoings', 'stockOpnameLatest'])
             ->get()
-            ->map(function ($item) {
-                $qty_in = optional($item->incomings)->sum('qty_in') ?? 0;
-                $qty_out = optional($item->outgoings)->sum('qty_out') ?? 0;
+            ->map(function ($item) use ($bulan, $tahun) {
+
+                // Filter incoming berdasarkan bulan & tahun
+                $filteredIncomings = $item->incomings->when($bulan && $tahun, function ($coll) use ($bulan, $tahun) {
+                    return $coll->filter(function ($in) use ($bulan, $tahun) {
+                        return \Carbon\Carbon::parse($in->created_at)->month == $bulan &&
+                            \Carbon\Carbon::parse($in->created_at)->year == $tahun;
+                    });
+                });
+
+                // Filter outgoing berdasarkan bulan & tahun
+                $filteredOutgoings = $item->outgoings->when($bulan && $tahun, function ($coll) use ($bulan, $tahun) {
+                    return $coll->filter(function ($out) use ($bulan, $tahun) {
+                        return \Carbon\Carbon::parse($out->created_at)->month == $bulan &&
+                            \Carbon\Carbon::parse($out->created_at)->year == $tahun;
+                    });
+                });
+
+                $qty_in = $filteredIncomings->sum('qty_in') ?? 0;
+                $qty_out = $filteredOutgoings->sum('qty_out') ?? 0;
                 $stock_akhir = $item->stock_awal + $qty_in - $qty_out;
-                $opname = isset($item->stockOpnameLatest) ? $item->stockOpnameLatest->stock_actual : null;
+                $opname = optional($item->stockOpnameLatest)->stock_actual;
                 $selisih = $opname !== null ? $opname - $stock_akhir : null;
 
                 return [
@@ -169,32 +207,24 @@ class InventoryController extends Controller
                     'opname' => $opname,
                     'selisih' => $selisih,
                     'balance' => $stock_akhir - $item->stock_minimum,
-                    'warning' => $stock_akhir < $item->stock_minimum ? 'Below Minimum Stock' : '-'
+                    'warning' => $stock_akhir < $item->stock_minimum ? 'Below Minimum Stock' : '-',
+                    'bulan' => $bulan,
+                    'tahun' => $tahun
                 ];
             });
 
-        // Jika ingin filter bulan & tahun
-        if ($bulan) {
-            $materials = $materials->filter(function ($item) use ($bulan) {
-                $itemBulan = \Carbon\Carbon::parse($item['material']->created_at)->format('m');
-                return $itemBulan === $bulan;
-            });
-        }
+        // Tidak ada filter qty_in/qty_out → tampilkan semua material
 
-        if ($tahun) {
-            $materials = $materials->filter(function ($item) use ($tahun) {
-                $itemTahun = \Carbon\Carbon::parse($item['material']->created_at)->format('Y');
-                return $itemTahun === $tahun;
-            });
-        }
-
-        // Load view PDF, pastikan variable compact sama
+        // Generate PDF
         $pdf = Pdf::loadView('pages.admin.inventory.report.export.stock-pdf', [
             'materials' => $materials,
             'bulan' => $bulan,
             'tahun' => $tahun
         ])->setPaper('a4', 'landscape');
+        $bulanNama = $bulan ? \Carbon\Carbon::createFromFormat('m', $bulan)->format('F') : 'AllMonths';
+        $tahunNama = $tahun ?? 'AllYears';
+        $filename = "Report-Kontrol-Barang-{$bulanNama}-{$tahunNama}.pdf";
 
-        return $pdf->stream('Stock-Report.pdf');
+        return $pdf->stream($filename);
     }
 }

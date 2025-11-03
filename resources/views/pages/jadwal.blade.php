@@ -613,7 +613,7 @@
                                 badgeText = 'Rejected';
                                 badgeColor = 'red'; // Merah = ditolak
                             } else {
-                                badgeText = 'Belum Diperiksa'; // default
+                                badgeText = 'Hasil belum tersedia.'; // default
                                 badgeColor = 'gray';
                             }
 
@@ -667,7 +667,7 @@
                         // Reset default
                         progressContainer.classList.add('hidden');
                         progressBar.style.width = '0%';
-                        progressBar.innerText = '0%';
+                        progressBar.innerText = '0%';  
 
                         const items = ev.extendedProps.items;
                         const okCount = items.filter(item => {

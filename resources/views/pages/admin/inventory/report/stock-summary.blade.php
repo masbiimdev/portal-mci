@@ -39,7 +39,8 @@
                     <select id="filterMonth" class="form-select form-select-sm">
                         <option value="">Semua Bulan</option>
                         @foreach (range(1, 12) as $m)
-                            <option value="{{ str_pad($m, 2, '0', STR_PAD_LEFT) }}">
+                            <option value="{{ str_pad($m, 2, '0', STR_PAD_LEFT) }}"
+                                {{ request('bulan') == str_pad($m, 2, '0', STR_PAD_LEFT) ? 'selected' : '' }}>
                                 {{ DateTime::createFromFormat('!m', $m)->format('F') }}
                             </option>
                         @endforeach
@@ -48,10 +49,12 @@
                     <select id="filterYear" class="form-select form-select-sm">
                         <option value="">Semua Tahun</option>
                         @foreach (range(date('Y') - 5, date('Y')) as $y)
-                            <option value="{{ $y }}">{{ $y }}</option>
+                            <option value="{{ $y }}" {{ request('tahun') == $y ? 'selected' : '' }}>
+                                {{ $y }}</option>
                         @endforeach
                     </select>
 
+                    <button id="applyFilter" class="btn btn-primary btn-sm">Terapkan</button>
                     <button id="resetFilter" class="btn btn-outline-secondary btn-sm">Reset</button>
                 </div>
 
@@ -87,35 +90,27 @@
                             <th>Stock Minimum</th>
                             <th>Balance</th>
                             <th>Posisi Barang</th>
-                            <th class="d-none">Bulan</th> {{-- HIDDEN --}}
-                            <th class="d-none">Tahun</th> {{-- HIDDEN --}}
                         </tr>
                     </thead>
 
                     <tbody>
-                        @foreach ($materials as $index => $row)
+                        @forelse ($materials as $index => $row)
                             @php
                                 $material = $row['material'];
                                 $underMin = ($row['stock_akhir'] ?? 0) < ($material->stock_minimum ?? 0);
 
-                                // === Format Valve Name ===
+                                // Format Valve Name
                                 $codes = $material->valves->pluck('valve_name');
-
                                 if ($codes->isNotEmpty()) {
-                                    // 1️⃣ Group berdasarkan prefix sebelum titik terakhir (misal: "GL.2")
                                     $grouped = $codes->groupBy(function ($code) {
                                         return substr($code, 0, strrpos($code, '.'));
                                     });
-
-                                    // 2️⃣ Format tiap grup: ambil semua suffix (angka terakhir) dan gabungkan
                                     $formattedGroups = $grouped->map(function ($items, $prefix) {
                                         $suffixes = $items->map(function ($c) {
                                             return substr($c, strrpos($c, '.') + 1);
                                         });
                                         return $prefix . '.' . $suffixes->join(',');
                                     });
-
-                                    // 3️⃣ Gabungkan semua grup menjadi satu string (pisah dengan spasi)
                                     $valveFormatted = $formattedGroups->join(' ');
                                 } else {
                                     $valveFormatted = '-';
@@ -139,12 +134,12 @@
                                 <td>{{ $material->stock_minimum ?? 0 }}</td>
                                 <td>{{ $row['balance'] ?? 0 }}</td>
                                 <td>{{ $material->rack->rack_name ?? '-' }}</td>
-
-                                {{-- Hidden filter data --}}
-                                <td class="d-none">{{ $row['bulan'] ?? date('m') }}</td>
-                                <td class="d-none">{{ $row['tahun'] ?? date('Y') }}</td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="15" class="text-center">Tidak ada data untuk periode ini</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -159,39 +154,36 @@
 
     <script>
         $(document).ready(function() {
-            var table = $('#stockSummaryTable').DataTable({
+            $('#stockSummaryTable').DataTable({
                 responsive: true,
+                paging: true,
                 language: {
                     emptyTable: "Tidak ada data",
                     zeroRecords: "Tidak ada data sesuai filter"
-                },
-                columnDefs: [{
-                    targets: [16, 17],
-                    visible: false
-                }]
+                }
             });
 
-            function applyFilters() {
-                var bulan = $('#filterMonth').val();
-                var tahun = $('#filterYear').val();
+            // Apply Filter (reload page with params)
+            $('#applyFilter').on('click', function() {
+                let bulan = $('#filterMonth').val();
+                let tahun = $('#filterYear').val();
 
-                table.column(16).search(bulan ? '^' + bulan + '$' : '', true, false);
-                table.column(17).search(tahun ? '^' + tahun + '$' : '', true, false);
-                table.draw();
-            }
+                let query = '';
+                if (bulan) query += `bulan=${bulan}`;
+                if (tahun) query += (query ? '&' : '') + `tahun=${tahun}`;
 
-            $('#filterMonth, #filterYear').on('change', applyFilters);
+                window.location.href = query ? `?${query}` : window.location.pathname;
+            });
 
+            // Reset Filter
             $('#resetFilter').on('click', function() {
-                $('#filterMonth, #filterYear').val('');
-                table.column(16).search('');
-                table.column(17).search('');
-                table.draw();
+                window.location.href = window.location.pathname;
             });
 
+            // Export buttons
             function exportFile(type) {
-                var bulan = $('#filterMonth').val();
-                var tahun = $('#filterYear').val();
+                let bulan = $('#filterMonth').val();
+                let tahun = $('#filterYear').val();
 
                 if (!bulan || !tahun) {
                     Swal.fire({
@@ -204,7 +196,8 @@
                     return;
                 }
 
-                window.location.href = `/report/stock-summary/${type}?bulan=${bulan}&tahun=${tahun}`;
+                const url = `/report/stock-summary/${type}?bulan=${bulan}&tahun=${tahun}`;
+                window.open(url, '_blank');
             }
 
             $('#exportExcel').click(() => exportFile('excel'));
