@@ -3,43 +3,36 @@
 namespace App\Http\Controllers;
 
 use App\Activity;
-use Carbon\Carbon;
 use App\Annon;
 use App\ActivityItemResult;
-
+use App\Material;
+use App\MaterialIn;
+use App\MaterialOut;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
     /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    // public function __construct()
-    // {
-    //     $this->middleware('auth');
-    // }
-
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * Home Page — Portal tanpa login
      */
     public function index()
     {
         $announcements = Annon::where('is_active', true)
             ->orderByRaw("FIELD(priority, 'high', 'medium', 'low')")
             ->orderBy('created_at', 'desc')
-            ->take(3) // tampilkan 3 pengumuman terbaru
+            ->take(3)
             ->get();
 
         return view('pages.home', compact('announcements'));
     }
+
+    /**
+     * Halaman Jadwal & hasil inspeksi
+     */
     public function jadwal()
     {
-        // Ambil semua activities dan juga weekly / sidebar data
         $activities = Activity::all();
 
         $today = Carbon::today();
@@ -58,7 +51,6 @@ class HomeController extends Controller
             ->orWhereBetween('end_date', [$weekStart, $weekEnd])
             ->get();
 
-        // Semua hasil inspeksi (untuk rendering di blade)
         $activityResults = ActivityItemResult::whereIn('activity_id', $activities->pluck('id'))
             ->orderBy('created_at', 'desc')
             ->get();
@@ -76,10 +68,9 @@ class HomeController extends Controller
                 'result' => $r->result,
                 'status' => $r->status,
                 'remarks' => $r->remarks,
-                'user_name' => optional($r->user)->name ?? '-', // <-- tambahkan ini
+                'user_name' => optional($r->user)->name ?? '-',
             ];
         })->toArray();
-
 
         return view('pages.jadwal', compact(
             'activities',
@@ -91,6 +82,9 @@ class HomeController extends Controller
         ));
     }
 
+    /**
+     * Simpan atau update hasil inspeksi
+     */
     public function storeOrUpdateResult(Request $request)
     {
         $validated = $request->validate([
@@ -107,7 +101,6 @@ class HomeController extends Controller
         ]);
 
         if (!empty($validated['result_id'])) {
-            // 🟩 UPDATE data existing
             $res = ActivityItemResult::findOrFail($validated['result_id']);
             $res->update([
                 'activity_id' => $validated['activity_id'],
@@ -116,15 +109,13 @@ class HomeController extends Controller
                 'qty' => $validated['qty'] ?? null,
                 'inspector_name' => $validated['inspector_name'],
                 'pic' => $validated['pic'],
-                'result' => $validated['result'],   // OK / NG / Rework
-                'status' => 'Checked',              // tetap pakai enum valid
+                'result' => $validated['result'],
+                'status' => 'Checked',
                 'remarks' => $validated['remarks'] ?? null,
-                'user_id' => Auth::check() ? Auth::id() : null,          // <-- simpan siapa yang update
+                'user_id' => Auth::check() ? Auth::id() : null,
             ]);
-
             $message = 'Hasil pemeriksaan berhasil diperbarui!';
         } else {
-            // 🟩 CREATE data baru
             $inspectionTime = $validated['inspection_time'] ?? now()->toDateTimeString();
 
             $res = ActivityItemResult::create([
@@ -138,13 +129,11 @@ class HomeController extends Controller
                 'result' => $validated['result'],
                 'status' => 'Checked',
                 'remarks' => $validated['remarks'] ?? null,
-                'user_id' => Auth::check() ? Auth::id() : null,           // <-- simpan siapa yang input
+                'user_id' => Auth::check() ? Auth::id() : null,
             ]);
-
             $message = 'Hasil pemeriksaan berhasil disimpan!';
         }
 
-        // 🟩 Tandai activity sudah punya hasil
         $activity = Activity::find($validated['activity_id']);
         if ($activity) {
             $activity->update(['has_result' => true]);
@@ -153,8 +142,9 @@ class HomeController extends Controller
         return redirect()->back()->with('success', $message);
     }
 
-
-
+    /**
+     * Ambil hasil inspeksi via AJAX
+     */
     public function getActivityResults(Request $request)
     {
         $request->validate([
@@ -162,11 +152,11 @@ class HomeController extends Controller
             'part_name' => 'required|string',
         ]);
 
-        $results = ActivityItemResult::with('user:id,name') // load relasi user
+        $results = ActivityItemResult::with('user:id,name')
             ->where('activity_id', $request->activity_id)
             ->where('part_name', $request->part_name)
             ->orderBy('inspection_time', 'desc')
-            ->get() // ambil semua kolom, jangan batasi di get([...])
+            ->get()
             ->map(function ($r) {
                 return [
                     'id' => $r->id,
@@ -180,10 +170,173 @@ class HomeController extends Controller
                     'result' => $r->result,
                     'status' => $r->status,
                     'remarks' => $r->remarks,
-                    'user_name' => optional($r->user)->name ?? '-', // pastikan ini ada
+                    'user_name' => optional($r->user)->name ?? '-',
                 ];
             });
 
         return response()->json($results);
+    }
+
+    /**
+     * Halaman publik inventory
+     */
+    public function inventory()
+    {
+        return view('pages.inventory');
+    }
+
+    /**
+     * Data inventory (JSON)
+     */
+    public function getData(Request $request)
+    {
+        $bulan = $request->get('bulan');
+        $tahun = $request->get('tahun');
+        $search = $request->get('search');
+
+        $materials = Material::with(['rack', 'incomings', 'outgoings', 'stockOpnameLatest', 'valves', 'sparePart'])
+            // 🔍 Filter pencarian
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('heat_lot_no', 'like', "%{$search}%")
+                        ->orWhere('no_drawing', 'like', "%{$search}%")
+                        ->orWhere('dimensi', 'like', "%{$search}%")
+                        ->orWhere('stock_minimum', 'like', "%{$search}%")
+                        ->orWhereHas('rack', fn($r) => $r->where('rack_name', 'like', "%{$search}%"))
+                        ->orWhereHas('sparePart', fn($s) => $s->where('spare_part_name', 'like', "%{$search}%"))
+                        ->orWhereHas('valves', fn($v) => $v->where('valve_name', 'like', "%{$search}%"));
+                });
+            })
+            ->get()
+            ->map(function ($item) use ($bulan, $tahun) {
+                // Filter data masuk (Incoming)
+                $filteredIncomings = $item->incomings->when($bulan && $tahun, function ($query) use ($bulan, $tahun) {
+                    return $query->filter(function ($in) use ($bulan, $tahun) {
+                        return Carbon::parse($in->created_at)->month == $bulan &&
+                            Carbon::parse($in->created_at)->year == $tahun;
+                    });
+                }, fn($q) => $q);
+
+                // Filter data keluar (Outgoing)
+                $filteredOutgoings = $item->outgoings->when($bulan && $tahun, function ($query) use ($bulan, $tahun) {
+                    return $query->filter(function ($out) use ($bulan, $tahun) {
+                        return Carbon::parse($out->created_at)->month == $bulan &&
+                            Carbon::parse($out->created_at)->year == $tahun;
+                    });
+                }, fn($q) => $q);
+
+                // Hitung total in & out
+                $qty_in = $filteredIncomings->sum('qty_in') ?? 0;
+                $qty_out = $filteredOutgoings->sum('qty_out') ?? 0;
+                $stock_akhir = $item->stock_awal + $qty_in - $qty_out;
+
+                // Data opname terakhir
+                $opname = optional($item->stockOpnameLatest)->stock_actual;
+                $selisih = $opname ? $opname - $stock_akhir : null;
+
+                // Tentukan status peringatan
+                $warning = $stock_akhir < $item->stock_minimum ? 'Below Minimum Stock' : 'OK';
+
+                // Format valve names jadi seperti GL.6.600 GL.8.300,150
+                $valveNames = '-';
+                $codes = $item->valves->pluck('valve_name');
+                if ($codes->isNotEmpty()) {
+                    $grouped = $codes->groupBy(function ($code) {
+                        return substr($code, 0, strrpos($code, '.'));
+                    });
+                    $formattedGroups = $grouped->map(function ($items, $prefix) {
+                        $suffixes = $items->map(function ($c) {
+                            return substr($c, strrpos($c, '.') + 1);
+                        });
+                        return $prefix . '.' . $suffixes->join(',');
+                    });
+                    $valveNames = $formattedGroups->join(' ');
+                }
+
+                return [
+                    'material' => [
+                        'heat_lot_no' => $item->heat_lot_no,
+                        'no_drawing' => $item->no_drawing,
+                        'valve_name' => $valveNames,
+                        'spare_part_name' => optional($item->sparePart)->spare_part_name ?? '-',
+                        'dimensi' => $item->dimensi,
+                        'stock_awal' => $item->stock_awal,
+                        'stock_minimum' => $item->stock_minimum,
+                        'rack_name' => optional($item->rack)->rack_name ?? '-',
+                    ],
+                    'qty_in' => $qty_in,
+                    'qty_out' => $qty_out,
+                    'stock_akhir' => $stock_akhir,
+                    'opname' => $opname,
+                    'selisih' => $selisih,
+                    'balance' => $stock_akhir - $item->stock_minimum,
+                    'warning' => $warning,
+                    'bulan' => $bulan,
+                    'tahun' => $tahun,
+                ];
+            });
+
+        return response()->json($materials);
+    }
+
+
+    /**
+     * Summary data inventory
+     */
+    public function getSummary()
+    {
+        $materials = Material::with(['incomings', 'outgoings'])->get();
+
+        $total_barang = $materials->count();
+        $total_masuk = $materials->sum(function ($m) {
+            return $m->incomings->sum('qty_in');
+        });
+        $total_keluar = $materials->sum(function ($m) {
+            return $m->outgoings->sum('qty_out');
+        });
+        $below_minimum = $materials->filter(function ($m) {
+            return $m->stock_awal < $m->stock_minimum;
+        })->count();
+
+        return response()->json([
+            'total_barang' => $total_barang,
+            'total_masuk' => $total_masuk,
+            'total_keluar' => $total_keluar,
+            'below_minimum' => $below_minimum,
+        ]);
+    }
+
+    public function getChart(Request $request)
+    {
+        $tahun = $request->get('tahun', date('Y'));
+        $bulan = $request->get('bulan', date('m')); // default bulan sekarang
+
+        // Ambil total qty_in & qty_out per bulan
+        $dataMasuk = MaterialIn::selectRaw('MONTH(created_at) as bulan, SUM(qty_in) as total')
+            ->whereYear('created_at', $tahun)
+            ->groupBy('bulan')
+            ->pluck('total', 'bulan');
+
+        $dataKeluar = MaterialOut::selectRaw('MONTH(created_at) as bulan, SUM(qty_out) as total')
+            ->whereYear('created_at', $tahun)
+            ->groupBy('bulan')
+            ->pluck('total', 'bulan');
+
+        $labels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+        $masuk = [];
+        $keluar = [];
+
+        for ($i = 1; $i <= 12; $i++) {
+            $masuk[] = $dataMasuk[$i] ?? 0;
+            $keluar[] = $dataKeluar[$i] ?? 0;
+        }
+
+        return response()->json([
+            'labels' => $labels,
+            'masuk' => $masuk,
+            'keluar' => $keluar,
+            'current_month' => $bulan,
+            'current_year' => $tahun
+        ]);
     }
 }

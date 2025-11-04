@@ -26,6 +26,11 @@ Route::post('/schedule/result', [HomeController::class, 'storeOrUpdateResult'])-
 // Route::get('/schedule/result/{id}', [HomeController::class, 'showResult'])
 //     ->name('jadwal.show');
 
+Route::get('/portal/inventory', [HomeController::class, 'inventory'])->name('inventory');
+Route::get('/portal/inventory/data', [HomeController::class, 'getData'])->name('inventory.data');
+Route::get('/portal/inventory/summary', [HomeController::class, 'getSummary'])->name('inventory.summary');
+Route::get('/portal/inventory/chart', [HomeController::class, 'getChart'])->name('inventory.chart');
+
 Route::get('/login', [App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'login']);
 // Logout

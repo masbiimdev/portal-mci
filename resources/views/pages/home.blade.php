@@ -83,7 +83,7 @@
                 <a href="/report"
                     class="group bg-yellow-50 hover:bg-yellow-100 p-6 rounded-xl text-center border transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
                     <i class="fas fa-chart-line text-yellow-600 text-2xl mb-2 group-hover:scale-110 transition"></i>
-                    <p class="font-semibold text-gray-800">Report</p>
+                    <p class="font-semibold text-gray-800">Inventory</p>
                 </a>
                 <a href="/announcement"
                     class="group bg-indigo-50 hover:bg-indigo-100 p-6 rounded-xl text-center border transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
