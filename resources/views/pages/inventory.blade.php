@@ -24,10 +24,10 @@
                 <p class="text-sm text-gray-500 mb-1">Total Keluar Bulan Ini</p>
                 <h3 id="totalKeluar" class="text-2xl font-bold text-red-500">...</h3>
             </div>
-            <div class="summary-card bg-white border border-blue-100 rounded-xl shadow-sm p-5 text-center animate-pulse">
+            {{-- <div class="summary-card bg-white border border-blue-100 rounded-xl shadow-sm p-5 text-center animate-pulse">
                 <p class="text-sm text-gray-500 mb-1">Stok Di Bawah Minimum</p>
                 <h3 id="belowMinimum" class="text-2xl font-bold text-yellow-500">...</h3>
-            </div>
+            </div> --}}
         </div>
 
         <!-- Filter -->
@@ -98,14 +98,14 @@
                             <th class="px-4 py-3 text-left">No</th>
                             <th class="px-4 py-3 text-left">Heat/Lot No</th>
                             <th class="px-4 py-3 text-left">No Drawing</th>
-                            <th class="px-4 py-3 text-left">Valve</th>
+                            <th class="px-4 py-3 text-left">Tipe Valve</th>
                             <th class="px-4 py-3 text-left">Spare Part</th>
                             <th class="px-4 py-3 text-left">Dimensi</th>
                             <th class="px-4 py-3 text-left">Posisi Barang</th>
                             <th class="px-4 py-3 text-center">Qty Masuk</th>
                             <th class="px-4 py-3 text-center">Qty Keluar</th>
-                            <th class="px-4 py-3 text-center">Stok Akhir</th>
-                            <th class="px-4 py-3 text-center">Stok Minimum</th>
+                            <th class="px-4 py-3 text-center">Posisi Stok</th>
+                            {{-- <th class="px-4 py-3 text-center">Stok Minimum</th> --}}
                             {{-- <th class="px-4 py-3 text-center">Status</th> --}}
                         </tr>
                     </thead>
@@ -202,7 +202,6 @@
                     <td class="px-4 py-2 border text-green-600 font-semibold text-center">${item.qty_in}</td>
                     <td class="px-4 py-2 border text-red-500 font-semibold text-center">${item.qty_out}</td>
                     <td class="px-4 py-2 border font-bold text-center">${item.stock_akhir}</td>
-                    <td class="px-4 py-2 border text-center">${item.material.stock_minimum}</td>
                 </tr>`;
                     });
                 } else {
