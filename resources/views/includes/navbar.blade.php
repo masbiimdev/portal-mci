@@ -12,10 +12,19 @@
                     class="block text-gray-700 hover:text-blue-600 {{ request()->is('/') ? 'active-page' : '' }}">Home</a>
                 <a href="/schedule"
                     class="block text-gray-700 hover:text-blue-600 {{ request()->is('schedule') ? 'active-page' : '' }}">Jadwal</a>
-                <a href="/tracking"
-                    class="block text-gray-700 hover:text-blue-600 {{ request()->is('tracking') ? 'active-page' : '' }}">Tracking</a>
-                <a href="/portal/inventory"
-                    class="block text-gray-700 hover:text-blue-600 {{ request()->is('inventory') ? 'active-page' : '' }}">Inventory</a>
+                @php
+                    $isSUP = auth()->check() && auth()->user()->role === 'SUP';
+                @endphp
+
+                <a href="{{ $isSUP ? '/tracking' : '/under-construction' }}"
+                    class="block text-gray-700 hover:text-blue-600 {{ request()->is('tracking') ? 'active-page' : '' }}">
+                    Tracking
+                </a>
+
+                <a href="{{ $isSUP ? '/portal/inventory' : '/under-construction' }}"
+                    class="block text-gray-700 hover:text-blue-600 {{ request()->is('inventory') ? 'active-page' : '' }}">
+                    Inventory
+                </a>
             </div>
             <!-- Right: Notif + User -->
             <div class="flex items-center space-x-4">

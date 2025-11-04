@@ -28,6 +28,11 @@ class HomeController extends Controller
         return view('pages.home', compact('announcements'));
     }
 
+        public function under()
+    {
+        return view('pages.under');
+    }
+
     /**
      * Halaman Jadwal & hasil inspeksi
      */

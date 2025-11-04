@@ -24,9 +24,16 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/schedule', [HomeController::class, 'jadwal'])->name('jadwal');
 Route::post('/schedule/result', [HomeController::class, 'storeOrUpdateResult'])->name('jadwal.store');
 // Route::get('/schedule/result/{id}', [HomeController::class, 'showResult'])
+// Tracking
+Route::get('tracking', 'TrackingController@index')->name('tracking.index')->middleware('check.sup');
+Route::get('tracking/search', 'TrackingController@ajaxSearch')->name('tracking.ajax.search');
+Route::get('tracking/{jobcard}/history', 'TrackingController@ajaxHistory')->name('tracking.ajax.history');
+
+// Undee Construction Page
+Route::get('/under-construction', [HomeController::class, 'under'])->name('under');
 //     ->name('jadwal.show');
 
-Route::get('/portal/inventory', [HomeController::class, 'inventory'])->name('inventory');
+Route::get('/portal/inventory', [HomeController::class, 'inventory'])->name('inventory')->middleware('check.sup');
 Route::get('/portal/inventory/data', [HomeController::class, 'getData'])->name('inventory.data');
 Route::get('/portal/inventory/summary', [HomeController::class, 'getSummary'])->name('inventory.summary');
 Route::get('/portal/inventory/chart', [HomeController::class, 'getChart'])->name('inventory.chart');
@@ -103,11 +110,6 @@ Route::middleware(['auth', 'module.access:production'])->group(function () {
 
     Route::get('jobcards/{jobcard}/scan-success/{action}', 'JobcardController@scanSuccess')
         ->name('jobcards.scan.success');
-
-    // Tracking
-    Route::get('tracking', 'TrackingController@index')->name('tracking.index');
-    Route::get('tracking/search', 'TrackingController@ajaxSearch')->name('tracking.ajax.search');
-    Route::get('tracking/{jobcard}/history', 'TrackingController@ajaxHistory')->name('tracking.ajax.history');
 
     // routes/web.php
     Route::get('jobcards/{id}/print', 'JobcardController@print')->name('jobcards.print');
