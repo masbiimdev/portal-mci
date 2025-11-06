@@ -29,7 +29,11 @@
                 <h3 id="belowMinimum" class="text-2xl font-bold text-yellow-500">...</h3>
             </div> --}}
         </div>
-
+        <!-- Chart Section -->
+        <div class="bg-white border border-blue-100 shadow-sm rounded-xl p-6 mb-8" style="height:500px;">
+            <h2 class="text-lg font-semibold text-blue-700 mb-4">📈 Grafik Barang Masuk & Keluar</h2>
+            <canvas id="inventoryChart"></canvas>
+        </div>
         <!-- Filter -->
         <div class="bg-white border border-blue-100 shadow-sm rounded-xl p-6 mb-8">
             <h2 class="text-lg font-semibold text-blue-700 mb-4">Filter Data</h2>
@@ -62,13 +66,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Chart Section -->
-        <div class="bg-white border border-blue-100 shadow-sm rounded-xl p-6 mb-8" style="height:500px;">
-            <h2 class="text-lg font-semibold text-blue-700 mb-4">📈 Grafik Barang Masuk & Keluar</h2>
-            <canvas id="inventoryChart"></canvas>
-        </div>
-
         <!-- Table -->
         <div class="bg-white border border-blue-100 shadow-sm rounded-xl p-6">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-3">
@@ -113,7 +110,6 @@
                 </table>
             </div>
         </div>
-        ```
 
     </div>
 
@@ -240,6 +236,7 @@
                                 borderColor: 'rgba(22,163,74,1)',
                                 borderWidth: 1,
                                 borderRadius: 6,
+                                order: 2 // biar bar di bawah garis
                             },
                             {
                                 label: 'Barang Keluar',
@@ -248,6 +245,35 @@
                                 borderColor: 'rgba(220,38,38,1)',
                                 borderWidth: 1,
                                 borderRadius: 6,
+                                order: 2
+                            },
+                            // Garis Tren Barang Masuk
+                            {
+                                type: 'line',
+                                label: 'Tren Masuk',
+                                data: masuk,
+                                borderColor: '#16a34a',
+                                backgroundColor: 'transparent',
+                                borderWidth: 2,
+                                tension: 0.3,
+                                pointBackgroundColor: '#16a34a',
+                                pointRadius: 3,
+                                fill: false,
+                                order: 1
+                            },
+                            // Garis Tren Barang Keluar
+                            {
+                                type: 'line',
+                                label: 'Tren Keluar',
+                                data: keluar,
+                                borderColor: '#dc2626',
+                                backgroundColor: 'transparent',
+                                borderWidth: 2,
+                                tension: 0.3,
+                                pointBackgroundColor: '#dc2626',
+                                pointRadius: 3,
+                                fill: false,
+                                order: 1
                             }
                         ]
                     },
@@ -261,22 +287,45 @@
                         scales: {
                             y: {
                                 beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Jumlah Barang'
+                                },
                                 ticks: {
                                     stepSize: 5
+                                },
+                                grid: {
+                                    color: 'rgba(0,0,0,0.05)'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    color: 'rgba(0,0,0,0.05)'
                                 }
                             }
                         },
                         plugins: {
                             legend: {
-                                position: 'top'
+                                position: 'top',
                             },
                             title: {
-                                display: false,
-                                text: 'Tren Barang Masuk & Keluar'
+                                display: true,
+                                text: '📊 Tren Barang Masuk & Keluar per Hari',
+                                font: {
+                                    size: 16
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.dataset.label || '';
+                                        return `${label}: ${context.parsed.y} unit`;
+                                    }
+                                }
                             }
                         },
                         animation: {
-                            duration: 800,
+                            duration: 900,
                             easing: 'easeOutQuart'
                         }
                     }

@@ -41,7 +41,7 @@
                         <div>©
                             <script>
                                 document.write(new Date().getFullYear());
-                            </script>Made With ❤️ by MCI Portal
+                            </script> Made With ❤️ by Metinca Portal
                         </div>
                     </div>
                 </footer>

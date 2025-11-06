@@ -1,125 +1,195 @@
 @extends('layouts.admin')
-@section('title')
-    Dashboard | Main
-@endsection
+@section('title', 'Dashboard | Main')
+
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
-        <div class="row g-3 d-flex align-items-stretch">
-            <!-- Card Total Jobcard -->
-            <div class="col-12 col-md-4">
-                <div class="card shadow-sm border-0 h-100">
-                    <div class="card-body d-flex flex-column">
-                        <!-- Header: Title + Button -->
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h6 class="text-muted mb-0">Total Jobcard</h6>
-                            <a href="{{ route('jobcards.index') }}" class="btn btn-sm btn-outline-primary">
-                                Detail
-                            </a>
+        <h4 class="fw-bold mb-4">🏠 Dashboard</h4>
+
+        <!-- QUICK ACCESS -->
+        <div class="row g-3">
+            <!-- Users -->
+            <div class="col-6 col-md-3">
+                <a href="#" class="text-decoration-none">
+                    <div class="card shadow-sm border-0 text-center h-100 quick-card">
+                        <div class="card-body">
+                            <i class="bx bx-user text-success fs-1"></i>
+                            <h6 class="fw-bold mt-2 mb-0">Users</h6>
+                            <small class="text-muted">Data Pengguna</small>
                         </div>
-                        <!-- Main Content: Number -->
-                        <h3 class="fw-bold">{{ $totalMachining + $totalAssembling }} Job Card</h3>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Schedule -->
+            <div class="col-6 col-md-3">
+                <a href="#" class="text-decoration-none">
+                    <div class="card shadow-sm border-0 text-center h-100 quick-card">
+                        <div class="card-body">
+                            <i class="bx bx-calendar text-primary fs-1"></i>
+                            <h6 class="fw-bold mt-2 mb-0">Schedule</h6>
+                            <small class="text-muted">Jadwal Produksi</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Production -->
+            <div class="col-6 col-md-3">
+                <a href="#" class="text-decoration-none">
+                    <div class="card shadow-sm border-0 text-center h-100 quick-card">
+                        <div class="card-body">
+                            <i class="bx bx-cog text-warning fs-1"></i>
+                            <h6 class="fw-bold mt-2 mb-0">Production</h6>
+                            <small class="text-muted">Proses Produksi</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Inventory -->
+            <div class="col-6 col-md-3">
+                <a href="#" class="text-decoration-none">
+                    <div class="card shadow-sm border-0 text-center h-100 quick-card">
+                        <div class="card-body">
+                            <i class="bx bx-box text-danger fs-1"></i>
+                            <h6 class="fw-bold mt-2 mb-0">Inventory</h6>
+                            <small class="text-muted">Manajemen Stok</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- INFO STATISTICS -->
+        <div class="row mt-4 g-3">
+            <div class="col-6 col-md-3">
+                <div class="card border-start border-success border-3 shadow-sm">
+                    <div class="card-body">
+                        <h6 class="text-muted mb-1">User Aktif</h6>
+                        <h4 class="fw-bold mb-0">{{ $totalUsers ?? '0' }}</h4>
                     </div>
                 </div>
             </div>
-
-            <!-- Card Total Users -->
-            <div class="col-12 col-md-4">
-                <div class="card shadow-sm border-0 h-100">
-                    <div class="card-body d-flex flex-column">
-                        <!-- Header: Title + Button -->
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h6 class="text-muted mb-0">Total Users</h6>
-                            <a href="{{ route('users.index') }}" class="btn btn-sm btn-outline-primary">
-                                Detail
-                            </a>
-                        </div>
-                        <!-- Main Content: Number -->
-                        <h3 class="fw-bold">{{ $totalUsers }} User</h3>
+            <div class="col-6 col-md-3">
+                <div class="card border-start border-primary border-3 shadow-sm">
+                    <div class="card-body">
+                        <h6 class="text-muted mb-1">Jadwal Hari Ini</h6>
+                        <h4 class="fw-bold mb-0">{{ $todaySchedules ?? '0' }}</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card border-start border-warning border-3 shadow-sm">
+                    <div class="card-body">
+                        <h6 class="text-muted mb-1">Produksi Berjalan</h6>
+                        <h4 class="fw-bold mb-0">{{ $activeProductions ?? '0' }}</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card border-start border-danger border-3 shadow-sm">
+                    <div class="card-body">
+                        <h6 class="text-muted mb-1">Stok Menipis</h6>
+                        <h4 class="fw-bold mb-0">{{ $lowStock ?? '0' }}</h4>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Optional Chart Section -->
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0 fw-bold"><i class="bx bx-bar-chart-alt-2 text-info"></i> Jobcard Summary (Monthly)
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div id="jobcardChart" style="height: 300px;"></div>
-                    </div>
-                </div>
+
+        <!-- CHART -->
+        <div class="bg-white border rounded-xl p-4 mt-4 shadow-sm">
+            <h6 class="fw-bold text-primary mb-3">📈 Aktivitas 7 Hari Terakhir</h6>
+            <canvas id="activityChart" height="120"></canvas>
+        </div>
+
+        <!-- UPCOMING SCHEDULE -->
+        <div class="card mt-4 shadow-sm border-0">
+            <div class="card-body">
+                <h6 class="fw-bold text-primary mb-3">📅 Jadwal Terdekat</h6>
+                <ul class="list-unstyled mb-0">
+                    @forelse($upcomingSchedules ?? [] as $schedule)
+                        <li class="mb-3 border-bottom pb-2">
+                            <strong>{{ $schedule->nama }}</strong><br>
+                            <small class="text-muted">{{ $schedule->tanggal }}</small>
+                        </li>
+                    @empty
+                        <li class="text-muted">Tidak ada jadwal terdekat</li>
+                    @endforelse
+                </ul>
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+    <!-- CHART JS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Data dari controller
-            const chartData = @json($monthlyData);
-
-            // Ambil nama bulan dan jumlah jobcard
-            const months = chartData.map(item => item.month_name);
-            const machining = chartData.map(item => item.machining);
-            const assembling = chartData.map(item => item.assembling);
-
-            const options = {
-                chart: {
-                    type: 'bar',
-                    height: 350,
-                    toolbar: {
-                        show: false
+            const ctx = document.getElementById('activityChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: {!! json_encode($chartLabels ?? ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min']) !!},
+                    datasets: [{
+                        label: 'Barang Masuk',
+                        data: {!! json_encode($chartMasuk ?? [5, 9, 7, 10, 8, 6, 4]) !!},
+                        borderColor: 'rgba(34,197,94,1)',
+                        backgroundColor: 'rgba(34,197,94,0.2)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4
+                    }, {
+                        label: 'Barang Keluar',
+                        data: {!! json_encode($chartKeluar ?? [3, 5, 6, 8, 5, 7, 9]) !!},
+                        borderColor: 'rgba(239,68,68,1)',
+                        backgroundColor: 'rgba(239,68,68,0.2)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        }
                     },
-                },
-                series: [{
-                        name: 'Machining',
-                        data: machining
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
                     },
-                    {
-                        name: 'Assembling',
-                        data: assembling
-                    }
-                ],
-                xaxis: {
-                    categories: months,
-                    title: {
-                        text: 'Bulan'
-                    }
-                },
-                yaxis: {
-                    title: {
-                        text: 'Jumlah Jobcard'
-                    },
-                    min: 0,
-                    forceNiceScale: true
-                },
-                colors: ['#007bff', '#28a745'],
-                legend: {
-                    position: 'top'
-                },
-                dataLabels: {
-                    enabled: true
-                },
-                plotOptions: {
-                    bar: {
-                        borderRadius: 6,
-                        horizontal: false,
-                        columnWidth: '30%'
-                    }
-                },
-                tooltip: {
-                    y: {
-                        formatter: function(val) {
-                            return val + " Jobcard";
+                    scales: {
+                        y: {
+                            beginAtZero: true
                         }
                     }
                 }
-            };
-
-            const chart = new ApexCharts(document.querySelector("#jobcardChart"), options);
-            chart.render();
+            });
         });
     </script>
+
+    @push('css')
+        <style>
+            .quick-card {
+                transition: all 0.2s ease-in-out;
+            }
+
+            .quick-card:hover {
+                transform: translateY(-6px) scale(1.02);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            }
+
+            .quick-card i {
+                display: block;
+            }
+
+            .card h6 {
+                font-size: 0.85rem;
+            }
+        </style>
+    @endpush
 @endsection

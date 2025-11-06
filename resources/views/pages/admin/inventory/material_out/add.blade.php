@@ -8,6 +8,9 @@
             <h4 class="fw-bold mb-0">📦 Input Material Harian (Barang Keluar)</h4>
 
             <div class="d-flex gap-2 align-items-center">
+                <button id="toggleColumns" class="btn btn-outline-secondary btn-sm">
+                    🔽 Minimize
+                </button>
                 <select id="monthSelect" class="form-select form-select-sm" style="width:auto;">
                     @foreach (range(1, 12) as $m)
                         <option value="{{ str_pad($m, 2, '0', STR_PAD_LEFT) }}" {{ $m == $month ? 'selected' : '' }}>
@@ -30,13 +33,15 @@
             <table class="table table-bordered align-middle text-center mb-0">
                 <thead class="table-primary sticky-top">
                     <tr>
-                        <th>No</th>
-                        <th>Heat/Lot/Batch No</th>
-                        <th>No Drawing</th>
-                        <th>Valve</th>
-                        <th>Spare Part</th>
-                        <th>Dimensi</th>
-                        <th>Stok Awal</th>
+                        <th class="hide-col">No</th>
+                        <th class="hide-col">Heat/Lot/Batch No</th>
+                        <th class="hide-col">No Drawing</th>
+
+                        <th class="sticky-left sticky-valve">Valve</th>
+                        <th class="sticky-left sticky-spare">Spare Part</th>
+                        <th class="sticky-left sticky-dimensi">Dimensi</th>
+
+                        <th class="hide-col">Stok Awal</th>
 
                         @for ($day = 1; $day <= $days; $day++)
                             <th
@@ -55,13 +60,16 @@
                             $totalQty = 0;
                         @endphp
                         <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $m->heat_lot_no ?? '-' }}</td>
-                            <td>{{ $m->no_drawing ?? '-' }}</td>
-                            <td>{{ $m->valves->pluck('valve_name')->implode(', ') ?: '-' }}</td>
-                            <td>{{ $m->sparePart->spare_part_name ?? '-' }}</td>
-                            <td>{{ $m->dimensi ?? '-' }}</td>
-                            <td>{{ $m->current_stock ?? 0 }}</td>
+                            <td class="hide-col">{{ $index + 1 }}</td>
+                            <td class="hide-col">{{ $m->heat_lot_no ?? '-' }}</td>
+                            <td class="hide-col">{{ $m->no_drawing ?? '-' }}</td>
+
+                            <td class="sticky-left sticky-valve">
+                                {{ $m->valves->pluck('valve_name')->implode(', ') ?: '-' }}</td>
+                            <td class="sticky-left sticky-spare">{{ $m->sparePart->spare_part_name ?? '-' }}</td>
+                            <td class="sticky-left sticky-dimensi">{{ $m->dimensi ?? '-' }}</td>
+
+                            <td class="hide-col"><strong>{{ $m->current_stock ?? 0 }}</strong></td>
 
                             @for ($day = 1; $day <= $days; $day++)
                                 @php
@@ -112,16 +120,55 @@
         }
 
         .day-input.filled {
-            background: #f38888;
-            border-color: #f30000;
+            background: #edd4d4;
+            border-color: #a72828;
         }
 
         .day-cell {
             position: relative;
         }
 
-        .fw-bold.text-danger {
-            color: #c00 !important;
+        /* Sticky columns (Valve, Spare Part, Dimensi) */
+        .table thead th.sticky-left,
+        .table tbody td.sticky-left {
+            position: sticky;
+            background: #fff;
+            z-index: 3;
+            box-shadow: 2px 0 3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Posisi bertahap (menyesuaikan urutan kolom) */
+        th.sticky-valve,
+        td.sticky-valve {
+            left: 0;
+            min-width: 120px;
+            z-index: 4;
+        }
+
+        th.sticky-spare,
+        td.sticky-spare {
+            left: calc(500px);
+            min-width: 160px;
+            z-index: 4;
+        }
+
+        th.sticky-dimensi,
+        td.sticky-dimensi {
+            left: calc(500px + 150px);
+            min-width: 130px;
+            z-index: 4;
+        }
+
+        /* Hidden columns when minimized */
+        .minimized th.hide-col,
+        .minimized td.hide-col {
+            display: none;
+        }
+
+        /* Smooth transition */
+        .table th,
+        .table td {
+            transition: all 0.3s ease;
         }
     </style>
 @endpush
@@ -187,6 +234,16 @@
                 spinner.classList.add('d-none');
                 input.disabled = false;
             }
+            // === Toggle minimize ===
+            const toggleBtn = document.getElementById('toggleColumns');
+            const tableContainer = document.querySelector('.table-responsive');
+
+            toggleBtn.addEventListener('click', () => {
+                tableContainer.classList.toggle('minimized');
+                toggleBtn.textContent = tableContainer.classList.contains('minimized') ?
+                    '🔼 Expand' :
+                    '🔽 Minimize';
+            });
         });
     </script>
 @endpush
