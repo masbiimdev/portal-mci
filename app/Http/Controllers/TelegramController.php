@@ -61,7 +61,6 @@ class TelegramController extends Controller
                         $message .= "│   Heat Number: {$item['heat_no']}\n";
                         $message .= "│   Quantity: {$item['qty']}\n";
                         $message .= "│   Remarks: {$item['remarks']}\n";
-                        $message .= "│   Status: {$item['detail_status']}\n";
                     }
                 } else {
                     $message .= "│   Tidak ada detail items.\n";
