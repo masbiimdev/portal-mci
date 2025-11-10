@@ -10,6 +10,7 @@ use App\Http\Controllers\JobcardController;
 use App\Http\Controllers\AnnonController;
 use App\Http\Controllers\AccessController;
 use App\Http\Controllers\ValveController;
+use App\Http\Controllers\TelegramController;
 use App\ActivityItemResult;
 use Illuminate\Http\Request;
 
@@ -24,6 +25,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/schedule', [HomeController::class, 'jadwal'])->name('jadwal');
 Route::post('/schedule/result', [HomeController::class, 'storeOrUpdateResult'])->name('jadwal.store');
 // Route::get('/schedule/result/{id}', [HomeController::class, 'showResult'])
+Route::post('/telegram/webhook', [TelegramController::class, 'handle'])->name('telegram.webhook');
 // Tracking
 Route::get('tracking', 'TrackingController@index')->name('tracking.index')->middleware('check.sup');
 Route::get('tracking/search', 'TrackingController@ajaxSearch')->name('tracking.ajax.search');
