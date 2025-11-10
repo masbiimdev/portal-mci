@@ -78,6 +78,39 @@
                     @endforeach
                 </ul>
             </div>
+            <!-- Banner Telegram Bot Premium Style -->
+            <div class="rounded-2xl shadow-xl mb-6 p-5 d-flex flex-column flex-md-row justify-content-between align-items-center"
+                style="background: linear-gradient(135deg, #6EC1E4, #29A9EB); color: #fff;">
+
+                <!-- Teks -->
+                <div class="mb-4 mb-md-0">
+                    <h4 class="fw-bold mb-2" style="font-size:1.25rem;">💬 Pantau Jadwal Kegiatan Lewat Telegram</h4>
+                    <p class="mb-0" style="font-size:0.95rem; max-width: 400px;">
+                        Cek jadwal kegiatan dengan cepat dan mudah menggunakan bot Telegram resmi MCI.
+                    </p>
+                </div>
+
+                <!-- Tombol -->
+                <a href="https://t.me/Notifmci_bot" target="_blank"
+                    class="d-inline-flex align-items-center gap-2 px-4 py-2 fw-semibold text-white"
+                    style="background-color:#007ACC; border-radius:12px; box-shadow:0 6px 12px rgba(0,0,0,0.2); transition: all 0.2s ease;">
+                    <i class="bx bxl-telegram fs-4"></i>
+                    <span>Buka Bot Telegram</span>
+                </a>
+            </div>
+
+            <!-- Hover effect -->
+            <style>
+                a[href^="https://t.me"] {
+                    transition: all 0.2s ease;
+                }
+
+                a[href^="https://t.me"]:hover {
+                    transform: translateY(-3px);
+                    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+                }
+            </style>
+
         </aside>
 
         <!-- Kalender -->
@@ -165,8 +198,8 @@
                 </div>
                 <div class="mb-3">
                     <label class="text-sm text-slate-600">Nama PIC Metinca</label>
-                    <input type="text" name="pic" id="pic" class="form-control w-full border rounded-lg p-2"
-                        required>
+                    <input type="text" name="pic" id="pic"
+                        class="form-control w-full border rounded-lg p-2" required>
                 </div>
 
                 <div class="mb-3">
@@ -667,7 +700,7 @@
                         // Reset default
                         progressContainer.classList.add('hidden');
                         progressBar.style.width = '0%';
-                        progressBar.innerText = '0%';  
+                        progressBar.innerText = '0%';
 
                         const items = ev.extendedProps.items;
                         const okCount = items.filter(item => {
