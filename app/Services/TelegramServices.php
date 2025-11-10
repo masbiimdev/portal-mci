@@ -11,8 +11,8 @@ class TelegramService
 
     public function __construct()
     {
-        $this->botToken = '8493801001:AAGqyjRQtkoZCjOuj6drQsbVVCIsXXioZd8'; // simpan di .env
-        $this->apiUrl = "https://api.telegram.org/bot{$this->botToken}/sendMessage";
+        $this->botToken = '8493801001:AAGqyjRQtkoZCjOuj6drQsbVVCIsXXioZd8';
+        $this->apiUrl = "https://api.telegram.org/bot{$this->botToken}";
     }
 
     /**
@@ -20,12 +20,33 @@ class TelegramService
      */
     public function sendMessage($chatId, $message, $parseMode = 'Markdown')
     {
-        $response = Http::post($this->apiUrl, [
+        $response = Http::post("{$this->apiUrl}/sendMessage", [
             'chat_id' => $chatId,
             'text' => $message,
-            'parse_mode' => $parseMode
+            'parse_mode' => $parseMode,
         ]);
 
+        return $response->json();
+    }
+
+    /**
+     * Set webhook ke URL kamu
+     */
+    public function setWebhook($url)
+    {
+        $response = Http::get("{$this->apiUrl}/setWebhook", [
+            'url' => $url,
+        ]);
+
+        return $response->json();
+    }
+
+    /**
+     * Cek status webhook
+     */
+    public function getWebhookInfo()
+    {
+        $response = Http::get("{$this->apiUrl}/getWebhookInfo");
         return $response->json();
     }
 }
