@@ -21,8 +21,8 @@ class UpdateActivityStatus extends Command
             ->update(['status' => 'Done']);
 
         // 2️⃣ Pending -> On Going jika start_date masuk minggu ini
-        $startOfWeek = $today->startOfWeek(); // Senin
-        $endOfWeek = $today->endOfWeek();     // Minggu
+        $startOfWeek = $today->copy()->startOfWeek(); // Senin
+        $endOfWeek = $today->copy()->endOfWeek();     // Minggu
 
         Activity::where('status', 'Pending')
             ->whereDate('start_date', '>=', $startOfWeek)
