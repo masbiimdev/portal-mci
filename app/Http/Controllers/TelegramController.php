@@ -58,8 +58,8 @@ class TelegramController extends Controller
                     foreach ($items as $item) {
                         $message .= "│   Part Name: {$item['part_name']}\n";
                         $message .= "│   Material: {$item['material']}\n";
-                        $message .= "│   Heat Number: {$item['heat_number']}\n";
-                        $message .= "│   Quantity: {$item['quantity']}\n";
+                        $message .= "│   Heat Number: {$item['heat_no']}\n";
+                        $message .= "│   Quantity: {$item['qty']}\n";
                         $message .= "│   Remarks: {$item['remarks']}\n";
                         $message .= "│   Status: {$item['detail_status']}\n";
                     }
