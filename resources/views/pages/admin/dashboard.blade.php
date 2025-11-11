@@ -9,11 +9,24 @@
         <div class="row g-3">
             <!-- Users -->
             <div class="col-6 col-md-3">
-                <a href="#" class="text-decoration-none">
+                @if (Auth::user()->role === 'SUP')
+                    <a href="{{ route('users.index') }}" class="text-decoration-none">
+                        <div class="card shadow-sm border-0 text-center h-100 quick-card">
+                            <div class="card-body">
+                                <i class="bx bx-user text-success fs-1"></i>
+                                <h6 class="fw-bold mt-2 mb-0">Users</h6>
+                                <small class="text-muted">Data Pengguna</small>
+                            </div>
+                        </div>
+                    </a>
+                @endif
+            </div>
+            <div class="col-6 col-md-3">
+                <a href="{{ route('announcements.index') }}" class="text-decoration-none">
                     <div class="card shadow-sm border-0 text-center h-100 quick-card">
                         <div class="card-body">
-                            <i class="bx bx-user text-success fs-1"></i>
-                            <h6 class="fw-bold mt-2 mb-0">Users</h6>
+                            <i class="bx bx-news text-warning fs-1"></i>
+                            <h6 class="fw-bold mt-2 mb-0">Pengumuman</h6>
                             <small class="text-muted">Data Pengguna</small>
                         </div>
                     </div>
@@ -22,7 +35,7 @@
 
             <!-- Schedule -->
             <div class="col-6 col-md-3">
-                <a href="#" class="text-decoration-none">
+                <a href="{{ route('activities.index') }}" class="text-decoration-none">
                     <div class="card shadow-sm border-0 text-center h-100 quick-card">
                         <div class="card-body">
                             <i class="bx bx-calendar text-primary fs-1"></i>
@@ -35,7 +48,7 @@
 
             <!-- Production -->
             <div class="col-6 col-md-3">
-                <a href="#" class="text-decoration-none">
+                <a href="{{ route('jobcards.index') }}" class="text-decoration-none">
                     <div class="card shadow-sm border-0 text-center h-100 quick-card">
                         <div class="card-body">
                             <i class="bx bx-cog text-warning fs-1"></i>
@@ -48,7 +61,7 @@
 
             <!-- Inventory -->
             <div class="col-6 col-md-3">
-                <a href="#" class="text-decoration-none">
+                <a href="{{ route('inventory.index') }}" class="text-decoration-none">
                     <div class="card shadow-sm border-0 text-center h-100 quick-card">
                         <div class="card-body">
                             <i class="bx bx-box text-danger fs-1"></i>
@@ -73,51 +86,58 @@
             <div class="col-6 col-md-3">
                 <div class="card border-start border-primary border-3 shadow-sm">
                     <div class="card-body">
-                        <h6 class="text-muted mb-1">Jadwal Hari Ini</h6>
-                        <h4 class="fw-bold mb-0">{{ $todaySchedules ?? '0' }}</h4>
+                        <h6 class="text-muted mb-1">Total Jadwal</h6>
+                        <h4 class="fw-bold mb-0">{{ $totalSchedules ?? '0' }}</h4>
                     </div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
                 <div class="card border-start border-warning border-3 shadow-sm">
                     <div class="card-body">
-                        <h6 class="text-muted mb-1">Produksi Berjalan</h6>
-                        <h4 class="fw-bold mb-0">{{ $activeProductions ?? '0' }}</h4>
+                        <h6 class="text-muted mb-1">Total Jobcard</h6>
+                        <h4 class="fw-bold mb-0">{{ $totalJobcard ?? '0' }}</h4>
                     </div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
                 <div class="card border-start border-danger border-3 shadow-sm">
                     <div class="card-body">
-                        <h6 class="text-muted mb-1">Stok Menipis</h6>
-                        <h4 class="fw-bold mb-0">{{ $lowStock ?? '0' }}</h4>
+                        <h6 class="text-muted mb-1">Total Material</h6>
+                        <h4 class="fw-bold mb-0">{{ $totalMaterial ?? '0' }}</h4>
+                    </div>
+                </div>
+            </div>
+                        <div class="col-6 col-md-3">
+                <div class="card border-start border-success border-3 shadow-sm">
+                    <div class="card-body">
+                        <h6 class="text-muted mb-1">Total Pengumuman</h6>
+                        <h4 class="fw-bold mb-0">{{ $totalAnnon ?? '0' }}</h4>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- CHART -->
-        <div class="bg-white border rounded-xl p-4 mt-4 shadow-sm">
-            <h6 class="fw-bold text-primary mb-3">📈 Aktivitas 7 Hari Terakhir</h6>
-            <canvas id="activityChart" height="120"></canvas>
-        </div>
-
-        <!-- UPCOMING SCHEDULE -->
+        {{-- <!-- UPCOMING SCHEDULE -->
         <div class="card mt-4 shadow-sm border-0">
             <div class="card-body">
                 <h6 class="fw-bold text-primary mb-3">📅 Jadwal Terdekat</h6>
                 <ul class="list-unstyled mb-0">
                     @forelse($upcomingSchedules ?? [] as $schedule)
                         <li class="mb-3 border-bottom pb-2">
-                            <strong>{{ $schedule->nama }}</strong><br>
-                            <small class="text-muted">{{ $schedule->tanggal }}</small>
+                            <strong>{{ $schedule->kegiatan }}</strong><br>
+                            <small class="text-muted">{{ $schedule->start_date }}</small>
                         </li>
                     @empty
                         <li class="text-muted">Tidak ada jadwal terdekat</li>
                     @endforelse
                 </ul>
             </div>
-        </div>
+        </div> --}}
+
+        <!-- CHART -->
+        {{-- <div class="bg-white border rounded-xl p-4 mt-4 shadow-sm">
+            <h6 class="fw-bold text-primary mb-3">📈 Aktivitas 7 Hari Terakhir</h6>
+            <canvas id="activityChart" height="120"></canvas>
+        </div> --}}
     </div>
 
     <!-- CHART JS -->

@@ -119,6 +119,11 @@
                 <h2 class="font-medium text-lg">Kalender Jadwal</h2>
             </div>
             <div id="calendar"></div>
+            <!-- ⏰ Teks terakhir update di pojok kanan bawah -->
+            <small id="lastUpdate" class="text-muted fst-italic position-absolute"
+                style="           font-size: 0.85rem;
+           color: #495057; /* abu gelap */
+           rgba(0,0,0,0.15);"></small>
         </section>
     </div>
 
@@ -343,6 +348,7 @@
             const modalContent = document.getElementById('modalContent');
             const resultModal = document.getElementById('resultModal');
             const viewResultModal = document.getElementById('viewResultModal');
+            const lastUpdateEl = document.getElementById('lastUpdate');
 
             // --- Helper Modal ---
             function showModal(el, contentEl) {
@@ -730,12 +736,35 @@
             });
 
             calendar.render();
+            // 🔄 Auto refresh event tiap 30 detik
+
 
             setTimeout(() => {
                 document.querySelectorAll('.progress-bar').forEach(el => {
                     el.style.width = el.dataset.percent;
                 });
             }, 300);
+
+            // Fungsi untuk update teks waktu terakhir refresh
+            function updateLastRefreshed() {
+                const now = new Date();
+                const formatter = new Intl.DateTimeFormat('id-ID', {
+                    dateStyle: 'long',
+                    timeStyle: 'medium',
+                    timeZone: 'Asia/Jakarta'
+                });
+                lastUpdateEl.textContent = `Terakhir diperbarui: ${formatter.format(now)}`;
+            }
+
+            // 🔄 Auto refresh event tiap 30 detik
+            setInterval(() => {
+                console.log('Refreshing calendar events...');
+                calendar.refetchEvents();
+                updateLastRefreshed();
+            }, 30000); // 30 detik
+
+            // Tampilkan waktu pertama kali load
+            updateLastRefreshed();
 
         });
 

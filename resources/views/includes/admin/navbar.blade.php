@@ -6,12 +6,22 @@
     </div>
 
     <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+
+        {{-- Tombol Portal --}}
+        <div class="me-3">
+            <a href="{{ route('home') }}"
+                class="btn btn-sm btn-primary d-flex align-items-center gap-1 shadow-sm">
+                <i class="bx bx-globe fs-5"></i>
+                <span>Menuju Ke Halaman Portal</span>
+            </a>
+        </div>
+
         <ul class="navbar-nav flex-row align-items-center ms-auto">
             <li class="nav-item dropdown-user dropdown">
                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">
-                        <img src="data:image/jpeg;base64,{{ base64_encode(file_get_contents(public_path('images/metinca-logo.jpeg'))) }}" alt
-                            class="w-px-40 h-auto rounded-circle" />
+                        <img src="data:image/jpeg;base64,{{ base64_encode(file_get_contents(public_path('images/metinca-logo.jpeg'))) }}"
+                            alt class="w-px-40 h-auto rounded-circle" />
                     </div>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
@@ -20,8 +30,8 @@
                             <div class="d-flex">
                                 <div class="flex-shrink-0 me-3">
                                     <div class="avatar avatar-online">
-                                        <img src="data:image/jpeg;base64,{{ base64_encode(file_get_contents(public_path('images/metinca-logo.jpeg'))) }}" alt
-                                            class="w-px-40 h-auto rounded-circle" />
+                                        <img src="data:image/jpeg;base64,{{ base64_encode(file_get_contents(public_path('images/metinca-logo.jpeg'))) }}"
+                                            alt class="w-px-40 h-auto rounded-circle" />
                                     </div>
                                 </div>
                                 <div class="flex-grow-1">
@@ -37,9 +47,8 @@
                     <li>
                         <div class="dropdown-divider"></div>
                     </li>
-                    <li>
-                        <a class="dropdown-item" href="#"><i class="bx bx-user me-2"></i> My Profile</a>
-                    </li>
+
+                    {{-- Tombol Logout --}}
                     <li>
                         <a class="dropdown-item" href="#"
                             onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
