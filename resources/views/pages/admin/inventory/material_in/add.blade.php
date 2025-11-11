@@ -2,277 +2,297 @@
 @section('title', 'Input Material Harian')
 
 @section('content')
-    <div class="container-xxl flex-grow-1 container-p-y">
+<div class="container-xxl flex-grow-1 container-p-y">
 
-        {{-- Header --}}
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="fw-bold mb-0">📦 Input Material Harian (Barang Masuk)</h4>
+    {{-- Header --}}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold mb-0">📦 Input Material Harian (Barang Masuk)</h4>
 
-            <div class="d-flex gap-2 align-items-center">
-                <button id="toggleColumns" class="btn btn-outline-secondary btn-sm">
-                    🔽 Minimize
-                </button>
+        <div class="d-flex gap-2 align-items-center">
+            <button id="toggleColumns" class="btn btn-outline-secondary btn-sm">
+                🔽 Minimize
+            </button>
 
-                <select id="monthSelect" class="form-select form-select-sm" style="width:auto;">
-                    @foreach (range(1, 12) as $m)
-                        <option value="{{ str_pad($m, 2, '0', STR_PAD_LEFT) }}" {{ $m == $month ? 'selected' : '' }}>
-                            {{ \Carbon\Carbon::create()->month($m)->format('F') }}
-                        </option>
-                    @endforeach
-                </select>
+            <select id="monthSelect" class="form-select form-select-sm" style="width:auto;">
+                @foreach (range(1, 12) as $m)
+                    <option value="{{ str_pad($m, 2, '0', STR_PAD_LEFT) }}" {{ $m == $month ? 'selected' : '' }}>
+                        {{ \Carbon\Carbon::create()->month($m)->format('F') }}
+                    </option>
+                @endforeach
+            </select>
 
-                <select id="yearSelect" class="form-select form-select-sm" style="width:auto;">
-                    @foreach (range(now()->year - 2, now()->year + 2) as $y)
-                        <option value="{{ $y }}" {{ $y == $year ? 'selected' : '' }}>
-                            {{ $y }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-        </div>
-
-        {{-- Table --}}
-        <div class="table-responsive shadow-sm rounded-3">
-            <table id="materialTable" class="table table-bordered align-middle text-center mb-0">
-                <thead class="table-primary sticky-top">
-                    <tr>
-                        <th class="hide-col">No</th>
-                        <th class="hide-col">Heat/Lot/Batch No</th>
-                        <th class="hide-col">No Drawing</th>
-
-                        <th class="sticky-left sticky-valve">Valve</th>
-                        <th class="sticky-left sticky-spare">Spare Part</th>
-                        <th class="sticky-left sticky-dimensi">Dimensi</th>
-
-                        <th class="hide-col">Stok Awal</th>
-
-                        @for ($day = 1; $day <= $days; $day++)
-                            <th
-                                class="{{ $day == now()->day && $month == now()->format('m') && $year == now()->year ? 'bg-info text-white' : '' }}">
-                                {{ $day }}
-                            </th>
-                        @endfor
-
-                        <th>Jumlah</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @foreach ($materials as $index => $m)
-                        @php
-                            $stokAwal = $m->current_stock ?? 0;
-                            $totalQty = 0;
-                        @endphp
-
-                        <tr>
-                            <td class="hide-col">{{ $index + 1 }}</td>
-                            <td class="hide-col">{{ $m->heat_lot_no ?? '-' }}</td>
-                            <td class="hide-col">{{ $m->no_drawing ?? '-' }}</td>
-
-                            <td class="sticky-left sticky-valve">
-                                {{ $m->valves->pluck('valve_name')->implode(', ') ?: '-' }}</td>
-                            <td class="sticky-left sticky-spare">{{ $m->sparePart->spare_part_name ?? '-' }}</td>
-                            <td class="sticky-left sticky-dimensi">{{ $m->dimensi ?? '-' }}</td>
-
-                            <td class="hide-col"><strong>{{ $stokAwal }}</strong></td>
-
-                            @for ($day = 1; $day <= $days; $day++)
-                                @php
-                                    $date = $year . '-' . $month . '-' . str_pad($day, 2, '0', STR_PAD_LEFT);
-                                    $existingQty = '';
-
-                                    if (isset($dailyInputs[$m->id])) {
-                                        $row = $dailyInputs[$m->id]->firstWhere('date_in', $date);
-                                        $existingQty = $row->qty_in ?? '';
-                                        $totalQty += (int) $existingQty;
-                                    }
-                                @endphp
-
-                                <td class="position-relative day-cell">
-                                    <input type="number"
-                                        class="form-control form-control-sm text-center day-input {{ $existingQty ? 'filled' : '' }}"
-                                        min="0" placeholder="0" data-day="{{ $day }}"
-                                        data-material="{{ $m->id }}" value="{{ $existingQty }}">
-
-                                    <div class="spinner-border spinner-border-sm text-primary d-none position-absolute top-50 start-50 translate-middle"
-                                        style="width:1rem;height:1rem;"></div>
-                                </td>
-                            @endfor
-
-                            <td><strong>{{ $totalQty }}</strong></td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+            <select id="yearSelect" class="form-select form-select-sm" style="width:auto;">
+                @foreach (range(now()->year - 2, now()->year + 2) as $y)
+                    <option value="{{ $y }}" {{ $y == $year ? 'selected' : '' }}>
+                        {{ $y }}
+                    </option>
+                @endforeach
+            </select>
         </div>
     </div>
+
+    {{-- Table --}}
+    <div class="table-responsive shadow-sm rounded-3">
+        <table id="materialTable" class="table table-striped table-bordered align-middle">
+            <thead class="table-primary sticky-top">
+                <tr>
+                    <th class="hide-col">No</th>
+                    <th class="hide-col">Heat/Lot/Batch No</th>
+                    <th class="hide-col">No Drawing</th>
+                    <th class="sticky-left sticky-valve">Valve</th>
+                    <th class="sticky-left sticky-spare">Spare Part</th>
+                    <th class="sticky-left sticky-dimensi">Dimensi</th>
+                    <th class="hide-col">Stok Awal</th>
+
+                    @for ($day = 1; $day <= $days; $day++)
+                        <th class="{{ $day == now()->day && $month == now()->format('m') && $year == now()->year ? 'bg-info text-white' : '' }}">
+                            {{ $day }}
+                        </th>
+                    @endfor
+
+                    <th>Jumlah</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @php
+                function formatValvesGrouped($valves) {
+                    if (empty($valves)) return '<em>-</em>';
+
+                    $groups = [];
+                    foreach ($valves as $v) {
+                        if (preg_match('/^([A-Z]+)\.(\d+)\.(\d+)$/', $v, $m)) {
+                            $prefix = $m[1] . '.' . $m[2];
+                            $groups[$prefix][] = $m[3];
+                        } else {
+                            $groups[$v][] = null;
+                        }
+                    }
+
+                    // Urutkan berdasarkan prefix (GT, GL, GF, GC, dst)
+                    uksort($groups, function($a, $b) {
+                        $order = ['GT', 'GL', 'GF', 'GC', 'GX'];
+                        $getPrefix = function($s) { return explode('.', $s)[0]; };
+                        $ai = array_search($getPrefix($a), $order);
+                        $bi = array_search($getPrefix($b), $order);
+                        $ai = $ai === false ? 999 : $ai;
+                        $bi = $bi === false ? 999 : $bi;
+                        if ($ai === $bi) {
+                            return strcmp($a, $b);
+                        }
+                        return $ai <=> $bi;
+                    });
+
+                    $formatted = [];
+                    foreach ($groups as $base => $nums) {
+                        $nums = array_filter($nums);
+                        $text = $nums ? $base . '.' . implode(',', $nums) : $base;
+                        $prefix = explode('.', $base)[0];
+
+                        // Warna berdasarkan prefix (compatible PHP)
+                        if ($prefix === 'GT') {
+                            $color = '#dbeafe'; // biru muda
+                        } elseif ($prefix === 'GL') {
+                            $color = '#dcfce7'; // hijau muda
+                        } elseif ($prefix === 'GF') {
+                            $color = '#fef3c7'; // kuning lembut
+                        } elseif ($prefix === 'GC') {
+                            $color = '#fde68a'; // emas
+                        } else {
+                            $color = '#f3f4f6'; // default
+                        }
+
+                        $formatted[] = "<span class='valve-badge' style='background:{$color}'>".e($text)."</span>";
+                    }
+                    return implode('<br>', $formatted);
+                }
+                @endphp
+
+                @foreach ($materials as $index => $m)
+                    @php
+                        $stokAwal = $m->current_stock ?? 0;
+                        $totalQty = 0;
+                    @endphp
+
+                    <tr>
+                        <td class="hide-col">{{ $index + 1 }}</td>
+                        <td class="hide-col">{{ $m->heat_lot_no ?? '-' }}</td>
+                        <td class="hide-col">{{ $m->no_drawing ?? '-' }}</td>
+
+                        <td class="sticky-left sticky-valve">
+                            <div class="valve-list">
+                                {!! formatValvesGrouped($m->valves->pluck('valve_name')->toArray()) !!}
+                            </div>
+                        </td>
+                        <td class="sticky-left sticky-spare">{{ $m->sparePart->spare_part_name ?? '-' }}</td>
+                        <td class="sticky-left sticky-dimensi">{{ $m->dimensi ?? '-' }}</td>
+
+                        <td class="hide-col"><strong>{{ $stokAwal }}</strong></td>
+
+                        @for ($day = 1; $day <= $days; $day++)
+                            @php
+                                $date = $year . '-' . $month . '-' . str_pad($day, 2, '0', STR_PAD_LEFT);
+                                $existingQty = '';
+
+                                if (isset($dailyInputs[$m->id])) {
+                                    $row = $dailyInputs[$m->id]->firstWhere('date_in', $date);
+                                    $existingQty = $row->qty_in ?? '';
+                                    $totalQty += (int) $existingQty;
+                                }
+                            @endphp
+
+                            <td class="position-relative day-cell">
+                                <input type="number"
+                                    class="form-control form-control-sm text-center day-input {{ $existingQty ? 'filled' : '' }}"
+                                    min="0" placeholder="0" data-day="{{ $day }}"
+                                    data-material="{{ $m->id }}" value="{{ $existingQty }}">
+                                <div class="spinner-border spinner-border-sm text-primary d-none position-absolute top-50 start-50 translate-middle"
+                                    style="width:1rem;height:1rem;"></div>
+                            </td>
+                        @endfor
+
+                        <td><strong>{{ $totalQty }}</strong></td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
 @endsection
 
 @push('css')
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    <style>
-        .table th,
-        .table td {
-            font-size: 13px;
-            padding: 4px;
-            white-space: nowrap;
-        }
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 
-        .day-input {
-            width: 55px;
-            font-size: 13px;
-            text-align: center;
-        }
+<style>
+.table th, .table td {
+    font-size: 13px;
+    padding: 5px;
+    vertical-align: middle;
+}
+.day-input {
+    width: 55px;
+    font-size: 13px;
+    text-align: center;
+}
+.day-input.filled {
+    background: #d4edda;
+    border-color: #28a745;
+}
+.day-cell { position: relative; }
 
-        .day-input.filled {
-            background: #d4edda;
-            border-color: #28a745;
-        }
+/* Sticky columns */
+.table thead th.sticky-left, .table tbody td.sticky-left {
+    position: sticky;
+    background: #fff;
+    z-index: 3;
+    box-shadow: 2px 0 3px rgba(0, 0, 0, 0.05);
+}
 
-        .day-cell {
-            position: relative;
-        }
+th.sticky-valve, td.sticky-valve { left: 0; width: 130px; max-width: 130px; z-index: 4; white-space: normal; }
+th.sticky-spare, td.sticky-spare { left: 130px; min-width: 160px; z-index: 4; }
+th.sticky-dimensi, td.sticky-dimensi { left: 290px; min-width: 130px; z-index: 4; }
 
-        /* Sticky columns */
-        .table thead th.sticky-left,
-        .table tbody td.sticky-left {
-            position: sticky;
-            background: #fff;
-            z-index: 3;
-            box-shadow: 2px 0 3px rgba(0, 0, 0, 0.1);
-        }
+/* Valve badges */
+.valve-list { display: flex; flex-direction: column; gap: 3px; }
+.valve-badge {
+    color: #1e3a8a;
+    padding: 3px 7px;
+    border-radius: 6px;
+    font-size: 12.5px;
+    font-weight: 500;
+    display: inline-block;
+    width: fit-content;
+}
 
-        /* Posisi bertahap (menyesuaikan urutan kolom) */
-        th.sticky-valve,
-        td.sticky-valve {
-            left: 0;
-            min-width: 120px;
-            z-index: 4;
-        }
-
-        th.sticky-spare,
-        td.sticky-spare {
-            left: calc(500px);
-            min-width: 160px;
-            z-index: 4;
-        }
-
-        th.sticky-dimensi,
-        td.sticky-dimensi {
-            left: calc(500px + 150px);
-            min-width: 130px;
-            z-index: 4;
-        }
-
-        /* Hidden columns when minimized */
-        .minimized th.hide-col,
-        .minimized td.hide-col {
-            display: none;
-        }
-
-        /* Smooth transition */
-        .table th,
-        .table td {
-            transition: all 0.3s ease;
-        }
-    </style>
+/* Transition */
+.table th, .table td { transition: all 0.25s ease; }
+.minimized th.hide-col, .minimized td.hide-col { display: none; }
+</style>
 @endpush
 
 @push('js')
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const url = "{{ route('material_in.store') }}";
-            const csrf = document.querySelector('meta[name="csrf-token"]').content;
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const url = "{{ route('material_in.store') }}";
+    const csrf = document.querySelector('meta[name="csrf-token"]').content;
 
-            // === Reload by month/year ===
-            document.getElementById("monthSelect").addEventListener('change', reloadPage);
-            document.getElementById("yearSelect").addEventListener('change', reloadPage);
+    document.getElementById("monthSelect").addEventListener('change', reloadPage);
+    document.getElementById("yearSelect").addEventListener('change', reloadPage);
 
-            function reloadPage() {
-                const m = document.getElementById("monthSelect").value;
-                const y = document.getElementById("yearSelect").value;
-                window.location = `?month=${m}&year=${y}`;
-            }
+    function reloadPage() {
+        const m = document.getElementById("monthSelect").value;
+        const y = document.getElementById("yearSelect").value;
+        window.location = `?month=${m}&year=${y}`;
+    }
 
-            // === DataTables setup ===
-            const table = $('#materialTable').DataTable({
-                pageLength: 15,
-                order: [],
-                scrollX: true,
-                columnDefs: [{
-                    orderable: false,
-                    targets: '_all'
-                }]
-            });
+    const table = $('#materialTable').DataTable({
+        pageLength: 15,
+        order: [],
+        scrollX: true,
+        columnDefs: [{ orderable: false, targets: '_all' }]
+    });
 
-            // === Attach input events ===
-            function attachInputEvents() {
-                document.querySelectorAll('.day-input').forEach(input => {
-                    input.addEventListener('keydown', e => {
-                        if (e.key === 'Enter') {
-                            e.preventDefault();
-                            save(input);
-                        }
-                    });
-                });
-            }
-
-            table.on('draw', function() {
-                attachInputEvents();
-            });
-            attachInputEvents(); // initial load
-
-            // === Save function ===
-            async function save(input) {
-                const qty = input.value;
-                if (!qty || qty <= 0) return;
-
-                const day = input.dataset.day;
-                const material = input.dataset.material;
-                const month = document.getElementById("monthSelect").value;
-                const year = document.getElementById("yearSelect").value;
-                const date = `${year}-${month}-${String(day).padStart(2,'0')}`;
-                const spinner = input.closest("td").querySelector(".spinner-border");
-
-                input.disabled = true;
-                spinner.classList.remove('d-none');
-
-                try {
-                    await fetch(url, {
-                        method: "POST",
-                        headers: {
-                            "X-CSRF-TOKEN": csrf,
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({
-                            material_id: material,
-                            qty_in: qty,
-                            date_in: date
-                        })
-                    });
-
-                    input.classList.add("filled");
-                } catch (e) {
-                    alert("Gagal menyimpan data");
+    function attachInputEvents() {
+        document.querySelectorAll('.day-input').forEach(input => {
+            input.addEventListener('keydown', e => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    save(input);
                 }
-
-                spinner.classList.add('d-none');
-                input.disabled = false;
-            }
-
-            // === Toggle minimize ===
-            const toggleBtn = document.getElementById('toggleColumns');
-            const tableContainer = document.querySelector('.table-responsive');
-
-            toggleBtn.addEventListener('click', () => {
-                tableContainer.classList.toggle('minimized');
-                toggleBtn.textContent = tableContainer.classList.contains('minimized') ?
-                    '🔼 Expand' :
-                    '🔽 Minimize';
             });
         });
-    </script>
+    }
+
+    table.on('draw', attachInputEvents);
+    attachInputEvents();
+
+    async function save(input) {
+        const qty = input.value;
+        if (!qty || qty <= 0) return;
+
+        const day = input.dataset.day;
+        const material = input.dataset.material;
+        const month = document.getElementById("monthSelect").value;
+        const year = document.getElementById("yearSelect").value;
+        const date = `${year}-${month}-${String(day).padStart(2,'0')}`;
+        const spinner = input.closest("td").querySelector(".spinner-border");
+
+        input.disabled = true;
+        spinner.classList.remove('d-none');
+
+        try {
+            await fetch(url, {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": csrf,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    material_id: material,
+                    qty_in: qty,
+                    date_in: date
+                })
+            });
+            input.classList.add("filled");
+        } catch {
+            alert("Gagal menyimpan data");
+        }
+
+        spinner.classList.add('d-none');
+        input.disabled = false;
+    }
+
+    const toggleBtn = document.getElementById('toggleColumns');
+    const tableContainer = document.querySelector('.table-responsive');
+
+    toggleBtn.addEventListener('click', () => {
+        tableContainer.classList.toggle('minimized');
+        toggleBtn.textContent = tableContainer.classList.contains('minimized')
+            ? '🔼 Expand' : '🔽 Minimize';
+    });
+});
+</script>
 @endpush
