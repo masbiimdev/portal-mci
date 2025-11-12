@@ -59,6 +59,74 @@
             }
         }
     </style>
+    <style>
+        /* Styles khusus untuk jam & tanggal */
+        .time-card {
+            min-width: 220px;
+        }
+
+        .time-meta {
+            display: flex;
+            gap: 0.75rem;
+            align-items: baseline;
+            justify-content: flex-end;
+            width: 100%;
+        }
+
+        /* Jam besar: monospace, tabular numbers untuk kestabilan lebar digit */
+        #localTime {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Segoe UI Mono", monospace;
+            font-variant-numeric: tabular-nums;
+            font-weight: 700;
+            font-size: 1.25rem;
+            /* 20px */
+            color: #0f172a;
+            background: linear-gradient(90deg, #111827, #4f46e5);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 0.5px;
+        }
+
+        /* Tanggal kecil: pill, subtle background */
+        #localDate {
+            font-size: 0.72rem;
+            /* ~11.5px */
+            color: #334155;
+            background: rgba(99, 102, 241, 0.08);
+            padding: 4px 8px;
+            border-radius: 999px;
+            border: 1px solid rgba(99, 102, 241, 0.12);
+            text-transform: capitalize;
+            display: inline-block;
+            margin-top: 2px;
+        }
+
+        /* container for suhu to align vertically centered with time */
+        .suhu-large {
+            font-size: 1.6rem;
+            /* ~26px */
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        /* responsive: on very small screens stack time & suhu */
+        @media (max-width:420px) {
+            .time-meta {
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 6px;
+            }
+
+            #localTime {
+                font-size: 1.05rem;
+            }
+
+            .suhu-large {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -67,21 +135,32 @@
         <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
             <div class="flex-1 min-w-0">
                 <h1 class="text-2xl md:text-3xl font-bold tracking-wide">Selamat Datang di Metinca Portal .</h1>
-                <p id="tanggal" class="text-sm text-blue-100 mt-2 small-muted" aria-live="polite"></p>
             </div>
 
+            <!-- Ganti dengan blok ini --- suhu dan jam sejajar, tanpa duplikasi -->
             <div class="flex justify-end">
                 <div
-                    class="bg-white/70 backdrop-blur-md border border-white/40 shadow-md p-4 rounded-2xl flex flex-col items-end min-w-[180px] transition hover:shadow-lg hover:scale-[1.02] duration-200">
+                    class="bg-white/70 backdrop-blur-md border border-white/40 shadow-md p-4 rounded-2xl flex flex-col items-end time-card transition hover:shadow-lg hover:scale-[1.02] duration-200">
                     <div class="text-xs text-gray-600 mb-1">🌡️ Suhu Saat Ini</div>
-                    <div id="suhu" class="text-3xl font-bold text-gray-900 leading-none" aria-live="polite">--°C</div>
-                    <div id="cuaca" class="text-sm text-gray-700 flex items-center gap-2 mt-2" aria-live="polite">
+
+                    <!-- SUHU + JAM sejajar -->
+                    <div class="time-meta">
+                        <!-- Jam (sejajar dengan suhu) -->
+                        <div class="flex flex-col items-end" style="line-height:1;">
+                            <div id="localTime" class="text-lg" role="timer" aria-live="polite" aria-atomic="true">
+                                --:--:--</div>
+                        </div>
+
+                        <!-- Suhu (besar) -->
+                        <div id="suhu" class="suhu-large leading-none ml-2" aria-live="polite">--°C</div>
+                    </div>
+
+                    <div id="cuaca" class="text-sm text-gray-700 flex items-center gap-2 mt-3" aria-live="polite">
                         <span id="weather-icon" class="text-xl" aria-hidden="true">🌤️</span>
                         <span id="weather-text" class="font-medium">Memuat cuaca...</span>
                     </div>
                 </div>
             </div>
-
         </div>
     </section>
 
@@ -255,47 +334,76 @@
             setInterval(updateDateTime, 1000);
 
             // Weather using Open-Meteo (no API key). Fallback coords: Jakarta.
+        </script>
+        <script>
             (function() {
-                const tempEl = document.getElementById('suhu');
-                const weatherText = document.getElementById('weather-text');
-                const weatherIcon = document.getElementById('weather-icon');
+                // waktu lokal (jam & tanggal)
+                const timeEl = document.getElementById('localTime');
+                if (!timeEl) return;
 
-                function renderWeather(data) {
-                    if (!data || !data.current_weather) {
-                        if (tempEl) tempEl.textContent = '--°C';
-                        if (weatherText) weatherText.textContent = 'Cuaca tidak tersedia';
-                        return;
-                    }
-                    const cw = data.current_weather;
-                    const temp = Math.round(cw.temperature);
-                    if (tempEl) tempEl.textContent = temp + '°C';
-                    if (weatherText) weatherText.textContent = cw.weathercode === 0 ? 'Cerah' : 'Berawan / Berangin';
-                    // simple icon mapping
-                    const code = cw.weathercode;
-                    const icon = (code === 0) ? '☀️' : (code <= 3 ? '⛅' : (code <= 48 ? '🌫️' : (code <= 77 ? '🌧️' :
-                        '🌦️')));
-                    if (weatherIcon) weatherIcon.textContent = icon;
-                }
-
-                function fetchWeather(lat, lon) {
-                    const url =
-                        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
-                    fetch(url).then(r => r.json()).then(json => renderWeather(json)).catch(() => renderWeather(null));
-                }
-
-                // Attempt geolocation, else fallback to Jakarta
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(function(pos) {
-                        fetchWeather(pos.coords.latitude, pos.coords.longitude);
-                    }, function() {
-                        // fallback Jakarta
-                        fetchWeather(-6.2088, 106.8456);
-                    }, {
-                        timeout: 5000
+                function updateTime() {
+                    const now = new Date();
+                    const timeStr = now.toLocaleTimeString('id-ID', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: false
                     });
-                } else {
-                    fetchWeather(-6.2088, 106.8456);
+                    timeEl.textContent = timeStr;
                 }
+
+                updateTime();
+                setInterval(updateTime, 1000);
+                document.addEventListener('visibilitychange', function() {
+                    if (document.visibilityState === 'visible') updateTime();
+                });
+
+                // (Opsional) jika Anda juga ingin memperbarui suhu dari Open-Meteo di sini,
+                // bisa gabungkan fetch weather seperti contoh sebelumnya. Berikut contoh ringan
+                // yang hanya memperbarui elemen #suhu dan #weather-* apabila tersedia:
+                (function fetchWeatherFallback() {
+                    const tempEl = document.getElementById('suhu');
+                    const weatherText = document.getElementById('weather-text');
+                    const weatherIcon = document.getElementById('weather-icon');
+                    if (!tempEl) return;
+
+                    function renderWeather(data) {
+                        if (!data || !data.current_weather) {
+                            tempEl.textContent = '--°C';
+                            if (weatherText) weatherText.textContent = 'Cuaca tidak tersedia';
+                            return;
+                        }
+                        const cw = data.current_weather;
+                        const temp = Math.round(cw.temperature);
+                        tempEl.textContent = temp + '°C';
+                        if (weatherText) weatherText.textContent = cw.weathercode === 0 ? 'Cerah' :
+                            'Berawan / Berangin';
+                        const code = cw.weathercode;
+                        const icon = (code === 0) ? '☀️' : (code <= 3 ? '⛅' : (code <= 48 ? '🌫️' : (code <= 77 ?
+                            '🌧️' : '🌦️')));
+                        if (weatherIcon) weatherIcon.textContent = icon;
+                    }
+
+                    // gunakan geolocation jika tersedia, fallback ke Jakarta
+                    function fetchWeather(lat, lon) {
+                        const url =
+                            `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
+                        fetch(url).then(r => r.json()).then(json => renderWeather(json)).catch(() => renderWeather(
+                            null));
+                    }
+
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(function(pos) {
+                            fetchWeather(pos.coords.latitude, pos.coords.longitude);
+                        }, function() {
+                            fetchWeather(-6.2088, 106.8456);
+                        }, {
+                            timeout: 5000
+                        });
+                    } else {
+                        fetchWeather(-6.2088, 106.8456);
+                    }
+                })();
             })();
         </script>
     @endpush

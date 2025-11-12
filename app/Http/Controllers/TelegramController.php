@@ -20,41 +20,44 @@ class TelegramController extends Controller
     {
         $data = $request->all();
 
-        // Pastikan ada message
+        // Pastikan ada pesan masuk
         if (!isset($data['message']['text'])) {
             return response()->json(['ok' => true]);
         }
 
         $chatId = $data['message']['chat']['id'];
-        $text = $data['message']['text'];
+        $text = strtolower(trim($data['message']['text']));
 
-        // Command /jadwal
-        if (strtolower($text) == '/jadwal') {
+        // Command /jadwal → hari ini
+        if ($text === '/jadwal') {
             $this->sendTodaysActivity($chatId);
+        }
+
+        // Command /besok → jadwal besok
+        if ($text === '/besok') {
+            $this->sendTomorrowsActivity($chatId);
         }
 
         return response()->json(['ok' => true]);
     }
 
-    protected function sendTodaysActivity($chatId)
+    protected function sendTomorrowsActivity($chatId)
     {
-        $today = now()->toDateString();
-        $activities = Activity::where('start_date', '<=', $today)
-            ->where('end_date', '>=', $today)
+        $tomorrow = now()->addDay()->toDateString();
+        $activities = Activity::where('start_date', '<=', $tomorrow)
+            ->where('end_date', '>=', $tomorrow)
             ->get();
 
         if ($activities->isEmpty()) {
-            $this->telegram->sendMessage($chatId, "Tidak ada jadwal hari ini.");
+            $this->telegram->sendMessage($chatId, "Tidak ada jadwal untuk besok.");
         } else {
             foreach ($activities as $act) {
-                // Format tanggal ke gaya Indonesia
                 $start = Carbon::parse($act->start_date)->locale('id')->translatedFormat('d F Y');
                 $end   = Carbon::parse($act->end_date)->locale('id')->translatedFormat('d F Y');
 
-                // Jika tanggalnya sama, tampilkan hanya 1
                 $dateRange = $start === $end ? $start : "{$start} – {$end}";
 
-                $message = "📋 *Jadwal Hari Ini*\n";
+                $message = "📅 *Jadwal Besok*\n";
                 $message .= "───────────────────────\n";
                 $message .= "🗂️ *Kegiatan:* {$act->kegiatan}\n";
                 $message .= "📅 *Waktu:* {$dateRange}\n";
