@@ -74,10 +74,6 @@
                                     </div>
                                 </a>
                             </li>
-                            <li class="px-3 py-2">
-                                <a href="{{ url('/notifications') }}"
-                                    class="block text-center text-sm text-sky-600 hover:underline">Lihat semua</a>
-                            </li>
                         </ul>
                     </div>
                 </details>
