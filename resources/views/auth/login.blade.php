@@ -196,19 +196,16 @@
       <aside class="auth-side" aria-hidden="false">
         <div>
           <div class="brand-mark" aria-hidden="true">
-            <svg width="38" height="38" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <rect x="2" y="3" width="20" height="18" rx="4" fill="rgba(255,255,255,0.08)"></rect>
-              <path d="M7 13l3 3 7-9" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <span>erp.</span>
+            <img src="{{ asset('images/metinca-logo.jpeg') }}" alt="">
+            <span>Metinca Portal .</span>
           </div>
         </div>
 
         <h2 id="login-heading" style="color: white">Selamat datang di Portal MCI</h2>
-        <p class="features">Akses cepat ke jadwal, tracking, inventory, dan hasil inspeksi kualitas. Aman, cepat, dan dapat diandalkan untuk tim Anda.</p>
+        <p class="features" style="color: white">Akses cepat ke jadwal, tracking, inventory, dan hasil inspeksi kualitas. Aman, cepat, dan dapat diandalkan untuk tim Anda.</p>
 
         <div class="aside-cta">
-          <div class="small-muted" style="color: white">Tips: Gunakan akun kantor untuk akses penuh. Jika lupa kata sandi, gunakan tautan "Forgot Password".</div>
+          <div class="small-muted" style="color: white">Tips: Gunakan akun kantor untuk akses penuh. Jika lupa kata sandi, Silahkan hubungi admin</div>
         </div>
       </aside>
 
