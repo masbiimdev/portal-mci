@@ -170,8 +170,8 @@
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-xl font-bold mb-0 text-gray-800">📢 Pengumuman Terbaru</h2>
                 <div class="flex items-center gap-3">
-                    <a href="{{ route('announcements.index') }}" class="text-sm text-sky-600 hover:underline">Lihat Semua
-                        Pengumuman</a>
+                    {{-- <a href="{{ route('announcements.index') }}" class="text-sm text-sky-600 hover:underline">Lihat Semua
+                        Pengumuman</a> --}}
                 </div>
             </div>
 
@@ -205,16 +205,15 @@
                             </div>
 
                             <div class="min-w-0 flex-1">
-                                <h3 id="ann-{{ $item->id }}" class="font-semibold text-gray-800">{{ $item->title }}
+                                <h3 id="ann-{{ $item->id }}" class="font-semibold text-black-800">{{ $item->title }}
                                 </h3>
-                                <p class="text-sm text-gray-600 mt-1">{{ Str::limit($item->content, 120, '...') }}</p>
+                                <p class="text-sm text-black-600 mt-1">{{ Str::limit($item->content, 120, '...') }}</p>
 
                                 <div class="mt-3 flex items-center justify-between gap-3">
                                     <div class="flex items-center gap-2">
-                                        <span class="text-xs text-gray-400">oleh {{ $item->author->name ?? 'Admin' }}</span>
+                                        <span class="text-xs text-black-400">oleh <br> {{ $item->author->name ?? 'Admin' }}</span>
                                         @if ($item->expiry_date)
-                                            <span class="text-xs text-gray-400">•</span>
-                                            <span class="text-xs text-gray-400">Sampai
+                                            <span class="text-xs text-black-400">Sampai <br>
                                                 {{ \Carbon\Carbon::parse($item->expiry_date)->translatedFormat('d M Y') }}</span>
                                         @endif
                                     </div>

@@ -7,20 +7,7 @@
 
         <!-- QUICK ACCESS -->
         <div class="row g-3">
-            <!-- Users -->
-            <div class="col-6 col-md-3">
-                @if (Auth::user()->role === 'SUP')
-                    <a href="{{ route('users.index') }}" class="text-decoration-none">
-                        <div class="card shadow-sm border-0 text-center h-100 quick-card">
-                            <div class="card-body">
-                                <i class="bx bx-user text-success fs-1"></i>
-                                <h6 class="fw-bold mt-2 mb-0">Users</h6>
-                                <small class="text-muted">Data Pengguna</small>
-                            </div>
-                        </div>
-                    </a>
-                @endif
-            </div>
+
             <div class="col-6 col-md-3">
                 <a href="{{ route('announcements.index') }}" class="text-decoration-none">
                     <div class="card shadow-sm border-0 text-center h-100 quick-card">
@@ -71,6 +58,20 @@
                     </div>
                 </a>
             </div>
+            <!-- Users -->
+            <div class="col-6 col-md-3">
+                @if (Auth::user()->role === 'SUP')
+                    <a href="{{ route('users.index') }}" class="text-decoration-none">
+                        <div class="card shadow-sm border-0 text-center h-100 quick-card">
+                            <div class="card-body">
+                                <i class="bx bx-user text-success fs-1"></i>
+                                <h6 class="fw-bold mt-2 mb-0">Users</h6>
+                                <small class="text-muted">Data Pengguna</small>
+                            </div>
+                        </div>
+                    </a>
+                @endif
+            </div>
         </div>
 
         <!-- INFO STATISTICS -->
@@ -107,7 +108,7 @@
                     </div>
                 </div>
             </div>
-                        <div class="col-6 col-md-3">
+            <div class="col-6 col-md-3">
                 <div class="card border-start border-success border-3 shadow-sm">
                     <div class="card-body">
                         <h6 class="text-muted mb-1">Total Pengumuman</h6>
