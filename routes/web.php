@@ -34,6 +34,8 @@ Route::get('tracking/{jobcard}/history', 'TrackingController@ajaxHistory')->name
 // Undee Construction Page
 Route::get('/under-construction', [HomeController::class, 'under'])->name('under');
 //     ->name('jadwal.show');
+// Lihat Detail Pengumuman
+Route::get('/pengumuman/show/{title}', [AnnonController::class, 'show'])->name('announcements.show');
 
 Route::get('/portal/inventory', [HomeController::class, 'inventory'])->name('inventory')->middleware('check.sup');
 Route::get('/portal/inventory/data', [HomeController::class, 'getData'])->name('inventory.data');
@@ -59,7 +61,7 @@ Route::middleware(['auth'])->group(function () {
 
 
 Route::middleware(['auth', 'module.access:announcement'])->group(function () {
-    Route::resource('announcements', 'AnnonController');
+    Route::resource('announcements', 'AnnonController')->except(['show']);
 });
 
 Route::middleware(['auth', 'module.access:activities'])->group(function () {

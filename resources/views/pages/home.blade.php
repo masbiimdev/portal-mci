@@ -146,8 +146,12 @@
                                             {{ $prio === 'high' ? 'bg-red-50 text-red-600' : ($prio === 'medium' ? 'bg-yellow-50 text-yellow-700' : 'bg-blue-50 text-sky-600') }}">
                                             {{ strtoupper($prio) }}
                                         </span>
-                                        <a href="{{ route('announcements.show', $item->id) }}"
-                                            class="inline-block px-3 py-1 rounded-lg text-sm text-white {{ $prio === 'high' ? 'bg-red-600 hover:bg-red-700' : ($prio === 'medium' ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-sky-600 hover:bg-sky-700') }} focus-ring">Lihat</a>
+                                        <a href="{{ url('pengumuman/show/' . Str::slug($item->title)) }}"
+                                            class="inline-block px-3 py-1 rounded-lg text-sm text-white
+    {{ $prio === 'high' ? 'bg-red-600 hover:bg-red-700' : ($prio === 'medium' ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-sky-600 hover:bg-sky-700') }}
+    focus-ring">
+                                            Lihat
+                                        </a>
                                     </div>
                                 </div>
                             </div>

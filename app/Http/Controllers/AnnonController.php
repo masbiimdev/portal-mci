@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Annon;
+use Illuminate\Support\Str;
 
 class AnnonController extends Controller
 {
@@ -95,8 +96,10 @@ class AnnonController extends Controller
     }
 
 
-    public function show(Annon $announcement)
+    public function show($title)
     {
+        $decodedTitle = str_replace('-', ' ', $title);
+        $announcement = Annon::whereRaw('LOWER(title) = ?', [strtolower($decodedTitle)])->firstOrFail();
         // $announcement sudah model tunggal via route model binding
         return view('pages.admin.pengumuman.show', compact('announcement'));
     }
