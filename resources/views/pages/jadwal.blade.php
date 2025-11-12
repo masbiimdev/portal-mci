@@ -79,23 +79,22 @@
                 </ul>
             </div>
             <!-- Banner Telegram Bot Premium Style -->
-            <div class="rounded-2xl shadow-xl mb-6 p-5 d-flex flex-column flex-md-row justify-content-between align-items-center"
-                style="background: linear-gradient(135deg, #6EC1E4, #29A9EB); color: #fff;">
-
-                <!-- Teks -->
-                <div class="mb-4 mb-md-0">
-                    <h4 class="fw-bold mb-2" style="font-size:1.25rem;">💬 Pantau Jadwal Kegiatan Lewat Telegram</h4>
-                    <p class="mb-0" style="font-size:0.95rem; max-width: 400px;">
-                        Cek jadwal kegiatan dengan cepat dan mudah menggunakan bot Telegram resmi MCI.
-                    </p>
-                </div>
-
-                <!-- Tombol -->
+            <div class="rounded-2xl overflow-hidden">
                 <a href="https://t.me/Notifmci_bot" target="_blank"
-                    class="d-inline-flex align-items-center gap-2 px-4 py-2 fw-semibold text-white"
-                    style="background-color:#007ACC; border-radius:12px; box-shadow:0 6px 12px rgba(0,0,0,0.2); transition: all 0.2s ease;">
-                    <i class="bx bxl-telegram fs-4"></i>
-                    <span>Buka Bot Telegram</span>
+                    class="block bg-gradient-to-r from-sky-500 to-blue-600 text-white p-4 rounded-2xl shadow-lg hover:scale-[1.01] transition-transform">
+                    <div class="flex items-start gap-3">
+                        <div class="flex-shrink-0">
+                            <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M12 2v4m0 12v4m10-10h-4M6 12H2m15.4-6.4L19 5m-14 14L5 19m12 0l1.4 1.4M5 5L3.6 3.6" />
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="font-semibold">💬 Pantau Jadwal Lewat Telegram</div>
+                            <div class="text-sm opacity-90">Terima notifikasi cepat & ringkasan kegiatan.</div>
+                        </div>
+                    </div>
                 </a>
             </div>
 
