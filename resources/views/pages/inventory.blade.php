@@ -173,16 +173,16 @@
                     <thead
                         class="bg-gradient-to-r from-blue-600 to-blue-500 text-white text-xs uppercase tracking-wide sticky top-0 z-10">
                         <tr>
-                            <th class="px-4 py-3 text-left">No</th>
-                            <th class="px-4 py-3 text-left">Heat/Lot No</th>
-                            <th class="px-4 py-3 text-left">No Drawing</th>
-                            <th class="px-4 py-3 text-left">Tipe Valve</th>
-                            <th class="px-4 py-3 text-left">Spare Part</th>
-                            <th class="px-4 py-3 text-left">Dimensi</th>
-                            <th class="px-4 py-3 text-left">Posisi Barang</th>
-                            <th class="px-4 py-3 text-center">Qty Masuk</th>
-                            <th class="px-4 py-3 text-center">Qty Keluar</th>
-                            <th class="px-4 py-3 text-center">Posisi Stok</th>
+                            <th class="px-4 py-3 text-left w-12">No</th>
+                            <th class="px-4 py-3 text-left min-w-[160px]">Heat/Lot No</th>
+                            <th class="px-4 py-3 text-left min-w-[140px]">No Drawing</th>
+                            <th class="px-4 py-3 text-left min-w-[180px]">Tipe Valve</th>
+                            <th class="px-4 py-3 text-left min-w-[180px]">Spare Part</th>
+                            <th class="px-4 py-3 text-left min-w-[100px]">Dimensi</th>
+                            <th class="px-4 py-3 text-left min-w-[120px]">Posisi Barang</th>
+                            <th class="px-4 py-3 text-center w-28">Qty Masuk</th>
+                            <th class="px-4 py-3 text-center w-28">Qty Keluar</th>
+                            <th class="px-4 py-3 text-center w-28">Posisi Stok</th>
                         </tr>
                     </thead>
                     <tbody id="inventoryBody" class="divide-y divide-gray-100 bg-white min-h-[120px]">
@@ -191,13 +191,22 @@
                 </table>
             </div>
 
-            <div id="tableFooter" class="mt-4 flex items-center justify-between text-sm text-gray-600 hidden">
-                <div id="tableCount">Menampilkan <span id="visibleCount">0</span> baris</div>
-                <div>
-                    <button id="btnPrev"
-                        class="px-3 py-1 rounded border border-gray-200 mr-2 bg-white text-gray-700 hidden">Sebelumnya</button>
-                    <button id="btnNext"
-                        class="px-3 py-1 rounded border border-gray-200 bg-white text-gray-700 hidden">Berikutnya</button>
+            <div id="tableFooter" class="mt-4 flex flex-col md:flex-row md:items-center md:justify-between text-sm text-gray-600 hidden gap-3">
+                <div id="tableCount">Menampilkan <span id="showingRange">0</span> dari <span id="totalCount">0</span> baris</div>
+                <div class="flex items-center gap-2">
+                    <button id="btnPrev" class="px-3 py-1 rounded border border-gray-200 bg-white text-gray-700 disabled:opacity-50">Sebelumnya</button>
+                    <div class="text-xs text-gray-500 px-2">Halaman <span id="currentPage">1</span> / <span id="totalPages">1</span></div>
+                    <button id="btnNext" class="px-3 py-1 rounded border border-gray-200 bg-white text-gray-700 disabled:opacity-50">Berikutnya</button>
+
+                    <div class="ml-2 flex items-center gap-2">
+                        <label for="pageSize" class="text-xs text-gray-500">Baris per halaman</label>
+                        <select id="pageSize" class="border rounded px-2 py-1 text-sm">
+                            <option value="10">10</option>
+                            <option value="25" selected>25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
@@ -210,8 +219,12 @@
 
     <script>
         let chartInstance;
-        let lastFetchedTableData = []; // for export
+        let lastFetchedTableData = []; // for export & pagination
         let debounceTimer;
+
+        // pagination state
+        let currentPage = 1;
+        let pageSize = 25;
 
         $(function() {
             // Default bulan & tahun to current
@@ -262,6 +275,26 @@
                     clearTimeout(debounceTimer);
                     loadTable();
                 }
+            });
+
+            // pagination controls
+            $('#btnPrev').on('click', function() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderTableRows(lastFetchedTableData);
+                }
+            });
+            $('#btnNext').on('click', function() {
+                const totalPages = Math.max(1, Math.ceil((lastFetchedTableData?.length || 0) / pageSize));
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderTableRows(lastFetchedTableData);
+                }
+            });
+            $('#pageSize').on('change', function() {
+                pageSize = Number($(this).val()) || 25;
+                currentPage = 1;
+                renderTableRows(lastFetchedTableData);
             });
         });
 
@@ -327,7 +360,8 @@
                 })
                 .done(function(data) {
                     $('#loadingTable').addClass('hidden');
-                    lastFetchedTableData = data || [];
+                    lastFetchedTableData = Array.isArray(data) ? data : [];
+                    currentPage = 1; // reset to first page on new fetch
                     renderTableRows(lastFetchedTableData);
                 })
                 .fail(function() {
@@ -340,44 +374,111 @@
         }
 
         function renderTableRows(data) {
-            let html = '';
-            if (Array.isArray(data) && data.length > 0) {
-                data.forEach((item, index) => {
-                    const idx = index + 1;
-                    const valveNames = Array.isArray(item.material?.valve_name) ?
-                        item.material.valve_name.join(', ') :
-                        (item.material?.valve_name ?? '-');
+            const total = Array.isArray(data) ? data.length : 0;
+            $('#totalCount').text(total);
 
-                    // status color (if present in item)
-                    let statusClass = 'bg-gray-100 text-gray-700';
-                    if (item.status === 'OK') statusClass = 'bg-green-100 text-green-700';
-                    else if (item.status === 'Warning') statusClass = 'bg-yellow-100 text-yellow-700';
-                    else if (item.status === 'Below') statusClass = 'bg-red-100 text-red-700';
-
-                    html += `
-                        <tr class="hover:bg-blue-50 transition">
-                            <td class="px-4 py-3 border align-top">${idx}</td>
-                            <td class="px-4 py-3 border align-top">${escapeHtml(item.material?.heat_lot_no ?? '-')}</td>
-                            <td class="px-4 py-3 border align-top">${escapeHtml(item.material?.no_drawing ?? '-')}</td>
-                            <td class="px-4 py-3 border align-top">${escapeHtml(valveNames)}</td>
-                            <td class="px-4 py-3 border align-top">${escapeHtml(item.material?.spare_part_name ?? '-')}</td>
-                            <td class="px-4 py-3 border align-top">${escapeHtml(item.material?.dimensi ?? '-')}</td>
-                            <td class="px-4 py-3 border align-top">${escapeHtml(item.material?.rack_name ?? '-')}</td>
-                            <td class="px-4 py-3 border text-green-600 font-semibold text-center align-top">${formatNumber(item.qty_in)}</td>
-                            <td class="px-4 py-3 border text-red-500 font-semibold text-center align-top">${formatNumber(item.qty_out)}</td>
-                            <td class="px-4 py-3 border font-bold text-center align-top">${formatNumber(item.stock_akhir)}</td>
-                        </tr>`;
-                });
-                $('#inventoryBody').html(html);
-                $('#visibleCount').text(data.length);
-                $('#tableFooter').removeClass('hidden');
-            } else {
+            if (total === 0) {
                 $('#inventoryBody').html(
                     `<tr><td colspan="10" class="py-8 text-gray-400 text-center">Tidak ada data untuk periode ini.</td></tr>`
-                    );
-                $('#visibleCount').text(0);
+                );
+                $('#showingRange').text(0);
+                $('#currentPage').text(1);
+                $('#totalPages').text(1);
                 $('#tableFooter').removeClass('hidden');
+                $('#btnPrev, #btnNext').prop('disabled', true);
+                return;
             }
+
+            const totalPages = Math.max(1, Math.ceil(total / pageSize));
+            if (currentPage > totalPages) currentPage = totalPages;
+
+            const startIdx = (currentPage - 1) * pageSize;
+            const pageItems = data.slice(startIdx, startIdx + pageSize);
+
+            let html = '';
+            pageItems.forEach((item, index) => {
+                const globalIndex = startIdx + index + 1;
+                const valveNames = Array.isArray(item.material?.valve_name) ?
+                    item.material.valve_name.join(', ') :
+                    (item.material?.valve_name ?? '-');
+
+                // status color (if present in item)
+                let statusClass = 'bg-gray-50 text-gray-700';
+                if (item.status === 'OK') statusClass = 'bg-green-50 text-green-700';
+                else if (item.status === 'Warning') statusClass = 'bg-yellow-50 text-yellow-700';
+                else if (item.status === 'Below') statusClass = 'bg-red-50 text-red-700';
+
+                // truncated cells with title for full value (improves readability)
+                const heatLot = escapeHtml(item.material?.heat_lot_no ?? '-');
+                const noDrawing = escapeHtml(item.material?.no_drawing ?? '-');
+                const sparePart = escapeHtml(item.material?.spare_part_name ?? '-');
+                const dimensi = escapeHtml(item.material?.dimensi ?? '-');
+                const rack = escapeHtml(item.material?.rack_name ?? '-');
+
+                const qtyIn = formatNumber(item.qty_in);
+                const qtyOut = formatNumber(item.qty_out);
+                const stock = formatNumber(item.stock_akhir);
+
+                html += `
+                    <tr class="hover:bg-blue-50 transition">
+                        <td class="px-4 py-3 border align-top text-sm">${globalIndex}</td>
+
+                        <td class="px-4 py-3 border align-top">
+                            <div class="max-w-[180px] truncate text-sm" title="${heatLot}">${heatLot}</div>
+                        </td>
+
+                        <td class="px-4 py-3 border align-top">
+                            <div class="max-w-[160px] truncate text-sm" title="${noDrawing}">${noDrawing}</div>
+                        </td>
+
+                        <td class="px-4 py-3 border align-top">
+                            <div class="max-w-[220px] truncate text-sm" title="${escapeHtml(valveNames)}">${escapeHtml(valveNames)}</div>
+                        </td>
+
+                        <td class="px-4 py-3 border align-top">
+                            <div class="max-w-[220px] truncate text-sm" title="${sparePart}">${sparePart}</div>
+                        </td>
+
+                        <td class="px-4 py-3 border align-top">
+                            <div class="max-w-[120px] truncate text-sm" title="${dimensi}">${dimensi}</div>
+                        </td>
+
+                        <td class="px-4 py-3 border align-top">
+                            <div class="max-w-[140px] truncate text-sm" title="${rack}">
+                                <span class="inline-block bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-xs font-medium">${rack}</span>
+                            </div>
+                        </td>
+
+                        <td class="px-4 py-3 border text-center align-top">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-sm font-semibold text-green-700 bg-green-50">${qtyIn}</span>
+                        </td>
+
+                        <td class="px-4 py-3 border text-center align-top">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-sm font-semibold text-red-700 bg-red-50">${qtyOut}</span>
+                        </td>
+
+                        <td class="px-4 py-3 border text-center align-top">
+                            <strong class="text-sm">${stock}</strong>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            $('#inventoryBody').html(html);
+
+            const showingFrom = startIdx + 1;
+            const showingTo = Math.min(startIdx + pageItems.length, total);
+            $('#showingRange').text(`${showingFrom}–${showingTo}`);
+            $('#currentPage').text(currentPage);
+            $('#totalPages').text(totalPages);
+            $('#totalCount').text(total);
+
+            // footer visibility & button state
+            $('#tableFooter').removeClass('hidden');
+            $('#btnPrev').prop('disabled', currentPage <= 1);
+            $('#btnNext').prop('disabled', currentPage >= totalPages);
+
+            // large tables: make header sticky still works thanks to overflow-x-auto wrapper
         }
 
         // Chart

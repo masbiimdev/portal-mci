@@ -19,16 +19,52 @@
                     class="inline-flex items-center px-2 py-1 text-sm font-medium rounded-md transition-colors {{ request()->is('/') ? 'text-sky-600 bg-sky-50' : 'text-gray-700 hover:text-sky-600 hover:bg-sky-50' }}"
                     aria-current="{{ request()->is('/') ? 'page' : '' }}">Home</a>
 
-                <a href="{{ url('/schedule') }}"
-                    class="inline-flex items-center px-2 py-1 text-sm font-medium rounded-md transition-colors {{ request()->is('schedule') ? 'text-sky-600 bg-sky-50' : 'text-gray-700 hover:text-sky-600 hover:bg-sky-50' }}">Jadwal</a>
+                @php
+                    // Aktivitas active when any of these routes match
+                    $isAktivitasActive = request()->is('activities*') || request()->is('activities/witness*') || request()->is('activities/kalibrasi*') || request()->is('witness*') || request()->is('kalibrasi*');
+                @endphp
+
+                <!-- Aktivitas (dropdown: Witness + Kalibrasi) -->
+                <details class="relative" id="aktivitasDetails">
+                    <summary
+                        class="inline-flex items-center px-2 py-1 text-sm font-medium rounded-md transition-colors list-none cursor-pointer
+                        {{ $isAktivitasActive ? 'text-sky-600 bg-sky-50' : 'text-gray-700 hover:text-sky-600 hover:bg-sky-50' }}"
+                        role="button" aria-haspopup="true" aria-expanded="{{ $isAktivitasActive ? 'true' : 'false' }}">
+                        Aktivitas
+                        <svg class="ml-2 h-4 w-4 text-gray-400" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                            <path d="M6 8l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </summary>
+
+                    <div
+                        class="absolute left-0 mt-2 w-44 bg-white border border-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50 p-1">
+                        <a href="{{ url('/schedule') }}"
+                            class="block px-3 py-2 text-sm rounded-md text-gray-700 hover:bg-sky-50 {{ request()->is('activities/witness*') || request()->is('witness*') ? 'text-sky-600 font-semibold' : '' }}">
+                            Witness/Inpection
+                        </a>
+                        <a href="{{ url('/under-construction') }}"
+                            class="block px-3 py-2 text-sm rounded-md text-gray-700 hover:bg-sky-50 {{ request()->is('activities/kalibrasi*') || request()->is('kalibrasi*') ? 'text-sky-600 font-semibold' : '' }}">
+                            Kalibrasi
+                        </a>
+                    </div>
+                </details>
 
                 @php $isSUP = auth()->check() && auth()->user()->role === 'SUP'; @endphp
 
-                <a href="{{ $isSUP ? url('/tracking') : url('/under-construction') }}"
-                    class="inline-flex items-center px-2 py-1 text-sm font-medium rounded-md transition-colors {{ request()->is('tracking') ? 'text-sky-600 bg-sky-50' : 'text-gray-700 hover:text-sky-600 hover:bg-sky-50' }}">Tracking</a>
+                {{-- TRACKING --}}
+                {{-- <a href="{{ $isSUP ? url('/tracking') : url('/under-construction') }}"
+                    class="inline-flex items-center px-2 py-1 text-sm font-medium rounded-md transition-colors 
+        {{ request()->is('tracking*') ? 'text-sky-600 bg-sky-50' : 'text-gray-700 hover:text-sky-600 hover:bg-sky-50' }}">
+                    Tracking
+                </a> --}}
 
+                {{-- INVENTORY --}}
                 <a href="{{ $isSUP ? url('/portal/inventory') : url('/under-construction') }}"
-                    class="inline-flex items-center px-2 py-1 text-sm font-medium rounded-md transition-colors {{ request()->is('inventory') ? 'text-sky-600 bg-sky-50' : 'text-gray-700 hover:text-sky-600 hover:bg-sky-50' }}">Inventory</a>
+                    class="inline-flex items-center px-2 py-1 text-sm font-medium rounded-md transition-colors 
+        {{ request()->is('portal/inventory*') ? 'text-sky-600 bg-sky-50' : 'text-gray-700 hover:text-sky-600 hover:bg-sky-50' }}">
+                    Inventory
+                </a>
             </div>
 
             <!-- Right: Notif + User + Mobile -->
@@ -138,8 +174,24 @@
         role="menu" aria-label="Mobile primary">
         <a href="{{ url('/') }}"
             class="block px-2 py-2 rounded-md text-sm font-medium {{ request()->is('/') ? 'text-sky-600 bg-sky-50' : 'text-gray-700 hover:text-sky-600 hover:bg-sky-50' }}">Home</a>
-        <a href="{{ url('/schedule') }}"
-            class="block px-2 py-2 rounded-md text-sm font-medium {{ request()->is('schedule') ? 'text-sky-600 bg-sky-50' : 'text-gray-700 hover:text-sky-600 hover:bg-sky-50' }}">Jadwal</a>
+
+        <!-- Mobile Aktivitas: collapsible sublist -->
+        <div class="border-b border-gray-100">
+            <button id="mobileAktivitasToggle"
+                class="w-full text-left flex items-center justify-between px-2 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-sky-50">
+                <span class="{{ $isAktivitasActive ? 'text-sky-600 font-semibold' : '' }}">Aktivitas</span>
+                <svg id="mobileAktivitasIcon" class="h-4 w-4 text-gray-400 transform transition-transform" viewBox="0 0 20 20" fill="none">
+                    <path d="M6 8l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </button>
+            <div id="mobileAktivitasList" class="hidden pl-4 pr-2 pb-2 space-y-1">
+                <a href="{{ url('/activities/witness') }}"
+                    class="block px-2 py-1 rounded-md text-sm text-gray-700 hover:bg-sky-50 {{ request()->is('activities/witness*') || request()->is('witness*') ? 'text-sky-600 font-semibold' : '' }}">Witness</a>
+                <a href="{{ url('/activities/kalibrasi') }}"
+                    class="block px-2 py-1 rounded-md text-sm text-gray-700 hover:bg-sky-50 {{ request()->is('activities/kalibrasi*') || request()->is('kalibrasi*') ? 'text-sky-600 font-semibold' : '' }}">Kalibrasi</a>
+            </div>
+        </div>
+
         <a href="{{ $isSUP ? url('/tracking') : url('/under-construction') }}"
             class="block px-2 py-2 rounded-md text-sm font-medium {{ request()->is('tracking') ? 'text-sky-600 bg-sky-50' : 'text-gray-700 hover:text-sky-600 hover:bg-sky-50' }}">Tracking</a>
         <a href="{{ $isSUP ? url('/portal/inventory') : url('/under-construction') }}"
@@ -164,7 +216,7 @@
     <!-- Small inline script to support mobile toggle and outside click close for <details> -->
     <script>
         (function() {
-            // Mobile hamburger toggle (kept simple)
+            // Mobile hamburger toggle
             const hamburger = document.getElementById('hamburger');
             const mobileMenu = document.getElementById('mobileMenu');
             if (hamburger && mobileMenu) {
@@ -174,12 +226,29 @@
                     if (hidden) {
                         mobileMenu.classList.remove('hidden');
                         hamburger.setAttribute('aria-expanded', 'true');
-                        // focus first link
                         const f = mobileMenu.querySelector('a, button');
                         f && f.focus();
                     } else {
                         mobileMenu.classList.add('hidden');
                         hamburger.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            }
+
+            // Mobile Aktivitas sublist toggle
+            const mobileAktToggle = document.getElementById('mobileAktivitasToggle');
+            const mobileAktList = document.getElementById('mobileAktivitasList');
+            const mobileAktIcon = document.getElementById('mobileAktivitasIcon');
+            if (mobileAktToggle && mobileAktList) {
+                mobileAktToggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const hidden = mobileAktList.classList.contains('hidden');
+                    if (hidden) {
+                        mobileAktList.classList.remove('hidden');
+                        mobileAktIcon.classList.add('rotate-180');
+                    } else {
+                        mobileAktList.classList.add('hidden');
+                        mobileAktIcon.classList.remove('rotate-180');
                     }
                 });
             }
@@ -192,12 +261,11 @@
                 });
             });
 
-            // keyboard: close details on Escape
+            // keyboard: close details on Escape and hide mobile menu
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
                     document.querySelectorAll('details[open]').forEach(function(d) {
                         d.removeAttribute('open');
-                        // try focus summary
                         const s = d.querySelector('summary');
                         s && s.focus();
                     });
