@@ -46,13 +46,14 @@ Route::get('/login', [App\Http\Controllers\Auth\LoginController::class, 'showLog
 Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'login']);
 // Logout
 Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
+Route::get('/notifications', 'ActivityController@notifications')->name('notifications.index');
+
 
 
 // Route dengan auth
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('users', 'UserController');
-    Route::get('/notifications', 'ActivityController@notifications')->name('notifications.index');
 
     Route::resource('modules', 'AccessController');
     Route::get('/access/user', [AccessController::class, 'userAccess'])->name('access.user');

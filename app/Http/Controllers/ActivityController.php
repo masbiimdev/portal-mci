@@ -6,6 +6,8 @@ use App\Activity;
 use App\ActivityItemResult;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+
 
 class ActivityController extends Controller
 {
@@ -107,12 +109,48 @@ class ActivityController extends Controller
 
     public function notifications()
     {
-        // Ambil 3 jadwal terbaru
-        $notifications = Activity::orderBy('created_at', 'desc')
-            ->take(3)
-            ->get();
+        // 🔧 Data inspection dari activity_item_results
+        $activities = DB::table('activity_item_results as air')
+            ->join('activities as a', 'a.id', '=', 'air.activity_id')
+            ->select(
+                'a.kegiatan as activity_name',
+                'air.part_name',
+                'air.qty',
+                'air.result',
+                'air.updated_at'
+            )
+            ->latest('air.updated_at')
+            ->limit(5)
+            ->get()
+            ->map(fn($x) => [
+                'icon' => '🧾',
+                'category' => 'Inspection',
+                'message' => "{$x->activity_name} - {$x->part_name} - {$x->qty} pcs - {$x->result}",
+                'time' => \Carbon\Carbon::parse($x->updated_at)->diffForHumans(),
+            ]);
 
-        return view('includes.navbar', compact('notifications'));
+        // 📢 Data pengumuman
+        $announcements = DB::table('announcements')
+            ->select('title', 'type', 'created_at')
+            ->latest('created_at')
+            ->limit(5)
+            ->get()
+            ->map(fn($x) => [
+                'icon' => '📢',
+                'category' => 'Pengumuman',
+                'message' => "{$x->title} - {$x->type}",
+                'time' => \Carbon\Carbon::parse($x->created_at)->diffForHumans(),
+            ]);
+
+        // Gabungkan dan urutkan
+        $merged = $activities->concat($announcements)
+            ->sortByDesc('time')
+            ->values();
+
+        // 🧾 Debug hasilnya
+        // dd($merged);
+
+        return response()->json($merged);
     }
 
     public function show($id)

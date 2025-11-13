@@ -21,7 +21,12 @@
 
                 @php
                     // Aktivitas active when any of these routes match
-                    $isAktivitasActive = request()->is('activities*') || request()->is('activities/witness*') || request()->is('activities/kalibrasi*') || request()->is('witness*') || request()->is('kalibrasi*');
+                    $isAktivitasActive =
+                        request()->is('activities*') ||
+                        request()->is('activities/witness*') ||
+                        request()->is('activities/kalibrasi*') ||
+                        request()->is('witness*') ||
+                        request()->is('kalibrasi*');
                 @endphp
 
                 <!-- Aktivitas (dropdown: Witness + Kalibrasi) -->
@@ -70,49 +75,41 @@
             <!-- Right: Notif + User + Mobile -->
             <div class="flex items-center space-x-3">
                 <!-- Notifications using <details> -->
-                <details id="notifDetails" class="relative" role="group" aria-label="Notifications">
+                <details id="notifDetails" class="relative group" role="group" aria-label="Notifications">
                     <summary
-                        class="relative p-2 rounded-md text-gray-600 hover:text-sky-600 hover:bg-sky-50 focus:outline-none focus:ring-2 focus:ring-sky-200 cursor-pointer list-none"
+                        class="relative flex items-center justify-center p-2 rounded-lg text-gray-600 hover:text-sky-600 hover:bg-sky-50 
+               focus:outline-none focus:ring-2 focus:ring-sky-200 cursor-pointer transition-all duration-200 list-none"
                         aria-haspopup="true">
-                        <svg class="h-5 w-5 inline-block" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                             <path stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
                                 stroke-linejoin="round"
                                 d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0a3 3 0 11-6 0h6z" />
                         </svg>
-                        @php $unread = session('unread_notifications', 2); @endphp
+
+                        @php $unread = session('unread_notifications', 5); @endphp
                         @if ($unread > 0)
                             <span
-                                class="absolute -top-0.5 -right-0.5 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-semibold leading-none text-white bg-rose-500 rounded-full">{{ $unread > 99 ? '99+' : $unread }}</span>
+                                class="absolute -top-0.5 -right-0.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1.5 text-[10px] 
+                       font-semibold leading-none text-white bg-rose-500 rounded-full shadow-sm">
+                                {{ $unread > 99 ? '99+' : $unread }}
+                            </span>
                         @endif
                     </summary>
 
                     <div
-                        class="absolute right-0 mt-2 w-72 bg-white border border-gray-100 rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 z-50 p-2">
-                        <div class="py-2 px-3 text-sm text-gray-600 font-medium">Notifikasi</div>
-                        <ul class="divide-y divide-gray-100 max-h-60 overflow-auto">
-                            <li class="px-3 py-2">
-                                <a href="#"
-                                    class="flex items-start gap-3 text-sm text-gray-700 hover:bg-sky-50 rounded-md p-2">
-                                    <span class="text-xl">📢</span>
-                                    <div>
-                                        <div class="font-medium text-gray-900">Maintenance server</div>
-                                        <div class="text-xs text-gray-500">Hari ini, 22:00</div>
-                                    </div>
-                                </a>
-                            </li>
-                            <li class="px-3 py-2">
-                                <a href="#"
-                                    class="flex items-start gap-3 text-sm text-gray-700 hover:bg-sky-50 rounded-md p-2">
-                                    <span class="text-xl">⚠️</span>
-                                    <div>
-                                        <div class="font-medium text-gray-900">Deadline tender</div>
-                                        <div class="text-xs text-gray-500">Minggu ini</div>
-                                    </div>
-                                </a>
-                            </li>
+                        class="absolute right-0 mt-3 w-80 bg-white border border-gray-100 rounded-xl shadow-lg ring-1 ring-black ring-opacity-5 
+               z-50 py-3 opacity-0 scale-95 origin-top-right transition-all duration-200 ease-out group-open:opacity-100 
+               group-open:scale-100">
+                        <div class="px-4 pb-2 border-b border-gray-100 flex items-center justify-between">
+                            <h4 class="text-sm font-semibold text-gray-700">Notifikasi</h4>
+                        </div>
+
+                        <ul id="notifList" class="divide-y divide-gray-100 max-h-60 overflow-auto">
+                            <li class="px-4 py-3 text-sm text-gray-500 text-center">Memuat...</li>
                         </ul>
                     </div>
                 </details>
+
 
                 <!-- User Menu using <details> -->
                 <details id="userDetails" class="relative" role="group" aria-label="User menu">
@@ -180,8 +177,10 @@
             <button id="mobileAktivitasToggle"
                 class="w-full text-left flex items-center justify-between px-2 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-sky-50">
                 <span class="{{ $isAktivitasActive ? 'text-sky-600 font-semibold' : '' }}">Aktivitas</span>
-                <svg id="mobileAktivitasIcon" class="h-4 w-4 text-gray-400 transform transition-transform" viewBox="0 0 20 20" fill="none">
-                    <path d="M6 8l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                <svg id="mobileAktivitasIcon" class="h-4 w-4 text-gray-400 transform transition-transform"
+                    viewBox="0 0 20 20" fill="none">
+                    <path d="M6 8l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                        stroke-linejoin="round" />
                 </svg>
             </button>
             <div id="mobileAktivitasList" class="hidden pl-4 pr-2 pb-2 space-y-1">
@@ -278,4 +277,53 @@
             });
         })();
     </script>
+    <!-- Script fetch notifikasi -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const notifList = document.getElementById('notifList');
+
+            async function fetchNotifikasi() {
+                notifList.innerHTML = `<li class="px-3 py-2 text-sm text-gray-500 text-center">Memuat...</li>`;
+                try {
+                    const res = await fetch('/notifications');
+                    const data = await res.json();
+
+                    notifList.innerHTML = '';
+
+                    if (!data.length) {
+                        notifList.innerHTML =
+                            `<li class="px-3 py-2 text-sm text-gray-500 text-center">Tidak ada notifikasi baru</li>`;
+                        return;
+                    }
+
+                    data.forEach(item => {
+                        notifList.innerHTML += `
+                    <li class="px-3 py-2">
+                        <div class="flex items-start gap-3 text-sm text-gray-700 hover:bg-sky-50 rounded-md p-2">
+                            <span class="text-xl">${item.icon}</span>
+                            <div>
+                                <div class="font-medium text-gray-900">${item.category} :</div>
+                                <div class="text-sm text-gray-700">${item.message}</div>
+                                <div class="text-xs text-gray-500">${item.time}</div>
+                            </div>
+                        </div>
+                    </li>
+                `;
+                    });
+                } catch (error) {
+                    console.error(error);
+                    notifList.innerHTML =
+                        `<li class="px-3 py-2 text-sm text-gray-500 text-center">Gagal memuat notifikasi</li>`;
+                }
+            }
+
+            // Trigger saat menu notifikasi dibuka
+            document.getElementById('notifDetails').addEventListener('toggle', function() {
+                if (this.open) fetchNotifikasi();
+            });
+        });
+    </script>
+
+
 </nav>
