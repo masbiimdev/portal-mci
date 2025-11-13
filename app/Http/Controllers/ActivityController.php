@@ -122,12 +122,24 @@ class ActivityController extends Controller
             ->latest('air.updated_at')
             ->limit(5)
             ->get()
-            ->map(fn($x) => [
-                'icon' => '🧾',
-                'category' => 'Inspection',
-                'message' => "{$x->activity_name} - {$x->part_name} - {$x->qty} pcs - {$x->result}",
-                'time' => \Carbon\Carbon::parse($x->updated_at)->diffForHumans(),
-            ]);
+            ->map(function ($x) {
+                $resultMap = [
+                    'OK' => 'All Accepted',
+                    'OH' => 'On Hold',
+                    'PA' => 'Partial Accepted',
+                    'NG' => 'Rejected',
+                ];
+
+                $resultText = $resultMap[$x->result] ?? $x->result;
+
+                return [
+                    'icon' => '🧾',
+                    'category' => 'Inspection',
+                    'message' => "{$x->activity_name} - {$x->part_name} - {$x->qty} pcs - {$resultText}",
+                    'time' => \Carbon\Carbon::parse($x->updated_at)->diffForHumans(),
+                    'timestamp' => \Carbon\Carbon::parse($x->updated_at), // ⬅️ untuk sorting
+                ];
+            });
 
         // 📢 Data pengumuman
         $announcements = DB::table('announcements')
@@ -140,18 +152,22 @@ class ActivityController extends Controller
                 'category' => 'Pengumuman',
                 'message' => "{$x->title} - {$x->type}",
                 'time' => \Carbon\Carbon::parse($x->created_at)->diffForHumans(),
+                'timestamp' => \Carbon\Carbon::parse($x->created_at), // ⬅️ untuk sorting
             ]);
 
-        // Gabungkan dan urutkan
-        $merged = $activities->concat($announcements)
-            ->sortByDesc('time')
-            ->values();
-
-        // 🧾 Debug hasilnya
-        // dd($merged);
+        // Gabungkan dan urutkan berdasarkan waktu sebenarnya
+        $merged = $activities
+            ->concat($announcements)
+            ->sortByDesc('timestamp') // ⬅️ pakai timestamp asli
+            ->values()
+            ->map(function ($x) {
+                unset($x['timestamp']); // opsional: buang field timestamp dari output JSON
+                return $x;
+            });
 
         return response()->json($merged);
     }
+
 
     public function show($id)
     {
