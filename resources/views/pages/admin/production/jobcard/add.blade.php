@@ -22,6 +22,9 @@
     <div class="card">
         <div class="card-header">
             <h5 class="mb-0">{{ isset($jobcard) ? 'Edit' : 'Tambah' }} Jobcard</h5>
+            <a href="{{ route('jobcards.index') }}" class="btn btn-light btn-sm">
+                <i class="bx bx-left-arrow-alt"></i> Kembali
+            </a>
         </div>
         <div class="card-body">
             <form action="{{ isset($jobcard) ? route('jobcards.update', $jobcard->id) : route('jobcards.store') }}" method="POST">
