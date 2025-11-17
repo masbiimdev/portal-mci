@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Material;
+use App\MaterialIn;
 use App\MaterialOut;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class MaterialOutController extends Controller
 {
@@ -16,104 +17,95 @@ class MaterialOutController extends Controller
         $materialOuts = MaterialOut::with('material', 'user')->latest()->paginate(10);
         return view('pages.admin.inventory.material_out.index', compact('materialOuts'));
     }
-
-    public function create()
+    public function create(Request $r)
     {
         $month = $r->month ?? now()->format('m');
-        $year = $r->year ?? now()->year;
+        $year  = $r->year ?? now()->year;
 
         $materials = Material::with(['valves', 'sparePart'])->get();
 
-        $dailyOutputs = MaterialOut::selectRaw("material_id, DATE(date_out) as date_out, qty_out")
+        // ===============================
+        // 1️⃣ Hitung Stok Awal Per Material
+        // ===============================
+        $stokAwalPerMaterial = [];
+
+        foreach ($materials as $material) {
+            $currentMonthStart = Carbon::create($year, $month, 1);
+            $prevMonthEnd = $currentMonthStart->copy()->subDay()->format('Y-m-d');
+
+            $totalInPrev = MaterialIn::where('material_id', $material->id)
+                ->whereDate('date_in', '<=', $prevMonthEnd)
+                ->sum('qty_in');
+
+            $totalOutPrev = MaterialOut::where('material_id', $material->id)
+                ->whereDate('date_out', '<=', $prevMonthEnd)
+                ->sum('qty_out');
+
+            $stokAwalPerMaterial[$material->id] =
+                $material->stock_awal + $totalInPrev - $totalOutPrev;
+        }
+
+        // ===============================
+        // 2️⃣ Ambil transaksi harian OUT untuk bulan ini
+        // ===============================
+        $dailyInputs = MaterialOut::selectRaw("material_id, DATE(date_out) as date_out, qty_out")
             ->whereYear('date_out', $year)
             ->whereMonth('date_out', $month)
             ->get()
             ->groupBy('material_id');
 
-        $days = \Carbon\Carbon::create($year, $month)->daysInMonth;
+        // ===============================
+        // 3️⃣ Jumlah hari dalam bulan
+        // ===============================
+        $days = Carbon::create($year, $month)->daysInMonth;
 
-        return view(
-            'pages.admin.inventory.material_out.add',
-            compact('materials', 'dailyOutputs', 'month', 'year', 'days')
-        );
+        return view('pages.admin.inventory.material_out.add', compact(
+            'materials',
+            'dailyInputs',
+            'stokAwalPerMaterial',
+            'month',
+            'year',
+            'days'
+        ));
     }
 
+    // 4️⃣ Create / update qty out per hari
     public function store(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'material_id' => 'required|exists:materials,id',
-            'qty_out'      => 'required|integer|min:1',
-            'date_out'     => 'required|date',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['message' => 'Validasi gagal', 'errors' => $validator->errors()], 422);
-        }
-
-        $material = Material::findOrFail($request->material_id);
-
-        $existing = MaterialOut::where('material_id', $material->id)
-            ->whereDate('date_out', $request->date_out)
-            ->first();
-
-        DB::transaction(function () use ($existing, $material, $request) {
-
-            if ($existing) {
-                $existing->update([
-                    'qty_out'   => $request->qty_out,
-                    'notes'    => $request->notes ?? '-',
-                    'user_id'  => Auth::id(),
-                ]);
-
-                $totalQty = MaterialOut::where('material_id', $material->id)->sum('qty_out');
-                $material->update(['current_stock' => $totalQty]);
-            } else {
-
-                $newStock = $material->current_stock + $request->qty_out;
-
-                $material->update(['current_stock' => $newStock]);
-
-                MaterialOut::create([
-                    'material_id' => $material->id,
-                    'user_id'     => Auth::id(),
-                    'date_out'     => $request->date_out,
-                    'qty_out'      => $request->qty_out,
-                    'stock_after' => $newStock,
-                    'notes'       => $request->notes ?? '-',
-                ]);
-            }
-        });
-
-        return response()->json([
-            'success' => true,
-            'qty_out'  => $request->qty_out
-        ]);
-    }
-
-
-    public function edit(MaterialOut $materialOuts)
-    {
-        $materials = Material::all();
-        return view('pages.admin.inventory.material_out.update', compact('materialOuts', 'materials'));
-    }
-
-    public function update(Request $request, MaterialOut $materialOuts)
     {
         $request->validate([
             'material_id' => 'required|exists:materials,id',
-            'date_out' => 'required|date',
-            'qty_out' => 'required|integer|min:1',
-            'notes' => 'nullable|string',
+            'qty_out'     => 'required|integer|min:1',
+            'date_out'    => 'required|date',
         ]);
 
-        $materialOuts->update($request->all());
+        $materialId = $request->material_id;
 
-        return redirect()->route('material_out.index')->with('success', 'Data material Keluar berhasil diperbarui.');
+        $existing = MaterialOut::where('material_id', $materialId)
+            ->whereDate('date_out', $request->date_out)
+            ->first();
+
+        if ($existing) {
+            $existing->update([
+                'qty_out' => $request->qty_out,
+                'user_id' => Auth::id(),
+            ]);
+        } else {
+            MaterialOut::create([
+                'material_id' => $materialId,
+                'qty_out'     => $request->qty_out,
+                'date_out'    => $request->date_out,
+                'user_id'     => Auth::id(),
+            ]);
+        }
+
+        return response()->json(['success' => true]);
     }
-
-    public function destroy(MaterialOut $materialOuts)
+    public function destroy(MaterialOut $materialOut)
     {
-        $materialOuts->delete();
-        return redirect()->route('material_out.index')->with('success', 'Data material Keluar berhasil dihapus.');
+        $materialOut->delete();
+
+        return redirect()
+            ->route('material_out.index')
+            ->with('success', 'Data material Masuk berhasil dihapus.');
     }
 }

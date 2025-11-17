@@ -589,6 +589,16 @@
                     };
                 },
                 eventDidMount: function(info) {
+                    // 🔥 1. Sembunyikan event pada weekend
+                    const dateCell = info.el.closest(".fc-daygrid-day");
+                    if (dateCell) {
+                        const dateStr = dateCell.getAttribute("data-date");
+                        const day = new Date(dateStr).getDay();
+                        if (day === 0 || day === 6) {
+                            info.el.style.display = "none"; // hide event
+                            return; // stop styling lanjut
+                        }
+                    }
                     const type = info.event.extendedProps.status;
                     let color = '#6B7280'; // Default Pending (Gray)
 
