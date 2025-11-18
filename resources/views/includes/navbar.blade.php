@@ -55,7 +55,7 @@
                     </div>
                 </details>
 
-                @php $isSUP = auth()->check() && auth()->user()->role === 'SUP'; @endphp
+                {{-- @php $isSUP = auth()->check() && auth()->user()->role === 'SUP'; @endphp --}}
 
                 {{-- TRACKING --}}
                 {{-- <a href="{{ $isSUP ? url('/tracking') : url('/under-construction') }}"
@@ -65,7 +65,12 @@
                 </a> --}}
 
                 {{-- INVENTORY --}}
-                <a href="{{ $isSUP ? url('/portal/inventory') : url('/under-construction') }}"
+                {{-- <a href="{{ $isSUP ? url('/portal/inventory') : url('/under-construction') }}"
+                    class="inline-flex items-center px-2 py-1 text-sm font-medium rounded-md transition-colors 
+        {{ request()->is('portal/inventory*') ? 'text-sky-600 bg-sky-50' : 'text-gray-700 hover:text-sky-600 hover:bg-sky-50' }}">
+                    Inventory
+                </a> --}}
+                <a href="{{url('/portal/inventory') }}"
                     class="inline-flex items-center px-2 py-1 text-sm font-medium rounded-md transition-colors 
         {{ request()->is('portal/inventory*') ? 'text-sky-600 bg-sky-50' : 'text-gray-700 hover:text-sky-600 hover:bg-sky-50' }}">
                     Inventory
@@ -191,9 +196,9 @@
             </div>
         </div>
 
-        <a href="{{ $isSUP ? url('/tracking') : url('/under-construction') }}"
-            class="block px-2 py-2 rounded-md text-sm font-medium {{ request()->is('tracking') ? 'text-sky-600 bg-sky-50' : 'text-gray-700 hover:text-sky-600 hover:bg-sky-50' }}">Tracking</a>
-        <a href="{{ $isSUP ? url('/portal/inventory') : url('/under-construction') }}"
+        {{-- <a href="{{ $isSUP ? url('/tracking') : url('/under-construction') }}"
+            class="block px-2 py-2 rounded-md text-sm font-medium {{ request()->is('tracking') ? 'text-sky-600 bg-sky-50' : 'text-gray-700 hover:text-sky-600 hover:bg-sky-50' }}">Tracking</a> --}}
+        <a href="{{url('/portal/inventory') }}"
             class="block px-2 py-2 rounded-md text-sm font-medium {{ request()->is('inventory') ? 'text-sky-600 bg-sky-50' : 'text-gray-700 hover:text-sky-600 hover:bg-sky-50' }}">Inventory</a>
 
         <div class="pt-2 border-t border-gray-100">
