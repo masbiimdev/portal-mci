@@ -32,6 +32,8 @@ Route::post('/telegram/webhook', [TelegramController::class, 'handle']);
 Route::get('tracking', 'TrackingController@index')->name('tracking.index')->middleware('check.sup');
 Route::get('tracking/search', 'TrackingController@ajaxSearch')->name('tracking.ajax.search');
 Route::get('tracking/{jobcard}/history', 'TrackingController@ajaxHistory')->name('tracking.ajax.history');
+// Kalibrasi Scan
+Route::get('/scan/{token}', [ToolController::class, 'scan'])->name('scan');
 
 // Undee Construction Page
 Route::get('/under-construction', [HomeController::class, 'under'])->name('under');
@@ -146,7 +148,6 @@ Route::middleware(['auth', 'module.access:kalibrasi'])
         Route::resource('/', 'ToolController');
         Route::get('/print', [ToolController::class, 'printAll'])->name('printAll');
 
-        Route::get('/scan/{token}', [ToolController::class, 'scan'])->name('scan');
         Route::post('/{tool}/regenerate-qr', [ToolController::class, 'regenerateQr'])->name('regenerateQr');
     });
 
