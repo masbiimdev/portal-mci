@@ -28,7 +28,7 @@
                     <div class="col-md-4">
                         <strong>QR Code:</strong><br>
                         @if ($tool->qr_code_path)
-                            <img src="{{ asset('storage/app/public/uploads/' . $tool->qr_code_path) }}" width="100"
+                            <img src="{{ asset('storage/' . $tool->qr_code_path) }}" width="100"
                                 height="100" alt="QR Code">
                         @else
                             <span class="text-muted">Belum ada QR Code</span>

@@ -59,7 +59,7 @@
                                 <td>{{ $tool->kapasitas ?? '-' }}</td>
                                 <td class="text-center">
                                     @if ($tool->qr_code_path)
-                                        <img src="{{ asset('storage/app/public/uploads/' . $tool->qr_code_path) }}"
+                                        <img src="{{ asset('storage/' . $tool->qr_code_path) }}"
                                             width="50" height="50" alt="QR Code">
                                     @else
                                         <span>Tidak ada QR Code</span>

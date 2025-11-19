@@ -252,7 +252,7 @@
 
                                 @if ($h->file_sertifikat)
                                     <button class="btn btn-view-pdf w-100 mt-2"
-                                        onclick="openPDFModal('{{ asset('storage/app/public/uploads/' . $h->file_sertifikat) }}')">
+                                        onclick="openPDFModal('{{ asset('storage/' . $h->file_sertifikat) }}')">
                                         <span class="me-2">📄</span> Lihat Sertifikat
                                     </button>
                                 @endif

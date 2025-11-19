@@ -19,7 +19,7 @@
             </div>
 
             @if ($tool->qr_code_path)
-                <img src="{{ asset('storage/app/public/uploads/' . $tool->qr_code_path) }}" width="110" height="110"
+                <img src="{{ asset('storage/' . $tool->qr_code_path) }}" width="110" height="110"
                     class="border rounded">
             @endif
         </div>
