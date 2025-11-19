@@ -11,6 +11,8 @@ use App\Http\Controllers\AnnonController;
 use App\Http\Controllers\AccessController;
 use App\Http\Controllers\ValveController;
 use App\Http\Controllers\TelegramController;
+use App\Http\Controllers\CalibrationHistoryController;
+use App\Http\Controllers\ToolController;
 use App\ActivityItemResult;
 use Illuminate\Http\Request;
 
@@ -133,3 +135,33 @@ Route::middleware(['auth', 'module.access:production'])->group(function () {
         'as'   => 'jobcards.scan'
     ]);
 });
+
+
+// ---- ROUTE TOOLS (tanpa prefix histories) ---
+Route::middleware(['auth', 'module.access:kalibrasi'])
+    ->prefix('tools')
+    ->name('tools.')
+    ->group(function () {
+
+        Route::resource('/', 'ToolController');
+        Route::get('/print', [ToolController::class, 'printAll'])->name('printAll');
+
+        Route::get('/scan/{token}', [ToolController::class, 'scan'])->name('scan');
+        Route::post('/{tool}/regenerate-qr', [ToolController::class, 'regenerateQr'])->name('regenerateQr');
+    });
+
+
+// ---- ROUTE HISTORY (prefix histories) ----
+Route::middleware(['auth', 'module.access:kalibrasi'])
+    ->prefix('histories')
+    ->name('histories.')
+    ->group(function () {
+        Route::get('/', [CalibrationHistoryController::class, 'index'])->name('index');
+        Route::get('/create', [CalibrationHistoryController::class, 'create'])->name('create');
+        Route::get('/{tool_id}', [CalibrationHistoryController::class, 'show'])->name('show'); // <-- ini
+        Route::post('/', [CalibrationHistoryController::class, 'store'])->name('store');
+        Route::get('/{history}/edit', [CalibrationHistoryController::class, 'edit'])->name('edit');
+        Route::put('/{history}', [CalibrationHistoryController::class, 'update'])->name('update');
+        Route::delete('/{history}', [CalibrationHistoryController::class, 'destroy'])->name('destroy');
+        Route::get('/{history}/download', [CalibrationHistoryController::class, 'downloadCertificate'])->name('download');
+    });

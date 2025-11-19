@@ -85,6 +85,125 @@
                 </li>
             </ul>
         </li>
+        {{-- QUALITY CONTROL MENU --}}
+        <li class="menu-item {{ request()->routeIs('qc.*') ? 'active open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-check-shield"></i>
+                <div data-i18n="Quality Control">Quality Control</div>
+            </a>
+            <ul class="menu-sub">
+
+                {{-- QC Overview --}}
+                <li class="menu-item {{ request()->routeIs('qc.index') ? 'active' : '' }}">
+                    <a href="javascript:void(0);" class="menu-link">
+                        <div data-i18n="Dashboard">Dashboard</div>
+                    </a>
+                </li>
+
+                {{-- Calibration Module --}}
+                <li class="menu-item {{ request()->routeIs('tools.*') ? 'active open' : '' }}">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <div data-i18n="Kalibrasi">Kalibrasi</div>
+                    </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item {{ request()->routeIs('tools.index') ? 'active' : '' }}">
+                            <a href="{{ route('tools.index') }}" class="menu-link">
+                                <div data-i18n="Master Alat">Master Alat</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ request()->routeIs('histories') ? 'active' : '' }}">
+                            <a href="{{ route('histories.index') }}" class="menu-link">
+                                <div data-i18n="History Kalibrasi">History Kalibrasi</div>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                {{-- Preventive Maintenance --}}
+                {{-- <li class="menu-item {{ request()->routeIs('qc.pm.*') ? 'active open' : '' }}">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <div data-i18n="Preventive Maintenance">Preventive Maintenance</div>
+                    </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item {{ request()->routeIs('qc.pm.assets.index') ? 'active' : '' }}">
+                            <a href="javascript:void(0);" class="menu-link">
+                                <div data-i18n="Master Asset">Master Asset</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ request()->routeIs('qc.pm.schedule.index') ? 'active' : '' }}">
+                            <a href="javascript:void(0);" class="menu-link">
+                                <div data-i18n="PM Schedule">PM Schedule</div>
+                            </a>
+                        </li>
+                    </ul>
+                </li> --}}
+
+                {{-- Inspection Checklist --}}
+                {{-- <li class="menu-item {{ request()->routeIs('qc.inspection.*') ? 'active open' : '' }}">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <div data-i18n="Inspection">Inspection</div>
+                    </a>
+                    <ul class="menu-sub">
+                        <li
+                            class="menu-item {{ request()->routeIs('qc.inspection.templates.index') ? 'active' : '' }}">
+                            <a href="javascript:void(0);" class="menu-link">
+                                <div data-i18n="Template Checklist">Template Checklist</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ request()->routeIs('qc.inspection.records.index') ? 'active' : '' }}">
+                            <a href="javascript:void(0);" class="menu-link">
+                                <div data-i18n="Inspection Records">Records</div>
+                            </a>
+                        </li>
+                    </ul>
+                </li> --}}
+
+                {{-- NCR / Non Conformance --}}
+                {{-- <li class="menu-item {{ request()->routeIs('qc.ncr.*') ? 'active open' : '' }}">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <div data-i18n="NCR">NCR</div>
+                    </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item {{ request()->routeIs('qc.ncr.index') ? 'active' : '' }}">
+                            <a href="javascript:void(0);" class="menu-link">
+                                <div data-i18n="Daftar NCR">Daftar NCR</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ request()->routeIs('qc.ncr.create') ? 'active' : '' }}">
+                            <a href="javascript:void(0);" class="menu-link">
+                                <div data-i18n="Input NCR">Input NCR</div>
+                            </a>
+                        </li>
+                    </ul>
+                </li> --}}
+
+                {{-- QC Reports --}}
+                {{-- <li class="menu-item {{ request()->routeIs('qc.reports.*') ? 'active open' : '' }}">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <div data-i18n="Reports">Reports</div>
+                    </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item">
+                            <a href="javascript:void(0);" class="menu-link">
+                                <div data-i18n="Calibration Report">Calibration Report</div>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="javascript:void(0);" class="menu-link">
+                                <div data-i18n="PM Report">PM Report</div>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="javascript:void(0);" class="menu-link">
+                                <div data-i18n="Inspection Report">Inspection Report</div>
+                            </a>
+                        </li>
+                    </ul>
+                </li> --}}
+
+            </ul>
+        </li>
+
         {{-- INVENTORY MENU --}}
         <li class="menu-item {{ request()->routeIs('inventory.*') ? 'active open' : '' }} ">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
