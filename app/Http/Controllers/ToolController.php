@@ -26,54 +26,53 @@ class ToolController extends Controller
     {
         $request->validate([
             'nama_alat' => 'required|string|max:255',
-            'merek' => 'nullable|string|max:255',
-            'no_seri' => 'nullable|string|max:255',
+            'merek'     => 'nullable|string|max:255',
+            'no_seri'   => 'nullable|string|max:255',
             'kapasitas' => 'nullable|string|max:255',
         ]);
 
-        // Simpan alat dulu
-        $tool = Tool::create($request->only(['nama_alat', 'merek', 'no_seri', 'kapasitas']));
-
-        // Generate token QR unik
+        // Simulasi data alat tanpa simpan ke DB
+        $tool = (object) $request->only(['nama_alat', 'merek', 'no_seri', 'kapasitas']);
+        $tool->id = rand(1, 9999); // ID dummy untuk nama file
         $tool->qr_token = (string) Str::uuid();
 
         try {
             if (class_exists(\SimpleSoftwareIO\QrCode\Facades\QrCode::class)) {
 
-                // Direktori tujuan di public/qrcodes
+                // Direktori tujuan di public/
                 $qrDir = public_path('qrcodes');
-
-                // Buat folder jika belum ada
-                if (!file_exists($qrDir)) mkdir($qrDir, 0755, true);
+                if (!file_exists($qrDir)) {
+                    mkdir($qrDir, 0755, true);
+                }
 
                 // Nama file QR
                 $qrFileName = 'tool-' . $tool->id . '.png';
                 $qrFullPath = $qrDir . '/' . $qrFileName;
 
-                // Generate QR dalam bentuk PNG
+                // Generate QR
                 $qrImage = \SimpleSoftwareIO\QrCode\Facades\QrCode::format('png')
                     ->size(300)
                     ->generate(route('tools.scan', $tool->qr_token));
 
-                // Simpan file ke public/qrcodes
+                // Simpan file
                 $written = file_put_contents($qrFullPath, $qrImage);
 
-                if ($written === false) {
-                    // Kalau gagal, bisa tampil pesan debug
-                    return redirect()->back()->with('error', 'QR gagal dibuat!');
-                }
-
-                // Simpan path relatif ke database
-                $tool->qr_code_path = 'qrcodes/' . $qrFileName;
+                // Debug langsung
+                dd([
+                    'qr_dir'       => $qrDir,
+                    'qr_full_path' => $qrFullPath,
+                    'written_bytes' => $written,
+                    'file_exists'  => file_exists($qrFullPath),
+                    'qr_token'     => $tool->qr_token,
+                ]);
+            } else {
+                dd('Package Simple-QrCode tidak ditemukan!');
             }
         } catch (\Throwable $e) {
-            return redirect()->back()->with('error', 'Terjadi error saat generate QR: ' . $e->getMessage());
+            dd('Error saat generate QR:', $e->getMessage());
         }
 
-        // Simpan perubahan QR path ke database
-        $tool->save();
-
-        return redirect()->route('tools.index')->with('success', 'Alat berhasil ditambahkan. QR berhasil dibuat!');
+        // Kalau berhasil, bisa lanjut simpan ke DB di sini
     }
 
 
