@@ -22,48 +22,50 @@
             margin-bottom: 6px;
         }
 
-        .card {
-            width: 28%;
-            border: 1px solid #333;
-            padding: 1px;
-            /* super minimal */
-            border-radius: 2px;
-            display: inline-block;
-            margin: 2px;
-            /* minimal jarak antar card */
-            height: 50px;
-            page-break-inside: avoid;
-        }
-
-        table {
+        table.outer {
             width: 100%;
             border-collapse: collapse;
         }
 
-        td {
+        td.card {
+            width: 30%;
+            border: 1px solid #333;
             vertical-align: top;
+            height: 20px; /* tinggi card */
+            page-break-inside: avoid;
+            padding: 0; /* hapus padding agar QR/text mepet */
+        }
+
+        table.inner {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+        }
+
+        td.qr {
+            width: 30%;
+            text-align: center;
             padding: 0;
             margin: 0;
+        }
+
+        td.details {
+            width: 52%;
+            padding: 0 0px 0 0px; /* minimal padding kiri-kanan */
         }
 
         .name {
             font-weight: bold;
-            font-size: 8.5px;
+            font-size: 7.5px;
             margin: 0;
-            line-height: 1.5;
+            line-height: 1.2;
         }
 
         .text {
             font-size: 6.5px;
-            line-height: 1.5;
+            line-height: 1.2;
             margin: 0;
             padding: 0;
-        }
-
-        .qr {
-            text-align: center;
-            padding: 0;
-            margin: 0;
         }
 
         .qr img {
@@ -73,49 +75,53 @@
             height: 48px;
         }
     </style>
-
-
 </head>
 
 <body>
-
     <div class="page">
-
         <div class="title">Label Alat – QC Calibration</div>
         <br>
 
-        @foreach ($tools as $tool)
-            <div class="card">
+        <table class="outer">
+            <tr>
+                @foreach ($tools as $index => $tool)
+                    <td class="card">
+                        <table class="inner">
+                            <tr>
+                                {{-- QR --}}
+                                <td class="qr">
+                                    @if ($tool->qr_code_path)
+                                        <img src="{{ public_path('storage/app/public/uploads/' . $tool->qr_code_path) }}"
+                                            width="48" height="48" alt="QR">
+                                    @else
+                                        <div class="text">QR Tidak Ada</div>
+                                    @endif
+                                </td>
 
-                <table>
-                    <tr>
+                                {{-- DETAIL --}}
+                                <td class="details">
+                                    <div class="name">{{ $tool->nama_alat }}</div>
+                                    <div class="text">Merk: {{ $tool->merek }}</div>
+                                    <div class="text">Seri: {{ $tool->no_seri }}</div>
+                                    <div class="text">Kap: {{ $tool->kapasitas }}</div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
 
-                        {{-- QR KIRI --}}
-                        <td style="width: 38%;" class="qr">
-                            @if ($tool->qr_code_path)
-                                <img src="{{ asset('storage/' . $tool->qr_code_path) }}"
-                                    width="25" height="25" alt="QR">
-                            @else
-                                <div class="text">QR Tidak Ada</div>
-                            @endif
-                        </td>
+                    {{-- Baris baru setiap 3 card --}}
+                    @if (($index + 1) % 3 == 0)
+            </tr>
+            <tr>
+                    @endif
+                @endforeach
 
-                        {{-- DETAIL KANAN --}}
-                        <td style="width: 62%; padding-left: 6px;">
-                            <div class="name">{{ $tool->nama_alat }}</div>
-                            <div class="text">Merk: {{ $tool->merek }}</div>
-                            <div class="text">Seri: {{ $tool->no_seri }}</div>
-                            <div class="text">Kap: {{ $tool->kapasitas }}</div>
-                        </td>
-
-                    </tr>
-                </table>
-
-            </div>
-        @endforeach
-
+                {{-- Tutup tr terakhir jika tidak kelipatan 3 --}}
+                @if (count($tools) % 3 != 0)
+            </tr>
+                @endif
+        </table>
     </div>
-
 </body>
 
 </html>
