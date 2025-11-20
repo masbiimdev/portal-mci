@@ -31,47 +31,38 @@ class ToolController extends Controller
             'kapasitas' => 'nullable|string|max:255',
         ]);
 
-        // simpan alat
+        // Simpan alat
         $tool = Tool::create($request->only(['nama_alat', 'merek', 'no_seri', 'kapasitas']));
+        $tool->qr_token = (string) Str::uuid(); // token unik
 
-        // generate token QR
-        $tool->qr_token = (string) Str::uuid();
-
+        // ============ QR CODE ==============
         try {
-            if (class_exists(\SimpleSoftwareIO\QrCode\Facades\QrCode::class)) {
-
-                $qrDir = public_path('qrcodes');
-
-                // pastikan folder ada
-                if (!file_exists($qrDir)) {
-                    mkdir($qrDir, 0755, true);
-                }
-
-                // path file di public folder
-                $qrPath = $qrDir . '/tool-' . $tool->id . '.png';
-
-                // hasil QR dalam bentuk binary string
-                $qrPng = \SimpleSoftwareIO\QrCode\Facades\QrCode::format('png')
-                    ->size(300)
-                    ->generate(route('tools.scan', $tool->qr_token));
-
-                // simpan manual ke file
-                file_put_contents($qrPath, $qrPng);
-
-                // simpan path relatif ke database
-                $tool->qr_code_path = 'qrcodes/tool-' . $tool->id . '.png';
+            $qrDir = public_path('qrcodes');
+            if (!file_exists($qrDir)) {
+                mkdir($qrDir, 0755, true);
             }
+
+            $qrPath = $qrDir . '/tool-' . $tool->id . '.png';
+
+            // Gunakan API QR yang pasti bekerja
+            $qrApi = "https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl="
+                . urlencode(route('tools.scan', $tool->qr_token));
+
+            file_put_contents($qrPath, file_get_contents($qrApi));
+
+            $tool->qr_code_path = 'qrcodes/tool-' . $tool->id . '.png';
         } catch (\Throwable $e) {
-            // bisa log error jika mau
-            // \Log::error('QR error: ' . $e->getMessage());
+            // Bisa tambahkan logging jika mau
+            // logger()->error($e->getMessage());
         }
-
-
+        // ==================================
 
         $tool->save();
 
-        return redirect()->route('tools.index')->with('success', 'Alat berhasil ditambahkan.');
+        return redirect()->route('tools.index')
+            ->with('success', 'Alat berhasil ditambahkan.');
     }
+
 
 
     public function show(Tool $tool)
@@ -122,18 +113,30 @@ class ToolController extends Controller
     // optional regenerate QR
     public function regenerateQr(Tool $tool)
     {
-        $tool->qr_token = (string) Str::uuid();
-        if (class_exists(\SimpleSoftwareIO\QrCode\Facades\QrCode::class)) {
-            $qrPath = 'qrcodes/tool-' . $tool->id . '.png';
-            $png = \SimpleSoftwareIO\QrCode\Facades\QrCode::format('png')
-                ->size(300)
-                ->generate(route('tools.scan', $tool->qr_token));
-            Storage::disk('public')->put($qrPath, $png);
-            $tool->qr_code_path = $qrPath;
+        $tool->qr_token = (string) Str::uuid(); // token baru
+
+        try {
+            $qrDir = public_path('qrcodes');
+            if (!file_exists($qrDir)) {
+                mkdir($qrDir, 0755, true);
+            }
+
+            $qrPath = $qrDir . '/tool-' . $tool->id . '.png';
+
+            $qrApi = "https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl="
+                . urlencode(route('tools.scan', $tool->qr_token));
+
+            file_put_contents($qrPath, file_get_contents($qrApi));
+
+            $tool->qr_code_path = 'qrcodes/tool-' . $tool->id . '.png';
+        } catch (\Throwable $e) {
         }
+
         $tool->save();
-        return back()->with('success', 'QR code regenerated.');
+
+        return back()->with('success', 'QR code berhasil digenerate ulang.');
     }
+
 
     public function printAll()
     {
