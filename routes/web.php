@@ -142,10 +142,8 @@ Route::middleware(['auth', 'module.access:production'])->group(function () {
 // ---- ROUTE TOOLS (tanpa prefix histories) ---
 Route::middleware(['auth', 'module.access:kalibrasi'])
     ->group(function () {
-
-        Route::resource('tools', 'ToolController');
-
         Route::get('tools/print', [ToolController::class, 'printAll'])->name('tools.printAll');
+        Route::resource('tools', 'ToolController');
         Route::post('tools/{tool}/regenerate-qr', [ToolController::class, 'regenerateQr'])
             ->name('tools.regenerateQr');
     });
