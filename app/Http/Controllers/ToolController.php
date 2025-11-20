@@ -42,24 +42,30 @@ class ToolController extends Controller
 
                 $qrDir = public_path('qrcodes');
 
-                // pastikan foldernya ada (biarpun sudah dibuat manual)
+                // pastikan folder ada
                 if (!file_exists($qrDir)) {
                     mkdir($qrDir, 0755, true);
                 }
 
+                // path file di public folder
                 $qrPath = $qrDir . '/tool-' . $tool->id . '.png';
 
-                // generate file PNG
-                \SimpleSoftwareIO\QrCode\Facades\QrCode::format('png')
+                // hasil QR dalam bentuk binary string
+                $qrPng = \SimpleSoftwareIO\QrCode\Facades\QrCode::format('png')
                     ->size(300)
-                    ->generate(route('tools.scan', $tool->qr_token), $qrPath);
+                    ->generate(route('tools.scan', $tool->qr_token));
 
-                // simpan ke database relatif terhadap public
+                // simpan manual ke file
+                file_put_contents($qrPath, $qrPng);
+
+                // simpan path relatif ke database
                 $tool->qr_code_path = 'qrcodes/tool-' . $tool->id . '.png';
             }
         } catch (\Throwable $e) {
-            // error silent, supaya tidak break
+            // bisa log error jika mau
+            // \Log::error('QR error: ' . $e->getMessage());
         }
+
 
 
         $tool->save();
