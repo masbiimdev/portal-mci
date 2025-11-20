@@ -94,11 +94,6 @@
             <ul class="menu-sub">
 
                 {{-- QC Overview --}}
-                <li class="menu-item {{ request()->routeIs('qc.index') ? 'active' : '' }}">
-                    <a href="javascript:void(0);" class="menu-link">
-                        <div data-i18n="Dashboard">Dashboard</div>
-                    </a>
-                </li>
 
                 {{-- Calibration Module --}}
                 <li class="menu-item {{ request()->routeIs('tools.*') ? 'active open' : '' }}">
@@ -106,6 +101,11 @@
                         <div data-i18n="Kalibrasi">Kalibrasi</div>
                     </a>
                     <ul class="menu-sub">
+                        <li class="menu-item {{ request()->routeIs('kalibrasi.dashboard') ? 'active' : '' }}">
+                            <a href="{{ route('kalibrasi.dashboard') }}" class="menu-link">
+                                <div data-i18n="Dashboard">Dashboard</div>
+                            </a>
+                        </li>
                         <li class="menu-item {{ request()->routeIs('tools.index') ? 'active' : '' }}">
                             <a href="{{ route('tools.index') }}" class="menu-link">
                                 <div data-i18n="Master Alat">Master Alat</div>

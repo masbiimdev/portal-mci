@@ -14,6 +14,7 @@ use App\Http\Controllers\TelegramController;
 use App\Http\Controllers\CalibrationHistoryController;
 use App\Http\Controllers\ToolController;
 use App\ActivityItemResult;
+use App\Http\Controllers\KalibrasiDashboardController;
 use Illuminate\Http\Request;
 
 /*
@@ -137,6 +138,9 @@ Route::middleware(['auth', 'module.access:production'])->group(function () {
         'as'   => 'jobcards.scan'
     ]);
 });
+
+Route::get('/kalibrasi/dashboard', [KalibrasiDashboardController::class, 'index'])
+    ->name('kalibrasi.dashboard');
 
 
 // ---- ROUTE TOOLS (tanpa prefix histories) ---
