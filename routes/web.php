@@ -33,7 +33,7 @@ Route::get('tracking', 'TrackingController@index')->name('tracking.index')->midd
 Route::get('tracking/search', 'TrackingController@ajaxSearch')->name('tracking.ajax.search');
 Route::get('tracking/{jobcard}/history', 'TrackingController@ajaxHistory')->name('tracking.ajax.history');
 // Kalibrasi Scan
-Route::get('/scan/{token}', [ToolController::class, 'scan'])->name('scan');
+Route::get('/scan/{token}', [ToolController::class, 'scan'])->name('tools.scan');
 
 // Undee Construction Page
 Route::get('/under-construction', [HomeController::class, 'under'])->name('under');
