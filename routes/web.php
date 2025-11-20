@@ -42,6 +42,9 @@ Route::get('/under-construction', [HomeController::class, 'under'])->name('under
 // Lihat Detail Pengumuman
 Route::get('/pengumuman/show/{title}', [AnnonController::class, 'show'])->name('announcements.show');
 
+// kalibrasi
+Route::get('/kalibrasi', [HomeController::class, 'kalibrasi'])->name('kalibrasi');
+
 Route::get('/portal/inventory', [HomeController::class, 'inventory'])->name('inventory');
 Route::get('/portal/inventory/data', [HomeController::class, 'getData'])->name('inventory.data');
 Route::get('/portal/inventory/summary', [HomeController::class, 'getSummary'])->name('inventory.summary');

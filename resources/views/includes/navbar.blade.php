@@ -48,7 +48,7 @@
                             class="block px-3 py-2 text-sm rounded-md text-gray-700 hover:bg-sky-50 {{ request()->is('activities/witness*') || request()->is('witness*') ? 'text-sky-600 font-semibold' : '' }}">
                             Witness/Inpection
                         </a>
-                        <a href="{{ url('/under-construction') }}"
+                        <a href="{{ url('/kalibrasi') }}"
                             class="block px-3 py-2 text-sm rounded-md text-gray-700 hover:bg-sky-50 {{ request()->is('activities/kalibrasi*') || request()->is('kalibrasi*') ? 'text-sky-600 font-semibold' : '' }}">
                             Kalibrasi
                         </a>

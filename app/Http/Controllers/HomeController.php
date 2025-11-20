@@ -8,6 +8,8 @@ use App\ActivityItemResult;
 use App\Material;
 use App\MaterialIn;
 use App\MaterialOut;
+use App\CalibrationHistory;
+use App\Tool;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -343,5 +345,61 @@ class HomeController extends Controller
             'current_month' => $bulan,
             'current_year' => $tahun
         ]);
+    }
+
+      public function kalibrasi()
+    {
+        // Ambil semua alat beserta history terbaru
+        $tools = Tool::with('latestHistory')->orderBy('nama_alat')->get();
+
+        // Summary
+        $totalTools = $tools->count();
+        $statusOk = $tools->filter(function ($t) {
+            return optional($t->latestHistory)->status_kalibrasi === 'OK';
+        })->count();
+
+        $statusProses = $tools->filter(function ($t) {
+            return optional($t->latestHistory)->status_kalibrasi === 'Proses';
+        })->count();
+
+        // Akan jatuh tempo dalam 30 hari
+        $dueSoon = $tools->filter(function ($t) {
+            $tgl = optional($t->latestHistory)->tgl_kalibrasi_ulang;
+            if (!$tgl) return false;
+            $now = Carbon::now();
+            return Carbon::parse($tgl)->between($now, $now->copy()->addDays(30));
+        })->count();
+
+        // Data pie chart
+        $pieData = [
+            'ok' => $statusOk,
+            'proses' => $statusProses,
+            'due' => $dueSoon,
+        ];
+
+        // Bar chart: jumlah alat jatuh tempo per bulan
+        $barLabels = [];
+        $barValues = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $barLabels[] = Carbon::create()->month($i)->translatedFormat('F');
+
+            $count = $tools->filter(function ($t) use ($i) {
+                $tgl = optional($t->latestHistory)->tgl_kalibrasi_ulang;
+                return $tgl && Carbon::parse($tgl)->month === $i;
+            })->count();
+
+            $barValues[] = $count;
+        }
+
+        return view('pages.kalibrasi', compact(
+            'tools',
+            'totalTools',
+            'statusOk',
+            'statusProses',
+            'dueSoon',
+            'pieData',
+            'barLabels',
+            'barValues'
+        ));
     }
 }
