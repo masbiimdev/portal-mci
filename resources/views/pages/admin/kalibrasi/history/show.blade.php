@@ -67,12 +67,12 @@
 
                                 <td class="d-flex gap-2">
                                     {{-- Lihat PDF (popup modal) --}}
-                                    @if ($h->file_sertifikat)
+                                    {{-- @if ($h->file_sertifikat)
                                         <button type="button" class="btn btn-sm btn-secondary"
                                             onclick="openPDFModal('{{ asset('storage/app/public/uploads/' . $h->file_sertifikat) }}')">
                                             PDF
                                         </button>
-                                    @endif
+                                    @endif --}}
 
                                     {{-- EDIT --}}
                                     <a href="{{ route('histories.edit', $h->id) }}" class="btn btn-sm btn-primary">
@@ -104,7 +104,7 @@
 </div>
 
 {{-- Modal PDF --}}
-<div class="modal fade" id="pdfModal" tabindex="-1" aria-labelledby="pdfModalLabel" aria-hidden="true">
+{{-- <div class="modal fade" id="pdfModal" tabindex="-1" aria-labelledby="pdfModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
@@ -116,7 +116,7 @@
       </div>
     </div>
   </div>
-</div>
+</div> --}}
 
 @endsection
 

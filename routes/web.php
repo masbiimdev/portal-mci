@@ -141,16 +141,14 @@ Route::middleware(['auth', 'module.access:production'])->group(function () {
 
 // ---- ROUTE TOOLS (tanpa prefix histories) ---
 Route::middleware(['auth', 'module.access:kalibrasi'])
-    ->prefix('tools')
-    ->name('tools.')
     ->group(function () {
 
-        Route::resource('/', 'ToolController');
-        Route::get('/print', [ToolController::class, 'printAll'])->name('printAll');
+        Route::resource('tools', 'ToolController');
 
-        Route::post('/{tool}/regenerate-qr', [ToolController::class, 'regenerateQr'])->name('regenerateQr');
+        Route::get('tools/print', [ToolController::class, 'printAll'])->name('tools.printAll');
+        Route::post('tools/{tool}/regenerate-qr', [ToolController::class, 'regenerateQr'])
+            ->name('tools.regenerateQr');
     });
-
 
 // ---- ROUTE HISTORY (prefix histories) ----
 Route::middleware(['auth', 'module.access:kalibrasi'])

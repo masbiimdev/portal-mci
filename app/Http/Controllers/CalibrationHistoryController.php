@@ -117,7 +117,7 @@ class CalibrationHistoryController extends Controller
         }
         $history->delete();
 
-        return redirect()->route('tools.histories.index', $tool->id)
+        return redirect()->route('histories.index', $tool->id)
             ->with('success', 'History kalibrasi dihapus.');
     }
 
