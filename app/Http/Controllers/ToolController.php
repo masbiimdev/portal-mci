@@ -31,29 +31,45 @@ class ToolController extends Controller
             'kapasitas' => 'nullable|string|max:255',
         ]);
 
+        // simpan alat
         $tool = Tool::create($request->only(['nama_alat', 'merek', 'no_seri', 'kapasitas']));
 
-        // generate qr_token and optionally QR image
+        // generate token QR
         $tool->qr_token = (string) Str::uuid();
 
-        // if simple-qrcode installed, generate png; otherwise skip
         try {
             if (class_exists(\SimpleSoftwareIO\QrCode\Facades\QrCode::class)) {
-                $qrPath = 'qrcodes/tool-' . $tool->id . '.png';
+
+                // path folder
+                $folder = 'qrcodes';
+
+                // pastikan folder ada (penting untuk hosting)
+                Storage::disk('public')->makeDirectory($folder);
+
+                // nama file
+                $qrPath = $folder . '/tool-' . $tool->id . '.png';
+
+                // generate QR
                 $png = \SimpleSoftwareIO\QrCode\Facades\QrCode::format('png')
                     ->size(300)
                     ->generate(route('tools.scan', $tool->qr_token));
+
+                // simpan file ke storage/app/public/qrcodes/
                 Storage::disk('public')->put($qrPath, $png);
+
+                // simpan path ke database
                 $tool->qr_code_path = $qrPath;
             }
         } catch (\Throwable $e) {
-            // ignore if QR generation fails
+            // untuk debug jika perlu
+            // dd($e->getMessage());
         }
 
         $tool->save();
 
         return redirect()->route('tools.index')->with('success', 'Alat berhasil ditambahkan.');
     }
+
 
     public function show(Tool $tool)
     {
