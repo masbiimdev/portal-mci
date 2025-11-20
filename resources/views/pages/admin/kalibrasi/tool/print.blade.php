@@ -93,7 +93,7 @@
                         {{-- QR KIRI --}}
                         <td style="width: 38%;" class="qr">
                             @if ($tool->qr_code_path)
-                                <img src="{{ public_path('storage/' . $tool->qr_code_path) }}"
+                                <img src="{{ public_path('storage/app/public/uploads/' . $tool->qr_code_path) }}"
                                     width="25" height="25" alt="QR">
                             @else
                                 <div class="text">QR Tidak Ada</div>
