@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Mpdf\Mpdf;
 
 class ToolController extends Controller
 {
@@ -121,19 +120,8 @@ class ToolController extends Controller
     {
         $tools = Tool::all();
 
-        // Buat instance mPDF
-        $mpdf = new \Mpdf\Mpdf([
-            'format' => 'A4',      // sama dengan 'a4' di Dompdf
-            'orientation' => 'P',  // 'P' = portrait, 'L' = landscape
-        ]);
-
-        // Render Blade view jadi HTML
-        $html = view('pages.admin.kalibrasi.tool.print', compact('tools'))->render();
-
-        // Tulis HTML ke PDF
-        $mpdf->WriteHTML($html);
-
-        // Download PDF langsung
-        $mpdf->Output('label-kalibrasi.pdf', 'I');
+        $pdf = Pdf::loadView('pages.admin.kalibrasi.tool.print', compact('tools'))
+            ->setPaper('a4', 'portrait');
+        return $pdf->stream('label-kalibrasi.pdf');
     }
 }
