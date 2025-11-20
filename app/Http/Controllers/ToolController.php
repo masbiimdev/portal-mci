@@ -101,27 +101,55 @@ class ToolController extends Controller
     }
 
     // optional regenerate QR
+    // Regenerate QR
     public function regenerateQr(Tool $tool)
     {
+        // Token baru
         $tool->qr_token = (string) Str::uuid();
+
+        // Generate QR (ukuran diperkecil agar PDF ringan)
         if (class_exists(\SimpleSoftwareIO\QrCode\Facades\QrCode::class)) {
             $qrPath = 'qrcodes/tool-' . $tool->id . '.png';
+
             $png = \SimpleSoftwareIO\QrCode\Facades\QrCode::format('png')
-                ->size(300)
+                ->size(150) // ukuran kecil agar pdf tidak berat
                 ->generate(route('tools.scan', $tool->qr_token));
+
             Storage::disk('public')->put($qrPath, $png);
             $tool->qr_code_path = $qrPath;
         }
+
         $tool->save();
+
         return back()->with('success', 'QR code regenerated.');
     }
 
+    // Print All (PDF)
     public function printAll()
     {
-        $tools = Tool::all();
+        // Tambah batas memory & execution time
+        ini_set('memory_limit', '512M');
+        ini_set('max_execution_time', '300');
 
+        // Query ringan
+        $tools = Tool::select(
+            'id',
+            'nama_alat',
+            'merek',
+            'no_seri',
+            'kapasitas',
+            'qr_code_path'
+        )->orderBy('id')->get();
+
+        // Load PDF
         $pdf = Pdf::loadView('pages.admin.kalibrasi.tool.print', compact('tools'))
             ->setPaper('a4', 'portrait');
-        return $pdf->stream('label-kalibrasi.pdf');
+
+        // Simpan dulu → paling aman di hosting (hindari stream)
+        $path = storage_path('app/public/label-kalibrasi.pdf');
+        $pdf->save($path);
+
+        // Download & langsung hapus setelah dikirim
+        return response()->download($path)->deleteFileAfterSend(true);
     }
 }
