@@ -48,21 +48,26 @@ class ToolController extends Controller
                     mkdir($qrDir, 0755, true);
                 }
 
-                // full path lokasi file PNG
-                $qrFullPath = $qrDir . '/tool-' . $tool->id . '.png';
+                // nama file
+                $qrFileName = 'tool-' . $tool->id . '.png';
+                $qrFullPath = $qrDir . '/' . $qrFileName;
 
-                // generate QR langsung ke file PNG
-                \SimpleSoftwareIO\QrCode\Facades\QrCode::format('png')
+                // hasil QR dalam bentuk binary PNG
+                $qrImage = \SimpleSoftwareIO\QrCode\Facades\QrCode::format('png')
                     ->size(300)
-                    ->generate(route('tools.scan', $tool->qr_token), $qrFullPath);
+                    ->generate(route('tools.scan', $tool->qr_token));
 
-                // simpan path relatif ke public (untuk ditampilkan di web)
-                $tool->qr_code_path = 'qrcodes/tool-' . $tool->id . '.png';
+                // simpan manual sebagai file PNG
+                file_put_contents($qrFullPath, $qrImage);
+
+                // simpan path ke database
+                $tool->qr_code_path = 'qrcodes/' . $qrFileName;
             }
         } catch (\Throwable $e) {
-            // jika gagal, jangan hentikan proses
-            // dd($e->getMessage()); // aktifkan jika ingin debug
+            //debug jika perlu
+            // dd($e->getMessage());
         }
+
 
         // simpan perubahan
         $tool->save();
