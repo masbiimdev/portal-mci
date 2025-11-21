@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('title', 'History Kalibrasi Alat')
+@section('title', 'History Kalibrasi Item')
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">

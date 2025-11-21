@@ -189,7 +189,7 @@
                         <span style="font-size:40px; color:#1976d2;">📄</span>
                     </div>
                     <h5 class="fw-bold text-primary">Belum Ada Riwayat Kalibrasi</h5>
-                    <p class="text-muted">Data akan muncul setelah alat menjalani kalibrasi pertama.</p>
+                    <p class="text-muted">Data akan muncul setelah item menjalani kalibrasi pertama.</p>
                 </div>
             @else
                 @foreach ($tool->histories as $h)

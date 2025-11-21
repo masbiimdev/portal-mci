@@ -25,7 +25,7 @@
 
             {{-- Header --}}
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h4 class="card-title">Daftar History Kalibrasi Alat</h4>
+                <h4 class="card-title">Daftar History Kalibrasi Item</h4>
             </div>
 
             {{-- Table --}}
