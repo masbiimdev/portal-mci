@@ -50,7 +50,8 @@
                 <thead class="bg-gradient-to-r from-blue-600 to-blue-500 text-white text-xs uppercase tracking-wide">
                     <tr>
                         <th class="px-4 py-3 text-left w-12">No</th>
-                        <th class="px-4 py-3 text-left">Nama Alat</th>
+                        <th class="px-4 py-3 text-left">Nama Item</th>
+                        <th class="px-4 py-3 text-left">Merk</th>
                         <th class="px-4 py-3 text-left">Status Kalibrasi</th>
                         <th class="px-4 py-3 text-left">Tanggal Kalibrasi</th>
                         <th class="px-4 py-3 text-left">Tanggal Kalibrasi Ulang</th>
@@ -76,6 +77,7 @@
                         <tr class="hover:bg-blue-50 transition">
                             <td class="px-4 py-3 border align-top">{{ $index + 1 }}</td>
                             <td class="px-4 py-3 border align-top">{{ $tool->nama_alat }}</td>
+                            <td class="px-4 py-3 border align-top">{{ $tool->merek }}</td>
                             <td class="px-4 py-3 border align-top">
                                 <span class="inline-block px-2 py-0.5 rounded text-sm font-medium {{ $statusClass }}">
                                     {{ $status }}

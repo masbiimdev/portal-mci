@@ -10,26 +10,29 @@
 
         <div class="card shadow-sm">
             <div class="card-header d-flex justify-content-between align-items-center text-white">
-                <h5 class="mb-0"><i class="bx bx-package"></i> Detail Alat: {{ $tool->nama_alat }}</h5>
+                <h5 class="mb-0"><i class="bx bx-package"></i> Detail Item: {{ $tool->nama_alat }}</h5>
                 <a href="{{ route('tools.index') }}" class="btn btn-light btn-sm">
                     <i class="bx bx-left-arrow-alt"></i> Kembali
                 </a>
             </div>
 
             <div class="card-body">
+
+                {{-- INFORMASI ALAT --}}
                 <div class="row mb-3">
                     <div class="col-md-4">
-                        <strong>Nama Alat:</strong> {{ $tool->nama_alat }}<br>
+                        <strong>Nama Item:</strong> {{ $tool->nama_alat }}<br>
                         <strong>Merek:</strong> {{ $tool->merek ?? '-' }}<br>
                         <strong>No. Seri:</strong> {{ $tool->no_seri ?? '-' }}<br>
                         <strong>Kapasitas:</strong> {{ $tool->kapasitas ?? '-' }}<br>
+                        <strong>Lokasi Item:</strong> {{ $tool->lokasi }}<br>
                     </div>
 
                     <div class="col-md-4">
                         <strong>QR Code:</strong><br>
                         @if ($tool->qr_code_path)
-                            <img src="{{ asset('storage/' . $tool->qr_code_path) }}" width="100"
-                                height="100" alt="QR Code">
+                            <img src="{{ asset('storage/' . $tool->qr_code_path) }}" width="100" height="100"
+                                alt="QR Code">
                         @else
                             <span class="text-muted">Belum ada QR Code</span>
                         @endif
@@ -59,16 +62,10 @@
                     </div>
                 </div>
 
-                {{-- Tombol Tambah History --}}
-                {{-- <div class="mb-3 text-end">
-                    <a href="{{ route('histories.create', ['tool_id' => $tool->id]) }}" class="btn btn-success btn-sm">
-                        <i class="bx bx-plus"></i> Tambah History Kalibrasi
-                    </a>
-                </div> --}}
-
-                {{-- List Semua History --}}
                 <hr>
                 <h6>History Kalibrasi</h6>
+
+                {{-- TABEL HISTORY --}}
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped">
                         <thead class="bg-light">
@@ -80,31 +77,70 @@
                                 <th>Eksternal</th>
                                 <th>Status</th>
                                 <th>Keterangan</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($tool->histories as $history)
+                            @forelse ($tool->histories as $h)
                                 <tr>
-                                    <td>{{ $history->tgl_kalibrasi ? \Carbon\Carbon::parse($history->tgl_kalibrasi)->format('d M Y') : '-' }}
+                                    <td>{{ $h->tgl_kalibrasi ? \Carbon\Carbon::parse($h->tgl_kalibrasi)->format('d M Y') : '-' }}
                                     </td>
-                                    <td>{{ $history->tgl_kalibrasi_ulang ? \Carbon\Carbon::parse($history->tgl_kalibrasi_ulang)->format('d M Y') : '-' }}
+                                    <td>{{ $h->tgl_kalibrasi_ulang ? \Carbon\Carbon::parse($h->tgl_kalibrasi_ulang)->format('d M Y') : '-' }}
                                     </td>
-                                    <td>{{ $history->no_sertifikat ?? '-' }}</td>
-                                    <td>{{ $history->lembaga_kalibrasi ?? '-' }}</td>
-                                    <td>{{ $history->eksternal_kalibrasi }}</td>
-                                    <td>{{ $history->status_kalibrasi }}</td>
-                                    <td>{{ $history->keterangan ?? '-' }}</td>
+                                    <td>{{ $h->no_sertifikat ?? '-' }}</td>
+                                    <td>{{ $h->lembaga_kalibrasi ?? '-' }}</td>
+                                    <td>{{ $h->eksternal_kalibrasi }}</td>
+                                    <td>{{ $h->status_kalibrasi }}</td>
+                                    <td>{{ $h->keterangan ?? '-' }}</td>
+
+                                    <td>
+                                        @if ($h->file_sertifikat)
+                                            <button class="btn btn-primary w-100 mt-2"
+                                                onclick="openPDFModal('{{ asset('storage/' . $h->file_sertifikat) }}')">
+                                                <span class="me-2">📄</span> Lihat Sertifikat
+                                            </button>
+                                        @endif
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="text-center text-muted">Belum ada history kalibrasi</td>
+                                    <td colspan="8" class="text-center text-muted">Belum ada history kalibrasi</td>
                                 </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
 
+            </div> {{-- end card-body --}}
+        </div> {{-- end card --}}
+    </div> {{-- end container --}}
+
+    {{-- ======== MODAL PDF VIEWER ========= --}}
+    <div class="modal fade" id="pdfViewerModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Preview Sertifikat</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body p-0" style="height: 80vh;">
+                    <embed id="pdfFrame" src="" type="application/pdf" width="100%" height="100%">
+                </div>
+
             </div>
         </div>
     </div>
+
 @endsection
+
+@push('js')
+    <script>
+        function openPDFModal(pdfUrl) {
+            document.getElementById('pdfFrame').src = pdfUrl;
+            let modal = new bootstrap.Modal(document.getElementById('pdfViewerModal'));
+            modal.show();
+        }
+    </script>
+@endpush

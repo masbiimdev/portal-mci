@@ -19,7 +19,7 @@
 
                 {{-- TOOL --}}
                 <div class="mb-3">
-                    <label class="form-label">Nama Alat</label>
+                    <label class="form-label">Nama Item</label>
 
                     @if(request()->tool_id)
                         <input type="hidden" name="tool_id" value="{{ request()->tool_id }}">
@@ -81,7 +81,8 @@
                         <label class="form-label">Status Kalibrasi</label>
                         <select name="status_kalibrasi" class="form-select">
                             <option value="OK">OK</option>
-                            <option value="Proses">Proses</option>
+                            <option value="PROSES">Proses</option>
+                            <option value="DUE SOON">Akan Jatuh Tempo</option>
                         </select>
                     </div>
                 </div>

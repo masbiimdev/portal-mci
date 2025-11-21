@@ -29,9 +29,10 @@ class ToolController extends Controller
             'merek' => 'nullable|string|max:255',
             'no_seri' => 'nullable|string|max:255',
             'kapasitas' => 'nullable|string|max:255',
+            'lokasi' => 'nullable|string|max:255'
         ]);
 
-        $tool = Tool::create($request->only(['nama_alat', 'merek', 'no_seri', 'kapasitas']));
+        $tool = Tool::create($request->only(['nama_alat', 'merek', 'no_seri', 'kapasitas','lokasi']));
 
         // generate qr_token and optionally QR image
         $tool->qr_token = (string) Str::uuid();
@@ -66,7 +67,7 @@ class ToolController extends Controller
 
     public function edit(Tool $tool)
     {
-        return view('tools.edit', compact('tool'));
+        return view('pages.admin.kalibrasi.tool.update', compact('tool'));
     }
 
     public function update(Request $request, Tool $tool)
@@ -76,9 +77,10 @@ class ToolController extends Controller
             'merek' => 'nullable|string|max:255',
             'no_seri' => 'nullable|string|max:255',
             'kapasitas' => 'nullable|string|max:255',
+            'lokasi' => 'nullable|string|max:255'
         ]);
 
-        $tool->update($request->only(['nama_alat', 'merek', 'no_seri', 'kapasitas']));
+        $tool->update($request->only(['nama_alat', 'merek', 'no_seri', 'kapasitas','lokasi']));
 
         return redirect()->route('tools.index')->with('success', 'Alat diperbarui.');
     }
@@ -138,7 +140,8 @@ class ToolController extends Controller
             'merek',
             'no_seri',
             'kapasitas',
-            'qr_code_path'
+            'qr_code_path',
+            'lokasi'
         )->orderBy('id')->get();
 
         // Load PDF

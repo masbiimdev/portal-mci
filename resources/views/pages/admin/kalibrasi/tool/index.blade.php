@@ -42,9 +42,10 @@
                 <table id="toolsTable" class="table table-striped table-bordered table-hover">
                     <thead style="background-color: #f8f9fa; font-weight: 600;">
                         <tr>
-                            <th class="text-center">Nama Alat</th>
+                            <th class="text-center">Nama Item</th>
                             <th class="text-center">Merek</th>
                             <th class="text-center">No Seri</th>
+                            <th class="text-center">Lokasi</th>
                             <th class="text-center">Kapasitas</th>
                             <th class="text-center">QR</th>
                             <th class="text-center">Actions</th>
@@ -56,6 +57,7 @@
                                 <td>{{ $tool->nama_alat }}</td>
                                 <td>{{ $tool->merek ?? '-' }}</td>
                                 <td>{{ $tool->no_seri ?? '-' }}</td>
+                                <td>{{ $tool->lokasi ?? '-' }}</td>
                                 <td>{{ $tool->kapasitas ?? '-' }}</td>
                                 <td class="text-center">
                                     @if ($tool->qr_code_path)

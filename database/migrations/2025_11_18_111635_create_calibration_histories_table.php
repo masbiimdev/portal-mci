@@ -33,7 +33,8 @@ class CreateCalibrationHistoriesTable extends Migration
             // Status periode ini
             $table->enum('status_kalibrasi', [
                 'OK',
-                'Proses'
+                'PROSES',
+                'DUE SOON'
             ])->default('OK');
 
             // Info catatan proses

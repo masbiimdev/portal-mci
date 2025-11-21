@@ -33,10 +33,10 @@
                 <table id="historyTable" class="table table-striped table-bordered table-hover">
                     <thead style="background-color: #f8f9fa; font-weight: 600;">
                         <tr>
-                            <th>Nama Alat</th>
+                            <th>Nama Item</th>
                             <th>Merek</th>
                             <th>No Seri</th>
-                            <th>Status</th>
+                            <th>Status Item</th>
                             <th class="text-center" style="width: 140px;">Aksi</th>
                         </tr>
                     </thead>
@@ -50,9 +50,9 @@
 
                                 <td>
                                     @if ($tool->histories->count() > 0)
-                                        <span class="badge bg-success">Sudah Ada</span>
+                                        <span class="badge bg-success">Sudah Ada History</span>
                                     @else
-                                        <span class="badge bg-secondary">Belum Ada</span>
+                                        <span class="badge bg-secondary">Belum Ada History</span>
                                     @endif
                                 </td>
 

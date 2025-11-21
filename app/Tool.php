@@ -12,7 +12,8 @@ class Tool extends Model
         'no_seri',
         'kapasitas',
         'qr_token',
-        'qr_code_path'
+        'qr_code_path',
+        'lokasi'
     ];
 
     // Semua riwayat kalibrasi

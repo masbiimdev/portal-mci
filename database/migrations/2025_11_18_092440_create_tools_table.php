@@ -20,6 +20,7 @@ class CreateToolsTable extends Migration
             $table->string('merek')->nullable();
             $table->string('no_seri')->nullable();
             $table->string('kapasitas')->nullable();
+            $table->string('lokasi')->nullable();
 
             // QR Code
             $table->string('qr_token')->unique()->nullable();

@@ -85,6 +85,20 @@
                 </li>
             </ul>
         </li>
+        {{-- Project --}}
+        <li class="menu-item {{ request()->routeIs('jobcards.*') ? 'active open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-building"></i>
+                <div data-i18n="Schedule">Project</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item {{ request()->routeIs('jobcards.index') ? 'active' : '' }}">
+                    <a href="{{ route('jobcards.index') }}" class="menu-link">
+                        <div data-i18n="Daily">PO</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
         {{-- QUALITY CONTROL MENU --}}
         <li class="menu-item {{ request()->routeIs('qc.*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">

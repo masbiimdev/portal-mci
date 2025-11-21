@@ -268,10 +268,10 @@
                     <p class="font-semibold text-gray-800">Inventory</p>
                 </a>
 
-                <a href="/announcement"
+                <a href="/kalibrasi"
                     class="group card-glass p-6 rounded-xl text-center border transition-all duration-200 hover:-translate-y-1 hover:shadow-lg focus-ring">
                     <div class="text-2xl text-indigo-600 mb-3"><i class="fas fa-bullhorn" aria-hidden="true"></i></div>
-                    <p class="font-semibold text-gray-800">Pengumuman</p>
+                    <p class="font-semibold text-gray-800">Kalibrasi</p>
                 </a>
             </div>
 
