@@ -5,43 +5,165 @@
 @push('css')
     <style>
         /* Card hover */
-        .summary-card { transition: transform .12s ease, box-shadow .12s ease; }
-        .summary-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(15,23,42,.08); }
+        .summary-card {
+            transition: transform .12s ease, box-shadow .12s ease;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(15, 23, 42, .08);
+        }
 
         /* Status badges */
-        .badge-status { display:inline-flex; align-items:center; gap:.4rem; padding:.25rem .5rem; border-radius:.5rem; font-weight:600; font-size:.85rem; }
-        .badge-ok { background:#ecfdf5; color:#166534; }
-        .badge-proses { background:#fffbeb; color:#92400e; }
-        .badge-due { background:#fff1f2; color:#991b1b; }
-        .badge-unknown { background:#f8fafc; color:#475569; }
+        .badge-status {
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            padding: .25rem .5rem;
+            border-radius: .5rem;
+            font-weight: 600;
+            font-size: .85rem;
+        }
+
+        .badge-ok {
+            background: #ecfdf5;
+            color: #166534;
+        }
+
+        .badge-proses {
+            background: #fffbeb;
+            color: #92400e;
+        }
+
+        .badge-due {
+            background: #fff1f2;
+            color: #991b1b;
+        }
+
+        .badge-unknown {
+            background: #f8fafc;
+            color: #475569;
+        }
 
         /* Table visuals: sticky header, zebra rows, responsive */
-        .table-wrapper { overflow: auto; border-radius: .5rem; }
-        table.tools-table { width:100%; border-collapse:collapse; min-width: 900px; }
-        table.tools-table thead th {
-            position: sticky; top:0; z-index: 10;
-            background: linear-gradient(90deg,#0ea5e9,#0284c7);
-            color: #fff;
+        .table-wrapper {
+            overflow: auto;
+            border-radius: .5rem;
         }
-        table.tools-table th, table.tools-table td { padding: .75rem 1rem; border-bottom: 1px solid #eef2ff; text-align: left; vertical-align: top; }
-        table.tools-table tbody tr:nth-child(odd) td { background: #fff; }
-        table.tools-table tbody tr:hover td { background: rgba(59,130,246,.04); }
+
+        table.tools-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px;
+        }
+
+        table.tools-table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: linear-gradient(90deg, #0ea5e9, #0284c7);
+            color: #fff;
+            padding: .75rem 1rem;
+            text-align: left;
+        }
+
+        table.tools-table th,
+        table.tools-table td {
+            padding: .75rem 1rem;
+            border-bottom: 1px solid #eef2ff;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        table.tools-table tbody tr:nth-child(odd) td {
+            background: #fff;
+        }
+
+        table.tools-table tbody tr:hover td {
+            background: rgba(59, 130, 246, .04);
+        }
 
         /* Action button */
-        .btn-detail { background:#0ea5e9; color:#fff; padding:.35rem .6rem; border-radius:.5rem; font-size:.85rem; border: none; cursor: pointer; }
-        .btn-detail:hover { background:#0284c7; }
+        .btn-detail {
+            background: #0ea5e9;
+            color: #fff;
+            padding: .35rem .6rem;
+            border-radius: .5rem;
+            font-size: .85rem;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-detail:hover {
+            background: #0284c7;
+        }
 
         /* Modal tweaks */
-        .modal-backdrop { background: rgba(2,6,23,.6); }
-        #detailModal .modal-card { max-height: 80vh; overflow:auto; }
+        .modal-backdrop {
+            background: rgba(2, 6, 23, .6);
+        }
+
+        #detailModal .modal-card {
+            max-height: 80vh;
+            overflow: auto;
+        }
 
         /* Pagination controls */
-        .pagination { display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; }
-        .pagination button { padding:.4rem .6rem; border-radius:.4rem; border:1px solid #e6edf4; background:#fff; cursor:pointer; }
-        .pagination button.active { background:#0ea5e9; color:#fff; border-color:#0ea5e9; }
-        .controls-row { display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; }
+        .pagination {
+            display: flex;
+            gap: .5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .pagination button {
+            padding: .4rem .6rem;
+            border-radius: .4rem;
+            border: 1px solid #e6edf4;
+            background: #fff;
+            cursor: pointer;
+        }
+
+        .pagination button.active {
+            background: #0ea5e9;
+            color: #fff;
+            border-color: #0ea5e9;
+        }
+
+        .controls-row {
+            display: flex;
+            gap: .5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
         @media (max-width: 640px) {
-            .controls-row { flex-direction:column; align-items:stretch; }
+            .controls-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+
+        /* Notice banner */
+        .notice {
+            background: linear-gradient(90deg, #fff7ed, #fff1f2);
+            border-left: 4px solid #fb923c;
+            padding: .75rem 1rem;
+            border-radius: .5rem;
+            color: #92400e;
+            margin-bottom: 1rem;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
         }
     </style>
 @endpush
@@ -51,7 +173,15 @@
         <!-- Header -->
         <div class="text-center mb-6">
             <h1 class="text-3xl sm:text-4xl font-extrabold text-blue-700 tracking-tight mb-2">🛠️ Portal Kalibrasi</h1>
-            <p class="text-gray-500 text-sm sm:text-base">Pantau status kalibrasi alat, jadwal ulang, dan ringkasan status alat secara real-time.</p>
+            <p class="text-gray-500 text-sm sm:text-base">Pantau status kalibrasi alat, jadwal ulang, dan ringkasan status
+                alat secara real-time.</p>
+        </div>
+
+        <!-- Notice: effective date -->
+        <div class="notice" role="status" aria-live="polite">
+            <strong>Perhatian:</strong>
+            Sistem ini mulai aktif pada Oktober 2025. Data kalibrasi sebelum periode tersebut mungkin tidak tersedia dalam
+            aplikasi karena perbedaan metode pencatatan sebelumnya.”
         </div>
 
         <!-- Summary Cards -->
@@ -91,14 +221,17 @@
         <!-- Controls: search, filter, per-page, export, refresh -->
         <div class="controls-row mb-4 justify-between">
             <div class="flex items-center gap-3 w-full sm:w-auto">
-                <input id="searchInput" type="search" placeholder="Cari nama, merk, seri..." class="w-full sm:w-72 px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-200" />
-                <select id="statusFilter" class="px-3 py-2 rounded-lg border border-gray-200">
+                <input id="searchInput" type="search" placeholder="Cari nama, merk, seri..."
+                    class="w-full sm:w-72 px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                    aria-label="Cari alat" />
+                <select id="statusFilter" class="px-3 py-2 rounded-lg border border-gray-200" aria-label="Filter status">
                     <option value="">Semua Status</option>
                     <option value="OK">OK</option>
                     <option value="Proses">Proses</option>
                     <option value="Jatuh Tempo">Jatuh Tempo</option>
                 </select>
-                <select id="perPage" class="px-3 py-2 rounded-lg border border-gray-200" title="Rows per page">
+                <select id="perPage" class="px-3 py-2 rounded-lg border border-gray-200" title="Rows per page"
+                    aria-label="Baris per halaman">
                     <option value="10">10 / halaman</option>
                     <option value="25">25 / halaman</option>
                     <option value="50">50 / halaman</option>
@@ -106,8 +239,9 @@
             </div>
 
             <div class="flex items-center gap-2">
-                {{-- <button id="exportCsvBtn" class="inline-flex items-center gap-2 bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700">↓ Export CSV</button> --}}
-                <button id="refreshBtn" class="inline-flex items-center gap-2 bg-white border border-gray-200 px-3 py-2 rounded-lg hover:bg-gray-50">↻ Refresh</button>
+                <button id="refreshBtn"
+                    class="inline-flex items-center gap-2 bg-white border border-gray-200 px-3 py-2 rounded-lg hover:bg-gray-50"
+                    aria-label="Refresh halaman">↻ Refresh</button>
             </div>
         </div>
 
@@ -119,9 +253,12 @@
                     <canvas id="statusPie" style="max-width:320px; width:100%; height:220px;"></canvas>
                 </div>
                 <div class="mt-3 flex items-center justify-center gap-4 text-sm text-gray-600">
-                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-green-600"></span> OK: {{ $pieData['ok'] ?? 0 }}</div>
-                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-amber-500"></span> Proses: {{ $pieData['proses'] ?? 0 }}</div>
-                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-red-600"></span> Jatuh Tempo: {{ $pieData['due'] ?? 0 }}</div>
+                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-green-600"></span> OK:
+                        {{ $pieData['ok'] ?? 0 }}</div>
+                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-amber-500"></span> Proses:
+                        {{ $pieData['proses'] ?? 0 }}</div>
+                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-red-600"></span> Jatuh Tempo:
+                        {{ $pieData['due'] ?? 0 }}</div>
                 </div>
             </div>
 
@@ -137,72 +274,93 @@
         <div class="bg-white border border-blue-100 shadow rounded-xl p-4 mt-6">
             <h2 class="text-lg font-semibold text-blue-700 mb-4">📋 Data Item</h2>
 
-            <div class="table-wrapper">
-                <table id="toolsTable" class="tools-table" aria-describedby="tableDescription">
+            <div class="table-wrapper" role="region" aria-labelledby="tableDescription">
+                <table id="toolsTable" class="tools-table" aria-describedby="tableDescription" role="table">
                     <caption id="tableDescription" class="sr-only">Daftar alat dan status kalibrasi</caption>
                     <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Nama Item</th>
-                            <th>Merk</th>
-                            <th>Status Kalibrasi</th>
-                            <th>Tanggal Kalibrasi</th>
-                            <th>Tanggal Kalibrasi Ulang</th>
-                            <th>Keterangan</th>
-                            <th>Aksi</th>
+                        <tr role="row">
+                            <th scope="col">No</th>
+                            <th scope="col">Nama Item</th>
+                            <th scope="col">Merk</th>
+                            <th scope="col">Status Kalibrasi</th>
+                            <th scope="col">Tanggal Kalibrasi</th>
+                            <th scope="col">Tanggal Kalibrasi Ulang</th>
+                            <th scope="col">Keterangan</th>
+                            <th scope="col">Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="toolsTbody" class="bg-white">
                         @php
                             // prepare $toolsData for JS safely
-                            $toolsData = $tools->map(function($t, $i) {
-                                $history = optional($t->latestHistory);
-                                return [
-                                    'id' => $t->id,
-                                    'nama' => $t->nama_alat ?? '',
-                                    'merek' => $t->merek ?? '',
-                                    'no_seri' => $t->no_seri ?? '',
-                                    'status' => $history->status_kalibrasi ?? '-',
-                                    'tgl_kalibrasi' => $history->tgl_kalibrasi ? $history->tgl_kalibrasi->format('d/m/Y') : null,
-                                    'tgl_kalibrasi_ulang' => $history->tgl_kalibrasi_ulang ? $history->tgl_kalibrasi_ulang->format('d/m/Y') : null,
-                                    'keterangan' => $history->keterangan ?? '',
-                                ];
-                            })->toArray();
+                            $toolsData = $tools
+                                ->map(function ($t, $i) {
+                                    $history = optional($t->latestHistory);
+                                    return [
+                                        'id' => $t->id,
+                                        'nama' => $t->nama_alat ?? '',
+                                        'merek' => $t->merek ?? '',
+                                        'no_seri' => $t->no_seri ?? '',
+                                        'status' => $history->status_kalibrasi ?? '-',
+                                        'tgl_kalibrasi' => $history->tgl_kalibrasi
+                                            ? $history->tgl_kalibrasi->format('d/m/Y')
+                                            : null,
+                                        'tgl_kalibrasi_ulang' => $history->tgl_kalibrasi_ulang
+                                            ? $history->tgl_kalibrasi_ulang->format('d/m/Y')
+                                            : null,
+                                        'keterangan' => $history->keterangan ?? '',
+                                    ];
+                                })
+                                ->toArray();
                         @endphp
 
                         @forelse($tools as $index => $tool)
                             @php
                                 $history = $tool->latestHistory;
                                 $status = optional($history)->status_kalibrasi ?? '-';
-                                if ($status === 'OK') $statusClass = 'badge-status badge-ok';
-                                elseif ($status === 'Proses') $statusClass = 'badge-status badge-proses';
-                                elseif ($status === 'Jatuh Tempo' || $status === 'Akan Jatuh Tempo') $statusClass = 'badge-status badge-due';
-                                else $statusClass = 'badge-status badge-unknown';
+                                if ($status === 'OK') {
+                                    $statusClass = 'badge-status badge-ok';
+                                } elseif ($status === 'Proses') {
+                                    $statusClass = 'badge-status badge-proses';
+                                } elseif ($status === 'Jatuh Tempo' || $status === 'Akan Jatuh Tempo') {
+                                    $statusClass = 'badge-status badge-due';
+                                } else {
+                                    $statusClass = 'badge-status badge-unknown';
+                                }
 
                                 $toolJson = [
                                     'id' => $tool->id,
                                     'nama' => $tool->nama_alat,
                                     'merek' => $tool->merek,
                                     'no_seri' => $tool->no_seri,
-                                    'history' => $history ? [
-                                        'status' => $history->status_kalibrasi,
-                                        'tgl_kalibrasi' => $history->tgl_kalibrasi ? $history->tgl_kalibrasi->format('d/m/Y') : null,
-                                        'tgl_kalibrasi_ulang' => $history->tgl_kalibrasi_ulang ? $history->tgl_kalibrasi_ulang->format('d/m/Y') : null,
-                                        'keterangan' => $history->keterangan,
-                                    ] : null
+                                    'history' => $history
+                                        ? [
+                                            'status' => $history->status_kalibrasi,
+                                            'tgl_kalibrasi' => $history->tgl_kalibrasi
+                                                ? $history->tgl_kalibrasi->format('d/m/Y')
+                                                : null,
+                                            'tgl_kalibrasi_ulang' => $history->tgl_kalibrasi_ulang
+                                                ? $history->tgl_kalibrasi_ulang->format('d/m/Y')
+                                                : null,
+                                            'keterangan' => $history->keterangan,
+                                        ]
+                                        : null,
                                 ];
                             @endphp
 
-                            <tr data-tool='@json($toolJson)'>
+                            <tr data-tool='@json($toolJson)' role="row">
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ e($tool->nama_alat) }}</td>
                                 <td>{{ e($tool->merek ?? '-') }}</td>
-                                <td><span class="{{ $statusClass }}">{{ $status }}</span></td>
-                                <td>{{ optional($history)->tgl_kalibrasi ? $history->tgl_kalibrasi->format('d/m/Y') : '-' }}</td>
-                                <td>{{ optional($history)->tgl_kalibrasi_ulang ? $history->tgl_kalibrasi_ulang->format('d/m/Y') : '-' }}</td>
+                                <td><span class="{{ $statusClass }}"
+                                        aria-label="Status {{ $status }}">{{ $status }}</span></td>
+                                <td>{{ optional($history)->tgl_kalibrasi ? $history->tgl_kalibrasi->format('d/m/Y') : '-' }}
+                                </td>
+                                <td>{{ optional($history)->tgl_kalibrasi_ulang ? $history->tgl_kalibrasi_ulang->format('d/m/Y') : '-' }}
+                                </td>
                                 <td>{{ optional($history)->keterangan ?? '-' }}</td>
                                 <td>
-                                    <button type="button" class="btn-detail" data-action="detail">Detail</button>
+                                    <button type="button" class="btn-detail" data-action="detail"
+                                        aria-label="Lihat detail item {{ $tool->nama_alat }}">Detail</button>
                                 </td>
                             </tr>
                         @empty
@@ -217,18 +375,19 @@
             <!-- Pagination (client-side) -->
             <div class="mt-4 flex items-center justify-between">
                 <div id="paginationInfo" class="text-sm text-gray-600"></div>
-                <div id="paginationControls" class="pagination"></div>
+                <div id="paginationControls" class="pagination" aria-label="Kontrol halaman"></div>
             </div>
         </div>
     </div>
 
     <!-- Modal -->
-    <div id="detailModal" class="fixed inset-0 hidden items-center justify-center z-50">
+    <div id="detailModal" class="fixed inset-0 hidden items-center justify-center z-50" role="dialog" aria-modal="true"
+        aria-labelledby="modalTitle">
         <div class="absolute inset-0 modal-backdrop" aria-hidden="true"></div>
         <div class="relative modal-card bg-white rounded-xl shadow-lg w-11/12 max-w-2xl p-6 z-10">
             <div class="flex justify-between items-start">
                 <h3 id="modalTitle" class="text-lg font-semibold text-slate-700">Detail Item</h3>
-                <button id="modalClose" class="text-gray-400 hover:text-gray-600">✕</button>
+                <button id="modalClose" class="text-gray-400 hover:text-gray-600" aria-label="Tutup">✕</button>
             </div>
             <div id="modalBody" class="mt-4 text-sm text-slate-700 space-y-2"></div>
             <div class="mt-4 text-right">
@@ -243,11 +402,11 @@
     <script>
         // Expose server data
         window._portalTools = @json($toolsData ?? []);
-        window._pieData = @json($pieData ?? ['ok'=>0,'proses'=>0,'due'=>0]);
+        window._pieData = @json($pieData ?? ['ok' => 0, 'proses' => 0, 'due' => 0]);
         window.__BAR_LABELS__ = @json($barLabels ?? []);
         window.__BAR_VALUES__ = @json($barValues ?? []);
 
-        (function () {
+        (function() {
             const toolsTbody = document.getElementById('toolsTbody');
             const searchInput = document.getElementById('searchInput');
             const statusFilter = document.getElementById('statusFilter');
@@ -273,7 +432,14 @@
 
             function escapeHtml(s) {
                 if (s === null || s === undefined) return '';
-                return String(s).replace(/[&<>"'`]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;'}[m]));
+                return String(s).replace(/[&<>"'`]/g, m => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;',
+                '`': '&#96;'
+                } [m]));
             }
 
             // Filtering and pagination state
@@ -282,8 +448,8 @@
             let perPage = parseInt(perPageSelect.value, 10) || 10;
 
             function applyFiltersAndPaginate() {
-                const q = searchInput.value.trim().toLowerCase();
-                const status = statusFilter.value.trim().toLowerCase();
+                const q = (searchInput && searchInput.value) ? searchInput.value.trim().toLowerCase() : '';
+                const status = (statusFilter && statusFilter.value) ? statusFilter.value.trim().toLowerCase() : '';
                 filteredRows = allRows.filter(r => {
                     const text = r.innerText.toLowerCase();
                     if (q && !text.includes(q)) return false;
@@ -305,11 +471,14 @@
                 const pageRows = filteredRows.slice(start, start + perPage);
                 pageRows.forEach(r => r.style.display = '');
                 // no-data handling
-                const noDataRow = toolsTbody.querySelector('tr td[colspan]') ? toolsTbody.querySelector('tr td[colspan]').parentElement : null;
+                const noDataRow = toolsTbody.querySelector('tr td[colspan]') ? toolsTbody.querySelector(
+                    'tr td[colspan]').parentElement : null;
                 if (noDataRow) {
                     noDataRow.style.display = filteredRows.length === 0 ? '' : 'none';
                 }
-                paginationInfo.innerText = `Menampilkan ${filteredRows.length === 0 ? 0 : start+1} - ${Math.min(start + pageRows.length, filteredRows.length)} dari ${filteredRows.length} hasil`;
+                paginationInfo.innerText = filteredRows.length === 0 ?
+                    'Menampilkan 0 hasil' :
+                    `Menampilkan ${start + 1} - ${Math.min(start + pageRows.length, filteredRows.length)} dari ${filteredRows.length} hasil`;
             }
 
             function renderPagination() {
@@ -319,25 +488,41 @@
                 const prev = document.createElement('button');
                 prev.innerText = '‹';
                 prev.disabled = currentPage <= 1;
-                prev.addEventListener('click', () => { if (currentPage > 1) { currentPage--; renderTablePage(); renderPagination(); } });
+                prev.addEventListener('click', () => {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        renderTablePage();
+                        renderPagination();
+                    }
+                });
                 paginationControls.appendChild(prev);
                 // pages (compact if many)
                 const maxButtons = 7;
-                let start = Math.max(1, currentPage - Math.floor(maxButtons/2));
+                let start = Math.max(1, currentPage - Math.floor(maxButtons / 2));
                 let end = Math.min(total, start + maxButtons - 1);
                 if (end - start < maxButtons - 1) start = Math.max(1, end - maxButtons + 1);
                 for (let i = start; i <= end; i++) {
                     const btn = document.createElement('button');
                     btn.innerText = i;
                     if (i === currentPage) btn.classList.add('active');
-                    btn.addEventListener('click', () => { currentPage = i; renderTablePage(); renderPagination(); });
+                    btn.addEventListener('click', () => {
+                        currentPage = i;
+                        renderTablePage();
+                        renderPagination();
+                    });
                     paginationControls.appendChild(btn);
                 }
                 // next
                 const next = document.createElement('button');
                 next.innerText = '›';
                 next.disabled = currentPage >= total;
-                next.addEventListener('click', () => { if (currentPage < total) { currentPage++; renderTablePage(); renderPagination(); } });
+                next.addEventListener('click', () => {
+                    if (currentPage < total) {
+                        currentPage++;
+                        renderTablePage();
+                        renderPagination();
+                    }
+                });
                 paginationControls.appendChild(next);
             }
 
@@ -345,9 +530,9 @@
             applyFiltersAndPaginate();
 
             // listeners
-            searchInput.addEventListener('input', () => applyFiltersAndPaginate());
-            statusFilter.addEventListener('change', () => applyFiltersAndPaginate());
-            perPageSelect.addEventListener('change', () => {
+            if (searchInput) searchInput.addEventListener('input', () => applyFiltersAndPaginate());
+            if (statusFilter) statusFilter.addEventListener('change', () => applyFiltersAndPaginate());
+            if (perPageSelect) perPageSelect.addEventListener('change', () => {
                 perPage = parseInt(perPageSelect.value, 10) || 10;
                 currentPage = 1;
                 renderTablePage();
@@ -355,35 +540,12 @@
             });
 
             // export visible rows to CSV
-            exportCsvBtn?.addEventListener('click', () => {
-                try {
-                    const headers = Array.from(document.querySelectorAll('#toolsTable thead th')).map(th => th.innerText.trim());
-                    const rows = [headers];
-                    // only include currently visible rows
-                    const visibleRows = Array.from(toolsTbody.querySelectorAll('tr')).filter(r => r.style.display !== 'none');
-                    visibleRows.forEach(tr => {
-                        const tds = Array.from(tr.querySelectorAll('td'));
-                        rows.push(tds.map(td => td.innerText.trim()));
-                    });
-                    const csv = rows.map(r => r.map(c => `"${(c||'').replace(/"/g,'""')}"`).join(',')).join('\n');
-                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-                    const link = document.createElement('a');
-                    link.href = URL.createObjectURL(blob);
-                    link.setAttribute('download', 'data-alat.csv');
-                    document.body.appendChild(link);
-                    link.click();
-                    link.remove();
-                } catch (err) {
-                    console.error('Export failed', err);
-                    alert('Gagal mengekspor CSV.');
-                }
-            });
 
             // refresh
-            refreshBtn?.addEventListener('click', () => window.location.reload());
+            if (refreshBtn) refreshBtn.addEventListener('click', () => window.location.reload());
 
             // modal: delegated click on "Detail" button
-            toolsTbody?.addEventListener('click', function (e) {
+            toolsTbody?.addEventListener('click', function(e) {
                 const btn = e.target.closest('button[data-action="detail"]');
                 if (!btn) return;
                 const tr = btn.closest('tr[data-tool]');
@@ -407,27 +569,49 @@
                         <div class="sm:col-span-2"><strong>Keterangan:</strong><div class="text-sm mt-1">${escapeHtml(data.history?.keterangan || data.keterangan || '-')}</div></div>
                     </div>
                 `;
-                detailModal.classList.remove('hidden'); detailModal.classList.add('flex');
+                detailModal.classList.remove('hidden');
+                detailModal.classList.add('flex');
                 modalClose?.focus();
             });
 
-            function closeModal() { detailModal?.classList.add('hidden'); detailModal?.classList.remove('flex'); }
+            function closeModal() {
+                detailModal?.classList.add('hidden');
+                detailModal?.classList.remove('flex');
+            }
             modalClose?.addEventListener('click', closeModal);
             modalClose2?.addEventListener('click', closeModal);
-            detailModal?.addEventListener('click', e => { if (e.target === detailModal) closeModal(); });
-            document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+            detailModal?.addEventListener('click', e => {
+                if (e.target === detailModal) closeModal();
+            });
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') closeModal();
+            });
 
             // charts
             (function initCharts() {
                 try {
-                    const pd = window._pieData || { ok:0, proses:0, due:0 };
+                    const pd = window._pieData || {
+                        ok: 0,
+                        proses: 0,
+                        due: 0
+                    };
                     if (statusPieEl && window.Chart) {
                         const ctx = statusPieEl.getContext('2d');
                         if (statusPieEl.__chart) statusPieEl.__chart.destroy();
                         statusPieEl.__chart = new Chart(ctx, {
                             type: 'doughnut',
-                            data: { labels:['OK','Proses','Jatuh Tempo'], datasets:[{ data:[pd.ok||0,pd.proses||0,pd.due||0], backgroundColor:['#16a34a','#f59e0b','#dc2626'] }] },
-                            options: { responsive:true, maintainAspectRatio:false, cutout:'55%' }
+                            data: {
+                                labels: ['OK', 'Proses', 'Jatuh Tempo'],
+                                datasets: [{
+                                    data: [pd.ok || 0, pd.proses || 0, pd.due || 0],
+                                    backgroundColor: ['#16a34a', '#f59e0b', '#dc2626']
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                cutout: '55%'
+                            }
                         });
                     }
                     const labels = window.__BAR_LABELS__ || [];
@@ -435,12 +619,25 @@
                     if (trendLineEl && window.Chart) {
                         const ctx2 = trendLineEl.getContext('2d');
                         if (trendLineEl.__chart) trendLineEl.__chart.destroy();
-                        const grad = ctx2.createLinearGradient(0,0,0,250);
-                        grad.addColorStop(0,'rgba(13,110,253,0.18)'); grad.addColorStop(1,'rgba(13,110,253,0.02)');
+                        const grad = ctx2.createLinearGradient(0, 0, 0, 250);
+                        grad.addColorStop(0, 'rgba(13,110,253,0.18)');
+                        grad.addColorStop(1, 'rgba(13,110,253,0.02)');
                         trendLineEl.__chart = new Chart(ctx2, {
                             type: 'line',
-                            data: { labels: labels, datasets: [{ label:'Alat Akan Jatuh Tempo', data: values||[], fill:true, backgroundColor:grad, borderColor:'#0d6efd' }] },
-                            options: { responsive:true, maintainAspectRatio:false }
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    label: 'Alat Akan Jatuh Tempo',
+                                    data: values || [],
+                                    fill: true,
+                                    backgroundColor: grad,
+                                    borderColor: '#0d6efd'
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false
+                            }
                         });
                     }
                 } catch (err) {
@@ -449,7 +646,11 @@
             })();
 
             // expose for debugging
-            window._portal = { applyFiltersAndPaginate, renderTablePage, renderPagination };
+            window._portal = {
+                applyFiltersAndPaginate,
+                renderTablePage,
+                renderPagination
+            };
         })();
     </script>
 @endpush
