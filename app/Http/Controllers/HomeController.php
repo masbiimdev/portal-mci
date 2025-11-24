@@ -359,7 +359,7 @@ class HomeController extends Controller
         })->count();
 
         $statusProses = $tools->filter(function ($t) {
-            return optional($t->latestHistory)->status_kalibrasi === 'Proses';
+            return optional($t->latestHistory)->status_kalibrasi === 'PROSES';
         })->count();
 
         // Akan jatuh tempo dalam 30 hari

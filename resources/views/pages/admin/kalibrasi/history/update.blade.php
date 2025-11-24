@@ -76,8 +76,10 @@
                             <select name="status_kalibrasi" class="form-select">
                                 <option value="OK" {{ $history->status_kalibrasi == 'OK' ? 'selected' : '' }}>OK
                                 </option>
-                                <option value="Proses" {{ $history->status_kalibrasi == 'Proses' ? 'selected' : '' }}>
+                                <option value="PROSES" {{ $history->status_kalibrasi == 'PROSES' ? 'selected' : '' }}>
                                     Proses</option>
+                                    <option value="DUE SOON" {{ $history->status_kalibrasi == 'DUE SOON' ? 'selected' : '' }}>
+                                    Akan Jatuh Tempo</option>
                             </select>
                         </div>
                     </div>

@@ -25,7 +25,7 @@ class CalibrationHistoryController extends Controller
 
         if ($request->tool_id) {
             $tool = Tool::find($request->tool_id);
-            if (!$tool) abort(404); // jika tool_id salah, tampilkan 404
+            if (!$tool) abort(404);
         } else {
             $tools = Tool::all();
         }
@@ -45,7 +45,8 @@ class CalibrationHistoryController extends Controller
             $file = $r->file('file_sertifikat')->store('sertifikat-kalibrasi', 'public');
         }
 
-        $history = CalibrationHistory::create([
+        // Mutator akan mengatur status_kalibrasi & keterangan
+        CalibrationHistory::create([
             'tool_id'               => $r->tool_id,
             'tgl_kalibrasi'         => $r->tgl_kalibrasi,
             'tgl_kalibrasi_ulang'   => $r->tgl_kalibrasi_ulang,
@@ -54,12 +55,9 @@ class CalibrationHistoryController extends Controller
             'lembaga_kalibrasi'     => $r->lembaga_kalibrasi,
             'interval_kalibrasi'    => $r->interval_kalibrasi,
             'eksternal_kalibrasi'   => $r->eksternal_kalibrasi,
-            'status_kalibrasi'      => $r->status_kalibrasi,
-            'keterangan'            => $r->keterangan,
+            'status_kalibrasi'      => $r->status_kalibrasi, // MUTATOR yang mengolah
         ]);
 
-        // ===== Redirect otomatis =====
-        // Gunakan input 'redirect_to' dari form, default ke show
         $redirectTo = $r->input('redirect_to', 'show');
 
         if ($redirectTo === 'index') {
@@ -71,17 +69,16 @@ class CalibrationHistoryController extends Controller
     }
 
 
-
     public function edit($id)
     {
         $history = CalibrationHistory::findOrFail($id);
-        $tool = $history->tool; // relasi tool
+        $tool = $history->tool;
         return view('pages.admin.kalibrasi.history.update', compact('tool', 'history'));
     }
 
     public function update(Request $request, $id)
     {
-        $r = $request->validate([
+        $data = $request->validate([
             'tgl_kalibrasi' => 'nullable|date',
             'tgl_kalibrasi_ulang' => 'nullable|date',
             'no_sertifikat' => 'nullable|string',
@@ -89,32 +86,36 @@ class CalibrationHistoryController extends Controller
             'lembaga_kalibrasi' => 'nullable|string',
             'interval_kalibrasi' => 'nullable|string',
             'eksternal_kalibrasi' => 'nullable|string',
-            'status_kalibrasi' => 'nullable|string',
-            'keterangan' => 'nullable|string',
+            'status_kalibrasi' => 'nullable|string', // MUTATOR akan olah
         ]);
 
         $history = CalibrationHistory::findOrFail($id);
 
+        // Handle file upload
         if ($request->hasFile('file_sertifikat')) {
-            if ($history->file_sertifikat && file_exists(public_path('uploads/' . $history->file_sertifikat))) {
-                unlink(public_path('uploads/' . $history->file_sertifikat));
+            if ($history->file_sertifikat && Storage::disk('public')->exists($history->file_sertifikat)) {
+                Storage::disk('public')->delete($history->file_sertifikat);
             }
+
             $file = $request->file('file_sertifikat')->store('uploads', 'public');
-            $history->file_sertifikat = $file;
+            $data['file_sertifikat'] = $file;
         }
 
-        $history->update($r);
+        // Mutator otomatis update status & keterangan
+        $history->fill($data);
+        $history->save();
 
         return redirect()->route('histories.show', $history->tool_id)
             ->with('success', 'History kalibrasi berhasil diperbarui!');
     }
 
+
     public function destroy(Tool $tool, CalibrationHistory $history)
     {
-        // delete file if exist
         if ($history->file_sertifikat && Storage::disk('public')->exists($history->file_sertifikat)) {
             Storage::disk('public')->delete($history->file_sertifikat);
         }
+
         $history->delete();
 
         return redirect()->route('histories.index', $tool->id)
@@ -123,21 +124,7 @@ class CalibrationHistoryController extends Controller
 
     public function show($tool_id)
     {
-        // Ambil data tool beserta history-nya
         $tool = Tool::with('histories')->findOrFail($tool_id);
-
         return view('pages.admin.kalibrasi.history.show', compact('tool'));
     }
-
-    // download certificate
-    // public function downloadCertificate(Tool $tool, CalibrationHistory $history)
-    // {
-    //     if (!$history->file_sertifikat) {
-    //         return back()->with('error','File sertifikat tidak tersedia.');
-    //     }
-    //     if (!Storage::disk('public')->exists($history->file_sertifikat)) {
-    //         return back()->with('error','File sertifikat tidak ditemukan di server.');
-    //     }
-    //     return Storage::disk('public')->stream($history->file_sertifikat, $history->no_sertifikat.'.pdf');
-    // }
 }
