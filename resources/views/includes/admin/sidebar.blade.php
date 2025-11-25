@@ -86,7 +86,7 @@
             </ul>
         </li>
         {{-- Project --}}
-        <li class="menu-item {{ request()->routeIs('jobcards.*') ? 'active open' : '' }}">
+        {{-- <li class="menu-item {{ request()->routeIs('jobcards.*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-building"></i>
                 <div data-i18n="Schedule">Project</div>
@@ -98,7 +98,7 @@
                     </a>
                 </li>
             </ul>
-        </li>
+        </li> --}}
         {{-- QUALITY CONTROL MENU --}}
         <li class="menu-item {{ request()->routeIs('qc.*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">

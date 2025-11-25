@@ -212,7 +212,7 @@
             </div>
 
             <div class="summary-card bg-white border border-blue-100 rounded-xl shadow p-5 text-center">
-                <p class="text-sm text-gray-500 mb-1">Akan Jatuh Tempo &lt; 30 Hari</p>
+                <p class="text-sm text-gray-500 mb-1">Penjadwalan &lt; 15 Hari</p>
                 <h3 class="text-2xl font-bold text-red-600">{{ $dueSoon }}</h3>
                 <p class="text-xs text-gray-400 mt-1">Perlu perhatian</p>
             </div>
@@ -227,8 +227,8 @@
                 <select id="statusFilter" class="px-3 py-2 rounded-lg border border-gray-200" aria-label="Filter status">
                     <option value="">Semua Status</option>
                     <option value="OK">OK</option>
-                    <option value="Proses">Proses</option>
-                    <option value="Jatuh Tempo">Jatuh Tempo</option>
+                    <option value="PROSES">Proses</option>
+                    <option value="DUE SOON">Penjadwalan</option>
                 </select>
                 <select id="perPage" class="px-3 py-2 rounded-lg border border-gray-200" title="Rows per page"
                     aria-label="Baris per halaman">
@@ -257,7 +257,7 @@
                         {{ $pieData['ok'] ?? 0 }}</div>
                     <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-amber-500"></span> Proses:
                         {{ $pieData['proses'] ?? 0 }}</div>
-                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-red-600"></span> Jatuh Tempo:
+                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-red-600"></span> Penjadwalan:
                         {{ $pieData['due'] ?? 0 }}</div>
                 </div>
             </div>
@@ -601,7 +601,7 @@
                         statusPieEl.__chart = new Chart(ctx, {
                             type: 'doughnut',
                             data: {
-                                labels: ['OK', 'Proses', 'Jatuh Tempo'],
+                                labels: ['OK', 'Proses', 'Penjadwalan'],
                                 datasets: [{
                                     data: [pd.ok || 0, pd.proses || 0, pd.due || 0],
                                     backgroundColor: ['#16a34a', '#f59e0b', '#dc2626']
@@ -627,7 +627,7 @@
                             data: {
                                 labels: labels,
                                 datasets: [{
-                                    label: 'Alat Akan Jatuh Tempo',
+                                    label: 'Penjadwalan',
                                     data: values || [],
                                     fill: true,
                                     backgroundColor: grad,

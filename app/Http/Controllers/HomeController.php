@@ -367,7 +367,7 @@ class HomeController extends Controller
             $tgl = optional($t->latestHistory)->tgl_kalibrasi_ulang;
             if (!$tgl) return false;
             $now = Carbon::now();
-            return Carbon::parse($tgl)->between($now, $now->copy()->addDays(30));
+            return Carbon::parse($tgl)->between($now, $now->copy()->addDays(15));
         })->count();
 
         // Data pie chart

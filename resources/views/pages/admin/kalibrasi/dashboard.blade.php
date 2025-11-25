@@ -109,7 +109,7 @@
             <div class="col-lg-3 col-md-6">
                 <div class="card summary-card text-center shadow-sm p-3 h-100">
                     <div class="d-flex justify-content-between align-items-start">
-                        <div class="label">Akan Jatuh Tempo (≤30 hari)</div>
+                        <div class="label">Penjadwalan (≤15 hari)</div>
                         <i class="bi bi-exclamation-triangle-fill fs-4 text-warning"></i>
                     </div>
                     <div class="value text-warning mt-2">{{ $dueSoon }}</div>
@@ -130,7 +130,7 @@
                     <div class="mt-2 d-flex justify-content-around">
                         <small><span class="badge bg-success">OK</span> {{ $pieData['ok'] ?? 0 }}</small>
                         <small><span class="badge bg-primary">Proses</span> {{ $pieData['proses'] ?? 0 }}</small>
-                        <small><span class="badge bg-warning text-dark">Akan Jatuh Tempo</span>
+                        <small><span class="badge bg-warning text-dark">Penjadwalan</span>
                             {{ $pieData['due'] ?? 0 }}</small>
                     </div>
                 </div>
@@ -158,7 +158,7 @@
         </div>
 
         <!-- Akan Jatuh Tempo -->
-        <h5 class="mb-2">Akan Jatuh Tempo (≤30 hari)</h5>
+        <h5 class="mb-2">Akan Jatuh Tempo (≤15 hari)</h5>
         <div class="card shadow-sm p-3 mb-4 table-responsive">
             <table id="dueSoonTable" class="table table-bordered table-hover mb-0">
                 <thead class="table-warning">
