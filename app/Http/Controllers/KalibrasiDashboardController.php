@@ -11,7 +11,7 @@ class KalibrasiDashboardController extends Controller
     public function index()
     {
         $now = Carbon::now();
-        $in30Days = $now->copy()->addDays(30);
+        $in15Days = $now->copy()->addDays(15);
 
         // Summary
         $totalTools = Tool::count();
@@ -24,8 +24,8 @@ class KalibrasiDashboardController extends Controller
             $q->where('status_kalibrasi', 'Proses');
         })->count();
 
-        $dueSoon = Tool::whereHas('latestHistory', function($q) use ($now, $in30Days){
-            $q->whereBetween('tgl_kalibrasi_ulang', [$now, $in30Days]);
+        $dueSoon = Tool::whereHas('latestHistory', function($q) use ($now, $in15Days){
+            $q->whereBetween('tgl_kalibrasi_ulang', [$now, $in15Days]);
         })->count();
 
         $pieData = [
@@ -56,9 +56,9 @@ class KalibrasiDashboardController extends Controller
         $dueSoonList = Tool::joinSub($latestSub, 'latest_history', function($join){
                 $join->on('tools.id', '=', 'latest_history.tool_id');
             })
-            ->whereBetween('latest_history.tgl_kalibrasi_ulang', [$now, $in30Days])
+            ->whereBetween('latest_history.tgl_kalibrasi_ulang', [$now, $in15Days])
             ->orderBy('latest_history.tgl_kalibrasi_ulang', 'asc')
-            ->select('tools.*')
+            ->select('tools.*', 'latest_history.tgl_kalibrasi_ulang')
             ->get();
 
         // In progress
