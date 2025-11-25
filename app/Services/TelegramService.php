@@ -13,7 +13,7 @@ class TelegramService
     {
         $this->botToken = '8493801001:AAGqyjRQtkoZCjOuj6drQsbVVCIsXXioZd8';
         $this->apiUrl = "https://api.telegram.org/bot{$this->botToken}";
-        $this->chatId = 8324155720; // langsung set chat ID di sini
+        $this->chatId = -5021332628; // langsung set chat ID di sini
     }
 
 
