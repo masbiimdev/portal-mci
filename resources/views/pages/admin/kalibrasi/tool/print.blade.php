@@ -102,10 +102,10 @@
 
                         {{-- DETAIL KANAN --}}
                         <td style="width: 62%; padding-left: 6px;">
-                            <div class="name">{{ $tool->nama_alat }}</div>
-                            <div class="text">Merk: {{ $tool->merek }}</div>
+                            <div class="name">{{ $tool->nama_alat }}#{{ $tool->no_seri }}</div>
+                            {{-- <div class="text">Merk: {{ $tool->merek }}</div>
                             <div class="text">Seri: {{ $tool->no_seri }}</div>
-                            <div class="text">Kap: {{ $tool->kapasitas }}</div>
+                            <div class="text">Kap: {{ $tool->kapasitas }}</div> --}}
                         </td>
 
                     </tr>

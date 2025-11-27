@@ -47,18 +47,47 @@
                             <th class="text-center">No Seri</th>
                             <th class="text-center">Lokasi</th>
                             <th class="text-center">Kapasitas</th>
+
+                            {{-- Tambahan baru --}}
+                            <th class="text-center">Tgl Kalibrasi</th>
+                            <th class="text-center">Tgl Ulang</th>
+
                             <th class="text-center">QR</th>
                             <th class="text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($tools as $tool)
+                            @php
+                                $history = $tool->latestHistory;
+                            @endphp
+
                             <tr>
                                 <td>{{ $tool->nama_alat }}</td>
                                 <td>{{ $tool->merek ?? '-' }}</td>
                                 <td>{{ $tool->no_seri ?? '-' }}</td>
                                 <td>{{ $tool->lokasi ?? '-' }}</td>
                                 <td>{{ $tool->kapasitas ?? '-' }}</td>
+
+                                {{-- Tanggal Kalibrasi Terakhir --}}
+                                <td class="text-center">
+                                    @if ($history && $history->tgl_kalibrasi)
+                                        {{ \Carbon\Carbon::parse($history->tgl_kalibrasi)->format('d/m/y') }}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+
+                                {{-- Tanggal Kalibrasi Ulang --}}
+                                <td class="text-center">
+                                    @if ($history && $history->tgl_kalibrasi_ulang)
+                                        {{ \Carbon\Carbon::parse($history->tgl_kalibrasi_ulang)->format('d/m/y') }}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+
+                                {{-- QR --}}
                                 <td class="text-center">
                                     @if ($tool->qr_code_path)
                                         <img src="{{ asset('storage/' . $tool->qr_code_path) }}"
@@ -68,20 +97,18 @@
                                     @endif
                                 </td>
 
+                                {{-- Actions --}}
                                 <td class="text-center">
                                     <div class="d-flex gap-1 justify-content-center">
 
-                                        {{-- Detail --}}
                                         <a href="{{ route('tools.show', $tool->id) }}" class="btn btn-sm btn-info">
                                             Detail
                                         </a>
 
-                                        {{-- Edit --}}
                                         <a href="{{ route('tools.edit', $tool->id) }}" class="btn btn-sm btn-primary">
                                             Edit
                                         </a>
 
-                                        {{-- Delete --}}
                                         <form action="{{ route('tools.destroy', $tool->id) }}" method="POST"
                                             class="delete-form">
                                             @csrf @method('DELETE')
@@ -118,7 +145,6 @@
                 lengthMenu: [5, 10, 25, 50],
             });
 
-            // Delete confirmation
             $('#toolsTable').on('submit', '.delete-form', function(e) {
                 e.preventDefault();
                 const form = this;
@@ -137,7 +163,6 @@
                 });
             });
 
-            // Success alert
             @if (session('success'))
                 Swal.fire({
                     icon: 'success',

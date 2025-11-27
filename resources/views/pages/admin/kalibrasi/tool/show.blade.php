@@ -43,10 +43,10 @@
                         @if ($tool->latestHistory)
                             <ul class="mb-0">
                                 <li><strong>Tanggal Kalibrasi:</strong>
-                                    {{ $tool->latestHistory->tgl_kalibrasi ? \Carbon\Carbon::parse($tool->latestHistory->tgl_kalibrasi)->format('d M Y') : '-' }}
+                                    {{ $tool->latestHistory->tgl_kalibrasi ? \Carbon\Carbon::parse($tool->latestHistory->tgl_kalibrasi)->format('d/m/Y') : '-' }}
                                 </li>
                                 <li><strong>Tanggal Kalibrasi Ulang:</strong>
-                                    {{ $tool->latestHistory->tgl_kalibrasi_ulang ? \Carbon\Carbon::parse($tool->latestHistory->tgl_kalibrasi_ulang)->format('d M Y') : '-' }}
+                                    {{ $tool->latestHistory->tgl_kalibrasi_ulang ? \Carbon\Carbon::parse($tool->latestHistory->tgl_kalibrasi_ulang)->format('d/m/Y') : '-' }}
                                 </li>
                                 <li><strong>No Sertifikat:</strong> {{ $tool->latestHistory->no_sertifikat ?? '-' }}</li>
                                 <li><strong>Lembaga Kalibrasi:</strong>
@@ -83,9 +83,9 @@
                         <tbody>
                             @forelse ($tool->histories as $h)
                                 <tr>
-                                    <td>{{ $h->tgl_kalibrasi ? \Carbon\Carbon::parse($h->tgl_kalibrasi)->format('d M Y') : '-' }}
+                                    <td>{{ $h->tgl_kalibrasi ? \Carbon\Carbon::parse($h->tgl_kalibrasi)->format('d/m/Y') : '-' }}
                                     </td>
-                                    <td>{{ $h->tgl_kalibrasi_ulang ? \Carbon\Carbon::parse($h->tgl_kalibrasi_ulang)->format('d M Y') : '-' }}
+                                    <td>{{ $h->tgl_kalibrasi_ulang ? \Carbon\Carbon::parse($h->tgl_kalibrasi_ulang)->format('d/m/Y') : '-' }}
                                     </td>
                                     <td>{{ $h->no_sertifikat ?? '-' }}</td>
                                     <td>{{ $h->lembaga_kalibrasi ?? '-' }}</td>

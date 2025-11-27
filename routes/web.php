@@ -36,6 +36,9 @@ Route::get('tracking/{jobcard}/history', 'TrackingController@ajaxHistory')->name
 // Kalibrasi Scan
 Route::get('/scan/{token}', [ToolController::class, 'scan'])->name('tools.scan');
 
+// Dokumen Control
+Route::get('/portal/document', [HomeController::class, 'document'])->name('document');
+
 // Undee Construction Page
 Route::get('/under-construction', [HomeController::class, 'under'])->name('under');
 //     ->name('jadwal.show');

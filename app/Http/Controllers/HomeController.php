@@ -402,4 +402,10 @@ class HomeController extends Controller
             'barValues'
         ));
     }
+
+    public function document(){
+        return view(
+            'pages.dokumen'
+        );
+    }
 }
