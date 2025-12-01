@@ -19,11 +19,17 @@
                 </div>
 
                 @if ($tool->qr_code_path)
-                    <img src="{{ asset('storage/' . $tool->qr_code_path) }}" width="110" height="110"
-                        class="border rounded">
+                    <div class="d-flex flex-column align-items-center">
+                        <a href="{{ route('histories.index') }}" class="btn btn-light btn-sm mb-2">
+                            <i class="bx bx-left-arrow-alt"></i> Kembali
+                        </a>
+                        <img src="{{ asset('storage/' . $tool->qr_code_path) }}" width="110" height="110"
+                            class="border rounded">
+                    </div>
                 @endif
             </div>
         </div>
+
 
         {{-- TABLE HISTORY --}}
         <div class="card">
