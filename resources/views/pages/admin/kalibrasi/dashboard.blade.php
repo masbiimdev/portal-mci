@@ -229,7 +229,7 @@
                             <td>{{ optional($tool->latestHistory)->status_kalibrasi ?? '-' }}</td>
                             <td>
                                 {{ optional($tool->latestHistory)->tgl_kalibrasi_ulang
-                                    ? \Carbon\Carbon::parse($tool->latestHistory->tgl_kalibrasi_ulang)->translatedFormat('d F Y')
+                                    ? \Carbon\Carbon::parse($tool->latestHistory->tgl_kalibrasi_ulang)->translatedFormat('d/m/Y')
                                     : '-' }}
                             </td>
                         </tr>
@@ -254,6 +254,7 @@
                 autoWidth: false,
                 pageLength: 10,
                 lengthMenu: [5, 10, 25, 50],
+                order : []
             });
         });
 
