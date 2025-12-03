@@ -8,15 +8,34 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
 
 class CalibrationHistoryController extends Controller
 {
-    // index for a tool
+    // index for a 
+
     public function index()
     {
-        $tools = Tool::with('histories')->get();
+        $today = Carbon::now();
+
+        $tools = Tool::with(['histories' => function ($q) {
+            $q->orderBy('tgl_kalibrasi_ulang', 'desc'); // urut history tiap tool
+        }])->get();
+
+        // Urutkan tools berdasarkan tgl_kalibrasi_ulang paling dekat dengan hari ini
+        $tools = $tools->sortBy(function ($tool) use ($today) {
+            $latestDate = optional($tool->histories->first())->tgl_kalibrasi_ulang;
+
+            if (!$latestDate) {
+                return PHP_INT_MAX; // kalau null, taruh paling bawah
+            }
+
+            return abs(Carbon::parse($latestDate)->diffInDays($today));
+        });
+
         return view('pages.admin.kalibrasi.history.index', compact('tools'));
     }
+
 
     public function create(Request $request)
     {
