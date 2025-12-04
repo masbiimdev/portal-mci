@@ -34,7 +34,7 @@ class SendDueCalibrationAlert extends Command
             return;
         }
 
-        $chatId = -5021332628; // Bisa diset di .env
+        $chatId = -5064084237; // Bisa diset di .env
 
         foreach ($dueTools as $tool) {
             $history = $tool->latestHistory;
