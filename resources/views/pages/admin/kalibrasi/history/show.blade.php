@@ -1,6 +1,161 @@
 @extends('layouts.admin')
 @section('title', 'History Kalibrasi Item')
 
+@push('css')
+    <style>
+        .icon-btn {
+            width: 34px;
+            height: 34px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.25s ease;
+            padding: 0;
+        }
+
+        .icon-btn i {
+            font-size: 16px;
+            color: #4b5563;
+            transition: 0.25s ease;
+        }
+
+        /* Hover elegan */
+        .icon-btn:hover {
+            background: #f3f4f6;
+            border-color: #d1d5db;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .icon-btn:hover i {
+            color: #111827;
+        }
+
+        /* Tombol delete warna merah halus */
+        .icon-btn.delete:hover {
+            background: #fee2e2;
+            border-color: #fecaca;
+        }
+
+        .icon-btn.delete:hover i {
+            color: #dc2626;
+        }
+
+        .icon-btn {
+            width: 40px;
+            /* sebelumnya 34px */
+            height: 40px;
+            /* sedikit lebih besar */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #fff;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 10px;
+            /* lebih modern */
+            cursor: pointer;
+            transition: 0.25s ease;
+            padding: 0;
+        }
+
+        /* Icon agak lebih besar */
+        .icon-btn i {
+            font-size: 18px;
+            /* sebelumnya 16px */
+            color: #4b5563;
+            transition: 0.25s ease;
+        }
+
+        /* Hover elegan */
+        .icon-btn:hover {
+            background: #f3f4f6;
+            border-color: #d1d5db;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.07);
+        }
+
+        .icon-btn:hover i {
+            color: #1f2937;
+        }
+
+        /* Tombol delete warna merah soft */
+        .icon-btn.delete:hover {
+            background: #fee2e2;
+            border-color: #fecaca;
+        }
+
+        .icon-btn.delete:hover i {
+            color: #dc2626;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            cursor: pointer;
+            border: none;
+            transition: 0.25s ease;
+            padding: 0;
+        }
+
+        /* icon */
+        .icon-btn i {
+            font-size: 18px;
+            color: white;
+        }
+
+
+        /* ===========================
+           🎨  WARNA TOMBOL
+           =========================== */
+
+        /* PDF - Biru */
+        .icon-blue {
+            background: #3b82f6;
+            /* blue-500 */
+        }
+
+        .icon-blue:hover {
+            background: #2563eb;
+            /* blue-600 */
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Edit - Orange */
+        .icon-orange {
+            background: #f59e0b;
+            /* amber-500 */
+        }
+
+        .icon-orange:hover {
+            background: #d97706;
+            /* amber-600 */
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
+        }
+
+        /* Delete - Red */
+        .icon-red {
+            background: #ef4444;
+            /* red-500 */
+        }
+
+        .icon-red:hover {
+            background: #dc2626;
+            /* red-600 */
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+        }
+    </style>
+@endpush
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
 
@@ -15,7 +170,8 @@
                     <h5 class="mb-2">{{ $tool->nama_alat }}</h5>
                     <p class="mb-1"><strong>Merek:</strong> {{ $tool->merek ?? '-' }}</p>
                     <p class="mb-1"><strong>No Seri:</strong> {{ $tool->no_seri ?? '-' }}</p>
-                    <p class="mb-0"><strong>Kapasitas:</strong> {{ $tool->kapasitas ?? '-' }}</p>
+                    <p class="mb-1"><strong>Kapasitas:</strong> {{ $tool->kapasitas ?? '-' }}</p>
+                    <p class="mb-0"><strong>Lokasi:</strong> {{ $tool->lokasi ?? '-' }}</p>
                 </div>
 
                 @if ($tool->qr_code_path)
@@ -51,7 +207,7 @@
                                 <th>No Sertifikat</th>
                                 <th>Lembaga</th>
                                 <th>Status</th>
-                                <th>Ulang</th>
+                                <th>Kalibrasi Ulang</th>
                                 <th style="width: 140px">Aksi</th>
                             </tr>
                         </thead>
@@ -79,28 +235,31 @@
                                     </td>
 
                                     <td class="d-flex gap-2">
-                                        {{-- Lihat PDF (popup modal) --}}
+
                                         @if ($h->file_sertifikat)
-                                            <button type="button" class="btn btn-sm btn-secondary"
-                                                onclick="openPDFModal('{{ asset('storage/' . $h->file_sertifikat) }}')">
-                                                PDF
+                                            <button type="button" class="icon-btn icon-blue"
+                                                onclick="openPDFModal('{{ asset('storage/' . $h->file_sertifikat) }}')"
+                                                title="Lihat PDF">
+                                                <i class="bx bx-file-find"></i>
                                             </button>
                                         @endif
 
-                                        {{-- EDIT --}}
-                                        <a href="{{ route('histories.edit', $h->id) }}" class="btn btn-sm btn-primary">
-                                            Edit
+                                        <a href="{{ route('histories.edit', $h->id) }}" class="icon-btn icon-orange"
+                                            title="Edit">
+                                            <i class="bx bx-edit"></i>
                                         </a>
 
-                                        {{-- DELETE --}}
                                         <form action="{{ route('histories.destroy', $h->id) }}" method="POST"
-                                            class="delete-form">
+                                            class="delete-form m-0 p-0">
                                             @csrf @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger">
-                                                Hapus
+                                            <button type="submit" class="icon-btn icon-red" title="Hapus">
+                                                <i class="bx bx-trash"></i>
                                             </button>
                                         </form>
+
                                     </td>
+
+
                                 </tr>
                             @empty
                                 <tr>
