@@ -101,9 +101,9 @@
                             <th>Nama Item</th>
                             <th>Merek</th>
                             <th>No Seri</th>
-                            <th>Status Item</th>
+                            <th>Status Kalibrasi Item</th>
                             <th>Tanggal Kalibrasi Ulang</th>
-                            <th>Status PDF</th>
+                            <th>Sertifikat</th>
                             <th class="text-center" style="width: 140px;">Aksi</th>
                         </tr>
                     </thead>
@@ -131,18 +131,7 @@
 
                                 {{-- Status Item --}}
                                 <td>
-                                    @if ($tool->histories->count() > 0)
-                                        <span class="badge bg-success">Sudah Ada History</span>
-                                    @else
-                                        <span class="badge bg-secondary">Belum Ada History</span>
-                                    @endif
-                                </td>
-
-                                {{-- Tanggal Kalibrasi Terakhir --}}
-                                <td>
                                     @if ($lastHistory && $lastHistory->tgl_kalibrasi_ulang)
-                                        {{ \Carbon\Carbon::parse($lastHistory->tgl_kalibrasi_ulang)->format('d/m/Y') }}
-
                                         @php
                                             $today = \Carbon\Carbon::now();
                                             $kalibrasi = \Carbon\Carbon::parse($lastHistory->tgl_kalibrasi_ulang);
@@ -151,15 +140,15 @@
 
                                         @if ($diff > 0 && $diff <= 30)
                                             <span class="badge bg-warning text-white ms-1">
-                                                <i class='bx bx-calendar-event'></i> Jadwalkan
+                                                <i class='bx bx-calendar-event'></i> Penjadwalan
                                             </span>
                                         @elseif($diff > 30)
                                             <span class="badge bg-info text-white ms-1">
-                                                <i class='bx bx-calendar-event'></i> H-{{ $diff }} hari
+                                                <i class='bx bx-calendar-event'></i> {{ $diff }} hari lagi
                                             </span>
                                         @elseif($diff >= -7 && $diff <= 7)
                                             <span class="badge bg-primary text-white ms-1">
-                                                <i class='bx bx-time-five'></i> Proses
+                                                <i class='bx bx-time-five'></i> Di Proses
                                             </span>
                                         @elseif($diff < 0 && abs($diff) > 8)
                                             <span class="badge bg-success text-white ms-1">
@@ -177,18 +166,25 @@
                                     @endif
                                 </td>
 
+                                {{-- Tanggal Kalibrasi Terakhir --}}
+                                <td>
+                                    @if ($lastHistory && $lastHistory->tgl_kalibrasi_ulang)
+                                        {{ \Carbon\Carbon::parse($lastHistory->tgl_kalibrasi_ulang)->format('d/m/Y') }}
+                                    @endif
+                                </td>
+
 
                                 {{-- Status PDF --}}
                                 <td>
                                     @if ($lastHistory && $lastHistory->file_sertifikat)
-                                        <span class="badge bg-success">Sudah Ada PDF</span>
+                                        <span class="badge bg-success">Tersedia</span>
 
                                         <button class="btn btn-sm btn-outline-primary rounded-pill ms-1 px-2 py-1"
                                             data-bs-toggle="modal" data-bs-target="#pdfModal_{{ $lastHistory->id }}">
                                             <i class="bx bx-show bx-xs"></i>
                                         </button>
                                     @elseif($lastHistory)
-                                        <span class="badge bg-warning">Belum Ada PDF</span>
+                                        <span class="badge bg-warning">Pending</span>
                                     @else
                                         <span class="badge bg-secondary">Belum Ada History</span>
                                     @endif
@@ -230,7 +226,7 @@
                                         </a>
                                     @else
                                         <a href="{{ route('histories.show', $tool->id) }}" class="btn btn-sm btn-info">
-                                            <i class="bi bi-eye"></i> Lihat
+                                            <i class="bi bi-eye"></i> Update
                                         </a>
                                     @endif
                                 </td>
