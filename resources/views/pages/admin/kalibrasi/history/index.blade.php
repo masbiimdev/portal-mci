@@ -26,6 +26,56 @@
             background-color: #d1e7dd;
             /* hijau muda */
         }
+
+        /* Modal premium putih bersih */
+        .modal-premium .modal-content {
+            border-radius: 14px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+            background: #ffffff;
+            overflow: hidden;
+        }
+
+        /* Header putih bersih */
+        .modal-premium .modal-header {
+            background: #ffffff;
+            border-bottom: 1px solid #e6e6e6;
+            padding: 14px 20px;
+        }
+
+        /* Title */
+        .modal-premium .modal-title {
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* Close button abu (bukan putih/biru) */
+        .modal-premium .btn-close {
+            filter: brightness(0);
+            opacity: 0.6;
+        }
+
+        .modal-premium .btn-close:hover {
+            opacity: 1;
+        }
+
+        /* Body */
+        .modal-premium .modal-body {
+            padding: 0 !important;
+            background: #fafafa;
+        }
+
+        .custom-close-btn {
+            filter: none !important;
+            /* Hilangkan filter bawaan Bootstrap */
+            opacity: 1 !important;
+            /* Biar tidak transparan */
+            background-size: 16px !important;
+        }
+
+        .custom-close-btn:hover {
+            opacity: 0.7 !important;
+        }
     </style>
 @endpush
 
@@ -52,7 +102,7 @@
                             <th>Merek</th>
                             <th>No Seri</th>
                             <th>Status Item</th>
-                            <th>Tanggal Kalibrasi Terakhir</th>
+                            <th>Tanggal Kalibrasi Ulang</th>
                             <th>Status PDF</th>
                             <th class="text-center" style="width: 140px;">Aksi</th>
                         </tr>
@@ -89,59 +139,87 @@
                                 </td>
 
                                 {{-- Tanggal Kalibrasi Terakhir --}}
-<td>
-    @if ($lastHistory && $lastHistory->tgl_kalibrasi_ulang)
-        {{ \Carbon\Carbon::parse($lastHistory->tgl_kalibrasi_ulang)->format('d/m/Y') }}
+                                <td>
+                                    @if ($lastHistory && $lastHistory->tgl_kalibrasi_ulang)
+                                        {{ \Carbon\Carbon::parse($lastHistory->tgl_kalibrasi_ulang)->format('d/m/Y') }}
 
-        @php
-            $today = \Carbon\Carbon::now();
-            $kalibrasi = \Carbon\Carbon::parse($lastHistory->tgl_kalibrasi_ulang);
-            $diff = $today->diffInDays($kalibrasi, false); // negatif jika sudah lewat
-        @endphp
+                                        @php
+                                            $today = \Carbon\Carbon::now();
+                                            $kalibrasi = \Carbon\Carbon::parse($lastHistory->tgl_kalibrasi_ulang);
+                                            $diff = $today->diffInDays($kalibrasi, false); // negatif jika sudah lewat
+                                        @endphp
 
-        @if ($diff > 0 && $diff <= 30)
-            <span class="badge bg-warning text-white ms-1">
-                <i class='bx bx-calendar-event'></i> Jadwalkan
-            </span>
-        @elseif($diff > 30)
-            <span class="badge bg-info text-white ms-1">
-                <i class='bx bx-calendar-event'></i> H-{{ $diff }} hari
-            </span>
-        @elseif($diff >= -7 && $diff <= 7)
-            <span class="badge bg-primary text-white ms-1">
-                <i class='bx bx-time-five'></i> Proses
-            </span>
-        @elseif($diff < 0 && abs($diff) > 8)
-            <span class="badge bg-success text-white ms-1">
-                <i class='bx bx-check-circle'></i> Selesai
-            </span>
-        @else
-            <span class="badge bg-secondary text-white ms-1">
-                <i class='bx bx-minus-circle'></i> -
-            </span>
-        @endif
-    @else
-        <span class="badge bg-secondary text-white ms-1">
-            <i class='bx bx-minus-circle'></i> -
-        </span>
-    @endif
-</td>
+                                        @if ($diff > 0 && $diff <= 30)
+                                            <span class="badge bg-warning text-white ms-1">
+                                                <i class='bx bx-calendar-event'></i> Jadwalkan
+                                            </span>
+                                        @elseif($diff > 30)
+                                            <span class="badge bg-info text-white ms-1">
+                                                <i class='bx bx-calendar-event'></i> H-{{ $diff }} hari
+                                            </span>
+                                        @elseif($diff >= -7 && $diff <= 7)
+                                            <span class="badge bg-primary text-white ms-1">
+                                                <i class='bx bx-time-five'></i> Proses
+                                            </span>
+                                        @elseif($diff < 0 && abs($diff) > 8)
+                                            <span class="badge bg-success text-white ms-1">
+                                                <i class='bx bx-check-circle'></i> Selesai
+                                            </span>
+                                        @else
+                                            <span class="badge bg-secondary text-white ms-1">
+                                                <i class='bx bx-minus-circle'></i> -
+                                            </span>
+                                        @endif
+                                    @else
+                                        <span class="badge bg-secondary text-white ms-1">
+                                            <i class='bx bx-minus-circle'></i> -
+                                        </span>
+                                    @endif
+                                </td>
 
 
                                 {{-- Status PDF --}}
                                 <td>
                                     @if ($lastHistory && $lastHistory->file_sertifikat)
                                         <span class="badge bg-success">Sudah Ada PDF</span>
-                                        <a href="{{ asset('storage/' . $lastHistory->file_sertifikat) }}"
-                                            class="btn btn-sm btn-success ms-1" target="_blank">
-                                            <i class=" bx bx-download"></i>
-                                        </a>
+
+                                        <button class="btn btn-sm btn-outline-primary rounded-pill ms-1 px-2 py-1"
+                                            data-bs-toggle="modal" data-bs-target="#pdfModal_{{ $lastHistory->id }}">
+                                            <i class="bx bx-show bx-xs"></i>
+                                        </button>
                                     @elseif($lastHistory)
                                         <span class="badge bg-warning">Belum Ada PDF</span>
                                     @else
                                         <span class="badge bg-secondary">Belum Ada History</span>
                                     @endif
+
                                 </td>
+                                @if ($lastHistory && $lastHistory->file_sertifikat)
+                                    <div class="modal fade" id="pdfModal_{{ $lastHistory->id }}" tabindex="-1"
+                                        aria-hidden="true">
+                                        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                                            <div class="modal-content border-0 shadow-lg" style="border-radius: 14px;">
+
+                                                <div class="modal-header"
+                                                    style="background: #ffffff; border-bottom: 1px solid #eee;">
+                                                    <h5 class="modal-title fw-semibold">Preview Sertifikat PDF</h5>
+
+                                                    <!-- Tombol Close yang lebih jelas -->
+                                                    <button type="button" class="btn-close custom-close-btn"
+                                                        data-bs-dismiss="modal"></button>
+                                                </div>
+
+                                                <div class="modal-body p-0" style="height: 80vh; background: #fff;">
+                                                    <iframe src="{{ asset('storage/' . $lastHistory->file_sertifikat) }}"
+                                                        width="100%" height="100%" style="border: none;">
+                                                    </iframe>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+
+
 
                                 {{-- Aksi --}}
                                 <td class="text-center">
@@ -165,6 +243,8 @@
 
         </div>
     </div>
+
+
 @endsection
 
 @push('js')
