@@ -10,7 +10,7 @@ use Carbon\Carbon;
 class SendDueCalibrationAlert extends Command
 {
     protected $signature = 'tools:due-alert';
-    protected $description = 'Kirim notifikasi Telegram untuk alat yang akan jatuh tempo kalibrasi (<15 hari)';
+    protected $description = 'Kirim notifikasi Telegram untuk alat yang akan jatuh tempo kalibrasi (H-20)';
 
     protected $telegram;
 
@@ -23,10 +23,10 @@ class SendDueCalibrationAlert extends Command
     public function handle()
     {
         $today = Carbon::today();
-        $limit = $today->copy()->addDays(15);
 
-        $dueTools = Tool::whereHas('latestHistory', function ($q) use ($today, $limit) {
-            $q->whereBetween('tgl_kalibrasi_ulang', [$today, $limit]);
+        // Ambil alat yang tepat H-20 hari sebelum tanggal kalibrasi ulang
+        $dueTools = Tool::whereHas('latestHistory', function ($q) use ($today) {
+            $q->whereDate('tgl_kalibrasi_ulang', $today->copy()->addDays(20));
         })->get();
 
         if ($dueTools->isEmpty()) {
@@ -34,37 +34,52 @@ class SendDueCalibrationAlert extends Command
             return;
         }
 
-        $chatId = -5064084237; // Bisa diset di .env
+        $chatId = -5064084237; // Bisa dipindahkan ke .env jika mau
 
+        // ================================
+        // KUMPULKAN DAFTAR ALAT
+        // ================================
+        $list = "";
         foreach ($dueTools as $tool) {
             $history = $tool->latestHistory;
 
-            $message = "
-⚠️ *INFO KALIBRASI ALERT* ⚠️
+            // Format tanggal: Hari, 22 Januari 2026
+            $formattedDate = $history->tgl_kalibrasi_ulang
+                ->locale('id')
+                ->translatedFormat('l, d F Y');
 
-Halo teman-teman!  
-Cuma mau ngingetin nih, salah satu alat kita udah masuk kategori *DUE SOON*.
-
-🛠 *Nama Alat:* {$tool->nama_alat}  
-🔖 *Serial:* {$tool->no_seri}  
-📅 *Kalibrasi Ulang:* {$history->tgl_kalibrasi_ulang->format('d M Y')}  
-⏳ *Status:* DUE SOON — kurang dari 15 hari lagi  
-
-Yuk, segera dicek dan dijadwalkan kalibrasinya supaya alat tetap:  
-✅ Akurat dan aman dipakai  
-✅ Gak sampai lewat batas (*overdue*)  
-
-Kalau udah follow up atau ada update, kabarin tim juga ya biar semuanya update.  
-
-Thanks banget atas kerjasamanya! 🙏🔥  
-Mari jaga alat tetap top performance! 💪
-";
-
-            $this->telegram->sendMessage($chatId, $message, 'Markdown');
-
-            $this->info("Notifikasi terkirim untuk alat: {$tool->nama_alat}");
+            $list .= "• *{$tool->nama_alat}*\n";
+            $list .= "  Serial: `{$tool->no_seri}`\n";
+            $list .= "  Jadwal Kalibrasi Ulang: *{$formattedDate}*\n\n";
         }
 
-        $this->info('Semua notifikasi due soon berhasil dikirim.');
+        // ================================
+        // PESAN FINAL (DIKIRIM SEKALI)
+        // ================================
+        $message = "
+Halo rekan-rekan,
+
+Berikut daftar alat yang telah memasuki periode *Penjadwalan Kalibrasi (H-20)*:
+
+$list
+📌 *Tindak Lanjut yang Diperlukan*
+Mohon untuk segera:
+• Melakukan pengecekan jadwal kalibrasi
+• Menghubungi vendor atau pihak terkait bila diperlukan
+• Menginformasikan update kepada tim agar monitoring tetap terkoordinasi
+
+Menjaga alat tetap terkalibrasi sangat penting untuk memastikan:
+✔ Keakuratan pengukuran
+✔ Keamanan penggunaan
+✔ Kepatuhan terhadap standar operasional dan audit
+
+Terima kasih atas perhatian dan kerjasamanya.
+Mari bersama menjaga kualitas alat tetap maksimal. 🙏💼
+";
+
+        // Kirim SEKALI SAJA
+        $this->telegram->sendMessage($chatId, $message, 'Markdown');
+
+        $this->info('Notifikasi due soon berhasil dikirim.');
     }
 }
