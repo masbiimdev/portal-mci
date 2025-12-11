@@ -103,6 +103,7 @@
                             <th>No Seri</th>
                             <th>Status Kalibrasi Item</th>
                             <th>Tanggal Kalibrasi Ulang</th>
+                            <th>Interval Kalibrasi</th>
                             <th>Sertifikat</th>
                             <th class="text-center" style="width: 140px;">Aksi</th>
                         </tr>
@@ -171,6 +172,9 @@
                                     @if ($lastHistory && $lastHistory->tgl_kalibrasi_ulang)
                                         {{ \Carbon\Carbon::parse($lastHistory->tgl_kalibrasi_ulang)->format('d/m/Y') }}
                                     @endif
+                                </td>
+                                <td>
+                                    {{ $lastHistory->interval_kalibrasi ?? '-' }}
                                 </td>
 
 
