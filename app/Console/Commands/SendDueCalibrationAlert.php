@@ -26,7 +26,7 @@ class SendDueCalibrationAlert extends Command
 
         // Ambil alat yang tepat H-20 hari sebelum tanggal kalibrasi ulang
         $dueTools = Tool::whereHas('latestHistory', function ($q) use ($today) {
-            $q->whereDate('tgl_kalibrasi_ulang', $today->copy()->addDays(20));
+            $q->whereDate('tgl_kalibrasi_ulang', $today->copy()->addDays(15));
         })->get();
 
         if ($dueTools->isEmpty()) {
@@ -59,7 +59,7 @@ class SendDueCalibrationAlert extends Command
         $message = "
 Halo rekan-rekan,
 
-Berikut daftar alat yang telah memasuki periode *Penjadwalan Kalibrasi (H-20)*:
+Berikut daftar alat yang telah memasuki periode *Penjadwalan Kalibrasi (H-15)*:
 
 $list
 📌 *Tindak Lanjut yang Diperlukan*
