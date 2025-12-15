@@ -47,11 +47,11 @@ class HomeController extends Controller
         // Schedules (next 7 days) — optional
         try {
             if (class_exists(Activity::class)) {
-                $scheduleUpcoming = Activity::whereBetween('start', [$today->toDateString(), $in7->toDateString()])
-                    ->orderBy('start')
+                $scheduleUpcoming = Activity::whereBetween('start_date', [$today->toDateString(), $in7->toDateString()])
+                    ->orderBy('start_date')
                     ->take(6)
                     ->get();
-                $scheduleUpcomingCount = Activity::whereBetween('start', [$today->toDateString(), $in7->toDateString()])->count();
+                $scheduleUpcomingCount = Activity::whereBetween('start_date', [$today->toDateString(), $in7->toDateString()])->count();
             }
         } catch (\Throwable $e) {
             Log::warning('HomeController::index schedule query failed: ' . $e->getMessage());
