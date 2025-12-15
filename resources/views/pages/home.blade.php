@@ -131,33 +131,66 @@
 
 @section('content')
     <!-- Header Mini (hero) -->
-    <section class="py-6 hero text-white animate-gradient">
-        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div class="flex-1 min-w-0">
-                <h1 class="text-2xl md:text-3xl font-bold tracking-wide">Selamat Datang di Metinca Portal .</h1>
-            </div>
-
-            <!-- Ganti dengan blok ini --- suhu dan jam sejajar, tanpa duplikasi -->
-            <div class="flex justify-end">
-                <div
-                    class="bg-white/70 backdrop-blur-md border border-white/40 shadow-md p-4 rounded-2xl flex flex-col items-end time-card transition hover:shadow-lg hover:scale-[1.02] duration-200">
-                    <div class="text-xs text-gray-600 mb-1">🌡️ Suhu Saat Ini</div>
-
-                    <!-- SUHU + JAM sejajar -->
-                    <div class="time-meta">
-                        <!-- Jam (sejajar dengan suhu) -->
-                        <div class="flex flex-col items-end" style="line-height:1;">
-                            <div id="localTime" class="text-lg" role="timer" aria-live="polite" aria-atomic="true">
-                                --:--:--</div>
+    <section class="py-8 bg-gradient-to-r from-indigo-600 to-sky-500 text-white rounded-2xl shadow-lg">
+        <div class="max-w-7xl mx-auto px-6 md:px-8">
+            <div class="flex flex-col md:flex-row items-center md:items-start justify-between gap-6">
+                <!-- Left: greeting, subtitle, search & quick actions -->
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="min-w-0">
+                            <h1 class="text-2xl md:text-3xl font-bold leading-tight">
+                                Selamat Datang, {{ Auth::user()->name ?? 'Pengguna' }}.
+                            </h1>
+                            <p class="mt-1 text-indigo-100/90 max-w-2xl">
+                                Portal Metinca — ringkasan cepat & shortcut ke modul penting. Akses jadwal, inventory, dan
+                                pengumuman dari sini.
+                            </p>
                         </div>
-
-                        <!-- Suhu (besar) -->
-                        <div id="suhu" class="suhu-large leading-none ml-2" aria-live="polite">--°C</div>
                     </div>
 
-                    <div id="cuaca" class="text-sm text-gray-700 flex items-center gap-2 mt-3" aria-live="polite">
-                        <span id="weather-icon" class="text-xl" aria-hidden="true">🌤️</span>
-                        <span id="weather-text" class="font-medium">Memuat cuaca...</span>
+                    <!-- Search + quick actions -->
+                    <div class="mt-4 flex flex-col sm:flex-row gap-3 items-stretch">
+                    </div>
+
+                    <!-- KPI mini row (inside hero) -->
+                    <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div class="bg-white/10 rounded-lg p-3">
+                            <div class="text-sm text-white/80">Jadwal (7 hari)</div>
+                            <div class="text-lg font-bold">{{ number_format($scheduleUpcomingCount ?? 0) }}</div>
+                        </div>
+                        <div class="bg-white/10 rounded-lg p-3">
+                            <div class="text-sm text-white/80">Low stock</div>
+                            <div class="text-lg font-bold">{{ number_format($lowStockCount ?? 0) }}</div>
+                        </div>
+                        <div class="bg-white/10 rounded-lg p-3">
+                            <div class="text-sm text-white/80">Pengumuman</div>
+                            <div class="text-lg font-bold">{{ number_format(optional($announcements)->count() ?? 0) }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: time + weather card (improved) -->
+                <div class="w-full sm:w-auto">
+                    <div class="bg-white/90 text-slate-900 rounded-xl p-4 shadow-md w-64">
+                        <div class="flex items-center justify-between">
+                            <div class="text-xs text-slate-600">Waktu & Cuaca</div>
+                            <div class="text-xs text-slate-500">Zona: WIB</div>
+                        </div>
+
+                        <div class="mt-3 flex items-center gap-3">
+                            <div class="flex-1">
+                                <div id="localTimeHero" class="font-mono font-bold text-xl">--:--:--</div>
+                                <div id="localDateHero" class="text-sm text-slate-600 mt-1">
+                                    {{ \Carbon\Carbon::now('Asia/Jakarta')->translatedFormat('d M Y') }}</div>
+                            </div>
+
+                            <div class="text-center">
+                                <div id="weatherIconHero" class="text-2xl">🌤️</div>
+                                <div id="tempHero" class="font-bold text-lg mt-1">--°C</div>
+                            </div>
+                        </div>
+
+                        <div id="weatherDescHero" class="mt-3 text-sm text-slate-600">Memuat cuaca...</div>
                     </div>
                 </div>
             </div>
@@ -211,7 +244,8 @@
 
                                 <div class="mt-3 flex items-center justify-between gap-3">
                                     <div class="flex items-center gap-2">
-                                        <span class="text-xs text-black-400">oleh <br> {{ $item->author->name ?? 'Admin' }}</span>
+                                        <span class="text-xs text-black-400">oleh <br>
+                                            {{ $item->author->name ?? 'Admin' }}</span>
                                         @if ($item->expiry_date)
                                             <span class="text-xs text-black-400">Sampai <br>
                                                 {{ \Carbon\Carbon::parse($item->expiry_date)->translatedFormat('d M Y') }}</span>
@@ -316,93 +350,65 @@
 
     @push('js')
         <script>
-            // Date & Time display (localized)
-            function updateDateTime() {
-                const dEl = document.getElementById('tanggal');
-                if (!dEl) return;
-                const now = new Date();
-                const options = {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                };
-                dEl.textContent = now.toLocaleDateString('id-ID', options) + ' • ' + now.toLocaleTimeString('id-ID');
-            }
-            updateDateTime();
-            setInterval(updateDateTime, 1000);
-
-            // Weather using Open-Meteo (no API key). Fallback coords: Jakarta.
-        </script>
-        <script>
             (function() {
-                // waktu lokal (jam & tanggal)
-                const timeEl = document.getElementById('localTime');
-                if (!timeEl) return;
-
+                // Time
                 function updateTime() {
+                    const el = document.getElementById('localTimeHero');
+                    const dateEl = document.getElementById('localDateHero');
+                    if (!el) return;
                     const now = new Date();
-                    const timeStr = now.toLocaleTimeString('id-ID', {
+                    el.textContent = now.toLocaleTimeString('id-ID', {
                         hour: '2-digit',
                         minute: '2-digit',
                         second: '2-digit',
                         hour12: false
                     });
-                    timeEl.textContent = timeStr;
+                    dateEl.textContent = now.toLocaleDateString('id-ID', {
+                        weekday: 'long',
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    });
                 }
-
                 updateTime();
                 setInterval(updateTime, 1000);
-                document.addEventListener('visibilitychange', function() {
-                    if (document.visibilityState === 'visible') updateTime();
-                });
 
-                // (Opsional) jika Anda juga ingin memperbarui suhu dari Open-Meteo di sini,
-                // bisa gabungkan fetch weather seperti contoh sebelumnya. Berikut contoh ringan
-                // yang hanya memperbarui elemen #suhu dan #weather-* apabila tersedia:
-                (function fetchWeatherFallback() {
-                    const tempEl = document.getElementById('suhu');
-                    const weatherText = document.getElementById('weather-text');
-                    const weatherIcon = document.getElementById('weather-icon');
-                    if (!tempEl) return;
-
-                    function renderWeather(data) {
-                        if (!data || !data.current_weather) {
-                            tempEl.textContent = '--°C';
-                            if (weatherText) weatherText.textContent = 'Cuaca tidak tersedia';
-                            return;
-                        }
-                        const cw = data.current_weather;
-                        const temp = Math.round(cw.temperature);
-                        tempEl.textContent = temp + '°C';
-                        if (weatherText) weatherText.textContent = cw.weathercode === 0 ? 'Cerah' :
-                            'Berawan / Berangin';
-                        const code = cw.weathercode;
-                        const icon = (code === 0) ? '☀️' : (code <= 3 ? '⛅' : (code <= 48 ? '🌫️' : (code <= 77 ?
-                            '🌧️' : '🌦️')));
-                        if (weatherIcon) weatherIcon.textContent = icon;
+                // Weather (Open-Meteo, no key). Fallback Jakarta.
+                function renderWeather(data) {
+                    const iconEl = document.getElementById('weatherIconHero');
+                    const tempEl = document.getElementById('tempHero');
+                    const descEl = document.getElementById('weatherDescHero');
+                    if (!data || !data.current_weather) {
+                        if (tempEl) tempEl.textContent = '--°C';
+                        if (descEl) descEl.textContent = 'Cuaca tidak tersedia';
+                        return;
                     }
+                    const cw = data.current_weather;
+                    tempEl.textContent = Math.round(cw.temperature) + '°C';
+                    // simple mapping
+                    const code = cw.weathercode;
+                    const icon = (code === 0) ? '☀️' : (code <= 3 ? '⛅' : (code <= 48 ? '🌫️' : (code <= 77 ? '🌧️' :
+                        '🌦️')));
+                    if (iconEl) iconEl.textContent = icon;
+                    if (descEl) descEl.textContent = (code === 0 ? 'Cerah' : 'Berawan / Berangin');
+                }
 
-                    // gunakan geolocation jika tersedia, fallback ke Jakarta
-                    function fetchWeather(lat, lon) {
-                        const url =
-                            `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
-                        fetch(url).then(r => r.json()).then(json => renderWeather(json)).catch(() => renderWeather(
-                            null));
-                    }
+                function fetchWeather(lat, lon) {
+                    fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`)
+                        .then(r => r.json()).then(renderWeather).catch(() => renderWeather(null));
+                }
 
-                    if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(function(pos) {
-                            fetchWeather(pos.coords.latitude, pos.coords.longitude);
-                        }, function() {
-                            fetchWeather(-6.2088, 106.8456);
-                        }, {
-                            timeout: 5000
-                        });
-                    } else {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(p) {
+                        fetchWeather(p.coords.latitude, p.coords.longitude);
+                    }, function() {
                         fetchWeather(-6.2088, 106.8456);
-                    }
-                })();
+                    }, {
+                        timeout: 5000
+                    });
+                } else {
+                    fetchWeather(-6.2088, 106.8456);
+                }
             })();
         </script>
     @endpush

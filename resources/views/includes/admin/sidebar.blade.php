@@ -72,7 +72,7 @@
             </ul>
         </li>
         <!-- Schedule -->
-        <li class="menu-item {{ request()->routeIs('jobcards.*') ? 'active open' : '' }}">
+        {{-- <li class="menu-item {{ request()->routeIs('jobcards.*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-building"></i>
                 <div data-i18n="Schedule">Production</div>
@@ -84,7 +84,7 @@
                     </a>
                 </li>
             </ul>
-        </li>
+        </li> --}}
         {{-- Project --}}
         {{-- <li class="menu-item {{ request()->routeIs('jobcards.*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">

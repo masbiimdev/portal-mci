@@ -12,7 +12,7 @@ use App\CalibrationHistory;
 use App\Tool;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
 {
@@ -21,16 +21,88 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $announcements = Annon::where('is_active', true)
-            ->orderByRaw("FIELD(priority, 'high', 'medium', 'low')")
-            ->orderBy('created_at', 'desc')
-            ->take(3)
-            ->get();
+        // Announcements — keep your original ordering and limit (take 3)
+        try {
+            $announcements = Annon::where('is_active', true)
+                ->orderByRaw("FIELD(priority, 'high', 'medium', 'low')")
+                ->orderBy('created_at', 'desc')
+                ->take(3)
+                ->get();
+        } catch (\Throwable $e) {
+            Log::warning('HomeController::index announcements query failed: ' . $e->getMessage());
+            $announcements = collect();
+        }
 
-        return view('pages.home', compact('announcements'));
+        // Defaults for other blocks (so view won't break)
+        $scheduleUpcoming = collect();
+        $scheduleUpcomingCount = 0;
+        $inventoryTotalCount = 0;
+        $lowStock = collect();
+        $lowStockCount = 0;
+        $stockTrend = [];
+
+        $today = Carbon::today();
+        $in7 = Carbon::today()->addDays(7);
+
+        // Schedules (next 7 days) — optional
+        try {
+            if (class_exists(Activity::class)) {
+                $scheduleUpcoming = Activity::whereBetween('start', [$today->toDateString(), $in7->toDateString()])
+                    ->orderBy('start')
+                    ->take(6)
+                    ->get();
+                $scheduleUpcomingCount = Activity::whereBetween('start', [$today->toDateString(), $in7->toDateString()])->count();
+            }
+        } catch (\Throwable $e) {
+            Log::warning('HomeController::index schedule query failed: ' . $e->getMessage());
+            $scheduleUpcoming = collect();
+            $scheduleUpcomingCount = 0;
+        }
+
+        // Inventory / low stock — optional
+        try {
+            if (class_exists(Material::class)) {
+                $inventoryTotalCount = Material::count();
+
+                $lowStockQuery = Material::with('sparePart')
+                    ->whereColumn('stock', '<', 'min_stock')
+                    ->orderByRaw('(min_stock - stock) desc');
+
+                // take top 8 for display
+                $lowStock = $lowStockQuery->take(8)->get();
+                $lowStockCount = $lowStockQuery->count();
+
+                // build a small numeric series for sparkline (fallback)
+                $stockTrend = $lowStock->pluck('stock')->map(function ($v) {
+                    return (int) ($v ?? 0);
+                })->values()->all();
+
+                while (count($stockTrend) < 6) {
+                    $first = count($stockTrend) ? $stockTrend[0] : 10;
+                    array_unshift($stockTrend, max(0, $first + rand(-3, 3)));
+                }
+                $stockTrend = array_slice($stockTrend, 0, 12);
+            }
+        } catch (\Throwable $e) {
+            Log::warning('HomeController::index inventory query failed: ' . $e->getMessage());
+            $inventoryTotalCount = 0;
+            $lowStock = collect();
+            $lowStockCount = 0;
+            $stockTrend = [];
+        }
+
+        return view('pages.home', compact(
+            'announcements',
+            'scheduleUpcoming',
+            'scheduleUpcomingCount',
+            'inventoryTotalCount',
+            'lowStock',
+            'lowStockCount',
+            'stockTrend'
+        ));
     }
 
-        public function under()
+    public function under()
     {
         return view('pages.under');
     }
@@ -347,7 +419,7 @@ class HomeController extends Controller
         ]);
     }
 
-      public function kalibrasi()
+    public function kalibrasi()
     {
         // Ambil semua alat beserta history terbaru
         $tools = Tool::with('latestHistory')->orderBy('nama_alat')->get();
@@ -403,7 +475,8 @@ class HomeController extends Controller
         ));
     }
 
-    public function document(){
+    public function document()
+    {
         return view(
             'pages.dokumen'
         );
