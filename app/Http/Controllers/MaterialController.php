@@ -86,16 +86,23 @@ class MaterialController extends Controller
             'no_drawing' => 'nullable|string',
             'heat_lot_no' => 'nullable|string',
             'dimensi' => 'nullable|string',
+
+            // tambahkan ini 👇
+            'stock_awal' => 'required|integer|min:0',
+
             'stock_minimum' => 'required|integer|min:0',
             'rack_id' => 'nullable|exists:racks,id',
         ]);
 
-        // Update material tanpa merubah stock_awal
         $material->update([
             'spare_part_id' => $validated['spare_part_id'] ?? null,
             'no_drawing' => $validated['no_drawing'] ?? null,
             'heat_lot_no' => $validated['heat_lot_no'] ?? null,
             'dimensi' => $validated['dimensi'] ?? null,
+
+            // dan update di sini 👇
+            'stock_awal' => $validated['stock_awal'],
+
             'stock_minimum' => $validated['stock_minimum'],
             'rack_id' => $validated['rack_id'] ?? null,
         ]);
@@ -105,6 +112,7 @@ class MaterialController extends Controller
         return redirect()->route('materials.index')
             ->with('success', 'Material berhasil diperbarui.');
     }
+
 
     public function destroy(Material $material)
     {

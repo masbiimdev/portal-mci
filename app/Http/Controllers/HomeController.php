@@ -66,15 +66,15 @@ class HomeController extends Controller
                 $inventoryTotalCount = Material::count();
 
                 $lowStockQuery = Material::with('sparePart')
-                    ->whereColumn('stock', '<', 'min_stock')
-                    ->orderByRaw('(min_stock - stock) desc');
+                    ->whereColumn('stock_awal', '<', 'stock_minimum')
+                    ->orderByRaw('(stock_minimum - stock_awal) desc');
 
                 // take top 8 for display
                 $lowStock = $lowStockQuery->take(8)->get();
                 $lowStockCount = $lowStockQuery->count();
 
                 // build a small numeric series for sparkline (fallback)
-                $stockTrend = $lowStock->pluck('stock')->map(function ($v) {
+                $stockTrend = $lowStock->pluck('stock_awal')->map(function ($v) {
                     return (int) ($v ?? 0);
                 })->values()->all();
 
