@@ -62,7 +62,15 @@ class MaterialInController extends Controller
             'stokAwalPerMaterial'
         ));
     }
+    public function getCurrentStock($materialId)
+    {
+        $material = Material::findOrFail($materialId);
 
+        $totalIn = MaterialIn::where('material_id', $materialId)->sum('qty_in');
+        $totalOut = MaterialOut::where('material_id', $materialId)->sum('qty_out');
+
+        return $material->stock_awal + $totalIn - $totalOut;
+    }
     public function store(Request $request)
     {
         $request->validate([
@@ -71,32 +79,56 @@ class MaterialInController extends Controller
             'date_in'     => 'required|date',
         ]);
 
-        $material = Material::findOrFail($request->material_id);
+        try {
+            DB::transaction(function () use ($request) {
 
-        $existing = MaterialIn::where('material_id', $material->id)
-            ->whereDate('date_in', $request->date_in)
-            ->first();
+                $materialId = $request->material_id;
 
-        DB::transaction(function () use ($existing, $material, $request) {
-            if ($existing) {
-                $existing->update([
-                    'qty_in'   => $request->qty_in,
-                    'notes'    => $request->notes ?? '-',
-                    'user_id'  => Auth::id(),
-                ]);
-            } else {
-                MaterialIn::create([
-                    'material_id' => $material->id,
-                    'user_id'     => Auth::id(),
-                    'date_in'     => $request->date_in,
-                    'qty_in'      => $request->qty_in,
-                    'notes'       => $request->notes ?? '-',
-                ]);
-            }
-        });
+                $existing = MaterialIn::where('material_id', $materialId)
+                    ->whereDate('date_in', $request->date_in)
+                    ->lockForUpdate()
+                    ->first();
 
-        return response()->json(['success' => true]);
+                // hitung stok dari ledger
+                $currentStock = $this->getCurrentStock($materialId);
+
+                if ($existing) {
+                    $diff = $request->qty_in - $existing->qty_in;
+                    $stockAfter = $currentStock + $diff;
+
+                    if ($stockAfter < 0) {
+                        throw new \Exception('Stok menjadi negatif');
+                    }
+
+                    $existing->update([
+                        'qty_in'      => $request->qty_in,
+                        'stock_after' => $stockAfter,
+                        'notes'       => $request->notes ?? '-',
+                        'user_id'     => Auth::id(),
+                    ]);
+                } else {
+                    $stockAfter = $currentStock + $request->qty_in;
+
+                    MaterialIn::create([
+                        'material_id' => $materialId,
+                        'qty_in'      => $request->qty_in,
+                        'date_in'     => $request->date_in,
+                        'stock_after' => $stockAfter,
+                        'notes'       => $request->notes ?? '-',
+                        'user_id'     => Auth::id(),
+                    ]);
+                }
+            });
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 422);
+        }
     }
+
     public function destroy(MaterialIn $materialIn)
     {
         $materialIn->delete();

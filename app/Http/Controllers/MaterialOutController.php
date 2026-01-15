@@ -69,7 +69,15 @@ class MaterialOutController extends Controller
         ));
     }
 
-    // 4️⃣ Create / update qty out per hari
+    public function getCurrentStock($materialId)
+    {
+        $material = Material::findOrFail($materialId);
+
+        $totalIn = MaterialIn::where('material_id', $materialId)->sum('qty_in');
+        $totalOut = MaterialOut::where('material_id', $materialId)->sum('qty_out');
+
+        return $material->stock_awal + $totalIn - $totalOut;
+    }
     public function store(Request $request)
     {
         $request->validate([
@@ -78,28 +86,64 @@ class MaterialOutController extends Controller
             'date_out'    => 'required|date',
         ]);
 
-        $materialId = $request->material_id;
+        try {
+            DB::transaction(function () use ($request) {
 
-        $existing = MaterialOut::where('material_id', $materialId)
-            ->whereDate('date_out', $request->date_out)
-            ->first();
+                $materialId = $request->material_id;
 
-        if ($existing) {
-            $existing->update([
-                'qty_out' => $request->qty_out,
-                'user_id' => Auth::id(),
-            ]);
-        } else {
-            MaterialOut::create([
-                'material_id' => $materialId,
-                'qty_out'     => $request->qty_out,
-                'date_out'    => $request->date_out,
-                'user_id'     => Auth::id(),
-            ]);
+                $existing = MaterialOut::where('material_id', $materialId)
+                    ->whereDate('date_out', $request->date_out)
+                    ->lockForUpdate()
+                    ->first();
+
+                // stok dari ledger
+                $currentStock = $this->getCurrentStock($materialId);
+
+                if ($existing) {
+                    // EDIT TRANSAKSI
+                    $diff = $request->qty_out - $existing->qty_out;
+
+                    // stok setelah edit
+                    $stockAfter = $currentStock - $diff;
+
+                    if ($stockAfter < 0) {
+                        throw new \Exception('Stok tidak mencukupi');
+                    }
+
+                    $existing->update([
+                        'qty_out'     => $request->qty_out,
+                        'stock_after' => $stockAfter,
+                        'notes'       => $request->notes ?? '-',
+                        'user_id'     => Auth::id(),
+                    ]);
+                } else {
+                    // TRANSAKSI BARU
+                    if ($currentStock < $request->qty_out) {
+                        throw new \Exception('Stok tidak mencukupi');
+                    }
+
+                    $stockAfter = $currentStock - $request->qty_out;
+
+                    MaterialOut::create([
+                        'material_id' => $materialId,
+                        'qty_out'     => $request->qty_out,
+                        'date_out'    => $request->date_out,
+                        'stock_after' => $stockAfter,
+                        'notes'       => $request->notes ?? '-',
+                        'user_id'     => Auth::id(),
+                    ]);
+                }
+            });
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 422);
         }
-
-        return response()->json(['success' => true]);
     }
+
     public function destroy(MaterialOut $materialOut)
     {
         $materialOut->delete();
