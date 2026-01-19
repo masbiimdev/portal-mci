@@ -4,8 +4,7 @@
 @push('css')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
-        /* General */
-        :root{
+        :root {
             --accent-1: #5166ff;
             --accent-2: #06b6d4;
             --muted: #6b7280;
@@ -30,12 +29,15 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, rgba(81,102,255,0.08), rgba(81,102,255,0.02));
+            background: linear-gradient(135deg, rgba(81, 102, 255, 0.08), rgba(81, 102, 255, 0.02));
             color: var(--accent-1);
             font-size: 1.25rem;
         }
 
-        .small-muted { color: var(--muted); font-size: .92rem; }
+        .small-muted {
+            color: var(--muted);
+            font-size: .92rem;
+        }
 
         .chip {
             display: inline-block;
@@ -47,27 +49,18 @@
             margin-right: .25rem;
         }
 
-        /* Low stock highlight */
         .low-stock-row {
             background: linear-gradient(90deg, rgba(255, 243, 205, 0.45), rgba(255, 255, 255, 0));
         }
 
-        /* Table header sticky + subtle glass effect */
         .table thead th {
             position: sticky;
             top: 0;
             backdrop-filter: blur(4px);
             z-index: 3;
-            background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.92));
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.92));
         }
 
-        /* Compact accordion look */
-        .accordion-button {
-            padding: .5rem 1rem;
-            border-radius: 8px;
-        }
-
-        /* badges */
         .badge-in {
             background: rgba(25, 135, 84, 0.09);
             color: #166534;
@@ -84,20 +77,56 @@
             font-weight: 600;
         }
 
-        /* Responsive tweaks */
-        @media (max-width: 575px) {
-            .stat-icon { width: 48px; height: 48px; font-size: 1.1rem; }
-            .action-btns .btn { min-width: unset; padding-left: .6rem; padding-right: .6rem; }
+        .history-day {
+            border-radius: 12px;
+            margin-bottom: 0.8rem;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(6, 8, 15, 0.04);
+            background: #fff;
         }
 
-        /* subtle hover for rows */
-        .table-hover tbody tr:hover { background-color: rgba(6, 8, 15, 0.03); }
+        .history-day .hd-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: .85rem 1rem;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.04);
+        }
 
-        /* helper: truncate long text */
-        .text-truncate-td { max-width: 18ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .hd-summary {
+            color: var(--muted);
+            font-size: .92rem;
+        }
 
-        /* KPI sparkline placeholder */
-        .kpi-spark { width: 72px; height: 28px; display:inline-block; }
+        .text-truncate-td {
+            max-width: 28ch;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 767px) {
+            .stat-icon {
+                width: 48px;
+                height: 48px;
+                font-size: 1.1rem;
+            }
+
+            .kpi-spark {
+                width: 56px;
+                height: 24px;
+            }
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(6, 8, 15, 0.03);
+        }
+
+        .muted-quiet {
+            color: #94a3b8;
+            font-size: .92rem;
+        }
     </style>
 @endpush
 
@@ -105,10 +134,12 @@
     <div class="container-xxl flex-grow-1 container-p-y">
 
         <!-- HEADER -->
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+        <div
+            class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
             <div>
                 <h4 class="fw-bold mb-0">📦 Dashboard Inventory</h4>
-                <div class="small-muted">Ringkasan stok, aktivitas terakhir, dan peringatan stok rendah — tampilan dibuat lebih informatif dan mudah dibaca.</div>
+                <div class="small-muted">Ringkasan stok, aktivitas terakhir, dan peringatan stok rendah — tampilan lebih rapi
+                    dan mudah dibaca.</div>
             </div>
 
             <div class="d-flex gap-2 action-btns">
@@ -121,9 +152,6 @@
                 <a href="{{ route('materials.index') }}" class="btn btn-outline-secondary d-flex align-items-center gap-2">
                     <i class="bi bi-boxes"></i> Daftar Material
                 </a>
-                {{-- <a href="{{ route('materials.export') }}" class="btn btn-outline-primary d-flex align-items-center gap-2">
-                    <i class="bi bi-download"></i> Export CSV
-                </a> --}}
             </div>
         </div>
 
@@ -148,7 +176,8 @@
             <div class="col-12 col-sm-6 col-md-3">
                 <div class="card card-hero border-0 shadow-sm h-100 p-3">
                     <div class="d-flex align-items-center gap-3">
-                        <div class="stat-icon" style="color:#16a34a; background:linear-gradient(135deg,#ecfdf5,#f1fbf6)"><i class="bi bi-box-seam"></i></div>
+                        <div class="stat-icon" style="color:#16a34a; background:linear-gradient(135deg,#ecfdf5,#f1fbf6)"><i
+                                class="bi bi-box-seam"></i></div>
                         <div class="flex-grow-1">
                             <div class="small-muted">Total Stok</div>
                             <div class="d-flex align-items-end justify-content-between">
@@ -164,7 +193,8 @@
             <div class="col-12 col-sm-6 col-md-3">
                 <div class="card card-hero border-0 shadow-sm h-100 p-3">
                     <div class="d-flex align-items-center gap-3">
-                        <div class="stat-icon" style="color:#0ea5e9; background:linear-gradient(135deg,#eff8ff,#f4fbff)"><i class="bi bi-arrow-down-square"></i></div>
+                        <div class="stat-icon" style="color:#0ea5e9; background:linear-gradient(135deg,#eff8ff,#f4fbff)"><i
+                                class="bi bi-arrow-down-square"></i></div>
                         <div class="flex-grow-1">
                             <div class="small-muted">Masuk (Bulan)</div>
                             <div class="d-flex align-items-end justify-content-between">
@@ -180,7 +210,8 @@
             <div class="col-12 col-sm-6 col-md-3">
                 <div class="card card-hero border-0 shadow-sm h-100 p-3">
                     <div class="d-flex align-items-center gap-3">
-                        <div class="stat-icon" style="color:#ef4444; background:linear-gradient(135deg,#fff5f5,#fff8f8)"><i class="bi bi-arrow-up-square"></i></div>
+                        <div class="stat-icon" style="color:#ef4444; background:linear-gradient(135deg,#fff5f5,#fff8f8)"><i
+                                class="bi bi-arrow-up-square"></i></div>
                         <div class="flex-grow-1">
                             <div class="small-muted">Keluar (Bulan)</div>
                             <div class="d-flex align-items-end justify-content-between">
@@ -193,10 +224,23 @@
                 </div>
             </div>
         </div>
+        <!-- ENHANCED MONTHLY CHART -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <div class="fw-bold">📊 Grafik Bulanan — Barang Masuk, Keluar & Net</div>
+                <div class="d-flex gap-2 align-items-center">
+                    <button id="downloadChart" class="btn btn-outline-secondary btn-sm">Download PNG</button>
+                </div>
+            </div>
 
-        <!-- LOW STOCK & QUICK ACTIONS -->
+            <div class="card-body">
+                <canvas id="monthlyChart" height="140" aria-label="Grafik barang masuk dan keluar per bulan"></canvas>
+            </div>
+        </div>
+
+        <!-- LOW STOCK -->
         <div class="row g-3 mb-4">
-            <div class="col-lg-6">
+            <div class="col-lg-12">
                 <div class="card shadow-sm h-100">
                     <div class="card-header d-flex justify-content-between align-items-center bg-light">
                         <div class="fw-bold">⚠️ Stok Rendah</div>
@@ -204,7 +248,7 @@
                     </div>
 
                     <div class="card-body p-0">
-                        @if($lowStock->isEmpty())
+                        @if ($lowStock->isEmpty())
                             <div class="p-4 text-center small-muted">Semua material berada di atas batas minimum.</div>
                         @else
                             <div class="table-responsive">
@@ -217,21 +261,29 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($lowStock as $m)
+                                        @foreach ($lowStock as $m)
                                             @php
-                                                $pct = $m->min_stock > 0 ? min(100, round(($m->stock / $m->min_stock) * 100)) : 0;
+                                                $pct =
+                                                    $m->min_stock > 0
+                                                        ? min(100, round(($m->stock / $m->min_stock) * 100))
+                                                        : 0;
                                             @endphp
                                             <tr class="{{ $m->stock <= $m->min_stock ? 'low-stock-row' : '' }}">
                                                 <td>
-                                                    <div class="fw-semibold">{{ $m->material_code ?? $m->spare_part_name }}</div>
-                                                    <div class="small-muted">{{ Str::limit($m->description ?? $m->spare_part_name, 50) }}</div>
+                                                    <div class="fw-semibold">{{ $m->material_code ?? $m->spare_part_name }}
+                                                    </div>
+                                                    <div class="small-muted">
+                                                        {{ Str::limit($m->description ?? $m->spare_part_name, 60) }}</div>
                                                 </td>
                                                 <td class="text-center fw-bold">{{ number_format($m->stock) }}</td>
                                                 <td class="text-end">
                                                     <div class="d-flex align-items-center gap-2 justify-content-end">
-                                                        <div class="small-muted me-2 text-nowrap">{{ $pct }}%</div>
+                                                        <div class="small-muted me-2 text-nowrap">{{ $pct }}%
+                                                        </div>
                                                         <div class="progress w-50" style="height:8px; border-radius:6px;">
-                                                            <div class="progress-bar @if($pct<=30) bg-danger @elseif($pct<=60) bg-warning @else bg-success @endif" role="progressbar" style="width:{{ $pct }}%"></div>
+                                                            <div class="progress-bar @if ($pct <= 30) bg-danger @elseif($pct <= 60) bg-warning @else bg-success @endif"
+                                                                role="progressbar" style="width:{{ $pct }}%">
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -240,33 +292,44 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="p-3 border-top text-end">
-                                <a href="{{ route('materials.low') }}" class="btn btn-outline-primary btn-sm">Lihat semua</a>
-                                <a href="{{ route('materials.restock') }}" class="btn btn-primary btn-sm">Buat PO Restock</a>
+
+                            <div class="p-3 border-top d-flex justify-content-between align-items-center">
+                                <div class="muted-quiet">Menampilkan {{ $lowStock->count() }} item dengan stok rendah
+                                </div>
+                                <div>
+                                    <a href="{{ route('materials.low') }}" class="btn btn-outline-primary btn-sm">Lihat
+                                        semua</a>
+                                    <a href="{{ route('materials.restock') }}" class="btn btn-primary btn-sm">Buat PO
+                                        Restock</a>
+                                </div>
                             </div>
                         @endif
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Recent Activity + Filters -->
-            <div class="col-lg-6">
+        <!-- RECENT ACTIVITY (filter Masuk/Keluar dihapus) -->
+        <div class="row g-3 mb-4">
+            <div class="col-lg-12">
                 <div class="card shadow-sm h-100">
-                    <div class="card-header bg-light d-flex align-items-center justify-content-between">
+                    <div class="card-header bg-light d-flex align-items-center justify-content-between flex-wrap">
                         <div>
                             <i class="bi bi-clock-history me-2"></i>
                             <span class="fw-bold">Riwayat Transaksi Terbaru</span>
-                            <div class="small-muted">Kelompok per tanggal — klik untuk buka detail</div>
+                            <div class="small-muted">Terbaru pertama — setiap tanggal tampil sebagai blok terbuka</div>
                         </div>
 
-                        <div class="d-flex gap-2 align-items-center">
-                            <input id="historySearch" type="search" class="form-control form-control-sm" placeholder="🔎 Cari (spare / kode / keterangan)" style="min-width:220px">
-                            <button class="btn btn-sm btn-outline-secondary" id="expandAll">Buka Semua</button>
-                            <button class="btn btn-sm btn-outline-secondary" id="collapseAll">Tutup Semua</button>
+                        <div class="d-flex gap-2 align-items-center mt-2 mt-md-0">
+                            <div class="input-group input-group-sm" style="min-width:240px;">
+                                <span class="input-group-text">🔎</span>
+                                <input id="historySearch" type="search" class="form-control form-control-sm"
+                                    placeholder="Cari (spare / kode / keterangan)">
+                            </div>
                         </div>
                     </div>
 
-                    <div class="card-body p-0">
+                    <div class="card-body p-3">
                         @if ($history->isEmpty())
                             <div class="text-center text-muted py-4 mb-0">
                                 <i class="bi bi-inbox fs-3 d-block mb-2"></i>
@@ -277,10 +340,9 @@
                                 $groupedHistory = $history->groupBy(function ($item) {
                                     return \Carbon\Carbon::parse($item->date_in)->translatedFormat('d F Y');
                                 });
-                                $accordionId = 'historyAccordion';
                             @endphp
 
-                            <div class="accordion" id="{{ $accordionId }}">
+                            <div id="historyList">
                                 @foreach ($groupedHistory as $date => $items)
                                     @php
                                         $totalIn = $items->where('jenis', 'in')->sum('qty');
@@ -288,60 +350,85 @@
                                         $safeId = 'grp-' . \Illuminate\Support\Str::slug($date);
                                     @endphp
 
-                                    <div class="accordion-item border-0">
-                                        <h2 class="accordion-header" id="heading-{{ $safeId }}">
-                                            <button class="accordion-button collapsed bg-white d-flex align-items-center justify-content-between" type="button"
-                                                data-bs-toggle="collapse" data-bs-target="#collapse-{{ $safeId }}" aria-expanded="false" aria-controls="collapse-{{ $safeId }}">
-                                                <div class="fw-semibold"><i class="bi bi-calendar-event me-2"></i> {{ $date }}</div>
-                                                <div class="small-muted">
-                                                    <span class="me-3"><strong class="text-success">+{{ number_format($totalIn) }}</strong> in</span>
-                                                    <span class="me-3"><strong class="text-danger">-{{ number_format($totalOut) }}</strong> out</span>
+                                    <div class="history-day" data-date-group="{{ $safeId }}">
+                                        <div class="hd-header">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div class="fw-semibold"><i class="bi bi-calendar-event me-2"></i>
+                                                    {{ $date }}</div>
+                                                <div class="hd-summary">
+                                                    <span class="me-3"><strong
+                                                            class="text-success">+{{ number_format($totalIn) }}</strong>
+                                                        in</span>
+                                                    <span class="me-3"><strong
+                                                            class="text-danger">-{{ number_format($totalOut) }}</strong>
+                                                        out</span>
                                                     <span class="text-muted">({{ $items->count() }} transaksi)</span>
                                                 </div>
-                                            </button>
-                                        </h2>
+                                            </div>
 
-                                        <div id="collapse-{{ $safeId }}" class="accordion-collapse collapse" aria-labelledby="heading-{{ $safeId }}" data-bs-parent="#{{ $accordionId }}">
-                                            <div class="accordion-body p-0">
-                                                <div class="table-responsive">
-                                                    <table class="table table-sm table-hover align-middle mb-0 history-table">
-                                                        <thead class="text-muted small">
-                                                            <tr>
-                                                                <th style="width:75px">Jam</th>
-                                                                <th style="width:90px">Jenis</th>
-                                                                <th>Material / Spare</th>
-                                                                <th class="text-end" style="width:100px">Stok Awal</th>
-                                                                <th class="text-end" style="width:100px">Perubahan</th>
-                                                                <th class="text-end" style="width:100px">Stok Akhir</th>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="muted-quiet me-2">Tampilan: semua transaksi tanggal ini</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-0" id="body-{{ $safeId }}">
+                                            <div class="table-responsive">
+                                                <table class="table table-sm table-hover align-middle mb-0 history-table"
+                                                    data-group="{{ $safeId }}">
+                                                    <thead class="text-muted small">
+                                                        <tr>
+                                                            <th style="width:75px">Jam</th>
+                                                            <th style="width:90px">Jenis</th>
+                                                            <th>Material / Spare</th>
+                                                            <th class="text-end" style="width:100px">Stok Awal</th>
+                                                            <th class="text-end" style="width:100px">Perubahan</th>
+                                                            <th class="text-end" style="width:100px">Stok Akhir</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach ($items as $item)
+                                                            @php
+                                                                $time = \Carbon\Carbon::parse($item->date_in)->format(
+                                                                    'H:i',
+                                                                );
+                                                                $isIn = $item->jenis === 'in';
+                                                                $valveList = optional($item->material->valves)
+                                                                    ->pluck('valve_name')
+                                                                    ->join(', ');
+                                                                $spareName =
+                                                                    optional($item->material->sparePart)
+                                                                        ->spare_part_name ??
+                                                                    ($item->material->material_code ?? '-');
+                                                            @endphp
+                                                            <tr data-kind="{{ $isIn ? 'in' : 'out' }}">
+                                                                <td class="text-nowrap small text-secondary">
+                                                                    {{ $time }}</td>
+                                                                <td>
+                                                                    <span class="{{ $isIn ? 'badge-in' : 'badge-out' }}">
+                                                                        <i
+                                                                            class="bi {{ $isIn ? 'bi-arrow-down-circle' : 'bi-arrow-up-circle' }} me-1"></i>{{ strtoupper($item->jenis) }}
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="fw-semibold small">{{ $spareName }}
+                                                                    </div>
+                                                                    <div class="small-muted small text-truncate-td"
+                                                                        title="{{ $valveList }}">{{ $valveList }}
+                                                                    </div>
+                                                                </td>
+                                                                <td class="text-end">
+                                                                    {{ number_format($item->material->stock_awal ?? 0) }}
+                                                                </td>
+                                                                <td
+                                                                    class="text-end fw-bold {{ $isIn ? 'text-success' : 'text-danger' }}">
+                                                                    {{ $isIn ? '+' : '-' }}{{ number_format($item->qty) }}
+                                                                </td>
+                                                                <td class="text-end fw-semibold">
+                                                                    {{ number_format($item->stock_after ?? 0) }}</td>
                                                             </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            @foreach ($items as $item)
-                                                                @php
-                                                                    $time = \Carbon\Carbon::parse($item->date_in)->format('H:i');
-                                                                    $isIn = $item->jenis === 'in';
-                                                                    $valveList = optional($item->material->valves)->pluck('valve_name')->join(', ');
-                                                                    $spareName = optional($item->material->sparePart)->spare_part_name ?? ($item->material->material_code ?? '-');
-                                                                @endphp
-                                                                <tr>
-                                                                    <td class="text-nowrap small text-secondary">{{ $time }}</td>
-                                                                    <td>
-                                                                        <span class="{{ $isIn ? 'badge-in' : 'badge-out' }}">
-                                                                            <i class="bi {{ $isIn ? 'bi-arrow-down-circle' : 'bi-arrow-up-circle' }} me-1"></i>{{ strtoupper($item->jenis) }}
-                                                                        </span>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="fw-semibold small">{{ $spareName }}</div>
-                                                                        <div class="small-muted small text-truncate-td" title="{{ $valveList }}">{{ $valveList }}</div>
-                                                                    </td>
-                                                                    <td class="text-end">{{ number_format($item->material->stock_awal ?? 0) }}</td>
-                                                                    <td class="text-end fw-bold {{ $isIn ? 'text-success' : 'text-danger' }}">{{ $isIn ? '+' : '-' }}{{ number_format($item->qty) }}</td>
-                                                                    <td class="text-end fw-semibold">{{ number_format($item->stock_after ?? 0) }}</td>
-                                                                </tr>
-                                                            @endforeach
-                                                        </tbody>
-                                                    </table>
-                                                </div>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
                                             </div>
                                         </div>
                                     </div>
@@ -349,16 +436,7 @@
                             </div>
                         @endif
                     </div>
-
                 </div>
-            </div>
-        </div>
-
-        <!-- MONTHLY CHART -->
-        <div class="card shadow-sm mb-4">
-            <div class="card-header bg-light fw-bold">📊 Grafik Bulanan — Barang Masuk & Keluar</div>
-            <div class="card-body">
-                <canvas id="monthlyChart" height="110" aria-label="Grafik barang masuk dan keluar per bulan"></canvas>
             </div>
         </div>
 
@@ -369,11 +447,13 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     @php
-        // Prepare small spark arrays safely to avoid Blade/PHP parsing issues
-        $sparkIn = [0,0,0,0,0];
-        $sparkOut = [0,0,0,0,0];
+        $sparkIn = [0, 0, 0, 0, 0];
+        $sparkOut = [0, 0, 0, 0, 0];
 
-        if (!empty($monthlyData) && (is_array($monthlyData) || $monthlyData instanceof \Illuminate\Support\Collection)) {
+        if (
+            !empty($monthlyData) &&
+            (is_array($monthlyData) || $monthlyData instanceof \Illuminate\Support\Collection)
+        ) {
             $coll = collect($monthlyData);
             $inArr = $coll->pluck('in')->all();
             $outArr = $coll->pluck('out')->all();
@@ -381,111 +461,227 @@
             $sIn = array_values(array_slice($inArr, -8));
             $sOut = array_values(array_slice($outArr, -8));
 
-            if (!empty($sIn)) $sparkIn = $sIn;
-            if (!empty($sOut)) $sparkOut = $sOut;
+            if (!empty($sIn)) {
+                $sparkIn = $sIn;
+            }
+            if (!empty($sOut)) {
+                $sparkOut = $sOut;
+            }
         }
-        // Use same sparklines for total/material placeholders (adjust as needed)
         $sparkTotalMaterial = $sparkIn;
         $sparkTotalStock = $sparkOut;
     @endphp
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Tooltip init (Bootstrap)
-            var tt = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            tt.forEach(function (el) { if (typeof bootstrap !== 'undefined') new bootstrap.Tooltip(el); });
-
-            // Expand / Collapse All for history accordion
-            const expandBtn = document.getElementById('expandAll');
-            const collapseBtn = document.getElementById('collapseAll');
-            const accordion = document.getElementById('{{ $accordionId ?? "historyAccordion" }}');
-            const collapses = accordion ? accordion.querySelectorAll('.accordion-collapse') : [];
-
-            expandBtn?.addEventListener('click', () => {
-                collapses.forEach(c => { if (!c.classList.contains('show') && typeof bootstrap !== 'undefined') new bootstrap.Collapse(c, { toggle: true }); });
-            });
-            collapseBtn?.addEventListener('click', () => {
-                collapses.forEach(c => { if (c.classList.contains('show') && typeof bootstrap !== 'undefined') new bootstrap.Collapse(c, { toggle: true }); });
-            });
-
-            // Small client-side search (fuzzy substring)
-            const search = document.getElementById('historySearch');
-            if (search) {
-                search.addEventListener('input', function () {
-                    const q = this.value.trim().toLowerCase();
-                    const tables = accordion ? accordion.querySelectorAll('.history-table') : [];
-                    tables.forEach(tbl => {
-                        Array.from(tbl.tBodies[0].rows).forEach(r => {
-                            const text = r.innerText.toLowerCase();
-                            r.style.display = text.indexOf(q) > -1 ? '' : 'none';
-                        });
-                    });
-                });
-            }
-
-            // KPI sparklines (tiny line charts) - using Chart.js lightweight config
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sparklines
             function createSpark(id, data = [], color = 'rgba(81,102,255,0.9)') {
                 const el = document.getElementById(id);
                 if (!el) return;
                 new Chart(el.getContext('2d'), {
                     type: 'line',
-                    data: { labels: data.map((_,i) => i+1), datasets: [{ data, borderColor: color, backgroundColor: 'transparent', tension: 0.3, borderWidth: 1.5, pointRadius: 0 }] },
-                    options: { responsive: false, maintainAspectRatio: false, scales: { x: { display: false }, y: { display: false } }, plugins: { legend: { display: false }, tooltip: { enabled: false } } }
+                    data: {
+                        labels: data.map((_, i) => i + 1),
+                        datasets: [{
+                            data,
+                            borderColor: color,
+                            backgroundColor: 'transparent',
+                            tension: 0.35,
+                            borderWidth: 1.6,
+                            pointRadius: 0
+                        }]
+                    },
+                    options: {
+                        responsive: false,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                display: false
+                            },
+                            y: {
+                                display: false
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                enabled: false
+                            }
+                        }
+                    }
                 });
             }
 
-            // create sparklines (using safe PHP-prepared arrays)
             createSpark('sparkTotalMaterial', @json($sparkTotalMaterial), 'rgba(81,102,255,0.9)');
             createSpark('sparkTotalStock', @json($sparkTotalStock), 'rgba(16,185,129,0.9)');
             createSpark('sparkIn', @json($sparkIn), 'rgba(34,197,94,0.9)');
             createSpark('sparkOut', @json($sparkOut), 'rgba(239,68,68,0.9)');
 
-            // MONTHLY CHART
-            (function () {
+            // Monthly enhanced chart
+            (function() {
                 const ctx = document.getElementById('monthlyChart');
                 if (!ctx) return;
                 const chartData = @json($monthlyData ?? []);
                 const labels = chartData.map(i => i.month);
                 const dataIn = chartData.map(i => i.in || 0);
                 const dataOut = chartData.map(i => i.out || 0);
+                const dataNet = chartData.map(i => (i.in || 0) - (i.out || 0));
+
+                const gradientBlue = ctx.getContext('2d').createLinearGradient(0, 0, 0, 200);
+                gradientBlue.addColorStop(0, 'rgba(81,102,255,0.18)');
+                gradientBlue.addColorStop(1, 'rgba(81,102,255,0.02)');
 
                 const formatNumber = (v) => new Intl.NumberFormat().format(v);
 
-                new Chart(ctx, {
+                new Chart(ctx.getContext('2d'), {
                     type: 'bar',
                     data: {
                         labels,
-                        datasets: [
-                            { label: 'Masuk', data: dataIn, backgroundColor: 'rgba(34,197,94,0.85)', borderRadius: 6 },
-                            { label: 'Keluar', data: dataOut, backgroundColor: 'rgba(239,68,68,0.85)', borderRadius: 6 }
+                        datasets: [{
+                                type: 'bar',
+                                label: 'Masuk',
+                                data: dataIn,
+                                backgroundColor: 'rgba(34,197,94,0.85)',
+                                borderRadius: 8,
+                                barThickness: 'flex',
+                                maxBarThickness: 28,
+                            },
+                            {
+                                type: 'bar',
+                                label: 'Keluar',
+                                data: dataOut,
+                                backgroundColor: 'rgba(239,68,68,0.85)',
+                                borderRadius: 8,
+                                barThickness: 'flex',
+                                maxBarThickness: 28,
+                            },
+                            {
+                                type: 'line',
+                                label: 'Net (Masuk−Keluar)',
+                                data: dataNet,
+                                borderColor: 'rgba(81,102,255,0.95)',
+                                backgroundColor: gradientBlue,
+                                tension: 0.35,
+                                fill: true,
+                                pointRadius: 3,
+                                pointHoverRadius: 5,
+                                borderWidth: 2,
+                                yAxisID: 'y',
+                            }
                         ]
                     },
                     options: {
                         responsive: true,
-                        interaction: { mode: 'index', intersect: false },
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        stacked: false,
                         scales: {
-                            x: { grid: { display: false } },
+                            x: {
+                                grid: {
+                                    display: false
+                                },
+                                ticks: {
+                                    maxRotation: 0,
+                                    autoSkip: true,
+                                    maxTicksLimit: 12
+                                }
+                            },
                             y: {
                                 beginAtZero: true,
-                                ticks: { callback: v => formatNumber(v) }
+                                ticks: {
+                                    callback: value => formatNumber(value)
+                                },
+                                grid: {
+                                    color: 'rgba(15,23,42,0.06)'
+                                }
                             }
                         },
                         plugins: {
-                            legend: { position: 'bottom' },
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    usePointStyle: true,
+                                    pointStyle: 'rectRounded'
+                                }
+                            },
                             tooltip: {
                                 callbacks: {
-                                    label: function (ctx) {
-                                        let label = ctx.dataset.label || '';
-                                        if (label) label += ': ';
-                                        label += formatNumber(ctx.parsed.y);
-                                        return label;
+                                    title: (ctx) => ctx[0]?.label || '',
+                                    label: (ctx) => {
+                                        const lbl = ctx.dataset.label || '';
+                                        return lbl + ': ' + formatNumber(ctx.parsed.y ?? ctx
+                                        .parsed);
+                                    },
+                                    afterBody: (ctx) => {
+                                        if (ctx[0] && (ctx[0].dataset.type === 'bar' || ctx[0]
+                                                .dataset.type === undefined)) {
+                                            const idx = ctx[0].dataIndex;
+                                            const inVal = dataIn[idx] || 0;
+                                            const outVal = dataOut[idx] || 0;
+                                            const tot = inVal + outVal;
+                                            if (tot > 0) {
+                                                return `Komposisi: Masuk ${Math.round((inVal / tot) * 100)}% • Keluar ${Math.round((outVal / tot) * 100)}%`;
+                                            }
+                                        }
+                                        return '';
                                     }
                                 }
+                            }
+                        },
+                        animation: {
+                            duration: 700,
+                            easing: 'cubicBezier(.2,.8,.2,1)'
+                        },
+                        layout: {
+                            padding: {
+                                top: 6,
+                                bottom: 6
                             }
                         }
                     }
                 });
+
+                document.getElementById('downloadChart')?.addEventListener('click', function() {
+                    const link = document.createElement('a');
+                    link.href = ctx.toDataURL('image/png', 1);
+                    link.download = 'grafik-bulanan-inventory.png';
+                    link.click();
+                });
             })();
+
+            // History: hanya pencarian client-side (filter Masuk/Keluar dihapus)
+            const searchInput = document.getElementById('historySearch');
+            const historyList = document.getElementById('historyList');
+
+            function applySearch() {
+                const q = (searchInput?.value || '').trim().toLowerCase();
+                const dayCards = historyList ? historyList.querySelectorAll('.history-day') : [];
+
+                dayCards.forEach(card => {
+                    const group = card.querySelector('table.history-table');
+                    const rows = group ? Array.from(group.tBodies[0].rows) : [];
+                    let anyVisible = false;
+
+                    rows.forEach(r => {
+                        const rowText = r.innerText.toLowerCase();
+                        const matchesSearch = q === '' ? true : rowText.indexOf(q) > -1;
+                        r.style.display = matchesSearch ? '' : 'none';
+                        if (matchesSearch) anyVisible = true;
+                    });
+
+                    card.style.display = anyVisible ? '' : 'none';
+                });
+            }
+
+            searchInput?.addEventListener('input', () => applySearch());
+
+            // Initial apply (in case search has default value)
+            applySearch();
         });
     </script>
 @endpush
