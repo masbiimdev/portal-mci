@@ -3,6 +3,8 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Support\Facades\Cache;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -51,5 +53,25 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $exception)
     {
         return parent::render($request, $exception);
+    }
+
+    /**
+     * HANDLE SESSION HABIS / UNAUTHENTICATED
+     * Ini otomatis dipanggil Laravel
+     */
+    protected function unauthenticated($request, AuthenticationException $exception)
+    {
+        // Bersihkan flag login (single login fix)
+        if ($request->session()->has('user_id')) {
+            Cache::forget('user_login_' . $request->session()->get('user_id'));
+        }
+
+        // Pastikan session benar-benar dihancurkan
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()
+            ->route('login')
+            ->with('session_expired', 'Session Anda telah berakhir. Silakan login kembali.');
     }
 }
