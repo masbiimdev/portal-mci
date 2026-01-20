@@ -22,37 +22,53 @@ class HomeController extends Controller
      */
     public function index()
     {
-        // Announcements — keep your original ordering and limit (take 3)
-        try {
-            $announcements = Annon::where('is_active', true)
-                ->orderByRaw("FIELD(priority, 'high', 'medium', 'low')")
-                ->orderBy('created_at', 'desc')
-                ->take(3)
-                ->get();
-        } catch (\Throwable $e) {
-            Log::warning('HomeController::index announcements query failed: ' . $e->getMessage());
-            $announcements = collect();
-        }
 
-        // Defaults for other blocks (so view won't break)
+        // Defaults (agar view tidak error jika query gagal atau model tidak ada)
+        $announcements = collect();
         $scheduleUpcoming = collect();
         $scheduleUpcomingCount = 0;
         $inventoryTotalCount = 0;
         $lowStock = collect();
         $lowStockCount = 0;
         $stockTrend = [];
+        $tools = collect();
+        $totalTools = 0;
+        $statusOk = 0;
+        $statusProses = 0;
+        $dueSoon = 0;
+        $pieData = ['ok' => 0, 'proses' => 0, 'due' => 0];
+        $trend = ['labels' => [], 'values' => []];
 
         $today = Carbon::today();
         $in7 = Carbon::today()->addDays(7);
 
-        // Schedules (next 7 days) — optional
+        // Announcements (safely)
+        try {
+            if (class_exists(
+                Annon::class
+            )) {
+                $announcements =
+                    Annon::where('is_active', true)
+                    ->orderByRaw("FIELD(priority, 'high', 'medium', 'low')")
+                    ->orderBy('created_at', 'desc')
+                    ->take(3)
+                    ->get();
+            }
+        } catch (\Throwable $e) {
+            Log::warning('HomeController::index announcements query failed: ' . $e->getMessage());
+            $announcements = collect();
+        }
+
+        // Schedules (next 7 days)
         try {
             if (class_exists(Activity::class)) {
                 $scheduleUpcoming = Activity::whereBetween('start_date', [$today->toDateString(), $in7->toDateString()])
                     ->orderBy('start_date')
                     ->take(6)
                     ->get();
-                $scheduleUpcomingCount = Activity::whereBetween('start_date', [$today->toDateString(), $in7->toDateString()])->count();
+
+                $scheduleUpcomingCount =
+                    Activity::whereBetween('start_date', [$today->toDateString(), $in7->toDateString()])->count();
             }
         } catch (\Throwable $e) {
             Log::warning('HomeController::index schedule query failed: ' . $e->getMessage());
@@ -60,27 +76,33 @@ class HomeController extends Controller
             $scheduleUpcomingCount = 0;
         }
 
-        // Inventory / low stock — optional
+        // Inventory / low stock
         try {
-            if (class_exists(Material::class)) {
-                $inventoryTotalCount = Material::count();
+            if (class_exists(
+                Material::class
+            )) {
+                $inventoryTotalCount =
+                    Material::count();
 
-                $lowStockQuery = Material::with('sparePart')
+                $lowStockQuery =
+                    Material::with('sparePart')
                     ->whereColumn('stock_awal', '<', 'stock_minimum')
                     ->orderByRaw('(stock_minimum - stock_awal) desc');
 
-                // take top 8 for display
                 $lowStock = $lowStockQuery->take(8)->get();
-                $lowStockCount = $lowStockQuery->count();
+                // count() on the base query (without take) is fine
+                $lowStockCount =
+                    Material::whereColumn('stock_awal', '<', 'stock_minimum')->count();
 
-                // build a small numeric series for sparkline (fallback)
+                // build a small numeric series for sparkline / fallback trend
                 $stockTrend = $lowStock->pluck('stock_awal')->map(function ($v) {
                     return (int) ($v ?? 0);
                 })->values()->all();
 
+                // ensure we have at least some points
                 while (count($stockTrend) < 6) {
                     $first = count($stockTrend) ? $stockTrend[0] : 10;
-                    array_unshift($stockTrend, max(0, $first + rand(-3, 3)));
+                    $stockTrend = array_merge([max(0, $first + rand(-3, 3))], $stockTrend);
                 }
                 $stockTrend = array_slice($stockTrend, 0, 12);
             }
@@ -92,6 +114,90 @@ class HomeController extends Controller
             $stockTrend = [];
         }
 
+        // Tools & status summary (if Tools model exists)
+        try {
+            if (class_exists(
+                Tool::class
+            )) {
+                // fetch a reasonable number for dashboard preview
+                $tools =
+                    Tool::with('latestHistory')->orderBy('id', 'desc')->take(50)->get();
+                $totalTools =
+                    Tool::count();
+
+                // compute simple status counts and due soon (<15 days)
+                $statusOk = 0;
+                $statusProses = 0;
+                $dueSoon = 0;
+                $now = Carbon::today();
+
+                foreach ($tools as $t) {
+                    $h = optional($t->latestHistory);
+                    $status = strtolower(trim($h->status_kalibrasi ?? ''));
+                    if ($status === 'ok') $statusOk++;
+                    elseif ($status === 'proses') $statusProses++;
+
+                    // check tgl_kalibrasi_ulang for due soon
+                    $tglUlang = $h->tgl_kalibrasi_ulang ? Carbon::parse($h->tgl_kalibrasi_ulang) : null;
+                    if ($tglUlang) {
+                        $diffDays = $now->diffInDays($tglUlang, false); // negative if past
+                        if ($diffDays >= 0 && $diffDays <= 15) {
+                            $dueSoon++;
+                        } elseif ($diffDays < 0) {
+                            // already past due -> count as due as well
+                            $dueSoon++;
+                        }
+                    }
+                }
+
+                $pieData = ['ok' => $statusOk, 'proses' => $statusProses, 'due' => $dueSoon];
+
+                // Build trend fallback if not provided elsewhere
+                if (empty($stockTrend)) {
+                    $trend = [
+                        'labels' => collect(range(-6, -1))->map(fn($i) => Carbon::today()->addDays($i)->format('d M'))->values()->all(),
+                        'values' => array_fill(0, 6, 0),
+                    ];
+                } else {
+                    $trend = [
+                        'labels' => collect(array_reverse(range(1, count($stockTrend))))->map(fn($i) => Carbon::today()->subDays($i)->format('d M'))->values()->all(),
+                        'values' => array_values($stockTrend),
+                    ];
+                }
+            } else {
+                // when Tool model not exists, keep defaults and build minimal trend
+                $tools = collect();
+                $totalTools = 0;
+                $pieData = ['ok' => 0, 'proses' => 0, 'due' => 0];
+                $trend = [
+                    'labels' => collect(range(-6, -1))->map(fn($i) => Carbon::today()->addDays($i)->format('d M'))->values()->all(),
+                    'values' => array_fill(0, 6, 0),
+                ];
+            }
+        } catch (\Throwable $e) {
+            Log::warning('HomeController::index tools/status query failed: ' . $e->getMessage());
+            $tools = collect();
+            $totalTools = 0;
+            $pieData = ['ok' => 0, 'proses' => 0, 'due' => 0];
+            $trend = ['labels' => [], 'values' => []];
+        }
+
+        // Prepare data for JS (toolsData) - safe mapping
+        $toolsData = collect($tools)->map(function ($t) {
+            $h = optional($t->latestHistory);
+            return [
+                'id' => $t->id,
+                'nama' => $t->nama_alat ?? '',
+                'merek' => $t->merek ?? '',
+                'no_seri' => $t->no_seri ?? '',
+                'status' => $h->status_kalibrasi ?? '-',
+                'tgl_kalibrasi' => $h->tgl_kalibrasi ? optional($h->tgl_kalibrasi)->format('d/m/Y') : null,
+                'tgl_kalibrasi_ulang' => $h->tgl_kalibrasi_ulang ? optional($h->tgl_kalibrasi_ulang)->format('d/m/Y') : null,
+                'keterangan' => $h->keterangan ?? '',
+            ];
+        })->values()->all();
+
+        // Finally return view with all variables used by the home blade
         return view('pages.home', compact(
             'announcements',
             'scheduleUpcoming',
@@ -99,7 +205,15 @@ class HomeController extends Controller
             'inventoryTotalCount',
             'lowStock',
             'lowStockCount',
-            'stockTrend'
+            'stockTrend',
+            'tools',
+            'toolsData',
+            'totalTools',
+            'statusOk',
+            'statusProses',
+            'dueSoon',
+            'pieData',
+            'trend'
         ));
     }
 
