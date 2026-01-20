@@ -22,8 +22,6 @@ class HomeController extends Controller
      */
     public function index()
     {
-
-        // Defaults (agar view tidak error jika query gagal atau model tidak ada)
         $announcements = collect();
         $scheduleUpcoming = collect();
         $scheduleUpcomingCount = 0;
