@@ -14,6 +14,7 @@ use App\Http\Controllers\TelegramController;
 use App\Http\Controllers\CalibrationHistoryController;
 use App\Http\Controllers\ToolController;
 use App\ActivityItemResult;
+use App\Http\Controllers\HomeDocController;
 use App\Http\Controllers\KalibrasiDashboardController;
 use Illuminate\Http\Request;
 
@@ -37,7 +38,7 @@ Route::get('tracking/{jobcard}/history', 'TrackingController@ajaxHistory')->name
 Route::get('/scan/{token}', [ToolController::class, 'scan'])->name('tools.scan');
 
 // Dokumen Control
-Route::get('/portal/document', [HomeController::class, 'document'])->name('document');
+Route::get('/portal/document', [HomeDocController::class, 'index'])->name('document');
 
 // Undee Construction Page
 Route::get('/under-construction', [HomeController::class, 'under'])->name('under');
@@ -172,3 +173,6 @@ Route::middleware(['auth', 'module.access:kalibrasi'])
         Route::delete('/{history}', [CalibrationHistoryController::class, 'destroy'])->name('destroy');
         Route::get('/{history}/download', [CalibrationHistoryController::class, 'downloadCertificate'])->name('download');
     });
+
+
+//  --- Route For Document Transmittal/Control ---

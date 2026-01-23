@@ -202,6 +202,7 @@
                         <th class="px-4 py-3 text-left min-w-[180px]">Tipe Valve</th>
                         <th class="px-4 py-3 text-left min-w-[180px]">Spare Part</th>
                         <th class="px-4 py-3 text-left min-w-[120px]">Posisi</th>
+                        <th class="px-4 py-3 text-center w-28">Stok Awal</th>
                         <th class="px-4 py-3 text-center w-28">Masuk</th>
                         <th class="px-4 py-3 text-center w-28">Keluar</th>
                         <th class="px-4 py-3 text-center w-28">Stok Akhir</th>
@@ -325,7 +326,7 @@
         const search = $('#searchInput').val();
 
         // adjust colspan to 9 (No + Heat + Drawing + Valve + Spare + Posisi + Masuk + Keluar + Stok)
-        $('#inventoryBody').html(`<tr><td colspan="9" class="py-8 text-center"><div class="skeleton h-6 w-72 mx-auto mb-3"></div><div class="skeleton h-6 w-40 mx-auto"></div></td></tr>`);
+        $('#inventoryBody').html(`<tr><td colspan="10" class="py-8 text-center"><div class="skeleton h-6 w-72 mx-auto mb-3"></div><div class="skeleton h-6 w-40 mx-auto"></div></td></tr>`);
         $('#inventoryCards').html(`<div class="py-8 text-center"><div class="skeleton h-24 w-11/12 mx-auto mb-3"></div><div class="skeleton h-24 w-11/12 mx-auto"></div></div>`);
         $('#tableFooter').addClass('hidden');
 
@@ -336,7 +337,7 @@
                 renderTableRows(lastFetchedTableData);
             })
             .fail(function(){
-                $('#inventoryBody').html(`<tr><td colspan="9" class="py-8 text-center text-rose-500">Gagal memuat data.</td></tr>`);
+                $('#inventoryBody').html(`<tr><td colspan="10" class="py-8 text-center text-rose-500">Gagal memuat data.</td></tr>`);
                 $('#inventoryCards').html(`<div class="py-8 text-center text-rose-500">Gagal memuat data.</div>`);
                 toast('Gagal memuat data tabel. Coba lagi.', 'error');
             });
@@ -347,7 +348,7 @@
         $('#totalCount').text(total);
 
         if (total === 0) {
-            $('#inventoryBody').html(`<tr><td colspan="9" class="py-8 text-gray-400 text-center">Tidak ada data untuk periode ini.</td></tr>`);
+            $('#inventoryBody').html(`<tr><td colspan="10" class="py-8 text-gray-400 text-center">Tidak ada data untuk periode ini.</td></tr>`);
             $('#inventoryCards').html(`<div class="py-8 text-center text-gray-400">Tidak ada data untuk periode ini.</div>`);
             $('#showingRange').text(0);
             $('#currentPage').text(1);
@@ -424,6 +425,7 @@
                         <td class="px-4 py-3"><div class="max-w-[220px] truncate" title="${valveNames}">${valveNames}</div></td>
                         <td class="px-4 py-3"><div class="max-w-[220px] truncate" title="${sparePart}">${sparePart}</div></td>
                         <td class="px-4 py-3"><span class="inline-block bg-sky-50 text-sky-700 px-2 py-0.5 rounded text-xs">${rack}</span></td>
+                        <td class="px-4 py-3 text-center"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-sm font-semibold text-emerald-700 bg-emerald-50">${stockAwal}</span></td>
                         <td class="px-4 py-3 text-center"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-sm font-semibold text-emerald-700 bg-emerald-50">${qtyIn}</span></td>
                         <td class="px-4 py-3 text-center"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-sm font-semibold text-rose-700 bg-rose-50">${qtyOut}</span></td>
                         <td class="px-4 py-3 text-center"><strong>${formatNumber(stock)}</strong></td>
@@ -513,6 +515,7 @@
                 valve,
                 sanitizeCsv(item.material?.spare_part_name),
                 sanitizeCsv(item.material?.rack_name),
+                item.stock_awal ?? 0,
                 item.qty_in ?? 0,
                 item.qty_out ?? 0,
                 item.stock_akhir ?? 0

@@ -75,7 +75,7 @@
         {{ request()->is('portal/inventory*') ? 'text-sky-600 bg-sky-50' : 'text-gray-700 hover:text-sky-600 hover:bg-sky-50' }}">
                     Inventory
                 </a>
-                <a href="{{ url('/under-construction') }}"
+                <a href="{{ url('/portal/document') }}"
                     class="inline-flex items-center px-2 py-1 text-sm font-medium rounded-md transition-colors 
         {{ request()->is('under-construction*') ? 'text-sky-600 bg-sky-50' : 'text-gray-700 hover:text-sky-600 hover:bg-sky-50' }}">
                     Document
