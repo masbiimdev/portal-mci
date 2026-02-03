@@ -201,6 +201,7 @@
                         <th class="px-4 py-3 text-left min-w-[140px]">No Drawing</th>
                         <th class="px-4 py-3 text-left min-w-[180px]">Tipe Valve</th>
                         <th class="px-4 py-3 text-left min-w-[180px]">Spare Part</th>
+                        <th class="px-4 py-3 text-left min-w-[180px]">Dimensi</th>
                         <th class="px-4 py-3 text-left min-w-[120px]">Posisi</th>
                         <th class="px-4 py-3 text-center w-28">Stok Awal</th>
                         <th class="px-4 py-3 text-center w-28">Masuk</th>
@@ -410,6 +411,7 @@
                 const noDrawing = escapeHtml(item.material?.no_drawing ?? '-');
                 const valveNames = escapeHtml(getValveNames(item));
                 const sparePart = escapeHtml(item.material?.spare_part_name ?? '-');
+                const dimensiPart = escapeHtml(item.material?.dimensi ?? '-');
                 const rack = escapeHtml(item.material?.rack_name ?? '-');
                 const stockAwal = formatNumber(item.material?.stock_awal ?? 0);
                 const qtyIn = formatNumber(item.qty_in ?? 0);
@@ -424,6 +426,7 @@
                         <td class="px-4 py-3"><div class="max-w-[160px] truncate" title="${noDrawing}">${noDrawing}</div></td>
                         <td class="px-4 py-3"><div class="max-w-[220px] truncate" title="${valveNames}">${valveNames}</div></td>
                         <td class="px-4 py-3"><div class="max-w-[220px] truncate" title="${sparePart}">${sparePart}</div></td>
+                        <td class="px-4 py-3"><div class="max-w-[220px] truncate" title="${dimensiPart}">${dimensiPart}</div></td>
                         <td class="px-4 py-3"><span class="inline-block bg-sky-50 text-sky-700 px-2 py-0.5 rounded text-xs">${rack}</span></td>
                         <td class="px-4 py-3 text-center"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-sm font-semibold text-emerald-700 bg-emerald-50">${stockAwal}</span></td>
                         <td class="px-4 py-3 text-center"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-sm font-semibold text-emerald-700 bg-emerald-50">${qtyIn}</span></td>
