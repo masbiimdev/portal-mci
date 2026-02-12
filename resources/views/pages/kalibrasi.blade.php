@@ -281,6 +281,7 @@
                         <tr role="row">
                             <th scope="col">No</th>
                             <th scope="col">Nama Item</th>
+                            <th scope="col">No Seri</th>
                             <th scope="col">Merk</th>
                             <th scope="col">Status Kalibrasi</th>
                             <th scope="col">Tanggal Kalibrasi</th>
@@ -350,6 +351,7 @@
                             <tr data-tool='@json($toolJson)' role="row">
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ e($tool->nama_alat) }}</td>
+                                <td>{{ e($tool->no_seri) }}</td>
                                 <td>{{ e($tool->merek ?? '-') }}</td>
                                 <td><span class="{{ $statusClass }}"
                                         aria-label="Status {{ $status }}">{{ $status }}</span></td>

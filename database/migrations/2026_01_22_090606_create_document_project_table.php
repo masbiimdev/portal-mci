@@ -18,10 +18,13 @@ class CreateDocumentProjectTable extends Migration
             $table->string('project_code')->unique();
             $table->string('project_number');
             $table->string('project_name');
-            $table->text('description')->nullable(); // cukup 1 description
-            $table->string('status', 20)->default('PENDING'); // status project
-            $table->date('start_date')->nullable(); // tanggal mulai project
-            $table->date('end_date')->nullable();   // tanggal selesai project (target atau real)
+            $table->text('description')->nullable();
+
+            $table->enum('status', ['PENDING', 'ACTIVE', 'ARCHIVED'])
+                ->default('PENDING');
+
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
             $table->timestamps();
         });
     }

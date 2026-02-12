@@ -597,6 +597,7 @@ class ComposerStaticInitc3d88fa6639c9463d85260309c03bb68
         'App\\Console\\Commands\\UpdateActivityStatus' => __DIR__ . '/../..' . '/app/Console/Commands/UpdateActivityStatus.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Document' => __DIR__ . '/../..' . '/app/Document.php',
+        'App\\DocumentHistory' => __DIR__ . '/../..' . '/app/DocumentHistory.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Exports\\StockExport' => __DIR__ . '/../..' . '/app/Exports/StockExport.php',
         'App\\Folder' => __DIR__ . '/../..' . '/app/Folder.php',

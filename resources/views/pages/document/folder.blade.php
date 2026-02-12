@@ -1,251 +1,310 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Project Folder — Document Transmittal</title>
+@extends('layouts.home')
+@section('title', 'Folder — Transmittal Portal')
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+@push('css')
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: linear-gradient(90deg, #2563eb, #7c3aed);
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --muted: #64748b;
+            --border: #e6eefb;
+            --radius: 14px;
+            --shadow: 0 8px 24px rgba(15, 23, 42, .06);
+        }
 
-<style>
-:root{
-    --primary:#0d1b2a;
-    --accent:#0d6efd;
-    --bg:#f4f6f9;
-    --card:#ffffff;
-    --muted:#6b7280;
-    --border:#e5e7eb;
-}
+        body {
+            background: var(--bg);
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            color: var(--primary);
+        }
 
-body{
-    background:var(--bg);
-    font-family:'Segoe UI',system-ui,sans-serif;
-    color:#1f2937;
-}
+        .container-main {
+            max-width: 1280px;
+            margin: 32px auto;
+            padding: 24px;
+        }
 
-.container-main{
-    max-width:1200px;
-    margin:auto;
-    padding:32px 20px;
-}
+        /* HEADER */
+        .page-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
 
-/* HEADER */
-.page-header{
-    background:linear-gradient(135deg,#0d1b2a,#1b263b);
-    color:#fff;
-    padding:26px 30px;
-    border-radius:18px;
-    margin-bottom:28px;
-}
+        .page-header-left h3 {
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0 0 4px 0;
+        }
 
-.page-header h3{
-    font-weight:600;
-    margin-bottom:4px;
-}
+        .page-header-left small {
+            color: var(--muted);
+            font-size: 13px;
+            display: block;
+        }
 
-.page-header small{opacity:.85}
+        .page-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 16px;
+        }
 
-/* CARD */
-.card{
-    border:none;
-    border-radius:18px;
-    box-shadow:0 12px 32px rgba(0,0,0,.08);
-}
+        .search {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #fff;
+            border: 1px solid var(--border);
+            padding: 8px 12px;
+            border-radius: 999px;
+            min-width: 240px;
+        }
 
-/* GRID */
-.folder-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
-    gap:22px;
-}
+        .search input {
+            border: 0;
+            outline: none;
+            width: 220px;
+            font-size: 14px;
+            color: var(--primary);
+        }
 
-/* FOLDER CARD (CLONE PROJECT CARD) */
-.folder-card{
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:18px;
-    padding:22px;
-    display:flex;
-    flex-direction:column;
-    transition:.2s ease;
-}
+        /* GRID FOLDER */
+        .folder-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 18px;
+        }
 
-.folder-card:hover{
-    transform:translateY(-6px);
-    box-shadow:0 18px 40px rgba(13,110,253,.12);
-    border-color:var(--accent);
-}
+        /* FOLDER CARD */
+        .folder-card {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), var(--card));
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 18px;
+            transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+            display: flex;
+            flex-direction: column;
+            min-height: 150px;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: var(--shadow);
+        }
 
-/* HEADER */
-.folder-header{
-    display:flex;
-    gap:14px;
-    margin-bottom:14px;
-}
+        .folder-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(37, 99, 235, .18);
+            box-shadow: 0 18px 40px rgba(15, 23, 42, .12);
+        }
 
-.folder-icon{
-    font-size:34px;
-    color:var(--accent);
-}
+        /* HEADER CARD */
+        .folder-header {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
 
-.folder-title{
-    font-weight:700;
-    font-size:18px;
-}
+        .folder-icon {
+            font-size: 28px;
+            color: #2563eb;
+        }
 
-.folder-code{
-    font-size:12px;
-    color:var(--muted);
-}
+        .folder-title {
+            font-weight: 700;
+            font-size: 16px;
+        }
 
-/* STATS */
-.folder-stats{
-    display:flex;
-    gap:10px;
-    margin-bottom:14px;
-}
+        .folder-code {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
 
-.stat-pill{
-    background:#f1f5f9;
-    border-radius:999px;
-    padding:6px 14px;
-    font-size:13px;
-    font-weight:600;
-    color:#334155;
-}
+        /* STATS */
+        .folder-stats {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
 
-/* LAST UPDATE */
-.last-update{
-    border-top:1px dashed var(--border);
-    padding-top:12px;
-    margin-bottom:16px;
-}
+        .meta-box {
+            background: rgba(15, 23, 42, 0.03);
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
 
-.last-update-label{
-    font-size:11px;
-    text-transform:uppercase;
-    letter-spacing:.4px;
-    color:var(--muted);
-    margin-bottom:2px;
-}
+        .meta-box strong {
+            display: block;
+            font-size: 16px;
+            font-weight: 800;
+        }
 
-.last-update-time{
-    font-size:13px;
-    font-weight:600;
-    color:#1f2937;
-}
+        .meta-box span {
+            font-size: 11px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .4px;
+        }
 
-/* FOOTER */
-.folder-footer{
-    margin-top:auto;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
+        /* LAST UPDATE */
+        .last-update {
+            margin-bottom: 14px;
+            font-size: 12px;
+            color: var(--muted);
+        }
 
-.view-link{
-    font-size:13px;
-    font-weight:600;
-    color:var(--accent);
-    opacity:.7;
-    transition:.15s;
-}
+        /* FOOTER */
+        .folder-footer {
+            margin-top: auto;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            font-size: 13px;
+            color: var(--muted);
+        }
 
-.folder-card:hover .view-link{
-    opacity:1;
-}
-</style>
-</head>
+        .view-link {
+            color: #2563eb;
+            font-weight: 700;
+            display: inline-flex;
+            gap: 6px;
+            align-items: center;
+            text-decoration: none;
+            cursor: pointer;
+            transition: .15s ease;
+        }
 
-<body>
+        .view-link:hover {
+            transform: translateX(4px);
+        }
 
-<div class="container-main">
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 40px 18px;
+            color: var(--muted);
+            background: linear-gradient(0deg, rgba(255, 255, 255, 0.6), transparent);
+            border-radius: 12px;
+            border: 1px dashed var(--border);
+            display: none;
+        }
 
-    <!-- HEADER -->
-    <div class="page-header">
-        <h3>Project: Valve Manufacturing</h3>
-        <small>Folder dokumen resmi dalam project</small>
-    </div>
+        @media (max-width:480px) {
+            .page-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
 
-    <!-- FOLDER LIST -->
-    <div class="card">
-        <div class="card-header bg-white">
-            <strong>Project Folders</strong>
-        </div>
+            .search input {
+                width: 120px;
+            }
 
-        <div class="card-body">
-            <div class="folder-grid">
+            .folder-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+@endpush
 
-                <!-- FOLDER -->
-                <div class="folder-card">
+@section('content')
+    <div class="container-main">
 
-                    <div class="folder-header">
-                        <div class="folder-icon">
-                            <i class="bi bi-folder2-open"></i>
-                        </div>
-                        <div>
-                            <div class="folder-title">Drawing</div>
-                            <div class="folder-code">FDR-DWG</div>
-                        </div>
-                    </div>
+        <!-- HEADER -->
+        <div class="page-header">
+            <div class="page-header-left">
+                <h3>Project: {{ $project->project_name ?? 'Unnamed Project' }}</h3>
+                <small>Folder dokumen resmi dalam project</small>
+            </div>
 
-                    <div class="folder-stats">
-                        <span class="stat-pill">12 Files</span>
-                        <span class="stat-pill">Released</span>
-                    </div>
-
-                    <div class="last-update">
-                        <div class="last-update-label">Last Update</div>
-                        <div class="last-update-time">
-                            20 January 2026 • 14:32 WIB
-                        </div>
-                    </div>
-
-                    <div class="folder-footer">
-                        <span class="text-muted small">Active</span>
-                        <span class="view-link">Open Folder →</span>
-                    </div>
-
+            <div class="page-actions">
+                <div class="search">
+                    <i class="bi bi-search" aria-hidden="true"></i>
+                    <input id="folder-search" type="search" placeholder="Cari folder atau kode..." />
                 </div>
-
-                <!-- FOLDER -->
-                <div class="folder-card">
-
-                    <div class="folder-header">
-                        <div class="folder-icon">
-                            <i class="bi bi-folder2-open"></i>
-                        </div>
-                        <div>
-                            <div class="folder-title">Specification</div>
-                            <div class="folder-code">FDR-SPEC</div>
-                        </div>
-                    </div>
-
-                    <div class="folder-stats">
-                        <span class="stat-pill">8 Files</span>
-                        <span class="stat-pill">Approved</span>
-                    </div>
-
-                    <div class="last-update">
-                        <div class="last-update-label">Last Update</div>
-                        <div class="last-update-time">
-                            18 January 2026 • 09:12 WIB
-                        </div>
-                    </div>
-
-                    <div class="folder-footer">
-                        <span class="text-muted small">Active</span>
-                        <span class="view-link">Open Folder →</span>
-                    </div>
-
-                </div>
-
             </div>
         </div>
+
+        <!-- FOLDER GRID -->
+        <div id="folder-grid" class="folder-grid">
+            @forelse($folders as $folder)
+                <a href="{{ route('document.list', ['project' => $project->id, 'folder' => $folder->id]) }}" class="folder-card"
+                    data-title="{{ strtolower($folder->folder_name) }}" data-code="{{ strtolower($folder->folder_code) }}">
+
+                    <div class="folder-header">
+                        <div class="folder-icon"><i class="bi bi-folder2-open"></i></div>
+                        <div>
+                            <div class="folder-title">{{ $folder->folder_name }}</div>
+                            <div class="folder-code">{{ $folder->folder_code }}</div>
+                        </div>
+                    </div>
+
+                    <div class="folder-stats">
+                        <div class="meta-box">
+                            <strong>{{ $folder->documents_count ?? 0 }}</strong>
+                            <span>Files</span>
+                        </div>
+                    </div>
+
+                    <div class="last-update">
+                        {{ optional($folder->updated_at)->format('d F Y • H:i') ?? '-' }}
+                    </div>
+
+                    <div class="folder-footer">
+                        <span class="view-link">Open Folder →</span>
+                    </div>
+
+                </a>
+            @empty
+                <div class="empty-state">
+                    Tidak ada folder untuk project ini.
+                </div>
+            @endforelse
+
+
+        </div>
+
+        <div class="empty-state" id="empty-search">Tidak ada folder yang cocok dengan pencarian.</div>
+
     </div>
+@endsection
 
-</div>
+@push('script')
+    <script>
+        (function() {
+            const input = document.getElementById('folder-search');
+            const grid = document.getElementById('folder-grid');
+            const cards = Array.from(grid.querySelectorAll('.folder-card'));
+            const empty = document.getElementById('empty-search');
 
-</body>
-</html>
+            function normalize(s) {
+                return (s || '').toString().trim().toLowerCase();
+            }
+
+            input.addEventListener('input', function() {
+                const q = normalize(this.value);
+                let visible = 0;
+                cards.forEach(card => {
+                    const title = normalize(card.dataset.title);
+                    const code = normalize(card.dataset.code);
+                    const match = q === '' || title.includes(q) || code.includes(q);
+                    card.style.display = match ? '' : 'none';
+                    if (match) visible++;
+                });
+                empty.style.display = visible === 0 ? 'block' : 'none';
+            });
+        })();
+    </script>
+@endpush

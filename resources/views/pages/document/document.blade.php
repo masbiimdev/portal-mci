@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Drawing Folder — Document Transmittal</title>
+
+<title>Folder {{ $folder->folder_name }} — Document Transmittal</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -168,23 +169,27 @@ body {
     <div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-3">
 
         <div>
-            <h3>Folder: Drawing</h3>
+            <h3>Folder: {{ $folder->folder_name }}</h3>
             <small>
-                Dokumen teknik resmi untuk kebutuhan engineering & manufacturing.<br>
-                <strong>12 dokumen</strong> • Update terakhir <strong>20 Jan 2026</strong>
+                {{ $folder->description ?? 'Dokumen resmi project.' }}<br>
+                <strong>{{ $documents->count() }} dokumen</strong>
+                • Update terakhir
+                <strong>
+                    {{ $lastUpdate ? \Carbon\Carbon::parse($lastUpdate)->format('d M Y') : '-' }}
+                </strong>
             </small>
         </div>
 
         <div class="header-meta text-end">
             <div class="fw-semibold">Project</div>
-            <small>Valve Assembly Series</small>
+            <small>{{ $project->project_name ?? '—' }}</small>
         </div>
 
     </div>
 
     <!-- BREADCRUMB -->
     <div class="breadcrumb-custom">
-        Home / Transmittal / <span>Drawing</span>
+        Home / Transmittal / <span>{{ $folder->folder_name }}</span>
     </div>
 
     <!-- FILE LIST -->
@@ -192,23 +197,27 @@ body {
 
         <!-- TOOLBAR -->
         <div class="toolbar">
-            <input type="text" class="form-control w-25" placeholder="Cari dokumen...">
+            <input type="text"
+                   class="form-control w-25"
+                   placeholder="Cari dokumen..."
+                   id="searchInput">
 
-            <select class="form-select w-25">
-                <option>Semua Status</option>
-                <option>Released</option>
-                <option>Approved</option>
-                <option>Draft</option>
+            <select class="form-select w-25" id="statusFilter">
+                <option value="">Semua Status</option>
+                <option value="RELEASED">Released</option>
+                <option value="APPROVED">Approved</option>
+                <option value="DRAFT">Draft</option>
             </select>
 
-            <button class="btn btn-outline-secondary ms-auto">
+            <a href="{{ route('portal.document.download.all', $folder->id) }}"
+               class="btn btn-outline-secondary ms-auto">
                 Download Semua
-            </button>
+            </a>
         </div>
 
         <!-- TABLE -->
         <div class="table-wrapper">
-            <table class="table">
+            <table class="table" id="documentTable">
                 <thead>
                     <tr>
                         <th>Dokumen</th>
@@ -221,47 +230,43 @@ body {
                 </thead>
                 <tbody>
 
-                    <tr>
+                @forelse ($documents as $doc)
+                    <tr data-status="{{ $doc->status }}">
                         <td>
-                            <div class="file-name">Valve Assembly Drawing</div>
-                            <div class="file-meta">PDF • 2.4 MB</div>
+                            <div class="file-name">{{ $doc->document_name }}</div>
+                            <div class="file-meta">
+                                {{ strtoupper(pathinfo($doc->file_path, PATHINFO_EXTENSION)) }}
+                                • {{ number_format($doc->file_size / 1024 / 1024, 1) }} MB
+                            </div>
                         </td>
-                        <td>DWG-VAL-001</td>
-                        <td>Rev. 1.3</td>
-                        <td><span class="badge bg-success badge-status">Released</span></td>
-                        <td>20 Jan 2026</td>
-                        <td class="text-end">
-                            <a href="#" class="btn btn-outline-primary btn-download">Download</a>
-                        </td>
-                    </tr>
 
-                    <tr>
-                        <td>
-                            <div class="file-name">Body Section Drawing</div>
-                            <div class="file-meta">PDF • 1.8 MB</div>
-                        </td>
-                        <td>DWG-VAL-002</td>
-                        <td>Rev. 1.1</td>
-                        <td><span class="badge bg-primary badge-status">Approved</span></td>
-                        <td>18 Jan 2026</td>
-                        <td class="text-end">
-                            <a href="#" class="btn btn-outline-primary btn-download">Download</a>
-                        </td>
-                    </tr>
+                        <td>{{ $doc->document_number }}</td>
+                        <td>Rev. {{ $doc->revision }}</td>
 
-                    <tr>
                         <td>
-                            <div class="file-name">Bonnet Detail Drawing</div>
-                            <div class="file-meta">PDF • 950 KB</div>
+                            <span class="badge badge-status
+                                bg-{{ $doc->status === 'RELEASED' ? 'success' :
+                                      ($doc->status === 'APPROVED' ? 'primary' : 'secondary') }}">
+                                {{ $doc->status }}
+                            </span>
                         </td>
-                        <td>DWG-VAL-003</td>
-                        <td>Rev. 0.9</td>
-                        <td><span class="badge bg-secondary badge-status">Draft</span></td>
-                        <td>15 Jan 2026</td>
+
+                        <td>{{ $doc->updated_at->format('d M Y') }}</td>
+
                         <td class="text-end">
-                            <a href="#" class="btn btn-outline-primary btn-download">Download</a>
+                            <a href="{{ route('portal.document.download', $doc->id) }}"
+                               class="btn btn-outline-primary btn-download">
+                                Download
+                            </a>
                         </td>
                     </tr>
+                @empty
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-5">
+                            Belum ada dokumen di folder ini
+                        </td>
+                    </tr>
+                @endforelse
 
                 </tbody>
             </table>
@@ -270,6 +275,27 @@ body {
     </div>
 
 </div>
+
+<script>
+document.getElementById('searchInput').addEventListener('keyup', function () {
+    const keyword = this.value.toLowerCase();
+    document.querySelectorAll('#documentTable tbody tr').forEach(row => {
+        row.style.display = row.innerText.toLowerCase().includes(keyword)
+            ? ''
+            : 'none';
+    });
+});
+
+document.getElementById('statusFilter').addEventListener('change', function () {
+    const status = this.value;
+    document.querySelectorAll('#documentTable tbody tr').forEach(row => {
+        row.style.display =
+            status === '' || row.dataset.status === status
+            ? ''
+            : 'none';
+    });
+});
+</script>
 
 </body>
 </html>

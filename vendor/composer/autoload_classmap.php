@@ -15,6 +15,7 @@ return array(
     'App\\Console\\Commands\\UpdateActivityStatus' => $baseDir . '/app/Console/Commands/UpdateActivityStatus.php',
     'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',
     'App\\Document' => $baseDir . '/app/Document.php',
+    'App\\DocumentHistory' => $baseDir . '/app/DocumentHistory.php',
     'App\\Exceptions\\Handler' => $baseDir . '/app/Exceptions/Handler.php',
     'App\\Exports\\StockExport' => $baseDir . '/app/Exports/StockExport.php',
     'App\\Folder' => $baseDir . '/app/Folder.php',

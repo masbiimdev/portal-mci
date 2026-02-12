@@ -14,8 +14,12 @@ use App\Http\Controllers\TelegramController;
 use App\Http\Controllers\CalibrationHistoryController;
 use App\Http\Controllers\ToolController;
 use App\ActivityItemResult;
+use App\Http\Controllers\DashboardDocController;
+use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\FolderDocController;
 use App\Http\Controllers\HomeDocController;
 use App\Http\Controllers\KalibrasiDashboardController;
+use App\Http\Controllers\ProjectDocController;
 use Illuminate\Http\Request;
 
 /*
@@ -38,7 +42,63 @@ Route::get('tracking/{jobcard}/history', 'TrackingController@ajaxHistory')->name
 Route::get('/scan/{token}', [ToolController::class, 'scan'])->name('tools.scan');
 
 // Dokumen Control
-Route::get('/portal/document', [HomeDocController::class, 'index'])->name('document');
+// PROJECT
+// =======================
+Route::get('/portal/document', [HomeDocController::class, 'index'])
+    ->name('document');
+Route::get('/portal/document/preview/{document}', [HomeDocController::class, 'preview'])
+    ->name('document.preview');
+
+// =======================
+// FOLDER PER PROJECT
+// =======================
+Route::get('/portal/document/{project}', [HomeDocController::class, 'folders'])
+    ->name('document.folder');
+
+Route::get('/portal/document/{project}', [HomeDocController::class, 'folders'])
+    ->name('document.folder');
+
+// =======================
+// DOCUMENT LIST PER FOLDER
+// /portal/document/{project}/folder/{folder}
+// =======================
+Route::get('/portal/document/{project}/folder/{folder}', [HomeDocController::class, 'documents'])
+    ->name('document.list');
+
+// =======================
+// INITIAL UPLOAD / STORE DOCUMENT
+// POST /portal/document/{project}/folder/{folder}
+// =======================
+Route::post('/portal/document/{project}/folder/{folder}', [HomeDocController::class, 'store'])
+    ->name('document.store');
+
+// =======================
+// UPDATE FILE (OVERWRITE)
+// PUT /portal/document/{document}
+// =======================
+Route::put('/portal/document/{document}', [HomeDocController::class, 'update'])
+    ->name('document.update');
+
+// =======================
+// SHOW DOCUMENT + HISTORY
+// /portal/document/show/{document}
+// =======================
+Route::get('/portal/document/show/{document}', [HomeDocController::class, 'show'])
+    ->name('document.show');
+
+// =======================
+// DOWNLOAD FILE
+// /portal/document/download/{document}
+// =======================
+Route::get('/portal/document/download/{document}', [HomeDocController::class, 'download'])
+    ->name('portal.document.download');
+
+// =======================
+// DOWNLOAD ALL FILES DI FOLDER
+// /portal/document/download-all/{project}/folder/{folder}
+// =======================
+Route::get('/portal/document/download-all/{project}/folder/{folder}', [HomeDocController::class, 'downloadAll'])
+    ->name('portal.document.download.all');
 
 // Undee Construction Page
 Route::get('/under-construction', [HomeController::class, 'under'])->name('under');
@@ -176,3 +236,58 @@ Route::middleware(['auth', 'module.access:kalibrasi'])
 
 
 //  --- Route For Document Transmittal/Control ---
+
+Route::middleware(['auth', 'module.access:document'])
+    ->prefix('document')
+    ->name('document.')
+    ->group(function () {
+        Route::get('/document/dashboad', [DashboardDocController::class, 'index'])->name('index');
+        // Project
+        Route::get('/document/project', [ProjectDocController::class, 'index'])->name('project.index');
+        Route::get('/document/project/create', [ProjectDocController::class, 'create'])->name('project.create');
+        Route::post('/document/project/store', [ProjectDocController::class, 'store'])->name('project.store');
+        Route::get('/document/project/{project}/edit', [ProjectDocController::class, 'edit'])->name('project.edit');
+        Route::put('/document/project/{project}', [ProjectDocController::class, 'update'])->name('project.update');
+        // Folder
+
+        Route::get('/folders', [FolderDocController::class, 'index'])
+            ->name('folders.index');
+
+        // ⬇️ TAMBAHKAN project DI SINI
+        Route::get('/folders/create/{project}', [FolderDocController::class, 'create'])
+            ->name('folders.create');
+
+        Route::post('/folders/{project}', [FolderDocController::class, 'store'])
+            ->name('folders.store');
+
+        Route::get('/folders/{folder}/edit', [FolderDocController::class, 'edit'])
+            ->name('folders.edit');
+
+        Route::put('/folders/{folder}', [FolderDocController::class, 'update'])
+            ->name('folders.update');
+
+        Route::delete('/folders/{folder}', [FolderDocController::class, 'destroy'])
+            ->name('folders.destroy');
+        // // Document
+
+        // Route::get('/document/{project}', [DocumentController::class, 'index'])
+        //     ->name('index');
+
+        // Route::get('/document/{project}/create', [DocumentController::class, 'create'])
+        //     ->name('create');
+
+        // Route::post('/document/store', [DocumentController::class, 'store'])
+        //     ->name('store');
+
+        // Route::get('/document/detail/{document}', [DocumentController::class, 'show'])
+        //     ->name('show');
+
+        // Route::put('/document/{document}', [DocumentController::class, 'update'])
+        //     ->name('update');
+
+        // Route::patch('/document/{document}/final', [DocumentController::class, 'setFinal'])
+        //     ->name('final');
+
+        // Route::delete('/document/{document}', [DocumentController::class, 'destroy'])
+        //     ->name('destroy');
+    });
