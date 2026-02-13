@@ -103,7 +103,8 @@ class HomeDocController extends Controller
         // Simpan file
         $path = $file->storeAs(
             "documents/project_{$project->id}/folder_{$folder->id}",
-            $safeFileName
+            $safeFileName,
+            'public'
         );
 
         // Simpan document
@@ -140,32 +141,31 @@ class HomeDocController extends Controller
         $request->validate([
             'document_no' => 'nullable|string|max:120',
             'revision'    => 'nullable|string|max:50',
-            'file'        => 'required|mimes:pdf|max:20480', // 20MB
+            'file'        => 'required|mimes:pdf|max:20480',
             'is_final'    => 'sometimes|boolean',
             'description' => 'nullable|string',
         ]);
 
         $file = $request->file('file');
 
-        // Ambil nama asli file
         $originalName = $file->getClientOriginalName();
-
-        // Buat nama aman untuk storage
         $safeFileName = time() . '_' . preg_replace('/\s+/', '_', $originalName);
 
+        // Upload dulu
         $path = $file->storeAs(
             "documents/project_{$document->document_project_id}/folder_{$document->document_folder_id}",
-            $safeFileName
+            $safeFileName,
+            'public'
         );
 
-        // HAPUS FILE LAMA SETELAH UPLOAD BERHASIL
-        if ($document->file_path && Storage::exists($document->file_path)) {
-            Storage::delete($document->file_path);
+        // Hapus file lama (PAKAI DISK PUBLIC)
+        if ($document->file_path && Storage::disk('public')->exists($document->file_path)) {
+            Storage::disk('public')->delete($document->file_path);
         }
 
-        // UPDATE DATA
+        // Update document
         $document->update([
-            'title'       => pathinfo($originalName, PATHINFO_FILENAME), // auto title dari file
+            'title'       => pathinfo($originalName, PATHINFO_FILENAME),
             'document_no' => $request->document_no,
             'revision'    => $request->revision,
             'file_name'   => $originalName,
@@ -178,11 +178,11 @@ class HomeDocController extends Controller
             'action'      => 'Update Dokumen',
             'note'        => $request->description ?? 'Dokumen diperbarui',
             'user_id'     => Auth::id(),
-            'created_at'  => now(),
         ]);
 
         return back()->with('success', 'Dokumen berhasil diperbarui');
     }
+
 
 
 
@@ -279,9 +279,9 @@ class HomeDocController extends Controller
 
     public function destroy(Document $document)
     {
-        // Hapus file dari storage jika ada
-        if ($document->file_path && Storage::exists($document->file_path)) {
-            Storage::delete($document->file_path);
+        // Hapus file dari storage (pakai disk public)
+        if ($document->file_path && Storage::disk('public')->exists($document->file_path)) {
+            Storage::disk('public')->delete($document->file_path);
         }
 
         // Hapus data dari database
