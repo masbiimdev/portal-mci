@@ -81,33 +81,33 @@ class HomeDocController extends Controller
         $request->validate([
             'document_no' => 'nullable|string|max:120',
             'revision'    => 'nullable|string|max:50',
-            'file'        => 'required|mimes:pdf|max:20480', // max 20MB
+            'file'        => 'required|mimes:pdf|max:20480',
             'is_final'    => 'sometimes|boolean',
             'description' => 'nullable|string',
         ]);
 
         $file = $request->file('file');
 
-        // Ambil nama asli file
         $originalName = $file->getClientOriginalName();
-
-        // Ambil nama tanpa extension
         $fileNameWithoutExt = pathinfo($originalName, PATHINFO_FILENAME);
-
-        // Rapikan jadi title (hapus underscore & capitalize)
         $title = ucwords(str_replace('_', ' ', $fileNameWithoutExt));
 
-        // Buat nama file aman (hindari spasi & tabrakan nama)
         $safeFileName = time() . '_' . preg_replace('/\s+/', '_', $originalName);
 
-        // Simpan file
-        $path = $file->storeAs(
-            "documents/project_{$project->id}/folder_{$folder->id}",
-            $safeFileName,
-            'public'
+        $destinationPath = public_path(
+            "documents/project_{$project->id}/folder_{$folder->id}"
         );
 
-        // Simpan document
+        // Buat folder kalau belum ada
+        if (!file_exists($destinationPath)) {
+            mkdir($destinationPath, 0755, true);
+        }
+
+        // Pindahkan file
+        $file->move($destinationPath, $safeFileName);
+
+        $relativePath = "documents/project_{$project->id}/folder_{$folder->id}/{$safeFileName}";
+
         $document = Document::create([
             'document_project_id' => $project->id,
             'document_folder_id'  => $folder->id,
@@ -115,23 +115,22 @@ class HomeDocController extends Controller
             'document_no'         => $request->document_no,
             'revision'            => $request->revision,
             'file_name'           => $originalName,
-            'file_path'           => $path,
+            'file_path'           => $relativePath,
             'is_final'            => $request->boolean('is_final'),
             'uploaded_by'         => Auth::id(),
         ]);
 
-        // Simpan history
         DocumentHistory::create([
             'document_id' => $document->id,
             'action'      => 'Initial Upload',
             'revision'    => $request->revision,
             'note'        => $request->input('description', 'File pertama diupload'),
             'user_id'     => Auth::id(),
-            'created_at'  => now(),
         ]);
 
         return back()->with('success', 'Dokumen berhasil diupload');
     }
+
 
     /**
      * Update (overwrite) document's file.
@@ -151,37 +150,44 @@ class HomeDocController extends Controller
         $originalName = $file->getClientOriginalName();
         $safeFileName = time() . '_' . preg_replace('/\s+/', '_', $originalName);
 
-        // Upload dulu
-        $path = $file->storeAs(
-            "documents/project_{$document->document_project_id}/folder_{$document->document_folder_id}",
-            $safeFileName,
-            'public'
+        $destinationPath = public_path(
+            "documents/project_{$document->document_project_id}/folder_{$document->document_folder_id}"
         );
 
-        // Hapus file lama (PAKAI DISK PUBLIC)
-        if ($document->file_path && Storage::disk('public')->exists($document->file_path)) {
-            Storage::disk('public')->delete($document->file_path);
+        if (!file_exists($destinationPath)) {
+            mkdir($destinationPath, 0755, true);
         }
 
-        // Update document
+        // Upload file baru dulu
+        $file->move($destinationPath, $safeFileName);
+
+        $relativePath = "documents/project_{$document->document_project_id}/folder_{$document->document_folder_id}/{$safeFileName}";
+
+        // Hapus file lama
+        if ($document->file_path && file_exists(public_path($document->file_path))) {
+            unlink(public_path($document->file_path));
+        }
+
         $document->update([
             'title'       => pathinfo($originalName, PATHINFO_FILENAME),
             'document_no' => $request->document_no,
             'revision'    => $request->revision,
             'file_name'   => $originalName,
-            'file_path'   => $path,
+            'file_path'   => $relativePath,
             'is_final'    => $request->boolean('is_final'),
         ]);
 
         DocumentHistory::create([
             'document_id' => $document->id,
             'action'      => 'Update Dokumen',
-            'note'        => $request->description ?? 'Dokumen diperbarui',
+            'revision'    => $request->revision,
+            'note'        => $request->input('description', 'Dokumen diperbarui'),
             'user_id'     => Auth::id(),
         ]);
 
         return back()->with('success', 'Dokumen berhasil diperbarui');
     }
+
 
 
 
@@ -279,12 +285,10 @@ class HomeDocController extends Controller
 
     public function destroy(Document $document)
     {
-        // Hapus file dari storage (pakai disk public)
-        if ($document->file_path && Storage::disk('public')->exists($document->file_path)) {
-            Storage::disk('public')->delete($document->file_path);
+        if ($document->file_path && file_exists(public_path($document->file_path))) {
+            unlink(public_path($document->file_path));
         }
 
-        // Hapus data dari database
         $document->delete();
 
         return back()->with('success', 'Dokumen berhasil dihapus.');
