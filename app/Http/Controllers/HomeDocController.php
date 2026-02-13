@@ -234,32 +234,39 @@ class HomeDocController extends Controller
      */
     public function download(Document $document)
     {
-        if (! $document->file_path || ! Storage::exists($document->file_path)) {
+        $fullPath = $document->file_path
+            ? public_path($document->file_path)
+            : null;
+
+        if (!$fullPath || !file_exists($fullPath)) {
             abort(404, 'File tidak ditemukan.');
         }
 
-        return Storage::download($document->file_path, $document->file_name);
+        return response()->download($fullPath, $document->file_name);
     }
+
 
     /**
      * Download all files in a folder as a ZIP.
      */
     public function downloadAll(Project $project, Folder $folder)
     {
-        $folderPath = "documents/project_{$project->id}/folder_{$folder->id}";
+        $folderPath = public_path(
+            "documents/project_{$project->id}/folder_{$folder->id}"
+        );
 
-        if (!Storage::exists($folderPath)) {
+        if (!file_exists($folderPath) || !is_dir($folderPath)) {
             return back()->with('error', 'Folder tidak ditemukan.');
         }
 
-        $files = Storage::files($folderPath);
+        $files = array_diff(scandir($folderPath), ['.', '..']);
 
         if (empty($files)) {
             return back()->with('error', 'Tidak ada dokumen untuk diunduh.');
         }
 
         $zipFileName = "documents_folder_{$folder->id}_" . time() . ".zip";
-        $zipPath = storage_path("app/{$zipFileName}");
+        $zipPath = public_path($zipFileName);
 
         $zip = new \ZipArchive;
 
@@ -267,11 +274,11 @@ class HomeDocController extends Controller
 
             foreach ($files as $file) {
 
-                $absolutePath = storage_path("app/" . $file);
+                $absolutePath = $folderPath . '/' . $file;
 
                 if (file_exists($absolutePath)) {
-                    // Ini bikin isi zip langsung file saja (tanpa struktur project)
-                    $zip->addFile($absolutePath, basename($file));
+                    // Isi zip langsung file saja (tanpa struktur folder)
+                    $zip->addFile($absolutePath, $file);
                 }
             }
 
@@ -282,6 +289,7 @@ class HomeDocController extends Controller
 
         return response()->download($zipPath)->deleteFileAfterSend(true);
     }
+
 
     public function destroy(Document $document)
     {

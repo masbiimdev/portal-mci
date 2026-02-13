@@ -235,9 +235,22 @@
     </div>
 
     @php
-        $fileExists = $document->file_path && Storage::exists($document->file_path);
-        $fileSize = $fileExists ? number_format(Storage::size($document->file_path) / 1024, 0) : '-';
+        $fullPath = $document->file_path ? public_path($document->file_path) : null;
+
+        $fileExists = $fullPath && file_exists($fullPath);
+
+        $fileSize = '-';
+
+        if ($fileExists) {
+            $size = filesize($fullPath);
+
+            $fileSize =
+                $size >= 1024 * 1024
+                    ? number_format($size / 1024 / 1024, 1) . ' MB'
+                    : number_format($size / 1024, 0) . ' KB';
+        }
     @endphp
+
 
     <div class="info-stats-grid">
         <div class="stat-card">
@@ -270,8 +283,11 @@
                 Document Preview
             </div>
 
-            <iframe class="iframe-container" src="{{ route('document.preview', $document->id) }}" width="100%"
+            {{-- <iframe class="iframe-container" src="{{ route('document.preview', $document->id) }}" width="100%"
                 height="600" style="border:none;">
+            </iframe> --}}
+            <iframe class="iframe-container" src="{{ asset($document->file_path) }}" width="100%" height="600"
+                style="border:none;">
             </iframe>
         </div>
     @else
