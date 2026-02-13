@@ -276,4 +276,17 @@ class HomeDocController extends Controller
 
         return response()->download($zipPath)->deleteFileAfterSend(true);
     }
+
+    public function destroy(Document $document)
+    {
+        // Hapus file dari storage jika ada
+        if ($document->file_path && Storage::exists($document->file_path)) {
+            Storage::delete($document->file_path);
+        }
+
+        // Hapus data dari database
+        $document->delete();
+
+        return back()->with('success', 'Dokumen berhasil dihapus.');
+    }
 }
