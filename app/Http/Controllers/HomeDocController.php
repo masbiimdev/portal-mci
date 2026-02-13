@@ -86,50 +86,59 @@ class HomeDocController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        $file = $request->file('file');
+        try {
 
-        $originalName = $file->getClientOriginalName();
-        $fileNameWithoutExt = pathinfo($originalName, PATHINFO_FILENAME);
-        $title = ucwords(str_replace('_', ' ', $fileNameWithoutExt));
+            $file = $request->file('file');
 
-        $safeFileName = time() . '_' . preg_replace('/\s+/', '_', $originalName);
+            $originalName = $file->getClientOriginalName();
+            $fileNameWithoutExt = pathinfo($originalName, PATHINFO_FILENAME);
+            $title = ucwords(str_replace('_', ' ', $fileNameWithoutExt));
 
-        $destinationPath = public_path(
-            "documents/project_{$project->id}/folder_{$folder->id}"
-        );
+            $safeFileName = time() . '_' . preg_replace('/\s+/', '_', $originalName);
 
-        // Buat folder kalau belum ada
-        if (!file_exists($destinationPath)) {
-            mkdir($destinationPath, 0755, true);
+            $destinationPath = public_path(
+                "documents/project_{$project->id}/folder_{$folder->id}"
+            );
+
+            if (!file_exists($destinationPath)) {
+                if (!mkdir($destinationPath, 0755, true)) {
+                    throw new \Exception('Gagal membuat folder.');
+                }
+            }
+
+            if (!$file->move($destinationPath, $safeFileName)) {
+                throw new \Exception('Gagal upload file.');
+            }
+
+            $relativePath = "documents/project_{$project->id}/folder_{$folder->id}/{$safeFileName}";
+
+            $document = Document::create([
+                'document_project_id' => $project->id,
+                'document_folder_id'  => $folder->id,
+                'title'               => $title,
+                'document_no'         => $request->document_no,
+                'revision'            => $request->revision,
+                'file_name'           => $originalName,
+                'file_path'           => $relativePath,
+                'is_final'            => $request->boolean('is_final'),
+                'uploaded_by'         => Auth::id(),
+            ]);
+
+            DocumentHistory::create([
+                'document_id' => $document->id,
+                'action'      => 'Initial Upload',
+                'revision'    => $request->revision,
+                'note'        => $request->input('description', 'File pertama diupload'),
+                'user_id'     => Auth::id(),
+            ]);
+
+            return back()->with('success', 'Dokumen berhasil diupload');
+        } catch (\Exception $e) {
+
+            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
-
-        // Pindahkan file
-        $file->move($destinationPath, $safeFileName);
-
-        $relativePath = "documents/project_{$project->id}/folder_{$folder->id}/{$safeFileName}";
-
-        $document = Document::create([
-            'document_project_id' => $project->id,
-            'document_folder_id'  => $folder->id,
-            'title'               => $title,
-            'document_no'         => $request->document_no,
-            'revision'            => $request->revision,
-            'file_name'           => $originalName,
-            'file_path'           => $relativePath,
-            'is_final'            => $request->boolean('is_final'),
-            'uploaded_by'         => Auth::id(),
-        ]);
-
-        DocumentHistory::create([
-            'document_id' => $document->id,
-            'action'      => 'Initial Upload',
-            'revision'    => $request->revision,
-            'note'        => $request->input('description', 'File pertama diupload'),
-            'user_id'     => Auth::id(),
-        ]);
-
-        return back()->with('success', 'Dokumen berhasil diupload');
     }
+
 
 
     /**
@@ -145,53 +154,64 @@ class HomeDocController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        $file = $request->file('file');
+        try {
 
-        $originalName = $file->getClientOriginalName();
-        $safeFileName = time() . '_' . preg_replace('/\s+/', '_', $originalName);
+            $file = $request->file('file');
 
-        $destinationPath = public_path(
-            "documents/project_{$document->document_project_id}/folder_{$document->document_folder_id}"
-        );
+            $originalName = $file->getClientOriginalName();
+            $safeFileName = time() . '_' . preg_replace('/\s+/', '_', $originalName);
 
-        if (!file_exists($destinationPath)) {
-            mkdir($destinationPath, 0755, true);
+            $destinationPath = public_path(
+                "documents/project_{$document->document_project_id}/folder_{$document->document_folder_id}"
+            );
+
+            // Pastikan folder ada
+            if (!file_exists($destinationPath)) {
+                if (!mkdir($destinationPath, 0755, true)) {
+                    throw new \Exception('Gagal membuat folder.');
+                }
+            }
+
+            // Upload file baru
+            if (!$file->move($destinationPath, $safeFileName)) {
+                throw new \Exception('Gagal upload file.');
+            }
+
+            $relativePath = "documents/project_{$document->document_project_id}/folder_{$document->document_folder_id}/{$safeFileName}";
+
+            // Hapus file lama (kalau ada)
+            $oldPath = $document->file_path
+                ? public_path($document->file_path)
+                : null;
+
+            if ($oldPath && file_exists($oldPath)) {
+                unlink($oldPath);
+            }
+
+            // Update database
+            $document->update([
+                'title'       => pathinfo($originalName, PATHINFO_FILENAME),
+                'document_no' => $request->document_no,
+                'revision'    => $request->revision,
+                'file_name'   => $originalName,
+                'file_path'   => $relativePath,
+                'is_final'    => $request->boolean('is_final'),
+            ]);
+
+            DocumentHistory::create([
+                'document_id' => $document->id,
+                'action'      => 'Update Dokumen',
+                'revision'    => $request->revision,
+                'note'        => $request->input('description', 'Dokumen diperbarui'),
+                'user_id'     => Auth::id(),
+            ]);
+
+            return back()->with('success', 'Dokumen berhasil diperbarui');
+        } catch (\Exception $e) {
+
+            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
-
-        // Upload file baru dulu
-        $file->move($destinationPath, $safeFileName);
-
-        $relativePath = "documents/project_{$document->document_project_id}/folder_{$document->document_folder_id}/{$safeFileName}";
-
-        // Hapus file lama
-        if ($document->file_path && file_exists(public_path($document->file_path))) {
-            unlink(public_path($document->file_path));
-        }
-
-        $document->update([
-            'title'       => pathinfo($originalName, PATHINFO_FILENAME),
-            'document_no' => $request->document_no,
-            'revision'    => $request->revision,
-            'file_name'   => $originalName,
-            'file_path'   => $relativePath,
-            'is_final'    => $request->boolean('is_final'),
-        ]);
-
-        DocumentHistory::create([
-            'document_id' => $document->id,
-            'action'      => 'Update Dokumen',
-            'revision'    => $request->revision,
-            'note'        => $request->input('description', 'Dokumen diperbarui'),
-            'user_id'     => Auth::id(),
-        ]);
-
-        return back()->with('success', 'Dokumen berhasil diperbarui');
     }
-
-
-
-
-
     /**
      * Show document detail + histories.
      */
