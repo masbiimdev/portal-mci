@@ -1190,10 +1190,11 @@
 
                 const MAX_SIZE = 20 * 1024 * 1024; // 20MB
 
+                resetError(); // ⬅ reset saat pertama load
+
                 fileInput.addEventListener('change', function() {
 
-                    err.style.display = 'none';
-                    err.textContent = '';
+                    resetError();
 
                     if (!fileInput.files.length) {
                         help.textContent = 'Pilih file untuk diupload.';
@@ -1222,8 +1223,15 @@
 
                 function showError(message) {
                     err.textContent = message;
-                    err.style.display = 'block';
+                    err.style.display = 'flex';
+                    fileInput.classList.add('is-invalid');
                     help.textContent = 'Hanya file PDF maksimal 20MB.';
+                }
+
+                function resetError() {
+                    err.style.display = 'none';
+                    err.textContent = '';
+                    fileInput.classList.remove('is-invalid');
                 }
             }
 
@@ -1243,8 +1251,7 @@
 
                 form.addEventListener('submit', function(e) {
 
-                    err.style.display = 'none';
-                    err.textContent = '';
+                    resetError();
 
                     if (!fileInput.files.length) {
                         e.preventDefault();
@@ -1282,9 +1289,17 @@
 
                 function showError(message) {
                     err.textContent = message;
-                    err.style.display = 'block';
+                    err.style.display = 'flex';
+                    fileInput.classList.add('is-invalid');
+                }
+
+                function resetError() {
+                    err.style.display = 'none';
+                    err.textContent = '';
+                    fileInput.classList.remove('is-invalid');
                 }
             }
+
 
             /* OPEN ADD */
             function openAdd() {
