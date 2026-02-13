@@ -212,7 +212,7 @@ class HomeDocController extends Controller
      */
     public function preview(Document $document)
     {
-        if (!$document->file_path || !Storage::exists($document->file_path)) {
+        if (!$document->file_path || !file_exists(public_path($document->file_path))) {
             abort(404, 'File tidak ditemukan.');
         }
 

@@ -921,15 +921,19 @@
                             @php
                                 $ext = strtolower(pathinfo($doc->file_path, PATHINFO_EXTENSION) ?: 'unknown');
                                 $extLabel = strtoupper($ext);
-                                $exists = $doc->file_path && Storage::exists($doc->file_path);
+                                $exists = $doc->file_path && file_exists(public_path($doc->file_path));
+
                                 $sizeDisplay = '-';
+
                                 if ($exists) {
-                                    $size = Storage::size($doc->file_path);
+                                    $size = filesize(public_path($doc->file_path));
+
                                     $sizeDisplay =
                                         $size >= 1024 * 1024
                                             ? number_format($size / 1024 / 1024, 1) . ' MB'
                                             : number_format($size / 1024, 0) . ' KB';
                                 }
+
                                 $isFinal = $doc->is_final;
                                 $extClassMap = [
                                     'pdf' => 'ext-pdf',
