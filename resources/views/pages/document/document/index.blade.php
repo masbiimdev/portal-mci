@@ -29,7 +29,8 @@
             box-sizing: border-box;
         }
 
-        html, body {
+        html,
+        body {
             height: 100%;
             margin: 0;
             padding: 0;
@@ -445,6 +446,13 @@
             border: none;
         }
 
+        .btn-delete {
+            background: linear-gradient(135deg, var(--danger), #b91c1c);
+            color: #fff;
+            border: none;
+        }
+
+
         .btn-update:hover {
             box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
         }
@@ -812,10 +820,10 @@
                 <h2>📄 {{ $folder->folder_name }}</h2>
                 <small>
                     {{ $folder->description ?? 'Dokumen resmi project' }}<br>
-                    <strong>{{ $documents->count() }} dokumen</strong> 
-                    • Update terakhir 
+                    <strong>{{ $documents->count() }} dokumen</strong>
+                    • Update terakhir
                     <strong>
-                        {{ $documents->isNotEmpty() ? $documents->first()->updated_at->format('d M Y') : '—' }}
+                        {{ $documents->isNotEmpty() ? $documents->first()->updated_at->format('d M Y H:i') . ' WIB' : '—' }}
                     </strong>
                 </small>
             </div>
@@ -833,13 +841,8 @@
             <div class="toolbar">
                 <div class="search-wrapper">
                     <i class="bi bi-search"></i>
-                    <input 
-                        id="searchInput" 
-                        type="search" 
-                        placeholder="Cari dokumen, nomor, atau revisi..." 
-                        aria-label="Cari dokumen"
-                        autocomplete="off"
-                    />
+                    <input id="searchInput" type="search" placeholder="Cari dokumen, nomor, atau revisi..."
+                        aria-label="Cari dokumen" autocomplete="off" />
                 </div>
 
                 <select class="filter-select" id="statusFilter" aria-label="Filter berdasarkan status">
@@ -856,7 +859,7 @@
                 @endauth
 
                 <a href="{{ route('portal.document.download.all', ['project' => $project->id, 'folder' => $folder->id]) }}"
-                   class="btn-action btn-secondary">
+                    class="btn-action btn-secondary">
                     <i class="bi bi-download"></i>
                     Download Semua
                 </a>
@@ -871,7 +874,7 @@
                             <th>Nomor</th>
                             <th>Revisi</th>
                             <th>Status</th>
-                            <th>Update</th>
+                            <th>Update Terakhir</th>
                             <th style="text-align:right">Aksi</th>
                         </tr>
                     </thead>
@@ -884,9 +887,10 @@
                                 $sizeDisplay = '-';
                                 if ($exists) {
                                     $size = Storage::size($doc->file_path);
-                                    $sizeDisplay = $size >= 1024 * 1024
-                                        ? number_format($size / 1024 / 1024, 1) . ' MB'
-                                        : number_format($size / 1024, 0) . ' KB';
+                                    $sizeDisplay =
+                                        $size >= 1024 * 1024
+                                            ? number_format($size / 1024 / 1024, 1) . ' MB'
+                                            : number_format($size / 1024, 0) . ' KB';
                                 }
                                 $isFinal = $doc->is_final;
                                 $extClassMap = [
@@ -920,7 +924,7 @@
                                 </td>
                                 <td>
                                     <time datetime="{{ $doc->updated_at->toDateString() }}">
-                                        {{ $doc->updated_at->format('d M Y') }}
+                                        {{ $doc->updated_at->format('d M Y H:i') . ' WIB' }}
                                     </time>
                                 </td>
                                 <td>
@@ -928,8 +932,7 @@
                                         @if ($exists)
                                             @if (in_array($ext, ['pdf', 'html', 'htm']))
                                                 <button type="button" class="btn btn-preview"
-                                                    data-action="open-document-modal" 
-                                                    data-mode="preview"
+                                                    data-action="open-document-modal" data-mode="preview"
                                                     data-preview-url="{{ $previewUrl }}"
                                                     data-title="{{ $doc->title }}">
                                                     <i class="bi bi-eye"></i>
@@ -938,7 +941,7 @@
                                             @endif
 
                                             <a href="{{ route('portal.document.download', $doc->id) }}"
-                                               class="btn btn-download">
+                                                class="btn btn-download">
                                                 <i class="bi bi-download"></i>
                                                 Download
                                             </a>
@@ -950,12 +953,9 @@
                                         @endif
 
                                         @auth
-                                            <button type="button" class="btn btn-update"
-                                                data-action="open-document-modal" 
-                                                data-mode="update"
-                                                data-id="{{ $doc->id }}" 
-                                                data-title="{{ $doc->title }}"
-                                                data-document_no="{{ $doc->document_no }}"
+                                            <button type="button" class="btn btn-update" data-action="open-document-modal"
+                                                data-mode="update" data-id="{{ $doc->id }}"
+                                                data-title="{{ $doc->title }}" data-document_no="{{ $doc->document_no }}"
                                                 data-revision="{{ $doc->revision }}"
                                                 data-is_final="{{ $doc->is_final ? 1 : 0 }}"
                                                 data-description="{{ $doc->description }}"
@@ -963,6 +963,17 @@
                                                 <i class="bi bi-pencil"></i>
                                                 Update
                                             </button>
+                                            <form action="{{ route('documents.destroy', $doc->id) }}" method="POST"
+                                                class="form-delete" style="display:inline;">
+                                                @csrf
+                                                @method('DELETE')
+
+                                                <button type="submit" class="btn btn-delete">
+                                                    <i class="bi bi-trash"></i>
+                                                    Delete
+                                                </button>
+                                            </form>
+
                                         @endauth
                                     </div>
                                 </td>
@@ -1030,7 +1041,7 @@
 
                     <div class="form-group">
                         <label for="f_file">
-                            File 
+                            File
                             <span class="small-muted">(.pdf, .docx, .xlsx, .dwg, .jpg, .png, .zip) *</span>
                         </label>
                         <input id="f_file" name="file" type="file" class="form-control"
@@ -1038,7 +1049,8 @@
                         <div id="f_fileHelp" class="small-muted">
                             Untuk tambah pilih file. Untuk update ganti file lama.
                         </div>
-                        <div class="text-danger small" id="err_file" style="display:none; color: var(--danger); margin-top: 6px;"></div>
+                        <div class="text-danger small" id="err_file"
+                            style="display:none; color: var(--danger); margin-top: 6px;"></div>
                     </div>
 
                     <div class="form-group">
@@ -1053,9 +1065,12 @@
 
                         <button type="submit" id="f_btnSave" class="btn btn-action">
                             <span id="f_btnText">Simpan</span>
-                            <svg id="f_btnSpinner" style="display:none; width: 14px; height: 14px;" viewBox="0 0 24 24" fill="none">
-                                <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.45)" stroke-width="3"></circle>
-                                <path d="M22 12a10 10 0 0 0-10-10" stroke="#fff" stroke-width="3" stroke-linecap="round"></path>
+                            <svg id="f_btnSpinner" style="display:none; width: 14px; height: 14px;" viewBox="0 0 24 24"
+                                fill="none">
+                                <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.45)"
+                                    stroke-width="3"></circle>
+                                <path d="M22 12a10 10 0 0 0-10-10" stroke="#fff" stroke-width="3"
+                                    stroke-linecap="round"></path>
                             </svg>
                         </button>
                     </div>
@@ -1068,6 +1083,7 @@
 @endsection
 
 @push('js')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
@@ -1172,7 +1188,8 @@
                 modalBody.innerHTML = originalFormHTML;
 
                 const form = $('#documentForm');
-                form.action = "{{ route('document.store', ['project' => $project->id, 'folder' => $folder->id]) }}";
+                form.action =
+                    "{{ route('document.store', ['project' => $project->id, 'folder' => $folder->id]) }}";
                 $('#documentFormMethod').value = 'POST';
 
                 form.reset();
@@ -1233,7 +1250,8 @@
             document.getElementById('statusFilter')?.addEventListener('change', function() {
                 const status = this.value;
                 document.querySelectorAll('#documentTable tbody tr').forEach(row => {
-                    row.style.display = (status === '' || row.dataset.status === status) ? '' : 'none';
+                    row.style.display = (status === '' || row.dataset.status === status) ? '' :
+                        'none';
                 });
             });
 
@@ -1277,6 +1295,28 @@
                 if (e.key === 'Escape' && modalRoot.classList.contains('show')) {
                     hideModal();
                 }
+            });
+
+        });
+        document.querySelectorAll('.form-delete').forEach(form => {
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                Swal.fire({
+                    title: 'Yakin ingin menghapus?',
+                    text: "Data yang dihapus tidak bisa dikembalikan!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc2626',
+                    cancelButtonColor: '#6b7280',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
             });
 
         });

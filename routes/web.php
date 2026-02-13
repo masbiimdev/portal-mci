@@ -86,6 +86,10 @@ Route::put('/portal/document/{document}', [HomeDocController::class, 'update'])
 Route::get('/portal/document/show/{document}', [HomeDocController::class, 'show'])
     ->name('document.show');
 
+// Destroy
+Route::delete('/portal/documents/delete/{document}', [HomeDocController::class, 'destroy'])
+    ->name('documents.destroy');
+
 // =======================
 // DOWNLOAD FILE
 // /portal/document/download/{document}

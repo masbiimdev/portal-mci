@@ -240,26 +240,35 @@ class HomeDocController extends Controller
      */
     public function downloadAll(Project $project, Folder $folder)
     {
-        $documents = Document::where('document_project_id', $project->id)
-            ->where('document_folder_id', $folder->id)
-            ->get();
+        $folderPath = "documents/project_{$project->id}/folder_{$folder->id}";
 
-        if ($documents->isEmpty()) {
+        if (!Storage::exists($folderPath)) {
+            return back()->with('error', 'Folder tidak ditemukan.');
+        }
+
+        $files = Storage::files($folderPath);
+
+        if (empty($files)) {
             return back()->with('error', 'Tidak ada dokumen untuk diunduh.');
         }
 
-        // Create a temporary zip file in storage/app
         $zipFileName = "documents_folder_{$folder->id}_" . time() . ".zip";
         $zipPath = storage_path("app/{$zipFileName}");
 
         $zip = new \ZipArchive;
+
         if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === TRUE) {
-            foreach ($documents as $doc) {
-                if ($doc->file_path && Storage::exists($doc->file_path)) {
-                    // Add file using its absolute path
-                    $zip->addFile(storage_path("app/{$doc->file_path}"), $doc->file_name);
+
+            foreach ($files as $file) {
+
+                $absolutePath = storage_path("app/" . $file);
+
+                if (file_exists($absolutePath)) {
+                    // Ini bikin isi zip langsung file saja (tanpa struktur project)
+                    $zip->addFile($absolutePath, basename($file));
                 }
             }
+
             $zip->close();
         } else {
             return back()->with('error', 'Gagal membuat file zip.');
