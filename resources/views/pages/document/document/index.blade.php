@@ -1080,7 +1080,7 @@
                     <div class="form-group">
                         <label for="f_file">
                             File
-                            <span class="small-muted">(.pdf) *</span>
+                            <span class="small-muted">File Harus .pdf dan Max 20MB</span>
                         </label>
 
                         <input id="f_file" name="file" type="file" class="form-control"
