@@ -544,12 +544,12 @@
 
         .prayer-info-item .label {
             color: var(--muted);
-            font-weight: 500;
+            font-weight: 400;
         }
 
         .prayer-info-item .value {
             color: #08306b;
-            font-weight: 600;
+            font-weight: 400;
         }
 
         .prayer-info-icon {
@@ -1241,11 +1241,6 @@
                             <span class="prayer-info-icon">📍</span>
                             <span class="label">Lokasi:</span>
                             <span class="value" id="prayerLocation" style="flex: 1; text-align: right;">—</span>
-                        </div>
-                        <div class="prayer-info-item">
-                            <span class="prayer-info-icon">📅</span>
-                            <span class="label">Tanggal:</span>
-                            <span class="value" id="prayerDate" style="flex: 1; text-align: right;">—</span>
                         </div>
                         <div class="prayer-info-item">
                             <span class="prayer-info-icon">☪️</span>
