@@ -212,21 +212,23 @@ class HomeDocController extends Controller
      */
     public function preview(Document $document)
     {
-        if (!$document->file_path || !file_exists(public_path($document->file_path))) {
+        $fullPath = $document->file_path
+            ? public_path($document->file_path)
+            : null;
+
+        if (!$fullPath || !file_exists($fullPath)) {
             abort(404, 'File tidak ditemukan.');
         }
 
-        $filePath = $document->file_path;
-        $mimeType = Storage::mimeType($filePath);
-        $fileName = $document->file_name ?? basename($filePath);
+        $mimeType = mime_content_type($fullPath);
+        $fileName = $document->file_name ?? basename($fullPath);
 
-        return response()->stream(function () use ($filePath) {
-            echo Storage::get($filePath);
-        }, 200, [
+        return response()->file($fullPath, [
             'Content-Type'        => $mimeType,
             'Content-Disposition' => 'inline; filename="' . $fileName . '"',
         ]);
     }
+
 
 
     /**

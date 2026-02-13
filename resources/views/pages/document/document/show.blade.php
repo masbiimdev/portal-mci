@@ -283,11 +283,8 @@
                 Document Preview
             </div>
 
-            {{-- <iframe class="iframe-container" src="{{ route('document.preview', $document->id) }}" width="100%"
+            <iframe class="iframe-container" src="{{ route('document.preview', $document->id) }}" width="100%"
                 height="600" style="border:none;">
-            </iframe> --}}
-            <iframe class="iframe-container" src="{{ asset($document->file_path) }}" width="100%" height="600"
-                style="border:none;">
             </iframe>
         </div>
     @else
