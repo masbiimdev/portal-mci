@@ -81,7 +81,7 @@ class HomeDocController extends Controller
         $request->validate([
             'document_no' => 'nullable|string|max:120',
             'revision'    => 'nullable|string|max:50',
-            'file'        => 'required|file|max:20480', // max 20MB
+            'file'        => 'required|mimes:pdf|max:20480', // max 20MB
             'is_final'    => 'sometimes|boolean',
             'description' => 'nullable|string',
         ]);
@@ -140,7 +140,7 @@ class HomeDocController extends Controller
         $request->validate([
             'document_no' => 'nullable|string|max:120',
             'revision'    => 'nullable|string|max:50',
-            'file'        => 'required|file|max:20480', // 20MB
+            'file'        => 'required|mimes:pdf|max:20480', // 20MB
             'is_final'    => 'sometimes|boolean',
             'description' => 'nullable|string',
         ]);

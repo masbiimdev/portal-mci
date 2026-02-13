@@ -796,6 +796,44 @@
             }
         }
     </style>
+    <style>
+        /* File Error Styling */
+        .file-error-box {
+            display: none;
+            margin-top: 8px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: rgba(220, 38, 38, 0.08);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            color: #b91c1c;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: fadeInError 0.2s ease-in-out;
+        }
+
+        .file-error-box i {
+            font-size: 14px;
+        }
+
+        .form-control.is-invalid {
+            border-color: #dc2626 !important;
+            box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.1);
+        }
+
+        @keyframes fadeInError {
+            from {
+                opacity: 0;
+                transform: translateY(-4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -1042,15 +1080,20 @@
                     <div class="form-group">
                         <label for="f_file">
                             File
-                            <span class="small-muted">(.pdf, .docx, .xlsx, .dwg, .jpg, .png, .zip) *</span>
+                            <span class="small-muted">(.pdf) *</span>
                         </label>
+
                         <input id="f_file" name="file" type="file" class="form-control"
-                            accept=".pdf,.doc,.docx,.xls,.xlsx,.dwg,.jpg,.jpeg,.png,.zip">
+                            accept=".pdf,application/pdf">
+
                         <div id="f_fileHelp" class="small-muted">
-                            Untuk tambah pilih file. Untuk update ganti file lama.
+                            Hanya file PDF yang diperbolehkan.
                         </div>
-                        <div class="text-danger small" id="err_file"
-                            style="display:none; color: var(--danger); margin-top: 6px;"></div>
+
+                        <div id="err_file" class="file-error-box">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            <span id="err_file_text"></span>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -1065,6 +1108,7 @@
 
                         <button type="submit" id="f_btnSave" class="btn btn-action">
                             <span id="f_btnText">Simpan</span>
+
                             <svg id="f_btnSpinner" style="display:none; width: 14px; height: 14px;" viewBox="0 0 24 24"
                                 fill="none">
                                 <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.45)"
@@ -1074,8 +1118,8 @@
                             </svg>
                         </button>
                     </div>
-
                 </form>
+
             </div>
         </div>
     </div>
@@ -1140,33 +1184,88 @@
             function initFileHelper() {
                 const fileInput = $('#f_file');
                 const help = $('#f_fileHelp');
-                if (!fileInput || !help) return;
+                const err = $('#err_file');
+
+                if (!fileInput || !help || !err) return;
+
+                const MAX_SIZE = 20 * 1024 * 1024; // 20MB
 
                 fileInput.addEventListener('change', function() {
-                    if (fileInput.files.length) {
-                        const f = fileInput.files[0];
-                        help.textContent = f.name + ' • ' + Math.round(f.size / 1024) + ' KB';
-                    } else {
+
+                    err.style.display = 'none';
+                    err.textContent = '';
+
+                    if (!fileInput.files.length) {
                         help.textContent = 'Pilih file untuk diupload.';
+                        return;
                     }
+
+                    const f = fileInput.files[0];
+
+                    const isPdf = f.type === 'application/pdf' ||
+                        f.name.toLowerCase().endsWith('.pdf');
+
+                    if (!isPdf) {
+                        fileInput.value = '';
+                        showError('File harus berupa PDF.');
+                        return;
+                    }
+
+                    if (f.size > MAX_SIZE) {
+                        fileInput.value = '';
+                        showError('Ukuran file maksimal 20MB.');
+                        return;
+                    }
+
+                    help.textContent = f.name + ' • ' + Math.round(f.size / 1024) + ' KB';
                 });
+
+                function showError(message) {
+                    err.textContent = message;
+                    err.style.display = 'block';
+                    help.textContent = 'Hanya file PDF maksimal 20MB.';
+                }
             }
+
 
             /* SUBMIT HANDLER */
             function initSubmitHandler() {
                 const form = $('#documentForm');
                 if (!form) return;
 
+                const fileInput = $('#f_file');
+                const err = $('#err_file');
+                const submitBtn = $('#f_btnSave');
+                const btnText = $('#f_btnText');
+                const spinner = $('#f_btnSpinner');
+
+                const MAX_SIZE = 20 * 1024 * 1024; // 20MB
+
                 form.addEventListener('submit', function(e) {
 
-                    const fileInput = $('#f_file');
-                    const submitBtn = $('#f_btnSave');
-                    const btnText = $('#f_btnText');
-                    const spinner = $('#f_btnSpinner');
+                    err.style.display = 'none';
+                    err.textContent = '';
 
                     if (!fileInput.files.length) {
                         e.preventDefault();
-                        alert('File wajib diupload.');
+                        showError('File PDF wajib diupload.');
+                        return;
+                    }
+
+                    const f = fileInput.files[0];
+
+                    const isPdf = f.type === 'application/pdf' ||
+                        f.name.toLowerCase().endsWith('.pdf');
+
+                    if (!isPdf) {
+                        e.preventDefault();
+                        showError('File harus berupa PDF.');
+                        return;
+                    }
+
+                    if (f.size > MAX_SIZE) {
+                        e.preventDefault();
+                        showError('Ukuran file maksimal 20MB.');
                         return;
                     }
 
@@ -1180,6 +1279,11 @@
                     spinner.style.display = 'inline-block';
                     btnText.textContent = 'Menyimpan...';
                 });
+
+                function showError(message) {
+                    err.textContent = message;
+                    err.style.display = 'block';
+                }
             }
 
             /* OPEN ADD */
