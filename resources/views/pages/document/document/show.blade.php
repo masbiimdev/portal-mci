@@ -668,10 +668,143 @@
     @endif
 
     {{-- PREVIEW --}}
+    <style>
+        /* Tambahkan ke style yang sudah ada */
+        .preview-section {
+            position: relative;
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .preview-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-fullscreen {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-fullscreen:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-fullscreen::before {
+            content: '⛶';
+            font-size: 14px;
+        }
+
+        .btn-fullscreen.exit::before {
+            content: '✕';
+        }
+
+        /* Fullscreen Modal */
+        .fullscreen-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #000;
+            z-index: 9999;
+            padding: 0;
+        }
+
+        .fullscreen-modal.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .fullscreen-header {
+            background: #1f2937;
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #374151;
+        }
+
+        .fullscreen-title {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .fullscreen-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .fullscreen-close:hover {
+            background: #374151;
+            border-radius: 6px;
+        }
+
+        .fullscreen-content {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .fullscreen-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+
+    {{-- PREVIEW --}}
     @if ($fileExists)
         <div class="preview-section">
-            <div class="preview-header">Document Preview</div>
-            <iframe class="iframe-container" src="{{ route('document.preview', $document->id) }}"></iframe>
+            <div class="preview-header">
+                <div>📄 Document Preview</div>
+                <div class="preview-controls">
+                    <button class="btn-fullscreen" id="fullscreenBtn" onclick="openFullscreen()">Fullscreen</button>
+                </div>
+            </div>
+            <iframe class="iframe-container" id="previewIframe"
+                src="{{ route('document.preview', $document->id) }}#toolbar=0&navpanes=0&scrollbar=0"
+                allow="fullscreen"></iframe>
+        </div>
+
+        {{-- Fullscreen Modal --}}
+        <div class="fullscreen-modal" id="fullscreenModal">
+            <div class="fullscreen-header">
+                <div class="fullscreen-title">{{ $document->title }} - Fullscreen Preview</div>
+                <button class="fullscreen-close" onclick="closeFullscreen()">✕</button>
+            </div>
+            <div class="fullscreen-content">
+                <iframe class="fullscreen-iframe" id="fullscreenIframe"
+                    src="{{ route('document.preview', $document->id) }}#toolbar=0&navpanes=0&scrollbar=0"
+                    allow="fullscreen"></iframe>
+            </div>
         </div>
     @else
         <div class="preview-error">
@@ -679,7 +812,33 @@
         </div>
     @endif
 
+    <script>
+        function openFullscreen() {
+            const modal = document.getElementById('fullscreenModal');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
 
+        function closeFullscreen() {
+            const modal = document.getElementById('fullscreenModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close fullscreen dengan ESC key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeFullscreen();
+            }
+        });
+
+        // Close fullscreen dengan click di background
+        document.getElementById('fullscreenModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeFullscreen();
+            }
+        });
+    </script>
 
 
     {{-- TIMELINE HISTORY --}}
@@ -765,6 +924,7 @@
             </div>
         </div>
     @endif
+
 
 
 </div>
