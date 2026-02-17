@@ -201,6 +201,102 @@
         font-size: 14px;
     }
 
+    /* ================= DOWNLOAD STATS ================= */
+    .download-stats-container {
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+        border-left: 4px solid #0284c7;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 28px;
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    .download-stats-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+
+    .download-stats-title {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 700;
+        color: #0c4a6e;
+    }
+
+    .download-count-badge {
+        background: #0284c7;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .download-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .download-stat-item {
+        background: white;
+        padding: 12px;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .download-stat-label {
+        font-size: 11px;
+        color: var(--gray-500);
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+
+    .download-stat-value {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--primary);
+    }
+
+    .download-users-section {
+        margin-top: 16px;
+    }
+
+    .download-users-title {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--gray-700);
+        margin-bottom: 10px;
+    }
+
+    .download-users-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .download-user-item {
+        background: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        border: 1px solid #e0e7ff;
+    }
+
+    .download-user-name {
+        font-weight: 700;
+        color: var(--gray-900);
+    }
+
+    .download-user-meta {
+        font-size: 11px;
+        color: var(--gray-500);
+    }
+
     /* ================= HISTORY TIMELINE ================= */
     .history-section {
         margin-bottom: 30px;
@@ -243,16 +339,28 @@
         animation: slideIn 0.5s ease-out forwards;
     }
 
-    .timeline-item:nth-child(1) { animation-delay: 0.1s; }
-    .timeline-item:nth-child(2) { animation-delay: 0.2s; }
-    .timeline-item:nth-child(3) { animation-delay: 0.3s; }
-    .timeline-item:nth-child(n+4) { animation-delay: 0.4s; }
+    .timeline-item:nth-child(1) {
+        animation-delay: 0.1s;
+    }
+
+    .timeline-item:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .timeline-item:nth-child(3) {
+        animation-delay: 0.3s;
+    }
+
+    .timeline-item:nth-child(n+4) {
+        animation-delay: 0.4s;
+    }
 
     @keyframes slideIn {
         from {
             opacity: 0;
             transform: translateX(-20px);
         }
+
         to {
             opacity: 1;
             transform: translateX(0);
@@ -264,6 +372,7 @@
             opacity: 0;
             transform: translateY(20px);
         }
+
         to {
             opacity: 1;
             transform: translateY(0);
@@ -282,6 +391,11 @@
         box-shadow: 0 0 0 4px var(--primary-light);
         z-index: 2;
         transition: var(--transition);
+    }
+
+    .timeline-dot.download {
+        border-color: #a855f7;
+        box-shadow: 0 0 0 4px #f3e8ff;
     }
 
     .timeline-item:hover .timeline-dot {
@@ -440,6 +554,14 @@
         .iframe-container {
             height: 50vh;
         }
+
+        .download-stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .download-users-list {
+            flex-direction: column;
+        }
     }
 
     @media (max-width: 480px) {
@@ -464,13 +586,20 @@
         .iframe-container {
             height: 40vh;
         }
+
+        .download-stats-grid {
+            grid-template-columns: 1fr;
+        }
     }
 
     /* ================= ANIMATIONS ================= */
     @keyframes pulse {
-        0%, 100% {
+
+        0%,
+        100% {
             opacity: 1;
         }
+
         50% {
             opacity: 0.5;
         }
@@ -505,7 +634,10 @@
         $fileSize = '-';
         if ($fileExists) {
             $size = filesize($fullPath);
-            $fileSize = $size >= 1024 * 1024 ? number_format($size / 1024 / 1024, 1).' MB' : number_format($size / 1024, 0).' KB';
+            $fileSize =
+                $size >= 1024 * 1024
+                    ? number_format($size / 1024 / 1024, 1) . ' MB'
+                    : number_format($size / 1024, 0) . ' KB';
         }
     @endphp
 
@@ -547,6 +679,9 @@
         </div>
     @endif
 
+
+
+
     {{-- TIMELINE HISTORY --}}
     @if ($document->histories->count())
         <div class="history-section">
@@ -555,45 +690,81 @@
             <div class="timeline">
                 @php
                     $actionIcons = [
-                        'add' => '➕',
-                        'update' => '✏️',
+                        'Initial Upload' => '➕',
+                        'Update Dokumen' => '✏️',
                         'delete' => '🗑️',
+                        'downloaded' => '⬇️',
+                        'view' => '👁️',
                     ];
+
+                    // Urutkan history terbaru di atas
+                    $histories = $document->histories->sortByDesc('created_at');
+
+                    // Group downloaded per user
+                    $downloadedGrouped = $histories->where('action', 'downloaded')->groupBy('user_id');
                 @endphp
 
-                @foreach ($document->histories as $index => $history)
+                {{-- Loop untuk Initial Upload dan Update Dokumen --}}
+                @foreach ($histories as $history)
+                    @if (in_array($history->action, ['Initial Upload', 'Update Dokumen']))
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+
+                            <div class="timeline-card">
+                                <div class="timeline-header">
+                                    <div class="timeline-action">
+                                        <span>{!! $actionIcons[$history->action] ?? 'ℹ️' !!}</span>
+                                        <span>{{ ucfirst($history->action) }}</span>
+
+                                        {{-- Tampilkan revision hanya untuk Update --}}
+                                        @if ($history->action === 'Update Dokumen' && $history->revision)
+                                            <span class="badge-revision">Rev {{ $history->revision }}</span>
+                                        @endif
+                                    </div>
+
+                                    <div class="timeline-meta">
+                                        👤 {{ $history->user->name ?? 'System' }} •
+                                        {{ $history->created_at->format('d M Y H:i') }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                @endforeach
+
+                {{-- Loop untuk Downloaded, digabung per user --}}
+                @foreach ($downloadedGrouped as $userId => $histories)
+                    @php
+                        // Ambil entry terbaru user
+                        $latestHistory = $histories->sortByDesc('created_at')->first();
+                        $count = $histories->count();
+                    @endphp
+
                     <div class="timeline-item">
-                        <div class="timeline-dot"></div>
+                        <div class="timeline-dot highlight"></div>
+
                         <div class="timeline-card">
                             <div class="timeline-header">
                                 <div class="timeline-action">
-                                    <span>{!! $actionIcons[$history->action] ?? 'ℹ️' !!}</span>
-                                    <span>{{ ucfirst($history->action) }}</span>
-                                    @if ($history->revision)
-                                        <span class="badge-revision">Rev {{ $history->revision }}</span>
+                                    <span>{!! $actionIcons['downloaded'] !!}</span>
+                                    <span>Downloaded</span>
+                                    @if ($count > 1)
+                                        <span class="badge-count">{{ $count }}×</span>
                                     @endif
                                 </div>
+
                                 <div class="timeline-meta">
-                                    👤 {{ $history->user->name ?? 'System' }} • {{ $history->created_at->format('d M Y H:i') }}
+                                    👤 {{ $latestHistory->user->name ?? 'System' }} •
+                                    {{ $latestHistory->created_at->format('d M Y H:i') }}
                                 </div>
                             </div>
-                            @if ($history->note)
-                                <div class="timeline-note">
-                                    💬 {{ $history->note }}
-                                </div>
-                            @endif
                         </div>
                     </div>
                 @endforeach
+
             </div>
         </div>
     @endif
 
-    {{-- FOOTER --}}
-    {{-- <div class="modal-doc-footer">
-        <a href="{{ route('document.download', $document->id) }}" class="btn-download-action">
-            Download
-        </a>
-    </div> --}}
 
 </div>

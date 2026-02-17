@@ -90,6 +90,9 @@ Route::get('/portal/document/show/{document}', [HomeDocController::class, 'show'
 Route::delete('/portal/documents/delete/{document}', [HomeDocController::class, 'destroy'])
     ->name('documents.destroy');
 
+Route::get('/portal/documents/{document}/stats', [HomeDocController::class, 'downloadStats'])->name('document.stats');
+Route::get('/portal/documents/{document}/history', [HomeDocController::class, 'history'])->name('document.history');
+
 // =======================
 // DOWNLOAD FILE
 // /portal/document/download/{document}

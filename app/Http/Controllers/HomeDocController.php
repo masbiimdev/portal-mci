@@ -219,13 +219,25 @@ class HomeDocController extends Controller
      */
     public function show(Document $document)
     {
-        $document->load([
-            'project',
-            'folder',
-            'histories.user'
-        ]);
-        return view('pages.document.document.show', compact('document'));
+        $document->load(['project', 'folder', 'histories.user']);
+
+        $downloadStats = [
+            'total' => DocumentHistory::getDownloadCount($document->id),
+            'unique_users' => DocumentHistory::getUniqueDownloaders($document->id),
+            'last_download' => DocumentHistory::getLastDownloadTime($document->id),
+            'downloaded_by' => DocumentHistory::getDownloadedByUsers($document->id),
+        ];
+
+        // Debug: cek data sebelum ke view
+        // dd($downloadStats);
+
+        return view('pages.document.document.show', compact('document', 'downloadStats'));
     }
+
+
+    /**
+     * Download document
+     */
 
     /**
      * Preview document inline (browser will handle supported types like PDF).
@@ -257,26 +269,32 @@ class HomeDocController extends Controller
      */
     public function download(Document $document)
     {
-        $fullPath = $document->file_path
-            ? public_path($document->file_path)
-            : null;
+        $fullPath = $document->file_path ? public_path($document->file_path) : null;
 
         if (!$fullPath || !file_exists($fullPath)) {
             abort(404, 'File tidak ditemukan.');
         }
 
+        $created = null;
+        if (Auth::check()) {
+            $created = DocumentHistory::create([
+                'document_id' => $document->id,
+                'action' => 'downloaded',
+                'user_id' => Auth::id(),
+                'created_at' => now(),
+            ]);
+        }
+
+        // dd($created); // <--- ini harus muncul saat klik download
+
         return response()->download($fullPath, $document->file_name);
     }
 
 
-    /**
-     * Download all files in a folder as a ZIP.
-     */
+    // --- Download semua file di folder sebagai ZIP & record ---
     public function downloadAll(Project $project, Folder $folder)
     {
-        $folderPath = public_path(
-            "documents/project_{$project->id}/folder_{$folder->id}"
-        );
+        $folderPath = public_path("documents/project_{$project->id}/folder_{$folder->id}");
 
         if (!file_exists($folderPath) || !is_dir($folderPath)) {
             return back()->with('error', 'Folder tidak ditemukan.');
@@ -292,19 +310,24 @@ class HomeDocController extends Controller
         $zipPath = public_path($zipFileName);
 
         $zip = new \ZipArchive;
-
         if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === TRUE) {
-
             foreach ($files as $file) {
-
                 $absolutePath = $folderPath . '/' . $file;
-
                 if (file_exists($absolutePath)) {
-                    // Isi zip langsung file saja (tanpa struktur folder)
                     $zip->addFile($absolutePath, $file);
+
+                    // Catat download untuk setiap file jika ada record Document
+                    $document = Document::where('file_path', "documents/project_{$project->id}/folder_{$folder->id}/$file")->first();
+                    if ($document && Auth::check()) {
+                        DocumentHistory::create([
+                            'document_id' => $document->id,
+                            'action' => 'downloaded',
+                            'user_id' => Auth::id(),
+                            'created_at' => now(),
+                        ]);
+                    }
                 }
             }
-
             $zip->close();
         } else {
             return back()->with('error', 'Gagal membuat file zip.');
@@ -312,7 +335,6 @@ class HomeDocController extends Controller
 
         return response()->download($zipPath)->deleteFileAfterSend(true);
     }
-
 
     public function destroy(Document $document)
     {
@@ -323,5 +345,39 @@ class HomeDocController extends Controller
         $document->delete();
 
         return back()->with('success_delete', 'Dokumen berhasil dihapus.');
+    }
+
+    public function history(Document $document)
+    {
+        $histories = $document->histories()
+            ->with('user')
+            ->latest('created_at')
+            ->get();
+
+        return response()->json($histories);
+    }
+    public function downloadStats(Document $document)
+    {
+        $totalDownloads = DocumentHistory::getDownloadCount($document->id);
+        $uniqueDownloaders = DocumentHistory::getUniqueDownloaders($document->id);
+        $lastDownload = DocumentHistory::getLastDownloadTime($document->id);
+        $downloadedByUsers = DocumentHistory::getDownloadedByUsers($document->id);
+
+        return response()->json([
+            'total_downloads' => $totalDownloads,
+            'unique_users' => $uniqueDownloaders,
+            'last_download' => $lastDownload,
+            'downloaded_by' => $downloadedByUsers->map(function ($data) {
+                return [
+                    'user' => [
+                        'id' => $data['user']->id,
+                        'name' => $data['user']->name,
+                        'email' => $data['user']->email ?? '-',
+                    ],
+                    'download_count' => $data['count'],
+                    'last_download' => $data['last_download'],
+                ];
+            })->values(),
+        ]);
     }
 }
