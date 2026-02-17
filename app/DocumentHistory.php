@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class DocumentHistory extends Model
 {
-
     protected $table = 'document_histories';
 
     protected $fillable = [
@@ -15,14 +14,16 @@ class DocumentHistory extends Model
         'revision',
         'note',
         'user_id',
+        'created_at', // tambahkan supaya bisa diisi manual
     ];
 
     protected $casts = [
         'created_at' => 'datetime',
     ];
 
-    /* ================= RELATION ================= */
+    public $timestamps = false; // <-- matikan timestamps otomatis
 
+    /* ================= RELATION ================= */
     public function document()
     {
         return $this->belongsTo(Document::class);

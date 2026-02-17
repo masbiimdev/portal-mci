@@ -1026,6 +1026,29 @@
             }
         }
     </style>
+    <style>
+        .np-progress {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .np-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
+            border-radius: 20px;
+            transition: width 1s linear;
+        }
+
+        /* kalau udah hampir waktu sholat */
+        .np-bar.warning {
+            background: linear-gradient(90deg, #ff9966, #ff5e62);
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -1223,114 +1246,94 @@
             </div>
 
             <!-- Right Column (Sidebar) -->
-            <aside aria-label="Sidebar informasi tambahan">
-                <!-- PRAYER TIMES (IMPROVED) -->
-                <div class="card pray-card" style="margin-bottom:14px;">
+            <aside class="sidebar" aria-label="Sidebar informasi tambahan">
+
+                <div class="card pray-card">
+
+                    <!-- Header -->
                     <div class="prayer-head">
-                        <span class="prayer-icon">🕋</span>
-                        <h4 style="margin: 0;">Jadwal Sholat</h4>
-                        <button id="prayerRefreshBtn" class="action" title="Refresh jadwal sholat"
-                            aria-label="Refresh jadwal sholat">
+                        <div class="head-left">
+                            <span class="prayer-icon">🕋</span>
+                            <h4>Jadwal Sholat</h4>
+                        </div>
+                        <button id="prayerRefreshBtn" class="action" title="Refresh jadwal" aria-label="Refresh jadwal">
                             ↻
                         </button>
                     </div>
 
-                    <!-- Prayer Info (Tanggal & Lokasi) -->
+                    <!-- Info Section -->
                     <div class="prayer-info">
                         <div class="prayer-info-item">
-                            <span class="prayer-info-icon">📍</span>
-                            <span class="label">Lokasi:</span>
-                            <span class="value" id="prayerLocation" style="flex: 1; text-align: right;">—</span>
+                            <div class="left">
+                                <span>📍</span>
+                                <span>Lokasi</span>
+                            </div>
+                            <span class="value" id="prayerLocation">—</span>
                         </div>
+
                         <div class="prayer-info-item">
-                            <span class="prayer-info-icon">☪️</span>
-                            <span class="label">Hijriyah:</span>
-                            <span class="value" id="prayerHijri" style="flex: 1; text-align: right;">—</span>
+                            <div class="left">
+                                <span>☪️</span>
+                                <span>Hijriyah</span>
+                            </div>
+                            <span class="value" id="prayerHijri">—</span>
                         </div>
                     </div>
 
-                    <!-- Next Prayer Block -->
+                    <!-- Next Prayer Highlight -->
                     <div class="next-prayer-block">
                         <div class="np-label">Sholat Berikutnya</div>
-                        <span class="np-name" id="prayerNextLabel">—</span>
+                        <div class="np-name" id="prayerNextLabel">—</div>
                         <div class="np-time" id="nextPrayerTime">--:--</div>
                         <div class="np-countdown" id="nextPrayerCountdown"></div>
+                        <div class="np-progress">
+                            <div class="np-bar" id="countdownBar"></div>
+                        </div>
                     </div>
 
-                    <!-- Prayer Times List -->
-                    <div class="prayer-list" id="prayerList">
+                    <!-- List -->
+                    <div class="prayer-list">
+
+                        <div class="pray-row" id="row-Imsak">
+                            <span class="pray-name">⏰ Imsak</span>
+                            <span class="pray-time" id="pray-Imsak">--:--</span>
+                        </div>
+
                         <div class="pray-row" id="row-Fajr">
-                            <span class="pray-ico">🌅</span>
-                            <span class="pray-name">Subuh</span>
+                            <span class="pray-name">🌅 Subuh</span>
                             <span class="pray-time" id="pray-Fajr">--:--</span>
                         </div>
+
                         <div class="pray-row" id="row-Sunrise">
-                            <span class="pray-ico">🌄</span>
-                            <span class="pray-name">Terbit</span>
+                            <span class="pray-name">🌄 Terbit</span>
                             <span class="pray-time" id="pray-Sunrise">--:--</span>
                         </div>
+
                         <div class="pray-row" id="row-Dhuhr">
-                            <span class="pray-ico">☀️</span>
-                            <span class="pray-name">Dzuhur</span>
+                            <span class="pray-name">☀️ Dzuhur</span>
                             <span class="pray-time" id="pray-Dhuhr">--:--</span>
                         </div>
+
                         <div class="pray-row" id="row-Asr">
-                            <span class="pray-ico">🏜️</span>
-                            <span class="pray-name">Ashar</span>
+                            <span class="pray-name">🏜️ Ashar</span>
                             <span class="pray-time" id="pray-Asr">--:--</span>
                         </div>
+
                         <div class="pray-row" id="row-Maghrib">
-                            <span class="pray-ico">🌇</span>
-                            <span class="pray-name">Maghrib</span>
+                            <span class="pray-name">🌇 Maghrib</span>
                             <span class="pray-time" id="pray-Maghrib">--:--</span>
                         </div>
+
                         <div class="pray-row" id="row-Isha">
-                            <span class="pray-ico">🌃</span>
-                            <span class="pray-name">Isya</span>
+                            <span class="pray-name">🌃 Isya</span>
                             <span class="pray-time" id="pray-Isha">--:--</span>
                         </div>
+
                     </div>
                 </div>
 
-                <!-- Summary Chart -->
-                {{-- <div class="card" style="margin-bottom:14px;">
-                    <h4 style="margin:0 0 12px 0">Ringkasan Status</h4>
-                    <div style="display:flex; gap:14px; align-items:center;">
-                        <div style="width:160px; height:160px;">
-                            <canvas id="statusPie" style="width:100%; height:100%;"></canvas>
-                        </div>
-                        <div class="summary-legend">
-                            <div class="muted">
-                                <span>OK</span>
-                                <strong id="legendOk" style="color:var(--accent);">{{ $pieData['ok'] ?? 0 }}</strong>
-                            </div>
-                            <div class="muted">
-                                <span>Proses</span>
-                                <strong id="legendProses"
-                                    style="color:var(--accent);">{{ $pieData['proses'] ?? 0 }}</strong>
-                            </div>
-                            <div class="muted">
-                                <span>Penjadwalan</span>
-                                <strong id="legendDue" style="color:var(--accent);">{{ $pieData['due'] ?? 0 }}</strong>
-                            </div>
-                            <div style="margin-top:12px;">
-                                <a href="/kalibrasi"
-                                    style="display:inline-block; background:var(--accent); color:#fff; padding:8px 14px; border-radius:10px; text-decoration:none; font-weight:600; font-size:0.9rem; transition:all .12s;">
-                                    Lihat Semua
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div> --}}
-
-                <!-- Trend Chart -->
-                {{-- <div class="card">
-                    <h4 style="margin:0 0 12px 0">Tren (7 hari)</h4>
-                    <div style="height:180px;">
-                        <canvas id="trendLine" style="width:100%; height:100%;"></canvas>
-                    </div>
-                </div> --}}
             </aside>
+
         </div>
     </div>
 
@@ -1361,6 +1364,7 @@
 
         // ========== PRAYER TIMES CONFIG ==========
         const PRAY_LABELS = {
+            'Imsak': 'Imsak',
             'Fajr': 'Subuh',
             'Sunrise': 'Terbit',
             'Dhuhr': 'Dzuhur',
@@ -1374,17 +1378,21 @@
         window._pieData = @json($pieData ?? ['ok' => 0, 'proses' => 0, 'due' => 0]);
         window._visitorTrend = @json($visitorTrend ?? ['labels' => [], 'data' => []]);
 
-        // ========== PRAYER TIMES MODULE ==========
+        // ================= PRAYER TIMES MODULE =================
         const PrayerTimes = {
             countdownInterval: null,
             currentTimings: {},
+            currentNextPrayer: null,
             dom: {},
 
             init() {
                 this.cacheDom();
                 this.bindEvents();
                 this.fetchPrayerTimes();
-                this.countdownInterval = setInterval(() => this.updateCountdown(), 1000);
+
+                this.countdownInterval = setInterval(() => {
+                    this.updateCountdown();
+                }, 1000);
             },
 
             cacheDom() {
@@ -1396,16 +1404,20 @@
                     nextLabel: document.getElementById('prayerNextLabel'),
                     nextTime: document.getElementById('nextPrayerTime'),
                     countdown: document.getElementById('nextPrayerCountdown'),
+                    progressBar: document.getElementById('countdownBar'), // ← TAMBAH INI
                 };
             },
 
             bindEvents() {
                 this.dom.refreshBtn?.addEventListener('click', () => {
                     this.fetchPrayerTimes();
-                    AppDashboard.showToast('Memperbarui jadwal sholat...');
+                    if (window.AppDashboard?.showToast) {
+                        AppDashboard.showToast('Memperbarui jadwal sholat...');
+                    }
                 });
             },
 
+            // 🔥 fallback langsung supaya selalu stabil
             async fetchPrayerTimes() {
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(
@@ -1473,28 +1485,59 @@
                 if (this.dom.location) this.dom.location.textContent = locationLabel || '—';
 
                 if (hijriInfo && this.dom.hijri) {
-                    this.dom.hijri.textContent = `${hijriInfo.day} ${hijriInfo.month.en} ${hijriInfo.year}`;
+                    this.dom.hijri.textContent =
+                        `${hijriInfo.day} ${hijriInfo.month.en} ${hijriInfo.year}`;
                 } else if (this.dom.hijri) {
                     this.dom.hijri.textContent = '—';
                 }
 
-                const keys = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+                const keys = ['Imsak', 'Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+
                 keys.forEach(k => {
                     const el = document.getElementById('pray-' + k);
                     if (el) {
-                        const time = (timings[k] || '--:--').replace(/\s*\(.*\)$/, '');
+                        const time = (timings[k] || '--:--')
+                            .replace(/\s*\(.*\)$/, '');
                         el.textContent = time;
                     }
                 });
 
-                const next = this.getNextPrayer(timings);
+                this.currentNextPrayer = this.getNextPrayer();
+                this.updateNextPrayerUI();
+                this.updateCountdown();
+            },
+
+            // 🔥 Imsak MASUK countdown
+            getNextPrayer() {
+                const order = ['Imsak', 'Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+                const now = new Date();
+
+                for (const name of order) {
+                    const t = this.parseTimeToDate(this.currentTimings[name]);
+                    if (t && t > now) {
+                        return name;
+                    }
+                }
+
+                // kalau semua sudah lewat → besok Imsak
+                return 'Imsak';
+            },
+
+            updateNextPrayerUI() {
+                const next = this.currentNextPrayer;
+                if (!next) return;
+
                 if (this.dom.nextLabel) {
                     this.dom.nextLabel.textContent = PRAY_LABELS[next] || next;
                 }
+
                 if (this.dom.nextTime) {
-                    const nextTime = (timings[next] || '--:--').replace(/\s*\(.*\)$/, '');
+                    const nextTime = (this.currentTimings[next] || '--:--')
+                        .replace(/\s*\(.*\)$/, '');
                     this.dom.nextTime.textContent = nextTime;
                 }
+
+                const keys = ['Imsak', 'Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
 
                 keys.forEach(k => {
                     const row = document.getElementById('row-' + k);
@@ -1505,71 +1548,83 @@
                         }
                     }
                 });
-
-                this.updateCountdown();
-            },
-
-            getNextPrayer(timings) {
-                const order = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-                const now = new Date();
-                for (const name of order) {
-                    const t = this.parseTimeToDate(timings[name] || '');
-                    if (t && t.getTime() > now.getTime()) {
-                        return name;
-                    }
-                }
-                return 'Fajr';
             },
 
             parseTimeToDate(timeStr) {
+                if (!timeStr) return null;
+
                 const m = timeStr.match(/(\d{1,2}):(\d{2})/);
                 if (!m) return null;
+
                 const d = new Date();
                 d.setHours(parseInt(m[1], 10), parseInt(m[2], 10), 0, 0);
                 return d;
             },
 
             updateCountdown() {
-                if (!this.dom.countdown) return;
+                if (!this.dom.countdown || !this.currentNextPrayer) return;
 
-                const nextName = this.getNextPrayer(this.currentTimings);
-                const timeStr = this.currentTimings[nextName] || '';
-                const m = timeStr.match(/(\d{1,2}):(\d{2})/);
+                const now = new Date();
+                let target = this.parseTimeToDate(
+                    this.currentTimings[this.currentNextPrayer]
+                );
 
-                if (!m) {
+                if (!target) {
                     this.dom.countdown.textContent = '';
                     return;
                 }
-
-                const now = new Date();
-                let target = new Date();
-                target.setHours(parseInt(m[1], 10), parseInt(m[2], 10), 0, 0);
 
                 if (target < now) {
                     target.setDate(target.getDate() + 1);
                 }
 
-                let s = Math.floor((target - now) / 1000);
-                if (s < 0) s = 0;
+                // 🔥 cari waktu sholat sebelumnya
+                const order = ['Imsak', 'Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+                const currentIndex = order.indexOf(this.currentNextPrayer);
+                const prevName = currentIndex > 0 ? order[currentIndex - 1] : 'Isha';
 
-                const h = Math.floor(s / 3600);
-                const mnt = Math.floor((s % 3600) / 60);
-                const dtk = s % 60;
+                let prevTime = this.parseTimeToDate(this.currentTimings[prevName]);
+                if (prevTime && prevTime > target) {
+                    prevTime.setDate(prevTime.getDate() - 1);
+                }
 
-                let countdown = '';
-                if (h > 0) countdown += `${h} jam `;
-                if (mnt > 0) countdown += `${mnt} mnt `;
-                countdown += `${dtk} detik`;
+                let totalSeconds = Math.floor((target - now) / 1000);
+                if (totalSeconds < 0) totalSeconds = 0;
 
-                this.dom.countdown.textContent = `Mulai dalam ${countdown}`;
-            },
+                const h = Math.floor(totalSeconds / 3600);
+                const m = Math.floor((totalSeconds % 3600) / 60);
+                const s = totalSeconds % 60;
 
-            destroy() {
-                if (this.countdownInterval) {
-                    clearInterval(this.countdownInterval);
+                let text = '';
+                if (h > 0) text += `${h} jam `;
+                if (m > 0) text += `${m} mnt `;
+                text += `${s} detik`;
+
+                this.dom.countdown.textContent = `Mulai dalam ${text}`;
+
+                // ======================
+                // 🔥 PROGRESS BAR LOGIC
+                // ======================
+                if (!this.dom.progressBar || !prevTime) return;
+
+                const totalDuration = target - prevTime;
+                const elapsed = now - prevTime;
+
+                let percent = (elapsed / totalDuration) * 100;
+                percent = Math.max(0, Math.min(percent, 100));
+
+                this.dom.progressBar.style.width = percent + '%';
+
+                // warna berubah kalau sisa < 10 menit
+                if (totalSeconds <= 600) {
+                    this.dom.progressBar.classList.add('warning');
+                } else {
+                    this.dom.progressBar.classList.remove('warning');
                 }
             }
+
         };
+
 
         // ========== APP DASHBOARD ==========
         const AppDashboard = {
@@ -1700,7 +1755,7 @@
                 if (this.dom.temp) this.dom.temp.textContent = Math.round(cw.temperature) + '°C';
                 const code = cw.weathercode;
                 const icon = code === 0 ? '☀️' : (code <= 3 ? '⛅' : (code <= 48 ? '🌫️' : (code <= 77 ? '🌧️' :
-                '🌦️')));
+                    '🌦️')));
                 if (this.dom.weatherIcon) this.dom.weatherIcon.textContent = icon;
                 if (this.dom.weatherDesc) {
                     this.dom.weatherDesc.textContent = code === 0 ? 'Cerah' : 'Berawan / Hujan ringan';

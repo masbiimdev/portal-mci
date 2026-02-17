@@ -130,6 +130,7 @@ class HomeDocController extends Controller
                 'revision'    => $request->revision,
                 'note'        => $request->input('description', 'File pertama diupload'),
                 'user_id'     => Auth::id(),
+                'created_at'  => now(),
             ]);
 
             return back()->with('success', 'Dokumen berhasil diupload');
@@ -204,6 +205,7 @@ class HomeDocController extends Controller
                 'revision'    => $request->revision,
                 'note'        => $request->input('description', 'Dokumen diperbarui'),
                 'user_id'     => Auth::id(),
+                'created_at'  => now(),
             ]);
 
             return back()->with('success', 'Dokumen berhasil diperbarui');
@@ -222,7 +224,6 @@ class HomeDocController extends Controller
             'folder',
             'histories.user'
         ]);
-
         return view('pages.document.document.show', compact('document'));
     }
 
