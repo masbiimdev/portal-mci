@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class DocumentHistory extends Model
 {
-    public $timestamps = false;
 
     protected $table = 'document_histories';
 
@@ -16,7 +15,6 @@ class DocumentHistory extends Model
         'revision',
         'note',
         'user_id',
-        'created_at',
     ];
 
     protected $casts = [
