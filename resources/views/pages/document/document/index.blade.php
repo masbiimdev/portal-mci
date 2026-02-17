@@ -958,7 +958,7 @@
                                     </div>
                                 </td>
                                 <td>{{ $doc->document_no ?: '—' }}</td>
-                                <td><strong>Rev. {{ $doc->revision ?: '—' }}</strong></td>
+                                <td><strong>Rev. {{ $doc->revision ?: '0' }}</strong></td>
                                 <td>
                                     <span class="badge-status {{ $isFinal ? 'badge-final' : 'badge-draft' }}">
                                         {{ $isFinal ? 'FINAL' : 'DRAFT' }}
