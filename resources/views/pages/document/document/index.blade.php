@@ -1132,6 +1132,7 @@
 
 @push('js')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
@@ -1443,5 +1444,45 @@
             });
 
         });
+
+        const swalOptions = (title, text, icon) => ({
+            title: title,
+            text: text,
+            icon: icon,
+            timer: 2300,
+            showConfirmButton: false,
+            position: 'center',
+            background: '#f8fafc',
+            color: '#0f172a',
+            iconColor: icon === 'success' ? '#16a34a' : icon === 'info' ? '#2563eb' : icon === 'warning' ?
+                '#dc2626' : '#64748b',
+            toast: false,
+            customClass: {
+                popup: 'shadow-xl rounded-xl p-6 animate__animated animate__fadeIn animate__faster',
+            },
+            willClose: () => {
+                // animasi keluar manual
+                const popup = document.querySelector('.swal2-popup');
+                if (popup) {
+                    popup.classList.remove('animate__fadeIn');
+                    popup.classList.add('animate__fadeOut');
+                }
+            }
+        });
+
+        // Add
+        @if (session('success_add'))
+            Swal.fire(swalOptions('Tambah Dokumen', '{{ session('success_add') }}', 'success'));
+        @endif
+
+        // Update
+        @if (session('success_update'))
+            Swal.fire(swalOptions('Update Dokumen', '{{ session('success_update') }}', 'info'));
+        @endif
+
+        // Delete
+        @if (session('success_delete'))
+            Swal.fire(swalOptions('Hapus Dokumen', '{{ session('success_delete') }}', 'warning'));
+        @endif
     </script>
 @endpush

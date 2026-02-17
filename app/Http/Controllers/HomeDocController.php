@@ -133,7 +133,7 @@ class HomeDocController extends Controller
                 'created_at'  => now(),
             ]);
 
-            return back()->with('success', 'Dokumen berhasil diupload');
+            return back()->with('success_add', 'Dokumen berhasil diupload');
         } catch (\Exception $e) {
 
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
@@ -208,7 +208,7 @@ class HomeDocController extends Controller
                 'created_at'  => now(),
             ]);
 
-            return back()->with('success', 'Dokumen berhasil diperbarui');
+            return back()->with('success_update', 'Dokumen berhasil diperbarui');
         } catch (\Exception $e) {
 
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
@@ -322,6 +322,6 @@ class HomeDocController extends Controller
 
         $document->delete();
 
-        return back()->with('success', 'Dokumen berhasil dihapus.');
+        return back()->with('success_delete', 'Dokumen berhasil dihapus.');
     }
 }
