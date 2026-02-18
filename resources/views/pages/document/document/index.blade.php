@@ -986,7 +986,7 @@
                                                 <a href="{{ route('portal.document.download', $doc->id) }}"
                                                     class="btn btn-download">
                                                     <i class="bi bi-download"></i>
-                                                    Download
+                                                    Download File
                                                 </a>
                                             @endauth
                                         @else
