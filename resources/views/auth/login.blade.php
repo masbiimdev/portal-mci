@@ -355,7 +355,7 @@
                 <div>
                     <div class="brand-mark" aria-hidden="true">
                         <img src="{{ asset('images/metinca-logo.jpeg') }}" alt="">
-                        <span>Metinca Portal .</span>
+                        <span>Metinca Portal Base .</span>
                     </div>
                 </div>
 
