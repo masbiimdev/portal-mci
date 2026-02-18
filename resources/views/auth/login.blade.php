@@ -436,7 +436,7 @@
                                         placeholder="••••••••" required aria-describedby="pwToggle" />
                                     <button type="button" class="input-group-text" id="pwToggle"
                                         aria-label="Toggle password visibility" title="Toggle password visibility">
-                                        <!-- inline icons to avoid external dependency issues -->
+                                        <!-- Icon Show -->
                                         <svg id="icon-show" width="18" height="18" viewBox="0 0 24 24"
                                             fill="none" aria-hidden="true" focusable="false">
                                             <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z" stroke="#111827"
@@ -444,6 +444,8 @@
                                             <circle cx="12" cy="12" r="3" stroke="#111827"
                                                 stroke-width="1.2" />
                                         </svg>
+
+                                        <!-- Icon Hide -->
                                         <svg id="icon-hide" width="18" height="18" viewBox="0 0 24 24"
                                             fill="none" aria-hidden="true" focusable="false"
                                             style="display:none">
@@ -454,9 +456,11 @@
                                             <path d="M1 1l22 22" stroke="#111827" stroke-width="1.2"
                                                 stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
+
                                         <span class="sr-only" id="pwToggleLabel">Tampilkan kata sandi</span>
                                     </button>
                                 </div>
+
                                 @error('password')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror

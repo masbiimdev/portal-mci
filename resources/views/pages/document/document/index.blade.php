@@ -982,11 +982,13 @@
                                                 </button>
                                             @endif
 
-                                            <a href="{{ route('portal.document.download', $doc->id) }}"
-                                                class="btn btn-download">
-                                                <i class="bi bi-download"></i>
-                                                Download
-                                            </a>
+                                            @auth
+                                                <a href="{{ route('portal.document.download', $doc->id) }}"
+                                                    class="btn btn-download">
+                                                    <i class="bi bi-download"></i>
+                                                    Download
+                                                </a>
+                                            @endauth
                                         @else
                                             <span class="btn btn-disabled">
                                                 <i class="bi bi-exclamation-circle"></i>
