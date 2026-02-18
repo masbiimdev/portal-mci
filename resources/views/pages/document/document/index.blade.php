@@ -1068,7 +1068,9 @@
 
                         <div class="form-group">
                             <label for="f_revision">Revisi</label>
-                            <input id="f_revision" name="revision" type="text" class="form-control">
+                            <input id="f_revision" name="revision" type="number" min="0" class="form-control"
+                                value="{{ old('revision', isset($document) && $document->revision !== null ? $document->revision : 0) }}"
+                                required>
                         </div>
 
                         <div class="form-group" style="max-width: 140px; justify-content: flex-end;">
@@ -1338,10 +1340,17 @@
                 form.action = data.updateRoute;
                 $('#documentFormMethod').value = 'PUT';
 
-                $('#f_document_no').value = data.document_no || '';
-                $('#f_revision').value = data.revision || '';
-                $('#f_description').value = data.description || '';
-                $('#f_is_final').checked = (data.is_final === '1');
+                const revisionValue = data.revision ?? 0;
+
+                const documentNoInput = $('#f_document_no');
+                const revisionInput = $('#f_revision');
+                const descriptionInput = $('#f_description');
+                const isFinalInput = $('#f_is_final');
+
+                if (documentNoInput) documentNoInput.value = data.document_no || '';
+                if (revisionInput) revisionInput.value = revisionValue;
+                if (descriptionInput) descriptionInput.value = data.description || '';
+                if (isFinalInput) isFinalInput.checked = (data.is_final === '1');
 
                 $('#f_fileHelp').textContent = 'Pilih file pengganti untuk diupload.';
 
