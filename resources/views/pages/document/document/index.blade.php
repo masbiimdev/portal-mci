@@ -1005,7 +1005,7 @@
                                                 data-description="{{ $doc->description }}"
                                                 data-update-route="{{ route('document.update', $doc->id) }}">
                                                 <i class="bi bi-pencil"></i>
-                                                Update
+                                                Update File
                                             </button>
                                             <form action="{{ route('documents.destroy', $doc->id) }}" method="POST"
                                                 class="form-delete" style="display:inline;">
