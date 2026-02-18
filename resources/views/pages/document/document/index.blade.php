@@ -986,7 +986,7 @@
                                                 <a href="{{ route('portal.document.download', $doc->id) }}"
                                                     class="btn btn-download">
                                                     <i class="bi bi-download"></i>
-                                                    Download File
+                                                    Download
                                                 </a>
                                             @endauth
                                         @else
@@ -1005,7 +1005,7 @@
                                                 data-description="{{ $doc->description }}"
                                                 data-update-route="{{ route('document.update', $doc->id) }}">
                                                 <i class="bi bi-pencil"></i>
-                                                Update File
+                                                Update
                                             </button>
                                             <form action="{{ route('documents.destroy', $doc->id) }}" method="POST"
                                                 class="form-delete" style="display:inline;">
