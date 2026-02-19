@@ -784,7 +784,7 @@
     @if ($fileExists)
         <div class="preview-section">
             <div class="preview-header">
-                <div>📄 Document Preview</div>
+                <div>Document Preview</div>
                 <div class="preview-controls">
                     <button class="btn-fullscreen" id="fullscreenBtn" onclick="openFullscreen()">Fullscreen</button>
                 </div>
@@ -849,23 +849,21 @@
             <div class="timeline">
                 @php
                     $actionIcons = [
-                        'Initial Upload' => '➕',
-                        'Update Dokumen' => '✏️',
-                        'delete' => '🗑️',
-                        'downloaded' => '⬇️',
-                        'view' => '👁️',
+                        'Dokumen Diupload' => '📤',
+                        'Dokumen Diperbarui' => '📝',
+                        'Dokumen Dihapus' => '🗑',
+                        'Dokumen Diunduh' => '📥',
                     ];
-
                     // Urutkan history terbaru di atas
                     $histories = $document->histories->sortByDesc('created_at');
 
                     // Group downloaded per user
-                    $downloadedGrouped = $histories->where('action', 'downloaded')->groupBy('user_id');
+                    $downloadedGrouped = $histories->where('action', 'Dokumen Diunduh')->groupBy('user_id');
                 @endphp
 
                 {{-- Loop untuk Initial Upload dan Update Dokumen --}}
                 @foreach ($histories as $history)
-                    @if (in_array($history->action, ['Initial Upload', 'Update Dokumen']))
+                    @if (in_array($history->action, ['Dokumen Diupload', 'Dokumen Diperbarui']))
                         <div class="timeline-item">
                             <div class="timeline-dot"></div>
 
@@ -876,7 +874,7 @@
                                         <span>{{ ucfirst($history->action) }}</span>
 
                                         {{-- Tampilkan revision hanya untuk Update --}}
-                                        @if ($history->action === 'Update Dokumen' && $history->revision)
+                                        @if ($history->action === 'Dokumen Diperbarui' && $history->revision)
                                             <span class="badge-revision">Rev {{ $history->revision }}</span>
                                         @endif
                                     </div>
@@ -905,8 +903,8 @@
                         <div class="timeline-card">
                             <div class="timeline-header">
                                 <div class="timeline-action">
-                                    <span>{!! $actionIcons['downloaded'] !!}</span>
-                                    <span>Downloaded</span>
+                                    <span>{!! $actionIcons['Dokumen Diunduh'] !!}</span>
+                                    <span>Dokumen Diunduh</span>
                                     @if ($count > 1)
                                         <span class="badge-count">{{ $count }}×</span>
                                     @endif

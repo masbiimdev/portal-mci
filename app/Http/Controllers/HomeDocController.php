@@ -126,7 +126,7 @@ class HomeDocController extends Controller
 
             DocumentHistory::create([
                 'document_id' => $document->id,
-                'action'      => 'Initial Upload',
+                'action'      => 'Dokumen Diupload',
                 'revision'    => $request->revision,
                 'note'        => $request->input('description', 'File pertama diupload'),
                 'user_id'     => Auth::id(),
@@ -201,7 +201,7 @@ class HomeDocController extends Controller
 
             DocumentHistory::create([
                 'document_id' => $document->id,
-                'action'      => 'Update Dokumen',
+                'action'      => 'Dokumen Diperbarui',
                 'revision'    => $request->revision,
                 'note'        => $request->input('description', 'Dokumen diperbarui'),
                 'user_id'     => Auth::id(),
@@ -279,7 +279,7 @@ class HomeDocController extends Controller
         if (Auth::check()) {
             $created = DocumentHistory::create([
                 'document_id' => $document->id,
-                'action' => 'downloaded',
+                'action' => 'Dokumen Diunduh',
                 'user_id' => Auth::id(),
                 'created_at' => now(),
             ]);
