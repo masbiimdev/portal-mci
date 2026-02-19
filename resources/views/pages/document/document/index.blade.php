@@ -899,7 +899,7 @@
                 <a href="{{ route('portal.document.download.all', ['project' => $project->id, 'folder' => $folder->id]) }}"
                     class="btn-action btn-secondary">
                     <i class="bi bi-download"></i>
-                    Download Semua File
+                    Download Semua
                 </a>
             </div>
 
