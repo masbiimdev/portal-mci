@@ -897,7 +897,7 @@
                 @endauth
 
                 <a href="{{ route('portal.document.download.all', ['project' => $project->id, 'folder' => $folder->id]) }}"
-                    class="btn-action btn-secondary">
+                    class="btn-action btn-secondary btn-download" data-title="Download Semua Dokumen">
                     <i class="bi bi-download"></i>
                     Download Semua
                 </a>
@@ -984,7 +984,7 @@
 
                                             @auth
                                                 <a href="{{ route('portal.document.download', $doc->id) }}"
-                                                    class="btn btn-download">
+                                                    class="btn btn-download" data-title="{{ $doc->title }}">
                                                     <i class="bi bi-download"></i>
                                                     Download
                                                 </a>
@@ -997,13 +997,17 @@
                                         @endif
 
                                         @auth
-                                            <button type="button" class="btn btn-update" data-action="open-document-modal"
-                                                data-mode="update" data-id="{{ $doc->id }}"
-                                                data-title="{{ $doc->title }}" data-document_no="{{ $doc->document_no }}"
+                                            <button type="button"
+                                                class="btn btn-update {{ $doc->is_final ? 'opacity-50' : '' }}"
+                                                data-action="open-document-modal" data-mode="update"
+                                                data-id="{{ $doc->id }}" data-title="{{ $doc->title }}"
+                                                data-document_no="{{ $doc->document_no }}"
                                                 data-revision="{{ $doc->revision }}"
                                                 data-is_final="{{ $doc->is_final ? 1 : 0 }}"
                                                 data-description="{{ $doc->description }}"
-                                                data-update-route="{{ route('document.update', $doc->id) }}">
+                                                data-update-route="{{ route('document.update', $doc->id) }}"
+                                                @if ($doc->is_final) disabled
+        title="Document sudah final dan tidak bisa diupdate" @endif>
                                                 <i class="bi bi-pencil"></i>
                                                 Update
                                             </button>
@@ -1136,6 +1140,278 @@
 
 @push('js')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        (function() {
+            'use strict';
+
+            // Minimum waktu visibilitas overlay (ms). Atur sesuai kebutuhan: 2000..3000
+            const MIN_VISIBLE_MS = 2500; // 2.5 detik (ubah ke 2000 atau 3000 jika mau)
+
+            function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            // Utility: buat elemen overlay modal progress
+            function createProgressOverlay() {
+                const overlay = document.createElement('div');
+                overlay.id = 'downloadProgressOverlay';
+                overlay.style.position = 'fixed';
+                overlay.style.inset = '0';
+                overlay.style.zIndex = '99999';
+                overlay.style.display = 'flex';
+                overlay.style.alignItems = 'center';
+                overlay.style.justifyContent = 'center';
+                overlay.style.background = 'rgba(15, 23, 42, 0.6)';
+                overlay.innerHTML = `
+            <div style="width:360px; max-width:92%; background:#fff; border-radius:10px; padding:18px; box-shadow:0 8px 30px rgba(2,6,23,0.5); text-align:left;">
+                <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+                    <div style="width:44px; height:44px; border-radius:8px; background:linear-gradient(135deg,#2563eb,#7c3aed); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700;">DL</div>
+                    <div style="flex:1;">
+                        <div id="downloadProgressTitle" style="font-weight:700; color:#0f172a; font-size:14px; margin-bottom:4px;">Mengunduh...</div>
+                        <div id="downloadProgressSub" style="font-size:12px; color:#64748b;">Menyiapkan</div>
+                    </div>
+                </div>
+
+                <div style="margin-top:8px;">
+                    <div style="height:10px; background:#f1f5f9; border-radius:8px; overflow:hidden;">
+                        <div id="downloadProgressBar" style="width:0%; height:100%; background:linear-gradient(90deg,#2563eb,#7c3aed); transition:width 200ms ease;"></div>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+                        <div id="downloadProgressPercent" style="font-size:12px; color:#0f172a;">0%</div>
+                        <div style="display:flex; gap:8px;">
+                            <button id="downloadProgressCancel" style="background:transparent; border:1px solid #e2e8f0; padding:6px 10px; border-radius:8px; font-weight:600; cursor:pointer;">Batal</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+                return overlay;
+            }
+
+            // Ambil nama file dari header Content-Disposition atau url fallback
+            function extractFilenameFromHeaders(response, url) {
+                const cd = response.headers.get('content-disposition') || '';
+                let filename = '';
+                // coba parsing filename*=UTF-8''... atau filename="..."
+                const re = /filename\*?=(?:UTF-8'')?["']?([^;"']+)/i;
+                const m = re.exec(cd);
+                if (m && m[1]) {
+                    try {
+                        filename = decodeURIComponent(m[1].replace(/['"]/g, ''));
+                    } catch (e) {
+                        filename = m[1].replace(/['"]/g, '');
+                    }
+                }
+                if (!filename) {
+                    try {
+                        const u = new URL(url, window.location.href);
+                        filename = decodeURIComponent(u.pathname.split('/').pop()) || 'download';
+                    } catch (e) {
+                        filename = 'download';
+                    }
+                }
+                return filename;
+            }
+
+            function prettyBytes(n) {
+                if (!n && n !== 0) return '-';
+                if (n >= 1024 * 1024) return (n / 1024 / 1024).toFixed(1) + ' MB';
+                return Math.round(n / 1024) + ' KB';
+            }
+
+            // Core: lakukan download dengan progress (fetch + ReadableStream)
+            async function downloadWithProgress(url, title) {
+                const overlay = createProgressOverlay();
+                document.body.appendChild(overlay);
+
+                const progressBar = overlay.querySelector('#downloadProgressBar');
+                const percentEl = overlay.querySelector('#downloadProgressPercent');
+                const titleEl = overlay.querySelector('#downloadProgressTitle');
+                const subEl = overlay.querySelector('#downloadProgressSub');
+                const cancelBtn = overlay.querySelector('#downloadProgressCancel');
+
+                titleEl.textContent = title || 'Mengunduh...';
+                subEl.textContent = 'Menghubungi server...';
+
+                const startedAt = Date.now();
+                let indeterminateInterval = null;
+                const controller = new AbortController();
+                let aborted = false;
+
+                cancelBtn.addEventListener('click', () => {
+                    controller.abort();
+                    aborted = true;
+                });
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        credentials: 'same-origin', // sertakan cookie/session Laravel jika perlu
+                        signal: controller.signal
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Gagal mengunduh file. HTTP ' + response.status);
+                    }
+
+                    const contentLengthHeader = response.headers.get('content-length');
+                    const total = contentLengthHeader ? parseInt(contentLengthHeader, 10) : 0;
+                    const filename = extractFilenameFromHeaders(response, url);
+
+                    // Jika tidak ada content-length, tampilkan indeterminate animation
+                    if (!total) {
+                        subEl.textContent = 'Mengunduh (ukuran tidak diketahui)...';
+                        let w = 0;
+                        indeterminateInterval = setInterval(() => {
+                            w = (w + 8) % 100;
+                            progressBar.style.width = w + '%';
+                            percentEl.textContent = '...';
+                        }, 220);
+                    } else {
+                        subEl.textContent = '0 KB / ' + prettyBytes(total);
+                    }
+
+                    const reader = response.body && response.body.getReader();
+                    if (!reader) {
+                        // fallback: jika stream tidak didukung, ambil blob langsung
+                        const blob = await response.blob();
+                        await finalizeDownload(blob, filename, startedAt, progressBar, percentEl, subEl,
+                            indeterminateInterval, overlay);
+                        return;
+                    }
+
+                    const chunks = [];
+                    let received = 0;
+
+                    // baca streaming
+                    while (true) {
+                        const {
+                            done,
+                            value
+                        } = await reader.read();
+                        if (done) break;
+                        chunks.push(value);
+                        received += value.byteLength || value.length || 0;
+
+                        if (total) {
+                            const pct = Math.min(100, Math.round((received / total) * 100));
+                            // update progress
+                            progressBar.style.transition = 'width 120ms linear';
+                            progressBar.style.width = pct + '%';
+                            percentEl.textContent = pct + '%';
+                            subEl.textContent = prettyBytes(received) + ' / ' + prettyBytes(total);
+                        }
+                    }
+
+                    // selesai baca -> gabungkan menjadi Blob
+                    const blob = new Blob(chunks);
+                    await finalizeDownload(blob, filename, startedAt, progressBar, percentEl, subEl,
+                        indeterminateInterval, overlay);
+
+                } catch (err) {
+                    // jika AbortError, anggap dibatalkan user
+                    if (err.name === 'AbortError' || aborted) {
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                title: 'Dibatalkan',
+                                text: 'Unduhan dibatalkan.',
+                                icon: 'info',
+                                timer: 1600,
+                                showConfirmButton: false
+                            });
+                        }
+                    } else {
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                title: 'Gagal mengunduh',
+                                text: err.message || 'Terjadi kesalahan.',
+                                icon: 'error'
+                            });
+                        } else {
+                            alert('Gagal mengunduh: ' + (err.message || err));
+                        }
+                    }
+                    // hapus overlay kalau masih ada
+                    if (indeterminateInterval) clearInterval(indeterminateInterval);
+                    if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+                }
+            }
+
+            // finalisasi unduhan: pastikan minimum visible time, animasi ke 100% jika perlu, lalu trigger download
+            async function finalizeDownload(blob, filename, startedAt, progressBar, percentEl, subEl,
+                indeterminateInterval, overlay) {
+                if (indeterminateInterval) clearInterval(indeterminateInterval);
+
+                const elapsed = Date.now() - startedAt;
+                const remaining = Math.max(0, MIN_VISIBLE_MS - elapsed);
+
+                // update sub text with final size
+                try {
+                    subEl.textContent = prettyBytes(blob.size);
+                } catch (e) {}
+
+                // Jika masih butuh menunggu supaya overlay tampil minimal MIN_VISIBLE_MS,
+                // animasikan progress bar ke 100% dalam sisa waktu agar transisi mulus.
+                if (remaining > 0) {
+                    // ubah transition berdasarkan remaining agar smooth
+                    progressBar.style.transition = `width ${Math.min(remaining, 1000)}ms ease`;
+                    progressBar.style.width = '100%';
+                    percentEl.textContent = '100%';
+
+                    // tunggu sedikit lebih lama dari animasi agar selesai terlihat
+                    await sleep(remaining + 120);
+                } else {
+                    // langsung set ke 100% seandainya sudah lewat MIN_VISIBLE_MS
+                    progressBar.style.transition = 'width 180ms ease';
+                    progressBar.style.width = '100%';
+                    percentEl.textContent = '100%';
+                    await sleep(150); // biar user lihat 100% sebentar
+                }
+
+                // buat object URL dan trigger download
+                const objectUrl = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = objectUrl;
+                a.download = filename || 'download';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+
+                setTimeout(() => URL.revokeObjectURL(objectUrl), 2000);
+
+                // tutup overlay
+                if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+
+                // optional: toast sukses
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: 'Selesai',
+                        text: 'Unduhan selesai.',
+                        icon: 'success',
+                        timer: 1300,
+                        showConfirmButton: false
+                    });
+                }
+            }
+
+            // Delegasi klik: target link dengan class .btn-download atau url yang mengandung /portal/document/download
+            document.addEventListener('click', function(e) {
+                const anchor = e.target.closest('a.btn-download, a[href*="/portal/document/download"]');
+                if (!anchor) return;
+
+                const href = anchor.getAttribute('href');
+                if (!href) return;
+
+                e.preventDefault();
+
+                const title = anchor.dataset.title || anchor.getAttribute('data-title') || anchor.textContent
+                    .trim() || 'Mengunduh...';
+
+                downloadWithProgress(href, title);
+            }, true);
+
+        })();
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <script>
         document.addEventListener('DOMContentLoaded', function() {
