@@ -67,7 +67,12 @@ class HomeDocController extends Controller
             ->orderBy('updated_at', 'desc')
             ->get();
 
-        return view('pages.document.document.index', compact('project', 'folder', 'documents'));
+        $lastDocument = $documents->first();
+
+        return view(
+            'pages.document.document.index',
+            compact('project', 'folder', 'documents', 'lastDocument')
+        );
     }
 
     /**

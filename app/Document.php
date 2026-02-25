@@ -50,4 +50,8 @@ class Document extends Model
     {
         return asset('storage/' . $this->file_path);
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

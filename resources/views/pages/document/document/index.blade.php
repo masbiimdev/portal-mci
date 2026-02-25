@@ -93,18 +93,19 @@
 
         /* ========== PAGE HEADER ========== */
         .page-header {
-            background: linear-gradient(135deg, var(--primary) 50%, var(--primary-light) 50%);
-            color: #fff;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            /* left flexible, right fixed card width */
+            gap: 24px;
+            align-items: center;
             padding: 32px;
             border-radius: var(--radius);
             margin-bottom: 32px;
             box-shadow: var(--shadow);
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 24px;
-            flex-wrap: wrap;
+            background: linear-gradient(135deg, var(--primary) 50%, var(--primary-light) 50%);
+            color: #fff;
         }
+
 
         .header-main h2 {
             font-size: 28px;
@@ -126,26 +127,35 @@
         }
 
         .header-meta {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 16px 20px;
-            border-radius: 10px;
-            backdrop-filter: blur(10px);
+            justify-self: end;
+            align-self: center;
+
+            /* card visual */
+            background: var(--card);
+            /* white card */
+            color: var(--primary);
+            /* text color for card */
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 18px;
+            box-shadow: var(--shadow-sm);
+            min-width: 220px;
+            max-width: 100%;
         }
 
         .header-meta-label {
-            color: rgba(255, 255, 255, 0.7);
+            color: var(--muted);
             font-size: 12px;
-            font-weight: 500;
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.3px;
         }
 
         .header-meta-value {
-            color: #fff;
+            color: var(--primary);
             font-size: 15px;
-            font-weight: 600;
-            margin-top: 4px;
+            font-weight: 700;
+            margin-top: 6px;
         }
 
         /* ========== TOOLBAR ========== */
@@ -754,7 +764,10 @@
             }
 
             .page-header {
-                padding: 16px;
+                grid-template-columns: 1fr;
+                /* stack */
+                padding: 24px;
+                gap: 12px;
             }
 
             .header-main h2 {
@@ -762,6 +775,7 @@
             }
 
             .header-meta {
+                justify-self: start;
                 width: 100%;
             }
 
@@ -852,23 +866,57 @@
             <span>{{ $folder->folder_name }}</span>
         </div> --}}
 
+        @php
+            // Pastikan $lastDocument tersedia; jika tidak, ambil dari koleksi $documents
+            $last = $lastDocument ?? ($documents->count() ? $documents->sortByDesc('updated_at')->first() : null);
+
+            // Ambil data dengan fallback aman
+            if ($last) {
+                $lastRev = $last->revision ?? '0';
+                $lastTitle = $last->title ?? '—';
+                $lastUser = optional($last->user)->name ?? ($last->updated_by ?? 'System');
+                $lastDate = $last->updated_at ? $last->updated_at->format('d M Y H:i') . ' WIB' : '—';
+            }
+        @endphp
+
         <!-- PAGE HEADER -->
         <div class="page-header">
             <div class="header-main">
                 <h2>📄 {{ $folder->folder_name }}</h2>
-                <small>
-                    {{ $folder->description ?? 'Dokumen resmi project' }}<br>
-                    <strong>{{ $documents->count() }} dokumen</strong>
-                    • Update terakhir
-                    <strong>
-                        {{ $documents->isNotEmpty() ? $documents->first()->updated_at->format('d M Y H:i') . ' WIB' : '—' }}
-                    </strong>
-                </small>
+
+                <strong>
+                    {{ $folder->description ?? 'Dokumen resmi project' }}<br><br>
+
+                </strong>
             </div>
 
-            <div class="header-meta">
+            <!-- right column: card -->
+            <div class="header-meta" role="complementary" aria-label="Project meta">
                 <div class="header-meta-label">📁 Project</div>
                 <div class="header-meta-value">{{ $project->project_name ?? '—' }}</div>
+
+                <hr style="border:none; border-top:1px solid var(--border); margin:10px 0;" />
+
+                <div style="display:flex; gap:8px; align-items:center; justify-content:space-between;">
+                    <div style="font-size:13px; color:var(--muted)">Total Dokumen</div>
+                    <div
+                        style="background:linear-gradient(135deg,var(--accent),#1d4ed8); color:#fff; padding:6px 10px; border-radius:999px; font-weight:700;">
+                        {{ $documents->count() }}
+                    </div>
+                </div>
+
+                @if ($last)
+                    <div style="margin-top:10px; font-size:13px; color:var(--muted)">
+                        Update Terakhir: <br>
+                        <a href="{{ route('document.show', $last->id) }}"
+                            style="color:var(--primary); font-weight:600; text-decoration:underline;">
+                            {{ Str::limit($lastTitle, 40) }}
+                        </a>
+                        <div style="color:var(--muted); font-size:12px; margin-top:6px;">
+                            oleh {{ $lastUser }} · {{ $lastDate }}
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
 
