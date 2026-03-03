@@ -60,11 +60,10 @@ class InventoryController extends Controller
         // 4️⃣ History transaksi terakhir
         // Barang masuk
         $in = MaterialIn::with(['material', 'user'])
-            ->select('id', 'material_id', 'qty_in as qty', 'notes', 'created_at as tanggal', 'stock_after')
+            ->select('id', 'material_id', 'qty_in as qty', 'notes', 'created_at as tanggal', 'stock_after','date_in')
             ->get()
             ->map(function ($item) {
                 $item->jenis = 'in';
-                $item->date_in = $item->tanggal;
                 $item->stock_awal = $item->material->stock_awal ?? 0;
                 $item->current_stock = $item->material->current_stock ?? 0;
                 return $item;
@@ -72,11 +71,10 @@ class InventoryController extends Controller
 
         // Barang keluar
         $out = MaterialOut::with(['material', 'user'])
-            ->select('id', 'material_id', 'qty_out as qty', 'notes', 'created_at as tanggal', 'stock_after')
+            ->select('id', 'material_id', 'qty_out as qty', 'notes', 'created_at as tanggal', 'stock_after','date_out as date_in')
             ->get()
             ->map(function ($item) {
                 $item->jenis = 'out';
-                $item->date_in = $item->tanggal;
                 $item->stock_awal = $item->material->stock_awal ?? 0;
                 $item->current_stock = $item->material->current_stock ?? 0;
                 return $item;
