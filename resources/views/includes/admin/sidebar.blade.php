@@ -146,6 +146,30 @@
                         </li>
                     </ul>
                 </li>
+                {{-- Transactions --}}
+                <li class="menu-item ">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <div data-i18n="Transactions">Transactions</div>
+                    </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item {{ request()->routeIs('material_in.index') ? 'active open' : '' }}">
+                            <a href="{{ route('material_in.index') }}" class="menu-link">
+                                <div data-i18n="Material In">Material In</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ request()->routeIs('material_out.index') ? 'active open' : '' }}">
+                            <a href="{{ route('material_out.index') }}" class="menu-link">
+                                <div data-i18n="Material Out">Material Out</div>
+                            </a>
+                        </li>
+                        {{-- <li
+                            class="menu-item ">
+                            <a href="#" class="menu-link">
+                                <div data-i18n="Transfer">Transfer</div>
+                            </a>
+                        </li> --}}
+                    </ul>
+                </li>
             </ul>
         </li>
 
