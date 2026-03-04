@@ -4,194 +4,403 @@
 @push('css')
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     <style>
-        :root{
+        :root {
             --bg-card: #ffffff;
             --muted: #6b7280;
-            --glass: rgba(255,255,255,0.85);
             --accent: #5166ff;
             --success: #22c55e;
             --danger: #ef4444;
-            --radius: 12px;
+            --radius: 14px;
+            --shadow-card: 0 12px 32px rgba(16, 24, 40, 0.11);
         }
 
-        /* Layout */
-        .container-xxl { padding-top: 1.25rem; padding-bottom: 1.25rem; }
+        .container-xxl {
+            padding-top: 1.25rem;
+            padding-bottom: 1.25rem;
+        }
 
-        /* Header */
+        /* Dashboard Header - Perbaikan */
         .dashboard-header {
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            gap:1rem;
-            margin-bottom:1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1.75rem;
+            background: linear-gradient(90deg, #f3f4fe 0, #e3e6ff 100%);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-card);
+            padding: 1.5rem 2rem;
         }
-        .greeting {
-            display:flex;
-            flex-direction:column;
-            gap:.15rem;
-        }
-        .greeting h4 { margin:0; font-size:1.25rem; }
-        .greeting .sub { color:var(--muted); font-size:.95rem; }
 
-        /* Quick access */
+        .greeting {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .greeting h4 {
+            margin: 0;
+            font-size: 1.35rem;
+            color: #2d3a71;
+            font-weight: 700;
+        }
+
+        .greeting .sub {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        /* User Avatar Inovasi - Pop-up Hover */
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(81, 102, 255, 0.18);
+            border: 2px solid #e0e7ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+            background: linear-gradient(135deg, #eff6ff, #e0e7ff);
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .user-avatar:hover {
+            box-shadow: 0 8px 24px rgba(81, 102, 255, 0.25);
+            transform: scale(1.08);
+        }
+
+        .user-popup-info {
+            display: none;
+            position: absolute;
+            top: 56px;
+            right: 0;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 10px 28px rgba(81, 102, 255, 0.19);
+            padding: 1rem;
+            min-width: 160px;
+            z-index: 1000;
+            text-align: left;
+            border: 1px solid #e0e7ff;
+        }
+
+        .user-avatar:hover .user-popup-info {
+            display: block;
+            animation: slideDown 0.2s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .user-popup-info b {
+            color: #2d3a71;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .user-popup-info .role {
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+
+        /* Download Summary Button */
+        .dashboard-download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(90deg, #5166ff, #889eff);
+            color: #fff;
+            border-radius: 10px;
+            padding: 0.6rem 1.2rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border: none;
+            box-shadow: 0 4px 12px rgba(81, 102, 255, 0.15);
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 0.8rem;
+        }
+
+        .dashboard-download-btn:hover {
+            background: linear-gradient(90deg, #3956d2, #5166ff);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(81, 102, 255, 0.22);
+        }
+
+        .dashboard-download-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Quick Card - Perbaikan & Inovasi */
         .quick-card {
             border-radius: var(--radius);
-            transition: transform .18s ease, box-shadow .18s ease;
-            background: linear-gradient(180deg, var(--bg-card), #fbfbff);
-            min-height:110px;
-            display:flex;
-            align-items:center;
-            justify-content:center;
+            transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(180deg, var(--bg-card), #f7fafe 95%);
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-card);
+            border: 1px solid rgba(241, 245, 249, 0.8);
+            position: relative;
+            overflow: hidden;
         }
-        .quick-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 12px 30px rgba(16,24,40,0.06);
-        }
-        .quick-card .icon {
-            width:56px; height:56px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.45rem;
-            background: linear-gradient(135deg, rgba(81,102,255,0.08), rgba(81,102,255,0.02));
-            color: var(--accent);
-        }
-        .quick-card .title { margin-top:.6rem; font-weight:700; }
-        .quick-card .meta { color:var(--muted); font-size:.85rem; }
 
-        /* KPI tiles */
+        .quick-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s;
+        }
+
+        .quick-card:hover::before {
+            left: 100%;
+        }
+
+        .quick-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 16px 40px rgba(81, 102, 255, 0.16);
+            border-color: #e0e7ff;
+        }
+
+        .quick-card .icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 14px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(81, 102, 255, 0.12), rgba(34, 197, 94, 0.08)),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.4), transparent);
+            margin-bottom: 0.5rem;
+        }
+
+        .quick-card .title {
+            margin-top: 0.5rem;
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: #2d3a71;
+        }
+
+        .quick-card .meta {
+            color: var(--muted);
+            font-size: 0.82rem;
+            margin-top: 0.2rem;
+        }
+
+        /* KPI Tiles - Perbaikan */
         .kpi {
             border-radius: 12px;
-            padding:1rem;
-            background: linear-gradient(180deg, var(--bg-card), #fff);
-            box-shadow: 0 8px 20px rgba(8,15,30,0.03);
+            padding: 1.2rem;
+            background: linear-gradient(180deg, #fff, #f3f4fe 88%);
+            box-shadow: var(--shadow-card);
+            border: 1px solid rgba(241, 245, 249, 0.8);
+            position: relative;
+            overflow: hidden;
         }
-        .kpi .kpi-head { display:flex; align-items:center; gap:12px; }
-        .kpi .kpi-icon { width:48px; height:48px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; }
-        .kpi .kpi-value { font-weight:700; font-size:1.25rem; }
-        .kpi .kpi-sub { color:var(--muted); font-size:.88rem; }
+
+        .kpi::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(81, 102, 255, 0.05), transparent);
+            border-radius: 50%;
+        }
+
+        .kpi .kpi-head {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .kpi .kpi-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            font-size: 1.35rem;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .kpi .kpi-value {
+            font-weight: 700;
+            font-size: 1.45rem;
+            color: #2d3a71;
+        }
+
+        .kpi .kpi-sub {
+            color: var(--muted);
+            font-size: 0.92rem;
+            margin-top: 2px;
+        }
 
         /* Statistics badges */
         .stat-pill {
-            display:inline-flex;
-            align-items:center;
-            gap:6px;
-            padding:.28rem .6rem;
-            border-radius:999px;
-            font-weight:600;
-            font-size:.82rem;
-            background:#f1f5f9;
-            color:#0f172a;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0.35rem 0.75rem;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            background: #f1f5f9;
+            color: #0f172a;
         }
 
-        /* History / cards */
-        .history-day {
-            border-radius: 12px;
-            background: #fff;
-            box-shadow: 0 8px 30px rgba(8,15,30,0.04);
-            overflow:hidden;
-            margin-bottom: 0.9rem;
-        }
-        .history-day .hd-head {
-            padding:.9rem 1rem;
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            border-bottom: 1px solid rgba(15,23,42,0.04);
-        }
-        .history-table thead th { position: sticky; top: 0; backdrop-filter: blur(4px); background: linear-gradient(180deg,#fff,#fbfbff); z-index:2; }
-
-        /* Activity chart card */
-        .card-chart {
-            border-radius: 12px;
-            background: linear-gradient(180deg, #fff, #fbfdff);
-            box-shadow: 0 10px 30px rgba(8,15,30,0.05);
-            padding:1rem;
-        }
-        .chart-actions { display:flex; gap:.5rem; align-items:center; }
-
-        /* responsive tweaks */
+        /* Responsive */
         @media (max-width: 767px) {
-            .greeting h4 { font-size:1.05rem; }
-            .quick-card { min-height:94px; }
-            .kpi .kpi-value { font-size:1.05rem; }
+            .dashboard-header {
+                padding: 1rem;
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .greeting h4 {
+                font-size: 1.15rem;
+            }
+
+            .quick-card {
+                min-height: 100px;
+            }
+
+            .kpi {
+                padding: 1rem;
+            }
+
+            .kpi .kpi-value {
+                font-size: 1.2rem;
+            }
+
+            .dashboard-download-btn {
+                font-size: 0.9rem;
+                padding: 0.5rem 1rem;
+            }
         }
     </style>
 @endpush
 
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
+        <!-- Dashboard Header dengan Download Button & User Avatar -->
         <div class="dashboard-header">
             <div class="greeting">
-                <h4 class="fw-bold mb-0">🏠 Dashboard</h4>
+                <h4 class="fw-bold">🏠 Dashboard</h4>
                 <div class="sub small-muted">
-                    Selamat datang{{ Auth::user() ? ', ' . Auth::user()->name : '' }} — {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}
+                    Selamat datang{{ Auth::user() ? ', ' . Auth::user()->name : '' }} — 
+                    {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}
                 </div>
             </div>
 
-            <div class="d-flex align-items-center gap-2">
-                <div class="me-2 text-end">
-                    <div class="small-muted">Server</div>
-                    <div class="fw-semibold">UP • <small class="text-muted">{{ \Illuminate\Support\Str::limit(gethostname() ?? '–', 18) }}</small></div>
-                </div>
+            <div class="d-flex align-items-center gap-3">
+                {{-- <button class="dashboard-download-btn" onclick="window.print()" title="Download Summary">
+                    <i class="bx bx-download"></i> Ringkasan
+                </button> --}}
 
-                {{-- <a href="{{ route('profile') }}" class="btn btn-outline-secondary btn-sm">Profil Saya</a> --}}
+                
             </div>
         </div>
 
-        <!-- QUICK ACCESS -->
+        <!-- QUICK ACCESS MENU -->
         <div class="row g-3">
-            <div class="col-6 col-md-3">
+            <!-- Pengumuman -->
+            <div class="col-6 col-md-4 col-lg-2">
                 <a href="{{ route('announcements.index') }}" class="text-decoration-none">
-                    <div class="card quick-card text-center h-100">
-                        <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                    <div class="card quick-card h-100">
+                        <div class="card-body d-flex flex-column align-items-center justify-content-center w-100">
                             <div class="icon bg-warning text-white"><i class="bx bx-news"></i></div>
-                            <div class="title mt-2">Pengumuman</div>
+                            <div class="title">Pengumuman</div>
                             <div class="meta">{{ $totalAnnon ?? 0 }} item</div>
                         </div>
                     </div>
                 </a>
             </div>
 
-            <div class="col-6 col-md-3">
-                <a href="{{ route('activities.index') }}" class="text-decoration-none">
-                    <div class="card quick-card text-center h-100">
-                        <div class="card-body d-flex flex-column align-items-center justify-content-center">
+            <!-- Schedule -->
+            <div class="col-6 col-md-4 col-lg-2">
+                <a href="{{ url('/activities/witness') }}" class="text-decoration-none">
+                    <div class="card quick-card h-100">
+                        <div class="card-body d-flex flex-column align-items-center justify-content-center w-100">
                             <div class="icon bg-primary text-white"><i class="bx bx-calendar"></i></div>
-                            <div class="title mt-2">Schedule</div>
+                            <div class="title">Schedule</div>
                             <div class="meta">{{ $totalSchedules ?? 0 }} jadwal</div>
                         </div>
                     </div>
                 </a>
             </div>
-{{-- 
-            <div class="col-6 col-md-3">
-                <a href="{{ route('jobcards.index') }}" class="text-decoration-none">
-                    <div class="card quick-card text-center h-100">
-                        <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                            <div class="icon bg-warning text-white"><i class="bx bx-cog"></i></div>
-                            <div class="title mt-2">Production</div>
-                            <div class="meta">{{ $totalJobcard ?? 0 }} jobcard</div>
-                        </div>
-                    </div>
-                </a>
-            </div> --}}
 
-            <div class="col-6 col-md-3">
-                <a href="{{ route('inventory.index') }}" class="text-decoration-none">
-                    <div class="card quick-card text-center h-100">
-                        <div class="card-body d-flex flex-column align-items-center justify-content-center">
+            <!-- Inventory -->
+            <div class="col-6 col-md-4 col-lg-2">
+                <a href="{{ url('/portal/inventory') }}" class="text-decoration-none">
+                    <div class="card quick-card h-100">
+                        <div class="card-body d-flex flex-column align-items-center justify-content-center w-100">
                             <div class="icon bg-danger text-white"><i class="bx bx-box"></i></div>
-                            <div class="title mt-2">Inventory</div>
+                            <div class="title">Inventory</div>
                             <div class="meta">{{ $totalMaterial ?? 0 }} material</div>
                         </div>
                     </div>
                 </a>
             </div>
 
+            <!-- INOVASI BARU: Kalibrasi -->
+            <div class="col-6 col-md-4 col-lg-2">
+                <a href="{{ url('/activities/kalibrasi') }}" class="text-decoration-none">
+                    <div class="card quick-card h-100">
+                        <div class="card-body d-flex flex-column align-items-center justify-content-center w-100">
+                            <div class="icon bg-info text-white"><i class="bx bx-wrench"></i></div>
+                            <div class="title">Kalibrasi</div>
+                            <div class="meta">{{ $totalCalibrations ?? 0 }} alat</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- INOVASI BARU: Document -->
+            <div class="col-6 col-md-4 col-lg-2">
+                <a href="{{ url('/portal/document') }}" class="text-decoration-none">
+                    <div class="card quick-card h-100">
+                        <div class="card-body d-flex flex-column align-items-center justify-content-center w-100">
+                            <div class="icon bg-secondary text-white"><i class="bx bx-file"></i></div>
+                            <div class="title">Dokumen</div>
+                            <div class="meta">{{ $totalDocuments ?? 0 }} file</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Users (Admin Only) -->
             @if (Auth::user()->role === 'SUP')
-                <div class="col-6 col-md-3">
+                <div class="col-6 col-md-4 col-lg-2">
                     <a href="{{ route('users.index') }}" class="text-decoration-none">
-                        <div class="card quick-card text-center h-100">
-                            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <div class="card quick-card h-100">
+                            <div class="card-body d-flex flex-column align-items-center justify-content-center w-100">
                                 <div class="icon bg-success text-white"><i class="bx bx-user"></i></div>
-                                <div class="title mt-2">Users</div>
+                                <div class="title">Users</div>
                                 <div class="meta">{{ $totalUsers ?? 0 }} aktif</div>
                             </div>
                         </div>
@@ -200,9 +409,9 @@
             @endif
         </div>
 
-        <!-- KPIs -->
+        <!-- KPI TILES -->
         <div class="row mt-4 g-3">
-            <div class="col-6 col-md-3">
+            <div class="col-6 col-md-4 col-lg-3">
                 <div class="kpi p-3 h-100">
                     <div class="kpi-head">
                         <div class="kpi-icon bg-light text-primary"><i class="bx bx-archive"></i></div>
@@ -211,30 +420,30 @@
                             <div class="kpi-sub">Total Material</div>
                         </div>
                     </div>
-                    <div class="mt-2 d-flex justify-content-between align-items-center">
-                        <div class="stat-pill"><i class="bx bx-up-arrow"></i> Active</div>
+                    <div class="mt-3 d-flex justify-content-between align-items-center">
+                        <div class="stat-pill"><i class="bx bx-up-arrow text-success"></i> Active</div>
                         <canvas id="sparkMaterials" width="90" height="30"></canvas>
                     </div>
                 </div>
             </div>
 
-            <div class="col-6 col-md-3">
+            <div class="col-6 col-md-4 col-lg-3">
                 <div class="kpi p-3 h-100">
                     <div class="kpi-head">
-                        <div class="kpi-icon bg-light text-success"><i class="bx bx-layer"></i></div>
+                        <div class="kpi-icon bg-light text-success"><i class="bx bx-user-check"></i></div>
                         <div>
                             <div class="kpi-value">{{ $totalUsers ?? '0' }}</div>
                             <div class="kpi-sub">User Aktif</div>
                         </div>
                     </div>
-                    <div class="mt-2 d-flex justify-content-between align-items-center">
-                        <div class="stat-pill"><i class="bx bx-check-double"></i> Verified</div>
+                    <div class="mt-3 d-flex justify-content-between align-items-center">
+                        <div class="stat-pill"><i class="bx bx-check-double text-success"></i> Verified</div>
                         <canvas id="sparkUsers" width="90" height="30"></canvas>
                     </div>
                 </div>
             </div>
 
-            <div class="col-6 col-md-3">
+            <div class="col-6 col-md-4 col-lg-3">
                 <div class="kpi p-3 h-100">
                     <div class="kpi-head">
                         <div class="kpi-icon bg-light text-warning"><i class="bx bx-calendar-event"></i></div>
@@ -243,145 +452,94 @@
                             <div class="kpi-sub">Total Jadwal</div>
                         </div>
                     </div>
-                    <div class="mt-2 d-flex justify-content-between align-items-center">
-                        <div class="stat-pill"><i class="bx bx-time-five"></i> Upcoming</div>
+                    <div class="mt-3 d-flex justify-content-between align-items-center">
+                        <div class="stat-pill"><i class="bx bx-time-five text-warning"></i> Upcoming</div>
                         <canvas id="sparkSched" width="90" height="30"></canvas>
                     </div>
                 </div>
             </div>
-{{-- 
-            <div class="col-6 col-md-3">
+
+            <!-- INOVASI BARU: KPI Kalibrasi -->
+            <div class="col-6 col-md-4 col-lg-3">
                 <div class="kpi p-3 h-100">
                     <div class="kpi-head">
-                        <div class="kpi-icon bg-light text-danger"><i class="bx bx-package"></i></div>
+                        <div class="kpi-icon bg-light text-info"><i class="bx bx-wrench"></i></div>
                         <div>
-                            <div class="kpi-value">{{ $totalJobcard ?? '0' }}</div>
-                            <div class="kpi-sub">Total Jobcard</div>
+                            <div class="kpi-value">{{ $totalCalibrations ?? '0' }}</div>
+                            <div class="kpi-sub">Total Kalibrasi</div>
                         </div>
                     </div>
-                    <div class="mt-2 d-flex justify-content-between align-items-center">
-                        <div class="stat-pill"><i class="bx bx-loader"></i> In Progress</div>
-                        <canvas id="sparkJobs" width="90" height="30"></canvas>
+                    <div class="mt-3 d-flex justify-content-between align-items-center">
+                        <div class="stat-pill"><i class="bx bx-check text-info"></i> Selesai</div>
+                        <canvas id="sparkCalib" width="90" height="30"></canvas>
                     </div>
                 </div>
-            </div> --}}
-        </div>
+            </div>
 
+            <!-- INOVASI BARU: KPI Document -->
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="kpi p-3 h-100">
+                    <div class="kpi-head">
+                        <div class="kpi-icon bg-light text-secondary"><i class="bx bx-file-blank"></i></div>
+                        <div>
+                            <div class="kpi-value">{{ $totalDocuments ?? '0' }}</div>
+                            <div class="kpi-sub">Total Dokumen</div>
+                        </div>
+                    </div>
+                    <div class="mt-3 d-flex justify-content-between align-items-center">
+                        <div class="stat-pill"><i class="bx bx-archive text-secondary"></i> Arsip</div>
+                        <canvas id="sparkDocs" width="90" height="30"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
 
 @push('js')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Sparklines (tiny)
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sparkline Chart Generator
             function spark(elId, data = [], color = 'rgba(81,102,255,0.9)') {
                 const el = document.getElementById(elId);
                 if (!el) return;
+
                 new Chart(el.getContext('2d'), {
                     type: 'line',
-                    data: { labels: data.map((_,i) => i+1), datasets: [{ data, borderColor: color, backgroundColor: 'transparent', tension: 0.35, borderWidth: 1.2, pointRadius: 0 }] },
-                    options: { responsive: false, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } }, scales: { x: { display: false }, y: { display: false } } }
-                });
-            }
-
-            // Provide example spark data if none passed from controller
-            const exampleSparkA = {!! json_encode($sparkA ?? [3,5,4,6,5,7,6]) !!};
-            const exampleSparkB = {!! json_encode($sparkB ?? [2,4,3,5,4,3,4]) !!};
-            spark('sparkMaterials', exampleSparkA, 'rgba(81,102,255,0.9)');
-            spark('sparkUsers', exampleSparkB, 'rgba(16,185,129,0.9)');
-            spark('sparkSched', exampleSparkA, 'rgba(250,184,60,0.9)');
-            spark('sparkJobs', exampleSparkB, 'rgba(239,68,68,0.9)');
-
-            // Activity chart (7 days)
-            (function () {
-                const ctx = document.getElementById('activityChart');
-                if (!ctx) return;
-
-                const labels = {!! json_encode($chartLabels ?? ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']) !!};
-                const dataIn = {!! json_encode($chartMasuk ?? [5,9,7,10,8,6,4]) !!};
-                const dataOut = {!! json_encode($chartKeluar ?? [3,5,6,8,5,7,9]) !!};
-                const netData = dataIn.map((v,i) => (v || 0) - (dataOut[i] || 0));
-
-                const ctx2d = ctx.getContext('2d');
-
-                const gradIn = ctx2d.createLinearGradient(0,0,0,220);
-                gradIn.addColorStop(0,'rgba(34,197,94,0.16)');
-                gradIn.addColorStop(1,'rgba(34,197,94,0.02)');
-
-                const gradOut = ctx2d.createLinearGradient(0,0,0,220);
-                gradOut.addColorStop(0,'rgba(239,68,68,0.16)');
-                gradOut.addColorStop(1,'rgba(239,68,68,0.02)');
-
-                const gradNet = ctx2d.createLinearGradient(0,0,0,220);
-                gradNet.addColorStop(0,'rgba(81,102,255,0.14)');
-                gradNet.addColorStop(1,'rgba(81,102,255,0.02)');
-
-                const chart = new Chart(ctx2d, {
-                    type: 'bar',
                     data: {
-                        labels,
-                        datasets: [
-                            { type:'bar', label: 'Masuk', data: dataIn, backgroundColor: 'rgba(34,197,94,0.9)', borderRadius:8, maxBarThickness:28 },
-                            { type:'bar', label: 'Keluar', data: dataOut, backgroundColor: 'rgba(239,68,68,0.9)', borderRadius:8, maxBarThickness:28 },
-                            { type:'line', label: 'Net', data: netData, borderColor: 'rgba(81,102,255,0.95)', backgroundColor: gradNet, fill:true, tension:0.35, pointRadius:3, borderWidth:2 }
-                        ]
+                        labels: data.map((_, i) => i + 1),
+                        datasets: [{
+                            data: data,
+                            borderColor: color,
+                            backgroundColor: 'transparent',
+                            tension: 0.35,
+                            borderWidth: 1.8,
+                            pointRadius: 0,
+                            fill: false
+                        }]
                     },
                     options: {
-                        responsive: true,
+                        responsive: false,
                         maintainAspectRatio: false,
-                        interaction: { mode: 'index', intersect: false },
-                        scales: {
-                            x: { grid: { display: false } },
-                            y: { beginAtZero: true, grid: { color: 'rgba(15,23,42,0.06)' } }
-                        },
                         plugins: {
-                            legend: { position: 'bottom' },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(ctx) {
-                                        const label = ctx.dataset.label || '';
-                                        return label + ': ' + new Intl.NumberFormat().format(ctx.parsed.y ?? ctx.parsed);
-                                    }
-                                }
-                            }
+                            legend: { display: false },
+                            tooltip: { enabled: false }
+                        },
+                        scales: {
+                            x: { display: false },
+                            y: { display: false }
                         }
                     }
                 });
-
-                // download
-                document.getElementById('downloadActivity')?.addEventListener('click', function() {
-                    const a = document.createElement('a');
-                    a.href = ctx.toDataURL('image/png', 1);
-                    a.download = 'activity-7days.png';
-                    a.click();
-                });
-            })();
-
-            // Simple client-side history search
-            const searchInput = document.getElementById('historySearch');
-            const historyList = document.getElementById('historyList');
-
-            function applySearch() {
-                const q = (searchInput?.value || '').trim().toLowerCase();
-                if (!historyList) return;
-                const tables = historyList.querySelectorAll('table.history-table');
-                tables.forEach(tbl => {
-                    const rows = Array.from(tbl.tBodies[0].rows);
-                    let any = false;
-                    rows.forEach(r => {
-                        const txt = r.innerText.toLowerCase();
-                        const ok = q === '' ? true : txt.indexOf(q) !== -1;
-                        r.style.display = ok ? '' : 'none';
-                        if (ok) any = true;
-                    });
-                    // hide parent date block if no visible rows
-                    const dayBlock = tbl.closest('.mb-3');
-                    if (dayBlock) dayBlock.style.display = any ? '' : 'none';
-                });
             }
 
-            searchInput?.addEventListener('input', applySearch);
+            // Initialize Sparklines
+            spark('sparkMaterials', {!! json_encode($sparkA ?? [3, 5, 4, 6, 5, 7, 6]) !!}, 'rgba(81,102,255,0.9)');
+            spark('sparkUsers', {!! json_encode($sparkB ?? [2, 4, 3, 5, 4, 3, 4]) !!}, 'rgba(16,185,129,0.9)');
+            spark('sparkSched', {!! json_encode($sparkA ?? [3, 5, 4, 6, 5, 7, 6]) !!}, 'rgba(250,184,60,0.9)');
+            spark('sparkCalib', {!! json_encode($sparkB ?? [2, 4, 3, 5, 4, 3, 4]) !!}, 'rgba(6,182,212,0.9)');
+            spark('sparkDocs', {!! json_encode($sparkA ?? [3, 5, 4, 6, 5, 7, 6]) !!}, 'rgba(108,99,255,0.85)');
         });
     </script>
 @endpush
