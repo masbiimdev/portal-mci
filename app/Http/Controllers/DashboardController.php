@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Activity;
 use App\Annon;
+use App\CalibrationHistory;
+use App\Document;
 use App\Jobcard;
 use App\User;
 use App\Material;
@@ -31,7 +33,8 @@ class DashboardController extends Controller
         $totalJobcard = Jobcard::count();
         $totalMaterial = Material::count();
         $totalAnnon = Annon::count();
-
+        $totalKalibrasi = CalibrationHistory::count(); // Placeholder if needed later
+        $totalDocuments = Document::count(); // Placeholder if needed later
         // Prepare a safe, unified "history" collection from material_ins and material_outs tables
         $history = collect();
 
@@ -153,7 +156,9 @@ class DashboardController extends Controller
             'chartMasuk',
             'chartKeluar',
             'sparkA',
-            'sparkB'
+            'sparkB',
+            'totalDocuments',
+            'totalKalibrasi'
         ));
     }
 

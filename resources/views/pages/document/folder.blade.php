@@ -135,6 +135,164 @@
             margin-top: 4px;
         }
 
+        /* ========== PAGE ACTIONS / BUTTON ========== */
+        .page-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .btn-add {
+            background: linear-gradient(90deg, var(--accent), #7c3aed);
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.12);
+            transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+            border: 0;
+            cursor: pointer;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            opacity: 0.98;
+        }
+
+        .btn-add:active {
+            transform: translateY(0);
+        }
+
+        .btn-add i {
+            margin-left: 0;
+            font-size: 14px;
+        }
+
+        /* ========== MODAL STYLES ========== */
+        .modal {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1100;
+        }
+
+        .modal[aria-hidden="false"] {
+            display: flex;
+        }
+
+        .modal-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(2, 6, 23, 0.55);
+            backdrop-filter: blur(3px);
+            transition: opacity 0.18s ease;
+        }
+
+        .modal-content {
+            position: relative;
+            background: var(--card);
+            width: 100%;
+            max-width: 520px;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow-lg);
+            z-index: 2;
+            transform: translateY(8px);
+            transition: transform 0.18s ease, opacity 0.18s ease;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 0;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: 0;
+            font-size: 20px;
+            line-height: 1;
+            cursor: pointer;
+            color: var(--muted);
+            padding: 6px;
+            border-radius: 6px;
+        }
+
+        .modal-close:hover {
+            background: rgba(15, 23, 42, 0.03);
+            color: var(--primary);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--muted);
+        }
+
+        .form-control {
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            outline: none;
+            font-size: 14px;
+            background: #fff;
+            color: var(--primary);
+        }
+
+        .form-control:focus {
+            border-color: var(--accent);
+            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.06);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--primary);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, var(--accent), #7c3aed);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            border: 0;
+            cursor: pointer;
+        }
+
         /* ========== RESPONSIVE ========== */
         @media (max-width: 768px) {
             .page-header {
@@ -150,6 +308,11 @@
             .header-meta {
                 width: 100%;
             }
+
+            .page-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
         }
 
         @media (max-width: 480px) {
@@ -163,6 +326,15 @@
 
             .header-main small {
                 font-size: 13px;
+            }
+
+            .header-meta {
+                width: 100%;
+            }
+
+            .page-actions {
+                width: 100%;
+                justify-content: flex-end;
             }
         }
 
@@ -588,12 +760,19 @@
                 <small>Kelola folder dan dokumen transmittal dengan mudah</small>
             </div>
 
-            {{-- <div class="page-actions">
-                <div class="search-wrapper">
+            <div class="page-actions">
+                {{-- Tombol buka modal --}}
+                <button id="open-add-folder" class="btn-add" type="button" aria-haspopup="dialog"
+                    aria-controls="add-folder-modal">
+                    + Tambah Folder <i class="bi bi-plus-lg" aria-hidden="true"></i>
+                </button>
+
+                {{-- Jika ingin mengaktifkan pencarian, uncomment bagian ini --}}
+                {{-- <div class="search-wrapper">
                     <i class="bi bi-search"></i>
                     <input id="folder-search" type="search" placeholder="Cari folder atau kode..." aria-label="Cari folder" />
-                </div>
-            </div> --}}
+                </div> --}}
+            </div>
         </div>
 
         <!-- STATS -->
@@ -664,74 +843,129 @@
         </div>
 
     </div>
+
+    {{-- MODAL: Tambah Folder --}}
+    <div id="add-folder-modal" class="modal" role="dialog" aria-hidden="true" aria-labelledby="add-folder-title"
+        aria-modal="true">
+        <div class="modal-overlay" data-close-modal></div>
+
+        <div class="modal-content" role="document">
+            <div class="modal-header">
+                <h3 id="add-folder-title" class="modal-title">Tambah Folder</h3>
+                <button class="modal-close" type="button" aria-label="Tutup modal" data-close-modal>×</button>
+            </div>
+
+            {{-- Ganti route('folder.store', ...) jika nama route di aplikasi berbeda --}}
+            <form id="add-folder-form" method="POST"
+                action="{{ route('document.folders.store', ['project' => $project->id]) }}">
+                @csrf
+
+                <div class="form-group">
+                    <label for="folder_name">Nama Folder</label>
+                    <input id="folder_name" name="folder_name" type="text" class="form-control" required maxlength="120"
+                        placeholder="Masukkan nama folder" />
+                </div>
+
+                <div class="form-group">
+                    <label for="folder_code">Kode Folder (opsional)</label>
+                    <input id="folder_code" name="folder_code" type="text" class="form-control" maxlength="40"
+                        placeholder="Contoh: F-001" />
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" data-close-modal>Batal</button>
+                    <button type="submit" class="btn-primary">Buat Folder</button>
+                </div>
+            </form>
+        </div>
+    </div>
 @endsection
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    (function() {
+        'use strict';
 
-@push('scripts')
-    <script>
-        (function() {
-            'use strict';
+        // Coba pasang handler saat DOM siap (fallback bila push/stack tidak dipanggil)
+        function initAddFolderModal() {
+            var openBtn = document.getElementById('open-add-folder');
+            var modal = document.getElementById('add-folder-modal');
 
-            const input = document.getElementById('folder-search');
-            const grid = document.getElementById('folder-grid');
-            const noResults = document.getElementById('no-results');
-
-            if (!input) return;
-
-            const cards = Array.from(document.querySelectorAll('.folder-card'));
-            const emptyState = document.querySelector('.empty-state');
-
-            function normalize(v) {
-                return (v || '').toLowerCase().trim();
-            }
-
-            function updateDisplay() {
-                const query = normalize(input.value);
-                let visibleCount = 0;
-
-                cards.forEach(card => {
-                    const title = normalize(card.dataset.title);
-                    const code = normalize(card.dataset.code);
-                    const matches = query === '' || title.includes(query) || code.includes(query);
-
-                    if (matches) {
-                        card.style.display = '';
-                        visibleCount++;
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-
-                // Show/hide empty state and no results
-                if (emptyState) {
-                    emptyState.style.display = cards.length === 0 ? '' : 'none';
-                }
-
-                if (noResults) {
-                    noResults.style.display = (cards.length > 0 && visibleCount === 0) ? '' : 'none';
-                }
-            }
-
-            // Event listeners
-            input.addEventListener('input', updateDisplay);
-            input.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') {
-                    input.value = '';
-                    updateDisplay();
-                }
+            console.log('[modal-debug] initAddFolderModal running', {
+                openBtn: !!openBtn,
+                modal: !!modal
             });
 
-            // Initial display
-            updateDisplay();
+            if (!openBtn || !modal) {
+                console.error('[modal-debug] open button or modal element not found');
+                return;
+            }
 
-            // Focus management
-            cards.forEach(card => {
-                card.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        card.click();
-                    }
-                });
+            var overlay = modal.querySelector('.modal-overlay');
+            var closeTriggers = modal.querySelectorAll('[data-close-modal]');
+            var firstInput = modal.querySelector('input[name="folder_name"]');
+            var lastActive = null;
+
+            function showModal() {
+                lastActive = document.activeElement;
+                modal.style.display = 'flex'; // fallback inline
+                modal.setAttribute('aria-hidden', 'false');
+                document.documentElement.style.overflow = 'hidden';
+                if (firstInput) firstInput.focus();
+                console.log('[modal-debug] modal opened');
+            }
+
+            function hideModal() {
+                modal.style.display = 'none';
+                modal.setAttribute('aria-hidden', 'true');
+                document.documentElement.style.overflow = '';
+                if (lastActive && typeof lastActive.focus === 'function') lastActive.focus();
+                console.log('[modal-debug] modal closed');
+            }
+
+            openBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                showModal();
+            }, false);
+
+            // Close triggers (buttons)
+            closeTriggers.forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    hideModal();
+                }, false);
             });
-        })();
-    </script>
-@endpush
+
+            // Click overlay
+            if (overlay) {
+                overlay.addEventListener('click', function() {
+                    hideModal();
+                }, false);
+            }
+
+            // ESC closes modal
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && modal.getAttribute('aria-hidden') === 'false') {
+                    hideModal();
+                }
+            }, false);
+        }
+
+        // If document already loaded, init immediately; otherwise wait for DOMContentLoaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initAddFolderModal);
+        } else {
+            initAddFolderModal();
+        }
+    })();
+    // Notifikasi sukses
+
+    @if (session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: '{{ session('success') }}',
+            timer: 2500,
+            showConfirmButton: false
+        });
+    @endif
+</script>

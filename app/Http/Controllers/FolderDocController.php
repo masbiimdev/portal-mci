@@ -43,14 +43,12 @@ class FolderDocController extends Controller
 
         Folder::create([
             'document_project_id' => $project->id,
-            'folder_name'          => $request->folder_name,
-            'folder_code'          => $request->folder_code,
-            'description'          => $request->description,
+            'folder_name'         => $request->folder_name,
+            'folder_code'         => $request->folder_code,
+            'description'         => $request->description,
         ]);
 
-        return redirect()
-            ->route('folders.create')
-            ->with('success', 'Folder berhasil ditambahkan');
+        return back()->with('success', 'Folder berhasil ditambahkan');
     }
 
     /**

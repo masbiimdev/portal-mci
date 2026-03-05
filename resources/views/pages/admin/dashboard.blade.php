@@ -374,7 +374,7 @@
                         <div class="card-body d-flex flex-column align-items-center justify-content-center w-100">
                             <div class="icon bg-info text-white"><i class="bx bx-wrench"></i></div>
                             <div class="title">Kalibrasi</div>
-                            <div class="meta">{{ $totalCalibrations ?? 0 }} alat</div>
+                            <div class="meta">{{ $totalKalibrasi ?? 0 }} alat</div>
                         </div>
                     </div>
                 </a>
@@ -465,7 +465,7 @@
                     <div class="kpi-head">
                         <div class="kpi-icon bg-light text-info"><i class="bx bx-wrench"></i></div>
                         <div>
-                            <div class="kpi-value">{{ $totalCalibrations ?? '0' }}</div>
+                            <div class="kpi-value">{{ $totalKalibrasi ?? '0' }}</div>
                             <div class="kpi-sub">Total Kalibrasi</div>
                         </div>
                     </div>
