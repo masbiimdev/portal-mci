@@ -380,7 +380,9 @@
                                                             <th style="width:75px">Jam</th>
                                                             <th style="width:90px">Jenis</th>
                                                             <th>Material / Spare</th>
+                                                            <!-- Added "Stok Sebelumnya" column -->
                                                             <th class="text-end" style="width:100px">Stok Awal</th>
+                                                            <th class="text-end" style="width:110px">Stok Sebelumnya</th>
                                                             <th class="text-end" style="width:100px">Perubahan</th>
                                                             <th class="text-end" style="width:100px">Stok Akhir</th>
                                                         </tr>
@@ -399,6 +401,22 @@
                                                                     optional($item->material->sparePart)
                                                                         ->spare_part_name ??
                                                                     ($item->material->material_code ?? '-');
+
+                                                                // Compute stock values safely (fallbacks to 0)
+                                                                $stockAfter = isset($item->stock_after)
+                                                                    ? (int) $item->stock_after
+                                                                    : 0;
+                                                                $qty = isset($item->qty) ? (int) $item->qty : 0;
+
+                                                                // Stok Sebelumnya: stok sebelum perubahan (berdasarkan stock_after dan qty)
+                                                                // Jika jenis = in, stok sebelum = stock_after - qty
+                                                                // Jika jenis = out, stok sebelumnya = stock_after + qty
+                                                                $stockBefore = $isIn
+                                                                    ? $stockAfter - $qty
+                                                                    : $stockAfter + $qty;
+
+                                                                // Existing "Stok Awal" value from material relation (kept for reference)
+                                                                $stokAwalMaterial = $item->material->stock_awal ?? 0;
                                                             @endphp
                                                             <tr data-kind="{{ $isIn ? 'in' : 'out' }}">
                                                                 <td class="text-nowrap small text-secondary">
@@ -416,15 +434,25 @@
                                                                         title="{{ $valveList }}">{{ $valveList }}
                                                                     </div>
                                                                 </td>
+
+
+
+                                                                <!-- Existing column: Stok Awal (dari material->stock_awal) -->
                                                                 <td class="text-end">
-                                                                    {{ number_format($item->material->stock_awal ?? 0) }}
+                                                                    {{ number_format($stokAwalMaterial) }}
                                                                 </td>
+
+                                                                <!-- New column: Stok Sebelumnya -->
+                                                                <td class="text-end">
+                                                                    {{ number_format($stockBefore) }}
+                                                                </td>
+
                                                                 <td
                                                                     class="text-end fw-bold {{ $isIn ? 'text-success' : 'text-danger' }}">
                                                                     {{ $isIn ? '+' : '-' }}{{ number_format($item->qty) }}
                                                                 </td>
                                                                 <td class="text-end fw-semibold">
-                                                                    {{ number_format($item->stock_after ?? 0) }}</td>
+                                                                    {{ number_format($stockAfter) }}</td>
                                                             </tr>
                                                         @endforeach
                                                     </tbody>
@@ -615,7 +643,7 @@
                                     label: (ctx) => {
                                         const lbl = ctx.dataset.label || '';
                                         return lbl + ': ' + formatNumber(ctx.parsed.y ?? ctx
-                                        .parsed);
+                                            .parsed);
                                     },
                                     afterBody: (ctx) => {
                                         if (ctx[0] && (ctx[0].dataset.type === 'bar' || ctx[0]
