@@ -11,50 +11,39 @@
             --primary: #4F46E5;
             --secondary: #6366F1;
             --accent: #F43F5E;
-            --glass: rgba(255, 255, 255, 0.7);
+            --glass: rgba(255, 255, 255, 0.85);
         }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #F1F5F9;
+            background: #F8FAFC;
             color: #1E293B;
         }
 
-        /* Dashboard Container Gradient */
-        .dashboard-bg {
-            background: radial-gradient(circle at 0% 0%, rgba(79, 70, 229, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at 100% 100%, rgba(244, 63, 94, 0.05) 0%, transparent 50%);
-        }
-
-        /* Premium Card Glassmorphism */
+        /* Premium Glassmorphism */
         .glass-card {
             background: var(--glass);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 1);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .glass-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.08);
         }
 
         /* Calendar Stylings */
         .fc {
             --fc-button-bg-color: #4F46E5;
             --fc-button-border-color: #4F46E5;
-            --fc-button-hover-bg-color: #4338CA;
         }
 
         .fc .fc-toolbar-title {
             font-weight: 800;
-            letter-spacing: -0.025em;
+            letter-spacing: -0.02em;
             color: #0F172A;
-        }
-
-        .fc .fc-day-today {
-            background: rgba(79, 70, 229, 0.03) !important;
         }
 
         .fc .fc-col-header-cell {
@@ -65,114 +54,88 @@
             padding: 12px 0;
         }
 
-        /* Event Custom Appearance */
         .fc-event {
             border: none !important;
-            padding: 5px 8px !important;
-            font-size: 0.75rem !important;
+            padding: 4px 8px !important;
             font-weight: 600 !important;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border-radius: 8px !important;
         }
 
-        /* Progress Bar High-End */
-        .progress-wrapper {
-            height: 8px;
-            background: #E2E8F0;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #4F46E5, #06B6D4);
-            border-radius: 10px;
-            transition: width 1.2s ease-out;
-        }
-
-        /* Scrollbar styling */
+        /* Custom Scrollbar */
         .custom-scroll::-webkit-scrollbar {
-            width: 4px;
+            width: 5px;
         }
 
         .custom-scroll::-webkit-scrollbar-thumb {
             background: #CBD5E1;
             border-radius: 10px;
         }
+
+        /* Progress Bar */
+        .progress-wrapper {
+            height: 8px;
+            background: #E2E8F0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4F46E5, #06B6D4);
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
     </style>
 @endpush
 
 @section('content')
-    <div class="dashboard-bg min-h-screen">
+    <div class="min-h-screen bg-[#F8FAFC]">
         <div class="max-w-[1500px] mx-auto p-4 sm:p-8">
 
-            <header class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <header class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Smart Schedule MCI</h1>
-                    <p class="text-slate-500 font-medium">Monitoring real-time kegiatan & hasil inspeksi.</p>
+                    <h1 class="text-3xl font-[800] text-slate-900 tracking-tight">MCI Smart Dashboard</h1>
+                    <p class="text-slate-500 font-medium">Monitoring Real-time Jadwal & Inspeksi</p>
                 </div>
-                <div class="flex items-center gap-3">
-                    <span id="lastUpdate"
-                        class="px-4 py-2 rounded-2xl bg-white border border-slate-200 text-[11px] font-bold text-slate-400 flex items-center gap-2">
-                        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span>
-                        SYNCING...
-                    </span>
+                <div id="lastUpdate"
+                    class="px-5 py-2.5 rounded-2xl bg-white border border-slate-200 text-[11px] font-bold text-slate-400 flex items-center gap-2 shadow-sm uppercase tracking-widest">
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                    System Synced
                 </div>
             </header>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-
-                <aside class="lg:col-span-3 space-y-8 order-2 lg:order-1">
-                    <div class="grid grid-cols-1 gap-4">
-                        <div class="glass-card p-6 rounded-[2rem] bg-indigo-600 text-white relative overflow-hidden">
-                            <div class="relative z-10">
-                                <p class="text-xs font-bold text-indigo-100 uppercase tracking-widest opacity-80">Today's
-                                    Tasks</p>
-                                <h2 class="text-5xl font-black mt-2 tracking-tighter">{{ $todayCount ?? 0 }}</h2>
-                            </div>
-                            <svg class="absolute -right-4 -bottom-4 w-32 h-32 opacity-10 text-white" fill="currentColor"
-                                viewBox="0 0 24 24">
-                                <path
-                                    d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7v-5z" />
-                            </svg>
-                        </div>
-                        <div class="glass-card p-6 rounded-[2rem] bg-white border-none">
-                            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Weekly Goal</p>
-                            <div class="flex items-end justify-between mt-2">
-                                <h2 class="text-3xl font-bold text-slate-800 tracking-tighter">{{ $weekCount ?? 0 }} <span
-                                        class="text-sm font-medium text-slate-400">Events</span></h2>
-                            </div>
+                <aside class="lg:col-span-3 space-y-6 order-2 lg:order-1">
+                    <div class="glass-card p-6 rounded-[2.5rem] bg-indigo-600 text-white relative overflow-hidden">
+                        <div class="relative z-10">
+                            <p class="text-[10px] font-bold text-indigo-100 uppercase tracking-widest opacity-80">Today's
+                                Activity</p>
+                            <h2 class="text-5xl font-black mt-1 tracking-tighter">{{ $todayCount ?? 0 }}</h2>
                         </div>
                     </div>
 
-                    <div class="glass-card p-6 rounded-[2rem]">
-                        <h3
-                            class="text-sm font-extrabold text-slate-800 uppercase mb-6 tracking-wide flex items-center justify-between">
-                            Next Agenda
-                            <span class="text-[10px] bg-slate-100 px-2 py-1 rounded-lg text-slate-500">Auto-update</span>
-                        </h3>
-                        <div class="space-y-6 max-h-[400px] overflow-y-auto custom-scroll pr-3">
+                    <div class="glass-card p-8 rounded-[2.5rem]">
+                        <h3 class="text-xs font-black text-slate-800 uppercase mb-6 tracking-widest">Upcoming Agenda</h3>
+                        <div class="space-y-6 max-h-[450px] overflow-y-auto custom-scroll pr-3">
                             @forelse ($weekActivities as $activity)
-                                <div class="group cursor-pointer">
-                                    <div class="flex gap-4 items-start">
-                                        <div
-                                            class="flex-shrink-0 w-12 h-12 rounded-2xl bg-slate-100 flex flex-col items-center justify-center transition-colors group-hover:bg-indigo-50">
-                                            <span
-                                                class="text-[10px] font-extrabold text-slate-400 group-hover:text-indigo-600 uppercase">{{ \Carbon\Carbon::parse($activity->start_date)->format('M') }}</span>
-                                            <span
-                                                class="text-lg font-black text-slate-700 group-hover:text-indigo-700 leading-none">{{ \Carbon\Carbon::parse($activity->start_date)->format('d') }}</span>
-                                        </div>
-                                        <div class="min-w-0">
-                                            <h4
-                                                class="text-sm font-bold text-slate-800 group-hover:text-indigo-600 transition-colors truncate uppercase">
-                                                {{ $activity->kegiatan }}</h4>
-                                            <p class="text-[11px] text-slate-500 font-medium italic truncate">
-                                                {{ $activity->customer ?? 'No Client' }}</p>
-                                        </div>
+                                <div class="group flex gap-4 items-center">
+                                    <div
+                                        class="flex-shrink-0 w-12 h-12 rounded-2xl bg-slate-50 flex flex-col items-center justify-center transition-colors group-hover:bg-indigo-50">
+                                        <span
+                                            class="text-[10px] font-black text-slate-400 group-hover:text-indigo-600 uppercase">{{ \Carbon\Carbon::parse($activity->start_date)->format('M') }}</span>
+                                        <span
+                                            class="text-lg font-black text-slate-700 group-hover:text-indigo-700 leading-none">{{ \Carbon\Carbon::parse($activity->start_date)->format('d') }}</span>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <h4
+                                            class="text-sm font-bold text-slate-800 truncate uppercase tracking-tight group-hover:text-indigo-600 transition-colors">
+                                            {{ $activity->kegiatan }}</h4>
+                                        <p class="text-[11px] text-slate-400 font-medium italic truncate">
+                                            {{ $activity->customer ?? 'No Client' }}</p>
                                     </div>
                                 </div>
                             @empty
-                                <p class="text-slate-400 text-xs italic text-center py-4">Kosong</p>
+                                <p class="text-slate-400 text-xs italic text-center">Tidak ada jadwal terdekat</p>
                             @endforelse
                         </div>
                     </div>
@@ -187,35 +150,16 @@
         </div>
     </div>
 
-    <div id="modal"
-        class="fixed inset-0 bg-slate-900/40 backdrop-blur-xl hidden items-center justify-center z-50 p-4 transition-all">
+    <div id="modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md hidden items-center justify-center z-50 p-4">
         <div id="modalContent"
-            class="bg-white rounded-[3rem] w-full max-w-2xl overflow-hidden shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] transform scale-95 opacity-0 transition-all duration-300">
-            <div class="p-10 pb-6 flex justify-between items-start">
+            class="bg-white rounded-[3rem] w-full max-w-3xl overflow-hidden shadow-2xl transform scale-95 opacity-0 transition-all duration-300">
+            <div class="p-10 pb-4 flex justify-between items-start">
                 <div class="max-w-[80%]">
                     <div id="mStatusBadge"
-                        class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-widest mb-3">
-                        <span class="w-1.5 h-1.5 rounded-full bg-current animate-pulse"></span>
+                        class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-3">
                         <span id="mStatus"></span>
                     </div>
-                    <h2 id="mTitle" class="text-3xl font-extrabold text-slate-900 leading-tight"></h2>
-                    <div class="flex items-center gap-4 mt-4">
-                        <div class="flex items-center gap-2 text-sm text-slate-500 font-medium">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                                    stroke-width="2" />
-                            </svg>
-                            <span id="mCustomer"></span>
-                        </div>
-                        <div class="flex items-center gap-2 text-sm text-slate-500 font-medium">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path
-                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                    stroke-width="2" />
-                            </svg>
-                            <span id="mTime"></span>
-                        </div>
-                    </div>
+                    <h2 id="mTitle" class="text-3xl font-extrabold text-slate-900 leading-tight tracking-tighter"></h2>
                 </div>
                 <button id="closeModal"
                     class="p-3 rounded-2xl bg-slate-50 hover:bg-rose-50 hover:text-rose-500 transition-all text-slate-400">
@@ -225,39 +169,45 @@
                 </button>
             </div>
 
-            <div class="px-10 py-4 max-h-[60vh] overflow-y-auto custom-scroll">
-                <div class="flex items-center justify-between mb-8 p-6 bg-slate-50 rounded-[2rem]">
+            <div class="px-10 py-6 max-h-[65vh] overflow-y-auto custom-scroll">
+                <div
+                    class="flex flex-col md:flex-row items-center justify-between mb-8 p-8 bg-slate-50 rounded-[2.5rem] gap-6">
                     <div>
-                        <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1">Completion
-                            Progress</p>
-                        <div class="flex items-baseline gap-2">
-                            <span id="mPercentText" class="text-3xl font-black text-indigo-600">0%</span>
-                            <span class="text-xs font-bold text-slate-400 uppercase">Items Passed</span>
+                        <p
+                            class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 text-center md:text-left">
+                            Inspection Progress</p>
+                        <div class="flex items-center gap-3 justify-center md:justify-start">
+                            <span id="mPercentText" class="text-4xl font-black text-indigo-600">0%</span>
+                            <div class="w-32 md:w-48 progress-wrapper">
+                                <div id="mProgressBar" class="progress-fill" style="width: 0%"></div>
+                            </div>
                         </div>
                     </div>
-                    <div class="w-48">
-                        <div class="progress-wrapper">
-                            <div id="mProgressBar" class="progress-fill" style="width: 0%"></div>
+                    <div class="grid grid-cols-2 gap-4 text-xs font-bold text-slate-500 uppercase tracking-tight">
+                        <div class="bg-white px-4 py-2 rounded-xl">PO: <span id="mPO" class="text-slate-800"></span>
+                        </div>
+                        <div class="bg-white px-4 py-2 rounded-xl">Date: <span id="mTime" class="text-slate-800"></span>
                         </div>
                     </div>
                 </div>
 
-                <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 ml-2">Item Inspection List</h4>
-                <div id="mItems" class="space-y-4 pb-10"></div>
+                <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 ml-4">Inspection Items</h4>
+                <div id="mItems" class="space-y-4"></div>
             </div>
 
-            <div class="p-8 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+            <div class="p-8 bg-white flex justify-end">
                 <button id="closeModal2"
-                    class="px-8 py-3 rounded-2xl bg-white border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-100 transition-all">Close</button>
+                    class="px-8 py-3 rounded-2xl bg-slate-100 text-sm font-black text-slate-500 hover:bg-slate-200 transition-all">CLOSE</button>
             </div>
         </div>
     </div>
 
     <div id="resultModal"
-        class="fixed inset-0 bg-slate-900/60 backdrop-blur-md hidden items-center justify-center z-[60] p-4">
-        <div class="bg-white rounded-[2.5rem] w-full max-w-md p-10 shadow-2xl relative">
-            <h3 class="text-2xl font-extrabold text-slate-900 mb-2">Update Inspection</h3>
-            <p id="display_part_name" class="text-sm font-bold text-indigo-600 mb-8"></p>
+        class="fixed inset-0 bg-slate-900/80 backdrop-blur-md hidden items-center justify-center z-[70] p-4">
+        <div
+            class="bg-white rounded-[2.5rem] w-full max-w-md p-10 shadow-2xl transform scale-95 opacity-0 transition-all duration-300">
+            <h3 class="text-2xl font-[900] text-slate-900 mb-2">Update Hasil</h3>
+            <p id="display_part_name" class="text-sm font-bold text-indigo-600 mb-8 tracking-tight"></p>
 
             <form id="resultForm" method="POST" action="{{ route('jadwal.store') }}" class="space-y-6">
                 @csrf
@@ -266,39 +216,43 @@
                 <input type="hidden" name="part_name" id="part_name">
 
                 <div class="space-y-4">
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-extrabold text-slate-400 uppercase ml-1 tracking-widest">Client
-                                Inspector</label>
-                            <input type="text" name="inspector_name" id="inspector_name" required
-                                class="w-full bg-slate-50 border-none rounded-2xl p-4 text-sm font-bold focus:ring-2 focus:ring-indigo-500 transition-all">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-extrabold text-slate-400 uppercase ml-1 tracking-widest">PIC
-                                Metinca</label>
-                            <input type="text" name="pic" id="pic" required
-                                class="w-full bg-slate-50 border-none rounded-2xl p-4 text-sm font-bold focus:ring-2 focus:ring-indigo-500 transition-all">
-                        </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Inspector
+                            Client</label>
+                        <input type="text" name="inspector_name" id="inspector_name" required
+                            class="w-full bg-slate-50 border-none rounded-2xl p-4 text-sm font-bold focus:ring-2 focus:ring-indigo-500 transition-all">
                     </div>
                     <div class="space-y-1">
-                        <label class="text-[10px] font-extrabold text-slate-400 uppercase ml-1 tracking-widest">Inspection
-                            Result</label>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">PIC
+                            Metinca</label>
+                        <input type="text" name="pic" id="pic" required
+                            class="w-full bg-slate-50 border-none rounded-2xl p-4 text-sm font-bold focus:ring-2 focus:ring-indigo-500 transition-all">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Status
+                            Hasil</label>
                         <select name="result" id="result"
-                            class="w-full bg-slate-50 border-none rounded-2xl p-4 text-sm font-bold focus:ring-2 focus:ring-indigo-500 appearance-none cursor-pointer">
+                            class="w-full bg-slate-50 border-none rounded-2xl p-4 text-sm font-bold focus:ring-2 focus:ring-indigo-500 cursor-pointer">
                             <option value="OK">ALL ACCEPTED</option>
                             <option value="PA">PARTIAL ACCEPTED</option>
                             <option value="OH">ON HOLD</option>
                             <option value="NG">REJECTED</option>
                         </select>
                     </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Catatan /
+                            Remarks</label>
+                        <textarea name="remarks" id="remarks" rows="2"
+                            class="w-full bg-slate-50 border-none rounded-2xl p-4 text-sm font-bold focus:ring-2 focus:ring-indigo-500 transition-all"></textarea>
+                    </div>
                 </div>
 
-                <div class="pt-6 flex gap-3">
+                <div class="pt-4 flex gap-3">
                     <button type="button" id="closeResultModal"
-                        class="flex-1 py-4 text-sm font-bold text-slate-400 hover:text-slate-600 transition-all">Cancel</button>
+                        class="flex-1 py-4 text-sm font-black text-slate-400 hover:text-slate-600 transition-all uppercase">Batal</button>
                     <button type="submit" id="submitResultBtn"
-                        class="flex-[2] py-4 bg-indigo-600 text-white rounded-2xl text-sm font-bold shadow-xl shadow-indigo-200 hover:bg-indigo-700 transition-all">Save
-                        Result</button>
+                        class="flex-[2] py-4 bg-indigo-600 text-white rounded-2xl text-sm font-black shadow-xl shadow-indigo-100 hover:bg-indigo-700 transition-all uppercase tracking-widest">Simpan
+                        Data</button>
                 </div>
             </form>
         </div>
@@ -311,47 +265,26 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        $(document).ready(function() {
+            // 1. Simpan data global
             const resultsData = @json($resultsData);
-            const userIsLoggedIn = {!! Auth::check() ? 'true' : 'false' !!};
+            const userIsLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
 
-            // --- Modal Animations ---
-            function toggleModal(modalId, contentId, show = true) {
-                const m = $(`#${modalId}`);
-                const c = $(`#${contentId}`);
-                if (show) {
-                    m.removeClass('hidden').addClass('flex');
-                    setTimeout(() => c.removeClass('scale-95 opacity-0').addClass('scale-100 opacity-100'), 10);
-                } else {
-                    c.removeClass('scale-100 opacity-100').addClass('scale-95 opacity-0');
-                    setTimeout(() => m.addClass('hidden').removeClass('flex'), 250);
-                }
-            }
-
-            $('#closeModal, #closeModal2').click(() => toggleModal('modal', 'modalContent', false));
-            $('#closeResultModal').click(() => toggleModal('resultModal', 'resultModal > div', false));
-
-            // --- Calendar Implementation ---
-            const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+            // 2. Inisialisasi Kalender
+            const calendarEl = document.getElementById('calendar');
+            const calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: window.innerWidth < 768 ? 'listWeek' : 'dayGridMonth',
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: window.innerWidth < 768 ? '' : 'dayGridMonth,dayGridWeek,listWeek'
+                    right: 'dayGridMonth,listWeek'
                 },
-                height: 'auto',
                 events: [
                     @foreach ($activities as $activity)
                         @php
                             $start = \Carbon\Carbon::parse($activity->start_date);
                             $end = \Carbon\Carbon::parse($activity->end_date);
-                            $statusColor =
-                                [
-                                    'Done' => '#10B981',
-                                    'On Going' => '#F59E0B',
-                                    'Reschedule' => '#F43F5E',
-                                    'Pending' => '#64748B',
-                                ][$activity->status] ?? '#4F46E5';
+                            $color = ['Done' => '#10B981', 'On Going' => '#F59E0B', 'Reschedule' => '#F43F5E'][$activity->status] ?? '#4F46E5';
                         @endphp
                         @for ($d = $start->copy(); $d->lte($end); $d->addDay())
                             @if (!$d->isWeekend())
@@ -359,10 +292,10 @@
                                     id: '{{ $activity->id }}',
                                     title: '{{ $activity->kegiatan }}',
                                     start: '{{ $d->toDateString() }}',
-                                    backgroundColor: '{{ $statusColor }}',
+                                    backgroundColor: '{{ $color }}',
                                     extendedProps: {
+                                        db_id: '{{ $activity->id }}',
                                         customer: '{{ $activity->customer ?? '-' }}',
-                                        type: '{{ ucfirst($activity->type) }}',
                                         po: '{{ $activity->po ?? '-' }}',
                                         status: '{{ $activity->status }}',
                                         items: {!! $activity->items ?? '[]' !!}
@@ -375,86 +308,82 @@
                 eventClick: function(info) {
                     const p = info.event.extendedProps;
 
-                    // Header Info
+                    // Isi Data Modal
                     $('#mTitle').text(info.event.title);
+                    $('#mPO').text(p.po);
                     $('#mCustomer').text(p.customer);
                     $('#mTime').text(info.event.start.toLocaleDateString('id-ID', {
                         dateStyle: 'long'
                     }));
                     $('#mStatus').text(p.status);
 
-                    // Dynamic Status Badge
-                    const statusClass = {
-                        'Done': 'bg-emerald-50 text-emerald-600',
-                        'On Going': 'bg-amber-50 text-amber-600',
-                        'Reschedule': 'bg-rose-50 text-rose-600'
-                    } [p.status] || 'bg-slate-50 text-slate-600';
-                    $('#mStatusBadge').removeClass().addClass(
-                        `inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-widest mb-3 ${statusClass}`
-                        );
-
-                    // Items Rendering
                     const itemsContainer = $('#mItems').empty();
-                    let ok = 0;
+                    let okCount = 0;
 
-                    if (p.items.length > 0) {
+                    if (p.items && p.items.length > 0) {
                         p.items.forEach(item => {
-                            const found = resultsData.find(r => r.activity_id == info.event
-                                .id && r.part_name == item.part_name);
-                            if (found?.result === 'OK') ok++;
+                            const found = resultsData.find(r => r.activity_id == p.db_id && r
+                                .part_name == item.part_name);
+                            if (found?.result === 'OK') okCount++;
 
-                            const resConfig = {
+                            const resMap = {
                                 'OK': {
-                                    color: 'text-emerald-500 bg-emerald-50',
-                                    label: 'Accepted'
+                                    c: 'text-emerald-500 bg-emerald-50',
+                                    l: 'Accepted'
                                 },
                                 'PA': {
-                                    color: 'text-blue-500 bg-blue-50',
-                                    label: 'Partial'
+                                    c: 'text-blue-500 bg-blue-50',
+                                    l: 'Partial'
                                 },
                                 'NG': {
-                                    color: 'text-rose-500 bg-rose-50',
-                                    label: 'Rejected'
-                                },
-                                'OH': {
-                                    color: 'text-amber-500 bg-amber-50',
-                                    label: 'On Hold'
+                                    c: 'text-rose-500 bg-rose-50',
+                                    l: 'Rejected'
                                 }
                             } [found?.result] || {
-                                color: 'text-slate-400 bg-slate-50',
-                                label: 'Pending'
+                                c: 'text-slate-400 bg-slate-50',
+                                l: 'Pending'
                             };
 
+                            // PERHATIKAN: Kita gunakan class 'btn-update' dan 'btn-detail' (Bukan onclick)
                             itemsContainer.append(`
-                        <div class="bg-white border border-slate-100 p-6 rounded-[2rem] flex flex-col md:flex-row justify-between gap-6 transition-all hover:border-indigo-100">
-                            <div>
-                                <div class="flex items-center gap-2 mb-2">
-                                    <span class="text-[10px] font-black text-slate-300 uppercase tracking-widest">Part Name</span>
-                                    <span class="px-2 py-0.5 rounded-lg text-[9px] font-black uppercase ${resConfig.color}">${resConfig.label}</span>
+                        <div class="bg-white border border-slate-100 p-6 rounded-[2rem] flex flex-col md:flex-row justify-between items-center gap-6 group hover:border-indigo-100 transition-all">
+                            <div class="text-center md:text-left">
+                                <div class="flex items-center gap-2 mb-2 justify-center md:justify-start">
+                                    <span class="px-2 py-0.5 rounded-lg text-[9px] font-black uppercase ${resMap.c}">${resMap.l}</span>
                                 </div>
-                                <h5 class="text-lg font-extrabold text-slate-800 uppercase tracking-tight">${item.part_name}</h5>
-                                <p class="text-xs font-bold text-slate-400 mt-1">${item.material || '-'} • ${item.qty || 0} PCS</p>
+                                <h5 class="text-lg font-black text-slate-800 uppercase tracking-tight">${item.part_name}</h5>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">${item.material || '-'} • ${item.qty || 0} PCS</p>
                             </div>
-                            <div class="flex items-center gap-2">
-                                ${userIsLoggedIn ? `<button onclick="openForm('${info.event.id}', '${item.part_name}')" class="flex-1 md:flex-none px-6 py-3 bg-indigo-50 text-indigo-600 text-[11px] font-black rounded-2xl hover:bg-indigo-600 hover:text-white transition-all">UPDATE</button>` : ''}
-                                <button onclick="viewDetail('${info.event.id}', '${item.part_name}')" class="flex-1 md:flex-none px-6 py-3 bg-slate-50 text-slate-500 text-[11px] font-black rounded-2xl hover:bg-slate-900 hover:text-white transition-all">DETAILS</button>
+                            <div class="flex gap-2 w-full md:w-auto">
+                                ${userIsLoggedIn ? `<button class="btn-update flex-1 md:flex-none px-6 py-3 bg-indigo-50 text-indigo-600 text-[10px] font-black rounded-2xl hover:bg-indigo-600 hover:text-white transition-all" 
+                                        data-id="${p.db_id}" data-part="${item.part_name}">UPDATE</button>` : ''}
+                                <button class="btn-detail flex-1 md:flex-none px-6 py-3 bg-slate-50 text-slate-500 text-[10px] font-black rounded-2xl hover:bg-slate-900 hover:text-white transition-all"
+                                    data-id="${p.db_id}" data-part="${item.part_name}">DETAIL</button>
                             </div>
                         </div>
                     `);
                         });
 
-                        const percent = Math.round((ok / p.items.length) * 100);
-                        $('#mPercentText').text(percent + '%');
-                        setTimeout(() => $('#mProgressBar').css('width', percent + '%'), 200);
+                        const pct = Math.round((okCount / p.items.length) * 100);
+                        $('#mPercentText').text(pct + '%');
+                        setTimeout(() => $('#mProgressBar').css('width', pct + '%'), 200);
                     }
 
-                    toggleModal('modal', 'modalContent');
+                    // Tampilkan Modal Utama
+                    $('#modal').removeClass('hidden').addClass('flex');
+                    setTimeout(() => $('#modalContent').removeClass('scale-95 opacity-0').addClass(
+                        'scale-100 opacity-100'), 10);
                 }
             });
             calendar.render();
 
-            // --- Functions ---
-            window.openForm = function(actId, part) {
+            // 3. EVENT DELEGATION (PENTING!)
+            // Mendengarkan klik pada tombol Update
+            $(document).on('click', '.btn-update', function() {
+                const actId = $(this).data('id');
+                const part = $(this).data('part');
+
+                $('#resultForm')[0].reset();
                 $('#activity_id').val(actId);
                 $('#part_name').val(part);
                 $('#display_part_name').text(part);
@@ -465,20 +394,62 @@
                     $('#inspector_name').val(found.inspector_name);
                     $('#pic').val(found.pic);
                     $('#result').val(found.result);
+                    $('#remarks').val(found.remarks || '');
                 }
-                toggleModal('resultModal', 'resultModal > div');
-            };
 
-            function updateSync() {
-                const time = new Date().toLocaleTimeString('id-ID', {
-                    hour: '2-digit',
-                    minute: '2-digit'
+                $('#resultModal').removeClass('hidden').addClass('flex');
+                setTimeout(() => $('#resultModal > div').removeClass('scale-95 opacity-0').addClass(
+                    'scale-100 opacity-100'), 10);
+            });
+
+            // Mendengarkan klik pada tombol Detail
+            $(document).on('click', '.btn-detail', function() {
+                const actId = $(this).data('id');
+                const part = $(this).data('part');
+                const matches = resultsData.filter(r => r.activity_id == actId && r.part_name == part);
+
+                let htmlContent = '';
+                if (matches.length === 0) {
+                    htmlContent =
+                        '<div class="p-6 text-center text-slate-400 italic">Belum ada riwayat inspeksi.</div>';
+                } else {
+                    matches.forEach(m => {
+                        htmlContent += `
+                <div class="text-left bg-slate-50 p-6 rounded-[2rem] border border-slate-100 mb-4 shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="px-3 py-1 rounded-full bg-indigo-600 text-white text-[9px] font-black uppercase tracking-widest">${m.result}</span>
+                        <span class="text-[10px] font-bold text-slate-400">${m.inspection_time || '-'}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mb-4 text-xs">
+                        <div><p class="font-black text-slate-300 uppercase text-[9px]">Inspector</p><p class="font-bold text-slate-700">${m.inspector_name}</p></div>
+                        <div><p class="font-black text-slate-300 uppercase text-[9px]">PIC</p><p class="font-bold text-slate-700">${m.pic}</p></div>
+                    </div>
+                    <div><p class="font-black text-slate-300 uppercase text-[9px]">Catatan</p><p class="italic text-slate-600">${m.remarks || '-'}</p></div>
+                </div>`;
+                    });
+                }
+
+                Swal.fire({
+                    title: `<div class="text-xl font-black uppercase tracking-tighter">${part}</div>`,
+                    html: `<div class="max-h-[400px] overflow-y-auto mt-4 px-2 custom-scroll">${htmlContent}</div>`,
+                    showConfirmButton: false,
+                    showCloseButton: true,
+                    customClass: {
+                        popup: 'rounded-[3rem] p-8'
+                    }
                 });
-                $('#lastUpdate').html(
-                    `<span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span> SYNCED ${time}`);
-            }
-            updateSync();
-            setInterval(updateSync, 60000);
+            });
+
+            // 4. Close Modal Handlers
+            $('#closeModal, #closeModal2').click(function() {
+                $('#modalContent').addClass('scale-95 opacity-0').removeClass('scale-100 opacity-100');
+                setTimeout(() => $('#modal').addClass('hidden').removeClass('flex'), 250);
+            });
+
+            $('#closeResultModal').click(function() {
+                $('#resultModal > div').addClass('scale-95 opacity-0').removeClass('scale-100 opacity-100');
+                setTimeout(() => $('#resultModal').addClass('hidden').removeClass('flex'), 250);
+            });
         });
     </script>
 @endpush
