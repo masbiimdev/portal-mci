@@ -1,791 +1,484 @@
 @extends('layouts.home')
-@section('title', 'MCI | Jadwal Kegiatan')
+@section('title', 'MCI | Smart Schedule Dashboard')
 
 @push('css')
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
     <style>
-        .fc .fc-daygrid-day-top {
-            padding: .5rem .6rem;
+        :root {
+            --primary: #4F46E5;
+            --secondary: #6366F1;
+            --accent: #F43F5E;
+            --glass: rgba(255, 255, 255, 0.7);
         }
 
-        .event-badge {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: .5rem;
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #F1F5F9;
+            color: #1E293B;
         }
-    </style>
-    <style>
-        .progress-container {
-            width: 100%;
-            background: #e5e7eb;
-            border-radius: 6px;
-            height: 6px;
+
+        /* Dashboard Container Gradient */
+        .dashboard-bg {
+            background: radial-gradient(circle at 0% 0%, rgba(79, 70, 229, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(244, 63, 94, 0.05) 0%, transparent 50%);
+        }
+
+        /* Premium Card Glassmorphism */
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Calendar Stylings */
+        .fc {
+            --fc-button-bg-color: #4F46E5;
+            --fc-button-border-color: #4F46E5;
+            --fc-button-hover-bg-color: #4338CA;
+        }
+
+        .fc .fc-toolbar-title {
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            color: #0F172A;
+        }
+
+        .fc .fc-day-today {
+            background: rgba(79, 70, 229, 0.03) !important;
+        }
+
+        .fc .fc-col-header-cell {
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #64748B;
+            padding: 12px 0;
+        }
+
+        /* Event Custom Appearance */
+        .fc-event {
+            border: none !important;
+            padding: 5px 8px !important;
+            font-size: 0.75rem !important;
+            font-weight: 600 !important;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Progress Bar High-End */
+        .progress-wrapper {
+            height: 8px;
+            background: #E2E8F0;
+            border-radius: 10px;
             overflow: hidden;
-            position: relative;
-            padding: 1px;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
         }
 
-        .progress-bar {
-            width: 0%;
+        .progress-fill {
             height: 100%;
-            border-radius: 4px;
-            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
-            transition: width .8s ease-in-out;
+            background: linear-gradient(90deg, #4F46E5, #06B6D4);
+            border-radius: 10px;
+            transition: width 1.2s ease-out;
+        }
+
+        /* Scrollbar styling */
+        .custom-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 10px;
         }
     </style>
 @endpush
 
 @section('content')
-    <div class="max-w-7xl mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-4 gap-6 mt-6">
-        <!-- Sidebar -->
-        <aside class="col-span-1 space-y-4 order-2 lg:order-1">
-            <div class="bg-white p-4 rounded-lg shadow-sm">
-                <h2 class="font-medium">Ringkasan Jadwal</h2>
-                <div class="mt-3 grid grid-cols-2 gap-3">
-                    <div class="p-3 bg-sky-50 rounded">
-                        <div class="text-sm text-slate-500">Event Hari Ini</div>
-                        <div id="todayCount" class="text-xl font-semibold">{{ $todayCount ?? 0 }}</div>
-                    </div>
-                    <div class="p-3 bg-amber-50 rounded">
-                        <div class="text-sm text-slate-500">Minggu Ini</div>
-                        <div id="weekCount" class="text-xl font-semibold">{{ $weekCount ?? 0 }}</div>
-                    </div>
-                </div>
-            </div>
+    <div class="dashboard-bg min-h-screen">
+        <div class="max-w-[1500px] mx-auto p-4 sm:p-8">
 
-            <div class="bg-white p-4 rounded-lg shadow-sm">
-                <h2 class="font-medium mb-3">Jadwal Minggu Ini</h2>
-                <ul id="weekEvents" class="space-y-3 text-sm">
-                    @foreach ($weekActivities as $activity)
-                        <li class="flex items-start gap-2 border-b pb-2">
-                            <span class="text-sky-600 font-medium w-16">
-                                @if (\Carbon\Carbon::parse($activity->start_date)->isSameDay(\Carbon\Carbon::parse($activity->end_date)))
-                                    {{ \Carbon\Carbon::parse($activity->start_date)->format('d M') }}
-                                @else
-                                    {{ \Carbon\Carbon::parse($activity->start_date)->format('d M') }} -
-                                    {{ \Carbon\Carbon::parse($activity->end_date)->format('d M') }}
-                                @endif
-                            </span>
-                            <div>
-                                <div class="font-medium">{{ $activity->kegiatan }}</div>
-                                <div class="text-slate-500 text-xs">{{ $activity->customer ?? '-' }}</div>
-                                <div class="text-slate-500 text-xs">{{ $activity->po ?? '-' }}</div>
+            <header class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Smart Schedule MCI</h1>
+                    <p class="text-slate-500 font-medium">Monitoring real-time kegiatan & hasil inspeksi.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span id="lastUpdate"
+                        class="px-4 py-2 rounded-2xl bg-white border border-slate-200 text-[11px] font-bold text-slate-400 flex items-center gap-2">
+                        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span>
+                        SYNCING...
+                    </span>
+                </div>
+            </header>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+                <aside class="lg:col-span-3 space-y-8 order-2 lg:order-1">
+                    <div class="grid grid-cols-1 gap-4">
+                        <div class="glass-card p-6 rounded-[2rem] bg-indigo-600 text-white relative overflow-hidden">
+                            <div class="relative z-10">
+                                <p class="text-xs font-bold text-indigo-100 uppercase tracking-widest opacity-80">Today's
+                                    Tasks</p>
+                                <h2 class="text-5xl font-black mt-2 tracking-tighter">{{ $todayCount ?? 0 }}</h2>
                             </div>
-                        </li>
-                    @endforeach
-                </ul>
-            </div>
-            <!-- Banner Telegram Bot Premium Style -->
-            <div class="rounded-2xl overflow-hidden">
-                <a href="https://t.me/Notifmci_bot" target="_blank"
-                    class="block bg-gradient-to-r from-sky-500 to-blue-600 text-white p-4 rounded-2xl shadow-lg hover:scale-[1.01] transition-transform">
-                    <div class="flex items-start gap-3">
-                        <div class="flex-shrink-0">
-                            <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M12 2v4m0 12v4m10-10h-4M6 12H2m15.4-6.4L19 5m-14 14L5 19m12 0l1.4 1.4M5 5L3.6 3.6" />
+                            <svg class="absolute -right-4 -bottom-4 w-32 h-32 opacity-10 text-white" fill="currentColor"
+                                viewBox="0 0 24 24">
+                                <path
+                                    d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7v-5z" />
                             </svg>
                         </div>
-                        <div>
-                            <div class="font-semibold">💬 Pantau Jadwal Lewat Telegram</div>
-                            <div class="text-sm opacity-90">Terima notifikasi cepat & ringkasan kegiatan.</div>
+                        <div class="glass-card p-6 rounded-[2rem] bg-white border-none">
+                            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Weekly Goal</p>
+                            <div class="flex items-end justify-between mt-2">
+                                <h2 class="text-3xl font-bold text-slate-800 tracking-tighter">{{ $weekCount ?? 0 }} <span
+                                        class="text-sm font-medium text-slate-400">Events</span></h2>
+                            </div>
                         </div>
                     </div>
-                </a>
-            </div>
 
-            <!-- Hover effect -->
-            <style>
-                a[href^="https://t.me"] {
-                    transition: all 0.2s ease;
-                }
-
-                a[href^="https://t.me"]:hover {
-                    transform: translateY(-3px);
-                    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
-                }
-            </style>
-
-        </aside>
-
-        <!-- Kalender -->
-        <section class="col-span-3 order-1 lg:order-2 bg-white p-4 rounded-lg shadow-sm">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
-                <h2 class="font-medium text-lg">Kalender Jadwal</h2>
-            </div>
-            <div id="calendar"></div>
-            <!-- ⏰ Teks terakhir update di pojok kanan bawah -->
-            <small id="lastUpdate" class="text-muted fst-italic position-absolute"
-                style="           font-size: 0.85rem;
-           color: #495057; /* abu gelap */
-           rgba(0,0,0,0.15);"></small>
-        </section>
-    </div>
-
-    <!-- Modal Utama (lihat event & items) -->
-    <div id="modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
-        <div id="modalContent"
-            class="bg-white rounded-2xl w-full max-w-md max-h-[85vh] p-6 transform scale-90 opacity-0 transition-all duration-300 ease-out overflow-y-auto shadow-2xl">
-            <div class="flex justify-between items-center border-b pb-3 mb-4">
-                <h3 id="mTitle" class="font-semibold text-lg text-slate-800">Event Title</h3>
-                <button id="closeModal" class="text-slate-400 hover:text-red-500 text-xl font-bold">✕</button>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                    <div class="text-slate-500">Tipe</div>
-                    <div id="mType" class="font-medium text-slate-800"></div>
-                </div>
-                <div>
-                    <div class="text-slate-500">Waktu</div>
-                    <div id="mTime" class="font-medium text-slate-800"></div>
-                </div>
-                <div>
-                    <div class="text-slate-500">Customer</div>
-                    <div id="mCustomer" class="font-medium text-slate-800"></div>
-                </div>
-                <div>
-                    <div class="text-slate-500">PO</div>
-                    <div id="mPO" class="font-medium text-slate-800"></div>
-                </div>
-                <div class="col-span-2">
-                    <div class="text-slate-500">Status</div>
-                    <div id="mStatus"
-                        class="inline-block mt-1 px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                    <div class="glass-card p-6 rounded-[2rem]">
+                        <h3
+                            class="text-sm font-extrabold text-slate-800 uppercase mb-6 tracking-wide flex items-center justify-between">
+                            Next Agenda
+                            <span class="text-[10px] bg-slate-100 px-2 py-1 rounded-lg text-slate-500">Auto-update</span>
+                        </h3>
+                        <div class="space-y-6 max-h-[400px] overflow-y-auto custom-scroll pr-3">
+                            @forelse ($weekActivities as $activity)
+                                <div class="group cursor-pointer">
+                                    <div class="flex gap-4 items-start">
+                                        <div
+                                            class="flex-shrink-0 w-12 h-12 rounded-2xl bg-slate-100 flex flex-col items-center justify-center transition-colors group-hover:bg-indigo-50">
+                                            <span
+                                                class="text-[10px] font-extrabold text-slate-400 group-hover:text-indigo-600 uppercase">{{ \Carbon\Carbon::parse($activity->start_date)->format('M') }}</span>
+                                            <span
+                                                class="text-lg font-black text-slate-700 group-hover:text-indigo-700 leading-none">{{ \Carbon\Carbon::parse($activity->start_date)->format('d') }}</span>
+                                        </div>
+                                        <div class="min-w-0">
+                                            <h4
+                                                class="text-sm font-bold text-slate-800 group-hover:text-indigo-600 transition-colors truncate uppercase">
+                                                {{ $activity->kegiatan }}</h4>
+                                            <p class="text-[11px] text-slate-500 font-medium italic truncate">
+                                                {{ $activity->customer ?? 'No Client' }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
+                                <p class="text-slate-400 text-xs italic text-center py-4">Kosong</p>
+                            @endforelse
+                        </div>
                     </div>
-                </div>
+                </aside>
 
-                <div class="col-span-2">
-                    <div class="text-slate-500">Detail Items</div>
-                    <div id="mItems" class="mt-1 space-y-1 text-slate-700 text-sm leading-relaxed"></div>
-                </div>
-            </div>
-            <!-- Progress Container -->
-            <div id="mProgressContainer" class="mt-4 hidden">
-                <label class="text-sm text-slate-600 mb-1 block">Progress</label>
-                <div class="w-full bg-gray-200 rounded-full h-5 overflow-hidden relative">
-                    <div id="mProgressBar"
-                        class="h-full w-0 flex items-center justify-end pr-2 text-white font-semibold text-xs rounded-full"
-                        style="background: linear-gradient(90deg, #10B981, #3B82F6); transition: width 1s ease-in-out;">
-                        0%
+                <main class="lg:col-span-9 order-1 lg:order-2">
+                    <div class="glass-card p-6 sm:p-8 rounded-[2.5rem] bg-white">
+                        <div id="calendar"></div>
                     </div>
-                </div>
-            </div>
-
-
-            <div class="mt-6 flex justify-end">
-                <button id="closeModal2"
-                    class="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium">Tutup</button>
+                </main>
             </div>
         </div>
     </div>
 
-    <!-- Modal Input / Edit Hasil Pemeriksaan -->
-    <div id="resultModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
-        <div
-            class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl transform scale-90 opacity-0 transition-all duration-300 ease-out overflow-y-auto">
-            <h3 class="font-semibold text-lg mb-4 text-slate-800">Input Hasil Pemeriksaan</h3>
+    <div id="modal"
+        class="fixed inset-0 bg-slate-900/40 backdrop-blur-xl hidden items-center justify-center z-50 p-4 transition-all">
+        <div id="modalContent"
+            class="bg-white rounded-[3rem] w-full max-w-2xl overflow-hidden shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] transform scale-95 opacity-0 transition-all duration-300">
+            <div class="p-10 pb-6 flex justify-between items-start">
+                <div class="max-w-[80%]">
+                    <div id="mStatusBadge"
+                        class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-widest mb-3">
+                        <span class="w-1.5 h-1.5 rounded-full bg-current animate-pulse"></span>
+                        <span id="mStatus"></span>
+                    </div>
+                    <h2 id="mTitle" class="text-3xl font-extrabold text-slate-900 leading-tight"></h2>
+                    <div class="flex items-center gap-4 mt-4">
+                        <div class="flex items-center gap-2 text-sm text-slate-500 font-medium">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                                    stroke-width="2" />
+                            </svg>
+                            <span id="mCustomer"></span>
+                        </div>
+                        <div class="flex items-center gap-2 text-sm text-slate-500 font-medium">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                    stroke-width="2" />
+                            </svg>
+                            <span id="mTime"></span>
+                        </div>
+                    </div>
+                </div>
+                <button id="closeModal"
+                    class="p-3 rounded-2xl bg-slate-50 hover:bg-rose-50 hover:text-rose-500 transition-all text-slate-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path d="M6 18L18 6M6 6l12 12" stroke-width="2.5" />
+                    </svg>
+                </button>
+            </div>
 
-            <form id="resultForm" method="POST" action="{{ route('jadwal.store') }}">
+            <div class="px-10 py-4 max-h-[60vh] overflow-y-auto custom-scroll">
+                <div class="flex items-center justify-between mb-8 p-6 bg-slate-50 rounded-[2rem]">
+                    <div>
+                        <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1">Completion
+                            Progress</p>
+                        <div class="flex items-baseline gap-2">
+                            <span id="mPercentText" class="text-3xl font-black text-indigo-600">0%</span>
+                            <span class="text-xs font-bold text-slate-400 uppercase">Items Passed</span>
+                        </div>
+                    </div>
+                    <div class="w-48">
+                        <div class="progress-wrapper">
+                            <div id="mProgressBar" class="progress-fill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 ml-2">Item Inspection List</h4>
+                <div id="mItems" class="space-y-4 pb-10"></div>
+            </div>
+
+            <div class="p-8 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+                <button id="closeModal2"
+                    class="px-8 py-3 rounded-2xl bg-white border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-100 transition-all">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="resultModal"
+        class="fixed inset-0 bg-slate-900/60 backdrop-blur-md hidden items-center justify-center z-[60] p-4">
+        <div class="bg-white rounded-[2.5rem] w-full max-w-md p-10 shadow-2xl relative">
+            <h3 class="text-2xl font-extrabold text-slate-900 mb-2">Update Inspection</h3>
+            <p id="display_part_name" class="text-sm font-bold text-indigo-600 mb-8"></p>
+
+            <form id="resultForm" method="POST" action="{{ route('jadwal.store') }}" class="space-y-6">
                 @csrf
                 <input type="hidden" name="result_id" id="result_id">
                 <input type="hidden" name="activity_id" id="activity_id">
+                <input type="hidden" name="part_name" id="part_name">
 
-                <div class="mb-3">
-                    <label class="text-sm text-slate-600">Nama Inspektor Client</label>
-                    <input type="text" name="inspector_name" id="inspector_name"
-                        class="form-control w-full border rounded-lg p-2" required>
-                </div>
-                <div class="mb-3">
-                    <label class="text-sm text-slate-600">Nama PIC Metinca</label>
-                    <input type="text" name="pic" id="pic"
-                        class="form-control w-full border rounded-lg p-2" required>
-                </div>
-
-                <div class="mb-3">
-                    <label class="text-sm text-slate-600">Nama Part</label>
-                    <input type="text" readonly name="part_name" id="part_name"
-                        class="form-control w-full border rounded-lg p-2">
-                </div>
-
-                <div class="mb-3">
-                    <label class="text-sm text-slate-600">Material</label>
-                    <input type="text" readonly name="material" id="material"
-                        class="form-control w-full border rounded-lg p-2">
-                </div>
-
-                <div class="mb-3">
-                    <label class="text-sm text-slate-600">Qty</label>
-                    <input type="number" readonly name="qty" id="qty"
-                        class="form-control w-full border rounded-lg p-2">
-                </div>
-
-                <div class="mb-3">
-                    <label class="text-sm text-slate-600">Hasil</label>
-                    <select name="result" id="result" class="form-control w-full border rounded-lg p-2" required>
-                        <option value="PA">Partial Accepted</option>
-                        <option value="OH">On Hold</option>
-                        <option value="OK">All Accepted</option>
-                        <option value="NG">Rejected</option>
-                    </select>
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-extrabold text-slate-400 uppercase ml-1 tracking-widest">Client
+                                Inspector</label>
+                            <input type="text" name="inspector_name" id="inspector_name" required
+                                class="w-full bg-slate-50 border-none rounded-2xl p-4 text-sm font-bold focus:ring-2 focus:ring-indigo-500 transition-all">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-extrabold text-slate-400 uppercase ml-1 tracking-widest">PIC
+                                Metinca</label>
+                            <input type="text" name="pic" id="pic" required
+                                class="w-full bg-slate-50 border-none rounded-2xl p-4 text-sm font-bold focus:ring-2 focus:ring-indigo-500 transition-all">
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-extrabold text-slate-400 uppercase ml-1 tracking-widest">Inspection
+                            Result</label>
+                        <select name="result" id="result"
+                            class="w-full bg-slate-50 border-none rounded-2xl p-4 text-sm font-bold focus:ring-2 focus:ring-indigo-500 appearance-none cursor-pointer">
+                            <option value="OK">ALL ACCEPTED</option>
+                            <option value="PA">PARTIAL ACCEPTED</option>
+                            <option value="OH">ON HOLD</option>
+                            <option value="NG">REJECTED</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div class="mb-3">
-                    <label class="text-sm text-slate-600">Catatan</label>
-                    <textarea name="remarks" id="remarks" class="form-control w-full border rounded-lg p-2"></textarea>
-                </div>
-
-                <div class="mt-4 flex justify-end gap-2">
+                <div class="pt-6 flex gap-3">
                     <button type="button" id="closeResultModal"
-                        class="px-4 py-2 bg-slate-100 rounded-lg hover:bg-slate-200 text-slate-700">Batal</button>
+                        class="flex-1 py-4 text-sm font-bold text-slate-400 hover:text-slate-600 transition-all">Cancel</button>
                     <button type="submit" id="submitResultBtn"
-                        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Simpan</button>
+                        class="flex-[2] py-4 bg-indigo-600 text-white rounded-2xl text-sm font-bold shadow-xl shadow-indigo-200 hover:bg-indigo-700 transition-all">Save
+                        Result</button>
                 </div>
             </form>
         </div>
     </div>
-
-    <!-- Modal View Hasil Pemeriksaan (rendered server-side) -->
-    <div id="viewResultModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
-        <div
-            class="bg-white rounded-2xl w-full max-w-lg p-6 shadow-2xl transform scale-90 opacity-0 transition-all duration-300 ease-out overflow-y-auto max-h-[85vh]">
-
-            <!-- Header -->
-            <div class="flex items-center justify-between border-b pb-3 mb-4">
-                <h3 class="font-semibold text-lg text-slate-800">🧾 Hasil Pemeriksaan</h3>
-                <button id="closeViewResultModal"
-                    class="text-slate-500 hover:text-red-500 transition-colors text-xl font-bold leading-none">×</button>
-            </div>
-
-            <!-- Body -->
-            <div id="viewResultBody" class="space-y-4">
-                @forelse($activityResults as $result)
-                    @php
-                        $status = $result->status ?? null;
-                        // default
-                        $badgeColor = 'bg-gray-300 text-slate-700';
-
-                        if ($status === 'All Accepted') {
-                            $badgeColor = 'bg-green-500 text-white';
-                        } elseif ($status === 'Partial Accepted') {
-                            $badgeColor = 'bg-orange-500 text-white';
-                        } elseif ($status === 'On Hold') {
-                            $badgeColor = 'bg-blue-500 text-white';
-                        } elseif ($status === 'Rejected') {
-                            $badgeColor = 'bg-red-500 text-white';
-                        }
-                    @endphp
-
-                    <div class="result-row border border-slate-200 rounded-xl p-4 hover:shadow-md transition-all"
-                        data-activity-id="{{ $result->activity_id }}" data-part-name="{{ $result->part_name }}">
-
-                        <div class="flex justify-between items-center mb-2">
-                            <h4 class="font-semibold text-slate-700">{{ $result->part_name }}</h4>
-                            <span class="text-xs font-semibold px-3 py-1 rounded-full {{ $badgeColor }}">
-                                {{ $status ?? 'Belum Diperiksa' }}
-                            </span>
-                        </div>
-
-                        <dl class="text-sm text-slate-600 space-y-1">
-                            <div class="flex justify-between">
-                                <dt class="font-medium">Inspektor Client:</dt>
-                                <dd>{{ $result->inspector_name }}</dd>
-                            </div>
-                            <div class="flex justify-between">
-                                <dt class="font-medium">PIC Metinca:</dt>
-                                <dd>{{ $result->pic }}</dd>
-                            </div>
-                            <div class="flex justify-between">
-                                <dt class="font-medium">Waktu:</dt>
-                                <dd>{{ $result->inspection_time }}</dd>
-                            </div>
-                            <div class="flex justify-between">
-                                <dt class="font-medium">Hasil:</dt>
-                                <dd>{{ $result->result }}</dd>
-                            </div>
-                            <div class="flex justify-between">
-                                <dt class="font-medium">Catatan:</dt>
-                                <dd class="text-slate-500 italic">{{ $result->remarks ?? '-' }}</dd>
-                            </div>
-                        </dl>
-                    </div>
-                @empty
-                    <p class="text-center text-slate-500 italic">Belum ada hasil pemeriksaan.</p>
-                @endforelse
-            </div>
-
-            <!-- Footer -->
-            <div class="mt-6 flex justify-end">
-                <button id="closeViewResultModalBottom"
-                    class="px-4 py-2 bg-slate-100 rounded-lg hover:bg-slate-200 text-slate-700 transition">
-                    Tutup
-                </button>
-            </div>
-        </div>
-    </div>
-
 @endsection
 
 @push('js')
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-
-            // --- Data dari server ---
             const resultsData = @json($resultsData);
+            const userIsLoggedIn = {!! Auth::check() ? 'true' : 'false' !!};
 
-
-            // --- Elemen DOM ---
-            const calendarEl = document.getElementById('calendar');
-            const modal = document.getElementById('modal');
-            const modalContent = document.getElementById('modalContent');
-            const resultModal = document.getElementById('resultModal');
-            const viewResultModal = document.getElementById('viewResultModal');
-            const lastUpdateEl = document.getElementById('lastUpdate');
-
-            // --- Helper Modal ---
-            function showModal(el, contentEl) {
-                el.classList.remove('hidden');
-                setTimeout(() => {
-                    el.classList.add('flex');
-                    if (contentEl) {
-                        contentEl.classList.remove('opacity-0', 'scale-90');
-                        contentEl.classList.add('opacity-100', 'scale-100');
-                    }
-                }, 10);
-            }
-
-            function hideModal(el, contentEl) {
-                if (contentEl) {
-                    contentEl.classList.remove('opacity-100', 'scale-100');
-                    contentEl.classList.add('opacity-0', 'scale-90');
-                }
-                setTimeout(() => {
-                    el.classList.add('hidden');
-                    el.classList.remove('flex');
-                }, 200);
-            }
-
-            // --- Close buttons ---
-            document.getElementById('closeModal')?.addEventListener('click', () => hideModal(modal, modalContent));
-            document.getElementById('closeModal2')?.addEventListener('click', () => hideModal(modal, modalContent));
-            modal.addEventListener('click', e => {
-                if (e.target === modal) hideModal(modal, modalContent);
-            });
-
-            document.getElementById('closeResultModal')?.addEventListener('click', () => hideModal(resultModal,
-                resultModal.querySelector('.bg-white')));
-            resultModal.addEventListener('click', e => {
-                if (e.target === resultModal) hideModal(resultModal, resultModal.querySelector(
-                    '.bg-white'));
-            });
-
-            document.getElementById('closeViewResultModal')?.addEventListener('click', () => hideModal(
-                viewResultModal, viewResultModal.querySelector('.bg-white')));
-            viewResultModal.addEventListener('click', e => {
-                if (e.target === viewResultModal) hideModal(viewResultModal, viewResultModal.querySelector(
-                    '.bg-white'));
-            });
-
-            // --- Modal Input/Edit Hasil ---
-            function openResultModal(activity, item) {
-                const activityId = activity.id;
-                const partName = item.part_name || '';
-
-                // Reset form
-                const form = document.getElementById('resultForm');
-                form.reset();
-                document.getElementById('result_id').value = '';
-                document.getElementById('activity_id').value = activityId;
-                document.getElementById('part_name').value = partName;
-                document.getElementById('material').value = item.material || '';
-                document.getElementById('qty').value = item.qty || '';
-
-                const submitBtn = document.getElementById('submitResultBtn');
-
-                // Cek apakah sudah ada hasil
-                const found = resultsData.find(r => r.activity_id == activityId && r.part_name == partName);
-                if (found) {
-                    document.getElementById('result_id').value = found.id;
-                    document.getElementById('inspector_name').value = found.inspector_name || '';
-                    document.getElementById('pic').value = found.pic || '';
-                    document.getElementById('material').value = found.material || '';
-                    document.getElementById('qty').value = found.qty || '';
-                    document.getElementById('result').value = found.result || 'OK';
-                    document.getElementById('remarks').value = found.remarks || '';
-                    submitBtn.innerText = 'Perbarui';
+            // --- Modal Animations ---
+            function toggleModal(modalId, contentId, show = true) {
+                const m = $(`#${modalId}`);
+                const c = $(`#${contentId}`);
+                if (show) {
+                    m.removeClass('hidden').addClass('flex');
+                    setTimeout(() => c.removeClass('scale-95 opacity-0').addClass('scale-100 opacity-100'), 10);
                 } else {
-                    submitBtn.innerText = 'Simpan';
+                    c.removeClass('scale-100 opacity-100').addClass('scale-95 opacity-0');
+                    setTimeout(() => m.addClass('hidden').removeClass('flex'), 250);
                 }
-
-                showModal(resultModal, resultModal.querySelector('.bg-white'));
             }
 
-            // --- Modal Lihat Hasil ---
-            function openViewResultModal(activityId, partName) {
-                const body = document.getElementById('viewResultBody');
-                body.innerHTML = '';
+            $('#closeModal, #closeModal2').click(() => toggleModal('modal', 'modalContent', false));
+            $('#closeResultModal').click(() => toggleModal('resultModal', 'resultModal > div', false));
 
-                const matches = resultsData.filter(r => r.activity_id == activityId && r.part_name == partName);
-
-                if (matches.length === 0) {
-                    body.innerHTML =
-                        '<p class="text-center text-slate-500 italic">Belum ada hasil pemeriksaan.</p>';
-                } else {
-                    matches.forEach(m => {
-                        const div = document.createElement('div');
-                        div.classList.add(
-                            'border', 'p-4', 'rounded-xl', 'hover:shadow-md',
-                            'transition-all', 'space-y-2', 'bg-white'
-                        );
-
-                        div.innerHTML = `
-        <!-- Bagian atas: dua kolom -->
-        <div class="grid grid-cols-2 gap-3 text-sm text-slate-700">
-            <div>
-                <div><strong>Inspektor Client:</strong> ${m.inspector_name}</div>
-                <div><strong>PIC Metinca:</strong> ${m.pic}</div>
-                <div><strong>Part Name:</strong> ${m.part_name}</div>
-            </div>
-            <div>
-                <div><strong>Material:</strong> ${m.material}</div>
-                <div><strong>Quantity:</strong> ${m.qty} Pcs</div>
-                <div>
-                <strong>Hasil Pemeriksaan:</strong>
-                ${
-                    m.result === 'OK' ? '<span style="color:#10B981;font-weight:500">All Accepted</span>' :
-                    m.result === 'NG' ? '<span style="color:#EF4444;font-weight:500">Rejected</span>' :
-                    m.result === 'OH' ? '<span style="color:#F59E0B;font-weight:500">On Hold</span>' :
-                    m.result === 'PA' ? '<span style="color:#3B82F6;font-weight:500">Partial Accepted</span>' :
-                    '<span style="color:#6B7280;font-style:italic">-</span>'
-                }
-                </div>
-            </div>
-        </div>
-
-        <!-- Garis pemisah -->
-        <div class="border-t border-slate-200 my-2"></div>
-
-        <!-- Bagian bawah: info tambahan -->
-        <div class="text-sm text-slate-600 space-y-1">
-            <div><strong>Keterangan:</strong> ${m.remarks || '(Tidak Ada Keterangan)'}</div>
-            <div><strong>Disusun oleh:</strong> ${m.user_name || 'Admin QC'}</div>
-        </div>
-    `;
-                        body.appendChild(div);
-                    });
-                }
-
-                showModal(viewResultModal, viewResultModal.querySelector('.bg-white'));
-            }
-
-            function expandRange(activity) {
-                const events = [];
-                let start = new Date(activity.start_date);
-                let end = new Date(activity.end_date);
-                end.setDate(end.getDate() + 1); // include end date
-
-                for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
-                    const dateStr = d.toISOString().split('T')[0]; // hanya YYYY-MM-DD
-                    events.push({
-                        id: activity.id + '-' + dateStr,
-                        title: activity.kegiatan,
-                        start: dateStr, // HANYA tanggal
-                        end: dateStr, // HANYA tanggal
-                        allDay: true, // pastikan full day event
-                        extendedProps: {
-                            id: activity.id,
-                            customer: activity.customer || '-',
-                            type: activity.type,
-                            po: activity.po || '',
-                            status: activity.status,
-                            items: activity.items || null
-                        }
-                    });
-                }
-
-                return events;
-            }
-
-
-            let initialEvents = [];
-            @foreach ($activities as $activity)
-                initialEvents = initialEvents.concat(expandRange({
-                    id: '{{ $activity->id }}',
-                    kegiatan: '{!! addslashes($activity->kegiatan) !!}',
-                    customer: '{{ $activity->customer ?? '' }}',
-                    start_date: '{{ $activity->start_date }}',
-                    end_date: '{{ $activity->end_date }}',
-                    type: '{{ ucfirst($activity->type) }}',
-                    po: '{{ $activity->po ?? '' }}',
-                    status: '{{ $activity->status }}',
-                    items: {!! $activity->items ?? 'null' !!}
-                }));
-            @endforeach
-
-            const calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
+            // --- Calendar Implementation ---
+            const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+                initialView: window.innerWidth < 768 ? 'listWeek' : 'dayGridMonth',
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: "dayGridMonth,dayGridWeek,dayGridDay"
+                    right: window.innerWidth < 768 ? '' : 'dayGridMonth,dayGridWeek,listWeek'
                 },
-                events: initialEvents,
-                eventContent: function(arg) {
-                    const items = arg.event.extendedProps.items || [];
-                    const okCount = items.filter(item => {
-                        const found = resultsData.find(r =>
-                            r.activity_id == arg.event.extendedProps.id &&
-                            r.part_name == item.part_name
-                        );
-                        return found && found.result === 'OK';
-                    }).length;
-
-                    const percent = items.length > 0 ?
-                        Math.round((okCount / items.length) * 100) :
-                        0;
-
-                    if (percent === 0) {
-                        return {
-                            html: `<div class="fc-event-title">${arg.event.title}</div>`
-                        };
-                    }
-
-                    let barColor = '#10B981'; // Hijau
-                    if (percent < 40) barColor = '#EF4444'; // Merah
-                    else if (percent < 80) barColor = '#F59E0B'; // Oranye
-
-                    const html = `
-        <div style="display:flex; flex-direction:column; gap:4px;">
-            <div class="fc-event-title"
-                style="font-weight:600; font-size:0.85rem;">
-                ${arg.event.title}
-            </div>
-
-            <div style="display:flex; flex-direction:column; gap:2px;">
-                <div style="font-size:0.65rem; font-weight:600;
-                    ; align-self:flex-end;">
-                    ${percent}%
-                </div>
-
-                <div class="progress-container">
-                    <div class="progress-bar"
-                         data-percent="${percent}%"
-                         style="background:${barColor};">
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-
-                    return {
-                        html
-                    };
-                },
-                eventDidMount: function(info) {
-                    // 🔥 1. Sembunyikan event pada weekend
-                    const dateCell = info.el.closest(".fc-daygrid-day");
-                    if (dateCell) {
-                        const dateStr = dateCell.getAttribute("data-date");
-                        const day = new Date(dateStr).getDay();
-                        if (day === 0 || day === 6) {
-                            info.el.style.display = "none"; // hide event
-                            return; // stop styling lanjut
-                        }
-                    }
-                    const type = info.event.extendedProps.status;
-                    let color = '#6B7280'; // Default Pending (Gray)
-
-                    if (type === 'Pending') color = '#6B7280'; // Gray
-                    if (type === 'On Going') color = '#F59E0B'; // Orange
-                    if (type === 'Reschedule') color = '#EF4444'; // Red
-                    if (type === 'Done') color = '#10B981'; // Green
-
-                    info.el.style.backgroundColor = color;
-                    info.el.style.borderColor = color;
-                },
+                height: 'auto',
+                events: [
+                    @foreach ($activities as $activity)
+                        @php
+                            $start = \Carbon\Carbon::parse($activity->start_date);
+                            $end = \Carbon\Carbon::parse($activity->end_date);
+                            $statusColor =
+                                [
+                                    'Done' => '#10B981',
+                                    'On Going' => '#F59E0B',
+                                    'Reschedule' => '#F43F5E',
+                                    'Pending' => '#64748B',
+                                ][$activity->status] ?? '#4F46E5';
+                        @endphp
+                        @for ($d = $start->copy(); $d->lte($end); $d->addDay())
+                            @if (!$d->isWeekend())
+                                {
+                                    id: '{{ $activity->id }}',
+                                    title: '{{ $activity->kegiatan }}',
+                                    start: '{{ $d->toDateString() }}',
+                                    backgroundColor: '{{ $statusColor }}',
+                                    extendedProps: {
+                                        customer: '{{ $activity->customer ?? '-' }}',
+                                        type: '{{ ucfirst($activity->type) }}',
+                                        po: '{{ $activity->po ?? '-' }}',
+                                        status: '{{ $activity->status }}',
+                                        items: {!! $activity->items ?? '[]' !!}
+                                    }
+                                },
+                            @endif
+                        @endfor
+                    @endforeach
+                ],
                 eventClick: function(info) {
-                    const ev = info.event;
+                    const p = info.event.extendedProps;
 
-                    // --- Isi data modal utama ---
-                    document.getElementById('mTitle').innerText = ev.title;
-                    document.getElementById('mCustomer').innerText = ev.extendedProps.customer || '-';
-                    document.getElementById('mType').innerText = ev.extendedProps.type || '-';
-                    document.getElementById('mTime').innerText = ev.start ? ev.start.toLocaleDateString(
-                        'id-ID') : '-';
-                    document.getElementById('mPO').innerText = ev.extendedProps.po || '-';
-                    document.getElementById('mStatus').innerText = ev.extendedProps.status || '-';
+                    // Header Info
+                    $('#mTitle').text(info.event.title);
+                    $('#mCustomer').text(p.customer);
+                    $('#mTime').text(info.event.start.toLocaleDateString('id-ID', {
+                        dateStyle: 'long'
+                    }));
+                    $('#mStatus').text(p.status);
 
-                    // --- Items ---
-                    const itemsDiv = document.getElementById('mItems');
-                    itemsDiv.innerHTML = '';
+                    // Dynamic Status Badge
+                    const statusClass = {
+                        'Done': 'bg-emerald-50 text-emerald-600',
+                        'On Going': 'bg-amber-50 text-amber-600',
+                        'Reschedule': 'bg-rose-50 text-rose-600'
+                    } [p.status] || 'bg-slate-50 text-slate-600';
+                    $('#mStatusBadge').removeClass().addClass(
+                        `inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-widest mb-3 ${statusClass}`
+                        );
 
-                    if (ev.extendedProps.items && ev.extendedProps.items.length > 0) {
-                        const scrollDiv = document.createElement('div');
-                        scrollDiv.style.maxHeight = '300px';
-                        scrollDiv.style.overflowY = 'auto';
+                    // Items Rendering
+                    const itemsContainer = $('#mItems').empty();
+                    let ok = 0;
 
-                        ev.extendedProps.items.forEach(item => {
-                            const itemContainer = document.createElement('div');
-                            itemContainer.classList.add('border', 'p-2', 'mb-2', 'rounded',
-                                'flex', 'justify-between', 'items-start', 'gap-2');
+                    if (p.items.length > 0) {
+                        p.items.forEach(item => {
+                            const found = resultsData.find(r => r.activity_id == info.event
+                                .id && r.part_name == item.part_name);
+                            if (found?.result === 'OK') ok++;
 
-                            // --- LEFT: Info item + badge status ---
-                            const left = document.createElement('div');
+                            const resConfig = {
+                                'OK': {
+                                    color: 'text-emerald-500 bg-emerald-50',
+                                    label: 'Accepted'
+                                },
+                                'PA': {
+                                    color: 'text-blue-500 bg-blue-50',
+                                    label: 'Partial'
+                                },
+                                'NG': {
+                                    color: 'text-rose-500 bg-rose-50',
+                                    label: 'Rejected'
+                                },
+                                'OH': {
+                                    color: 'text-amber-500 bg-amber-50',
+                                    label: 'On Hold'
+                                }
+                            } [found?.result] || {
+                                color: 'text-slate-400 bg-slate-50',
+                                label: 'Pending'
+                            };
 
-                            // Ambil status item dari resultsData
-                            const foundResult = resultsData.find(r => r.activity_id == ev
-                                .extendedProps.id && r.part_name == item.part_name);
-                            const status = foundResult ? foundResult.result : '-';
-
-                            // Tentukan warna badge
-                            let badgeText = status;
-                            let badgeColor = 'gray';
-
-                            if (status === 'OK') {
-                                badgeText = 'All Accepted';
-                                badgeColor = 'green'; // Hijau = semua diterima
-                            } else if (status === 'PA') {
-                                badgeText = 'Partial Accepted';
-                                badgeColor = 'orange'; // Oranye = sebagian diterima
-                            } else if (status === 'OH') {
-                                badgeText = 'On Hold';
-                                badgeColor = 'blue'; // Biru = ditunda
-                            } else if (status === 'NG') {
-                                badgeText = 'Rejected';
-                                badgeColor = 'red'; // Merah = ditolak
-                            } else {
-                                badgeText = 'Hasil belum tersedia.'; // default
-                                badgeColor = 'gray';
-                            }
-
-                            const statusBadge =
-                                `<span class="px-2 py-1 rounded text-white text-xs" style="background-color:${badgeColor}">${badgeText}</span>`;
-
-                            left.innerHTML = `
-                <div><strong>Part Name:</strong> ${item.part_name || '-'}</div>
-                <div><strong>Material:</strong> ${item.material || '-'}</div>
-                <div><strong>Heat Number:</strong> ${item.heat_no || '-'}</div>
-                <div><strong>Quantity:</strong> ${item.qty || '-'}</div>
-                <div><strong>Remarks:</strong> ${item.remarks || '-'}</div>
-                <div><strong>Status:</strong> ${statusBadge}</div>
-            `;
-
-                            // --- RIGHT: Button ---
-                            const right = document.createElement('div');
-                            right.classList.add('flex', 'flex-col', 'gap-1');
-
-                            const userIsLoggedIn = {!! Auth::check() ? 'true' : 'false' !!};
-
-                            if (userIsLoggedIn) {
-                                const inputBtn = document.createElement('button');
-                                inputBtn.innerText = 'Input / Edit Hasil';
-                                inputBtn.classList.add('bg-blue-600', 'text-white', 'text-xs',
-                                    'px-2', 'py-1', 'rounded', 'hover:bg-blue-700');
-                                inputBtn.addEventListener('click', () => openResultModal(ev
-                                    .extendedProps, item));
-                                right.appendChild(inputBtn);
-                            }
-
-                            const viewBtn = document.createElement('button');
-                            viewBtn.innerText = 'Lihat Hasil';
-                            viewBtn.classList.add('bg-gray-100', 'text-gray-700', 'text-xs',
-                                'px-2', 'py-1', 'rounded', 'hover:bg-gray-200');
-                            viewBtn.addEventListener('click', () => openViewResultModal(ev
-                                .extendedProps.id, item.part_name));
-                            right.appendChild(viewBtn);
-
-                            itemContainer.appendChild(left);
-                            itemContainer.appendChild(right);
-                            scrollDiv.appendChild(itemContainer);
+                            itemsContainer.append(`
+                        <div class="bg-white border border-slate-100 p-6 rounded-[2rem] flex flex-col md:flex-row justify-between gap-6 transition-all hover:border-indigo-100">
+                            <div>
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="text-[10px] font-black text-slate-300 uppercase tracking-widest">Part Name</span>
+                                    <span class="px-2 py-0.5 rounded-lg text-[9px] font-black uppercase ${resConfig.color}">${resConfig.label}</span>
+                                </div>
+                                <h5 class="text-lg font-extrabold text-slate-800 uppercase tracking-tight">${item.part_name}</h5>
+                                <p class="text-xs font-bold text-slate-400 mt-1">${item.material || '-'} • ${item.qty || 0} PCS</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                ${userIsLoggedIn ? `<button onclick="openForm('${info.event.id}', '${item.part_name}')" class="flex-1 md:flex-none px-6 py-3 bg-indigo-50 text-indigo-600 text-[11px] font-black rounded-2xl hover:bg-indigo-600 hover:text-white transition-all">UPDATE</button>` : ''}
+                                <button onclick="viewDetail('${info.event.id}', '${item.part_name}')" class="flex-1 md:flex-none px-6 py-3 bg-slate-50 text-slate-500 text-[11px] font-black rounded-2xl hover:bg-slate-900 hover:text-white transition-all">DETAILS</button>
+                            </div>
+                        </div>
+                    `);
                         });
 
-                        itemsDiv.appendChild(scrollDiv);
-
-                        // --- Progress Bar ---
-                        const progressContainer = document.getElementById('mProgressContainer');
-                        const progressBar = document.getElementById('mProgressBar');
-
-                        // Reset default
-                        progressContainer.classList.add('hidden');
-                        progressBar.style.width = '0%';
-                        progressBar.innerText = '0%';
-
-                        const items = ev.extendedProps.items;
-                        const okCount = items.filter(item => {
-                            const found = resultsData.find(r => r.activity_id == ev
-                                .extendedProps.id && r.part_name == item.part_name);
-                            return found && found.result === 'OK';
-                        }).length;
-
-                        const percent = Math.round((okCount / items.length) * 100);
-
-                        if (percent > 0) {
-                            progressContainer.classList.remove('hidden');
-
-                            // Animasi progress
-                            setTimeout(() => {
-                                progressBar.style.width = percent + '%';
-                                progressBar.innerText = percent + '%';
-                            }, 50);
-                        }
-
-                    } else {
-                        itemsDiv.innerHTML = '<p class="text-muted mb-0">Tidak ada items</p>';
+                        const percent = Math.round((ok / p.items.length) * 100);
+                        $('#mPercentText').text(percent + '%');
+                        setTimeout(() => $('#mProgressBar').css('width', percent + '%'), 200);
                     }
 
-                    showModal(modal, modalContent);
+                    toggleModal('modal', 'modalContent');
                 }
             });
-
             calendar.render();
-            // 🔄 Auto refresh event tiap 30 detik
 
+            // --- Functions ---
+            window.openForm = function(actId, part) {
+                $('#activity_id').val(actId);
+                $('#part_name').val(part);
+                $('#display_part_name').text(part);
 
-            setTimeout(() => {
-                document.querySelectorAll('.progress-bar').forEach(el => {
-                    el.style.width = el.dataset.percent;
+                const found = resultsData.find(r => r.activity_id == actId && r.part_name == part);
+                if (found) {
+                    $('#result_id').val(found.id);
+                    $('#inspector_name').val(found.inspector_name);
+                    $('#pic').val(found.pic);
+                    $('#result').val(found.result);
+                }
+                toggleModal('resultModal', 'resultModal > div');
+            };
+
+            function updateSync() {
+                const time = new Date().toLocaleTimeString('id-ID', {
+                    hour: '2-digit',
+                    minute: '2-digit'
                 });
-            }, 300);
-
-            // Fungsi untuk update teks waktu terakhir refresh
-            function updateLastRefreshed() {
-                const now = new Date();
-                const formatter = new Intl.DateTimeFormat('id-ID', {
-                    dateStyle: 'long',
-                    timeStyle: 'medium',
-                    timeZone: 'Asia/Jakarta'
-                });
-                lastUpdateEl.textContent = `Terakhir diperbarui: ${formatter.format(now)}`;
+                $('#lastUpdate').html(
+                    `<span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span> SYNCED ${time}`);
             }
-
-            // 🔄 Auto refresh event tiap 30 detik
-            setInterval(() => {
-                console.log('Refreshing calendar events...');
-                calendar.refetchEvents();
-                updateLastRefreshed();
-            }, 30000); // 30 detik
-
-            // Tampilkan waktu pertama kali load
-            updateLastRefreshed();
-
+            updateSync();
+            setInterval(updateSync, 60000);
         });
-
-        // Notifikasi sukses
-        @if (session('success'))
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: '{{ session('success') }}',
-                timer: 2500,
-                showConfirmButton: false
-            });
-        @endif
     </script>
 @endpush
