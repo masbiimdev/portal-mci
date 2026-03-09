@@ -2,249 +2,289 @@
 @section('title', 'History Kalibrasi | QC Calibration')
 
 @push('css')
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 
     <style>
-        table.dataTable td,
-        table.dataTable th {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+        :root {
+            --primary-blue: #4361ee;
+            --soft-bg: #f8fafc;
+            --border-color: #e2e8f0;
         }
 
-        /* Highlight row berdasarkan status */
-        .row-no-history {
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--soft-bg);
+        }
+
+        /* Card & Container */
+        .card-history {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+            background: #ffffff;
+            padding: 1.5rem;
+        }
+
+        /* Table Styling */
+        #historyTable {
+            border: none !important;
+            width: 100% !important;
+        }
+
+        #historyTable thead th {
             background-color: #f8f9fa;
+            border-bottom: 2px solid var(--border-color);
+            color: #64748b;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            padding: 12px 15px;
         }
 
-        .row-history-no-pdf {
-            background-color: #fff3cd;
-            /* oranye muda */
+        #historyTable tbody tr {
+            transition: all 0.2s ease;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .row-history-pdf {
-            background-color: #d1e7dd;
-            /* hijau muda */
+        #historyTable tbody tr:hover {
+            background-color: #f1f5f9 !important;
+            transform: scale(1.002);
         }
 
-        /* Modal premium putih bersih */
+        #historyTable td {
+            padding: 15px;
+            vertical-align: middle;
+            color: #334155;
+            border: none;
+        }
+
+        /* Status Badge Soft UI */
+        .status-pill {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .pill-info {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .pill-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .pill-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .pill-process {
+            background: #e0e7ff;
+            color: #4338ca;
+        }
+
+        .pill-secondary {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        /* PDF & Action Buttons */
+        .btn-view-pdf {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            color: #475569;
+            width: 35px;
+            height: 35px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-view-pdf:hover {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+            box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
+        }
+
+        /* Modal Premium */
         .modal-premium .modal-content {
-            border-radius: 14px;
-            border: 1px solid #e5e7eb;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
-            background: #ffffff;
-            overflow: hidden;
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
 
-        /* Header putih bersih */
         .modal-premium .modal-header {
-            background: #ffffff;
-            border-bottom: 1px solid #e6e6e6;
-            padding: 14px 20px;
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        /* Title */
         .modal-premium .modal-title {
-            font-weight: 600;
-            color: #333;
+            font-weight: 800;
+            color: #1e293b;
         }
 
-        /* Close button abu (bukan putih/biru) */
-        .modal-premium .btn-close {
-            filter: brightness(0);
-            opacity: 0.6;
+        .iframe-wrapper {
+            background: #f8fafc;
+            border-radius: 0 0 20px 20px;
+            overflow: hidden;
+            height: 75vh;
         }
 
-        .modal-premium .btn-close:hover {
-            opacity: 1;
-        }
-
-        /* Body */
-        .modal-premium .modal-body {
-            padding: 0 !important;
-            background: #fafafa;
-        }
-
-        .custom-close-btn {
-            filter: none !important;
-            /* Hilangkan filter bawaan Bootstrap */
-            opacity: 1 !important;
-            /* Biar tidak transparan */
-            background-size: 16px !important;
-        }
-
-        .custom-close-btn:hover {
-            opacity: 0.7 !important;
+        /* Custom scrollbar for DataTable */
+        .dataTables_wrapper .dataTables_filter input {
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 8px 12px;
+            outline: none;
         }
     </style>
 @endpush
 
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
-
-        <h4 class="fw-bold py-3 mb-4">
-            <span class="text-muted fw-light">QC / Kalibrasi /</span> History Kalibrasi
-        </h4>
-
-        <div class="card p-3">
-
-            {{-- Header --}}
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h4 class="card-title">Daftar History Kalibrasi Item</h4>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h4 class="fw-extrabold mb-1">History Kalibrasi</h4>
+                <p class="text-muted small mb-0">Manajemen records dan sertifikasi QC Calibration</p>
             </div>
+            <div class="bg-white p-2 rounded-3 shadow-sm border">
+                <span class="text-muted small px-2">Total Item: <strong>{{ $tools->count() }}</strong></span>
+            </div>
+        </div>
 
-            {{-- Table --}}
+        <div class="card card-history">
             <div class="table-responsive">
-                <table id="historyTable" class="table table-striped table-bordered table-hover">
-                    <thead style="background-color: #f8f9fa; font-weight: 600;">
+                <table id="historyTable" class="table">
+                    <thead>
                         <tr>
-                            <th>Nama Item</th>
-                            <th>Merek</th>
-                            <th>No Seri</th>
-                            <th>Status Kalibrasi Item</th>
-                            <th>Tanggal Kalibrasi Ulang</th>
-                            <th>Interval Kalibrasi</th>
+                            <th>Item & Identitas</th>
+                            <th>Status Kalibrasi</th>
+                            <th>Jadwal Ulang</th>
+                            <th>Interval</th>
                             <th>Sertifikat</th>
-                            <th class="text-center" style="width: 140px;">Aksi</th>
+                            <th class="text-center">Aksi</th>
                         </tr>
                     </thead>
-
                     <tbody>
                         @foreach ($tools as $tool)
                             @php
-                                // Ambil history terakhir (tgl_kalibrasi_ulang terbaru)
                                 $lastHistory = $tool->histories->sortByDesc('tgl_kalibrasi_ulang')->first();
-
-                                // Tentukan kelas row
-                                $rowClass = '';
-                                if (!$lastHistory) {
-                                    $rowClass = 'row-no-history';
-                                } elseif ($lastHistory && !$lastHistory->file_sertifikat) {
-                                    $rowClass = 'row-history-no-pdf';
-                                } else {
-                                    $rowClass = 'row-history-pdf';
+                                $diff = 0;
+                                if ($lastHistory && $lastHistory->tgl_kalibrasi_ulang) {
+                                    $today = \Carbon\Carbon::now();
+                                    $kalibrasi = \Carbon\Carbon::parse($lastHistory->tgl_kalibrasi_ulang);
+                                    $diff = $today->diffInDays($kalibrasi, false);
                                 }
                             @endphp
-                            <tr class="{{ $rowClass }}">
-                                <td>{{ $tool->nama_alat }}</td>
-                                <td>{{ $tool->merek ?? '-' }}</td>
-                                <td>{{ $tool->no_seri ?? '-' }}</td>
+                            <tr>
+                                <td>
+                                    <div class="d-flex flex-column">
+                                        <span class="fw-bold text-dark"
+                                            style="font-size: 0.95rem;">{{ $tool->nama_alat }}</span>
+                                        <span class="text-muted extra-small">{{ $tool->merek ?? '-' }} &bull; SN:
+                                            {{ $tool->no_seri ?? '-' }}</span>
+                                    </div>
+                                </td>
 
-                                {{-- Status Item --}}
                                 <td>
                                     @if ($lastHistory && $lastHistory->tgl_kalibrasi_ulang)
-                                        @php
-                                            $today = \Carbon\Carbon::now();
-                                            $kalibrasi = \Carbon\Carbon::parse($lastHistory->tgl_kalibrasi_ulang);
-                                            $diff = $today->diffInDays($kalibrasi, false); // negatif jika sudah lewat
-                                        @endphp
-
                                         @if ($diff > 0 && $diff <= 30)
-                                            <span class="badge bg-warning text-white ms-1">
-                                                <i class='bx bx-calendar-event'></i> Penjadwalan
-                                            </span>
+                                            <span class="status-pill pill-warning"><i class='bx bxs-bell-ring'></i>
+                                                Penjadwalan</span>
                                         @elseif($diff > 30)
-                                            <span class="badge bg-info text-white ms-1">
-                                                <i class='bx bx-calendar-event'></i> {{ $diff }} hari lagi
-                                            </span>
+                                            <span class="status-pill pill-info"><i class='bx bxs-calendar-check'></i>
+                                                {{ $diff }} Hari Lagi</span>
                                         @elseif($diff >= -7 && $diff <= 7)
-                                            <span class="badge bg-primary text-white ms-1">
-                                                <i class='bx bx-time-five'></i> Di Proses
-                                            </span>
+                                            <span class="status-pill pill-process"><i class='bx bx-sync bx-spin'></i> Di
+                                                Proses</span>
                                         @elseif($diff < 0 && abs($diff) > 8)
-                                            <span class="badge bg-success text-white ms-1">
-                                                <i class='bx bx-check-circle'></i> Selesai
-                                            </span>
+                                            <span class="status-pill pill-success"><i class='bx bxs-check-shield'></i>
+                                                Selesai</span>
                                         @else
-                                            <span class="badge bg-secondary text-white ms-1">
-                                                <i class='bx bx-minus-circle'></i> -
-                                            </span>
+                                            <span class="status-pill pill-secondary">-</span>
                                         @endif
                                     @else
-                                        <span class="badge bg-secondary text-white ms-1">
-                                            <i class='bx bx-minus-circle'></i> -
-                                        </span>
+                                        <span class="status-pill pill-secondary">Belum Ada History</span>
                                     @endif
                                 </td>
 
-                                {{-- Tanggal Kalibrasi Terakhir --}}
-                                <td>
-                                    @if ($lastHistory && $lastHistory->tgl_kalibrasi_ulang)
-                                        {{ \Carbon\Carbon::parse($lastHistory->tgl_kalibrasi_ulang)->format('d/m/Y') }}
-                                    @endif
-                                </td>
-                                <td>
-                                    {{ $lastHistory->interval_kalibrasi ?? '-' }}
+                                <td class="fw-bold">
+                                    {{ $lastHistory ? \Carbon\Carbon::parse($lastHistory->tgl_kalibrasi_ulang)->format('d/m/Y') : '-' }}
                                 </td>
 
+                                <td>
+                                    <span class="badge bg-label-primary px-3">{{ $lastHistory->interval_kalibrasi ?? '-' }}
+                                        Bulan</span>
+                                </td>
 
-                                {{-- Status PDF --}}
                                 <td>
                                     @if ($lastHistory && $lastHistory->file_sertifikat)
-                                        <span class="badge bg-success">Tersedia</span>
-
-                                        <button class="btn btn-sm btn-outline-primary rounded-pill ms-1 px-2 py-1"
-                                            data-bs-toggle="modal" data-bs-target="#pdfModal_{{ $lastHistory->id }}">
-                                            <i class="bx bx-show bx-xs"></i>
-                                        </button>
-                                    @elseif($lastHistory)
-                                        <span class="badge bg-warning">Pending</span>
-                                    @else
-                                        <span class="badge bg-secondary">Belum Ada History</span>
-                                    @endif
-
-                                </td>
-                                @if ($lastHistory && $lastHistory->file_sertifikat)
-                                    <div class="modal fade" id="pdfModal_{{ $lastHistory->id }}" tabindex="-1"
-                                        aria-hidden="true">
-                                        <div class="modal-dialog modal-xl modal-dialog-scrollable">
-                                            <div class="modal-content border-0 shadow-lg" style="border-radius: 14px;">
-
-                                                <div class="modal-header"
-                                                    style="background: #ffffff; border-bottom: 1px solid #eee;">
-                                                    <h5 class="modal-title fw-semibold">Preview Sertifikat PDF</h5>
-
-                                                    <!-- Tombol Close yang lebih jelas -->
-                                                    <button type="button" class="btn-close custom-close-btn"
-                                                        data-bs-dismiss="modal"></button>
-                                                </div>
-
-                                                <div class="modal-body p-0" style="height: 80vh; background: #fff;">
-                                                    <iframe src="{{ asset('storage/' . $lastHistory->file_sertifikat) }}"
-                                                        width="100%" height="100%" style="border: none;">
-                                                    </iframe>
-                                                </div>
-                                            </div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="text-success small fw-bold">Tersedia</span>
+                                            <button class="btn-view-pdf" data-bs-toggle="modal"
+                                                data-bs-target="#pdfModal_{{ $lastHistory->id }}">
+                                                <i class="bx bx-show-alt"></i>
+                                            </button>
                                         </div>
-                                    </div>
-                                @endif
+                                    @else
+                                        <span class="text-muted small">N/A</span>
+                                    @endif
+                                </td>
 
-
-
-                                {{-- Aksi --}}
                                 <td class="text-center">
                                     @if ($tool->histories->count() == 0)
                                         <a href="{{ route('histories.create', ['tool_id' => $tool->id, 'from' => 'index']) }}"
-                                            class="btn btn-sm btn-primary">
-                                            <i class="bi bi-plus-circle"></i> Tambah
+                                            class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm">
+                                            <i class="bx bx-plus-circle me-1"></i> Tambah
                                         </a>
                                     @else
-                                        <a href="{{ route('histories.show', $tool->id) }}" class="btn btn-sm btn-info">
-                                            <i class="bi bi-eye"></i> Update
+                                        <a href="{{ route('histories.show', $tool->id) }}"
+                                            class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                                            <i class="bx bx-history me-1"></i> Update
                                         </a>
                                     @endif
                                 </td>
                             </tr>
+
+                            {{-- Modal PDF Premium --}}
+                            @if ($lastHistory && $lastHistory->file_sertifikat)
+                                <div class="modal fade modal-premium" id="pdfModal_{{ $lastHistory->id }}" tabindex="-1"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog modal-xl modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title d-flex align-items-center">
+                                                    <i class="bx bxs-file-pdf text-danger fs-3 me-2"></i>
+                                                    Sertifikat: {{ $tool->nama_alat }}
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body p-0 iframe-wrapper">
+                                                <iframe src="{{ asset('storage/' . $lastHistory->file_sertifikat) }}"
+                                                    width="100%" height="100%" style="border: none;"></iframe>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
                         @endforeach
                     </tbody>
-
                 </table>
             </div>
-
         </div>
     </div>
-
-
 @endsection
 
 @push('js')
@@ -254,27 +294,37 @@
 
     <script>
         $(document).ready(function() {
-
-            // DataTable
             $('#historyTable').DataTable({
                 responsive: true,
                 autoWidth: false,
                 pageLength: 10,
-                lengthMenu: [5, 10, 25, 50],
-                order: [] // Urutkan berdasarkan kolom Tanggal Kalibrasi Terakhir
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Cari item atau serial number...",
+                    paginate: {
+                        previous: "<i class='bx bx-chevron-left'></i>",
+                        next: "<i class='bx bx-chevron-right'></i>"
+                    }
+                },
+                columnDefs: [{
+                    orderable: false,
+                    targets: [4, 5]
+                }]
             });
 
-            // Success alert
             @if (session('success'))
                 Swal.fire({
                     icon: 'success',
                     title: 'Berhasil',
                     text: '{{ session('success') }}',
                     timer: 2300,
-                    showConfirmButton: false
+                    showConfirmButton: false,
+                    customClass: {
+                        popup: 'rounded-20'
+                    }
                 });
             @endif
-
         });
     </script>
 @endpush
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        

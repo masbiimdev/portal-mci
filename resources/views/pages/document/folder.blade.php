@@ -3,174 +3,443 @@
 @section('title', 'Folder — Transmittal Portal')
 
 @push('css')
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <style>
         /* ========== CSS VARIABLES ========== */
         :root {
-            --primary: #0f172a;
-            --primary-light: #1e293b;
+            --primary: #1e293b;
+            --primary-light: #334155;
             --accent: #2563eb;
-            --accent-soft: #dbeafe;
-            --success: #16a34a;
-            --warning: #ea580c;
-            --danger: #dc2626;
+            --accent-hover: #1d4ed8;
+            --accent-soft: #eff6ff;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
             --bg: #f8fafc;
             --card: #ffffff;
             --muted: #64748b;
             --muted-light: #94a3b8;
             --border: #e2e8f0;
-            --radius: 14px;
-            --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.04);
-            --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
-            --shadow-lg: 0 16px 40px rgba(15, 23, 42, 0.12);
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.05);
+            --shadow-lg: 0 15px 35px -5px rgba(37, 99, 235, 0.08);
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* ========== BASE STYLES ========== */
-        * {
-            box-sizing: border-box;
-        }
-
-        html,
         body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, var(--bg) 0%, #f0f4f8 100%);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
             color: var(--primary);
-            line-height: 1.6;
-        }
-
-        body {
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* ========== CONTAINER ========== */
         .container-main {
-            max-width: 1400px;
+            max-width: 1440px;
             margin: 0 auto;
-            padding: 40px 24px;
+            padding: 2.5rem 1.5rem;
         }
 
         /* ========== BREADCRUMB ========== */
         .breadcrumb-nav {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 24px;
-            font-size: 13px;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
             color: var(--muted);
+            font-weight: 500;
         }
 
         .breadcrumb-nav a {
             color: var(--accent);
             text-decoration: none;
             font-weight: 600;
-            transition: opacity 0.2s ease;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .breadcrumb-nav a:hover {
-            opacity: 0.7;
+            color: var(--accent-hover);
         }
 
-        .breadcrumb-nav i {
-            font-size: 12px;
-        }
-
-        /* ========== HEADER ========== */
         /* ========== PAGE HEADER ========== */
         .page-header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            color: #fff;
-            padding: 32px;
-            border-radius: var(--radius);
-            margin-bottom: 32px;
-            box-shadow: var(--shadow);
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            border-radius: var(--radius-xl);
+            padding: 2.5rem 3rem;
+            color: white;
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            gap: 24px;
+            align-items: center;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+            flex: 1;
+        }
+
+        .header-content h2 {
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin: 0 0 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            letter-spacing: -0.02em;
+        }
+
+        .header-content p {
+            color: #cbd5e1;
+            font-size: 1.05rem;
+            margin: 0;
+            max-width: 500px;
+            line-height: 1.5;
+        }
+
+        .header-actions {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            gap: 12px;
+            align-items: center;
             flex-wrap: wrap;
         }
 
-        .header-main h2 {
-            font-size: 28px;
-            font-weight: 800;
-            margin: 0 0 8px 0;
-            letter-spacing: -0.5px;
-        }
-
-        .header-main small {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 14px;
-            line-height: 1.6;
-            display: block;
-        }
-
-        .header-main small strong {
-            color: #fff;
-            font-weight: 600;
-        }
-
-        .header-meta {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 16px 20px;
-            border-radius: 10px;
-            backdrop-filter: blur(10px);
-        }
-
-        .header-meta-label {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 12px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-
-        .header-meta-value {
-            color: #fff;
-            font-size: 15px;
-            font-weight: 600;
-            margin-top: 4px;
-        }
-
-        /* ========== PAGE ACTIONS / BUTTON ========== */
-        .page-actions {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
         .btn-add {
-            background: linear-gradient(90deg, var(--accent), #7c3aed);
-            color: #fff;
-            padding: 10px 14px;
-            border-radius: 10px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 999px;
             font-weight: 700;
-            text-decoration: none;
+            font-size: 0.95rem;
+            border: none;
+            cursor: pointer;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.12);
-            transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
-            border: 0;
-            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            transition: var(--transition);
         }
 
         .btn-add:hover {
             transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-            opacity: 0.98;
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
         }
 
-        .btn-add:active {
+        /* ========== STATS BAR ========== */
+        .filter-stats {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-badge {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1.25rem;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--primary);
+            box-shadow: var(--shadow-sm);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-badge span {
+            background: var(--accent-soft);
+            color: var(--accent);
+            padding: 0.1rem 0.6rem;
+            border-radius: 999px;
+            font-weight: 800;
+        }
+
+        /* ========== FOLDER GRID & CARD ========== */
+        .folder-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .folder-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .folder-card::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            height: 4px;
+            background: linear-gradient(90deg, #38bdf8, var(--accent));
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .folder-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: #bfdbfe;
+        }
+
+        .folder-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Card Header */
+        .folder-header {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .folder-avatar {
+            width: 52px;
+            height: 52px;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, #e0f2fe, #bae6fd);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--accent);
+        }
+
+        .folder-info {
+            flex: 1;
+            min-width: 0;
+            padding-right: 20px;
+        }
+
+        .folder-info h4 {
+            margin: 0 0 0.25rem 0;
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .folder-code {
+            font-size: 0.75rem;
+            color: var(--muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background: var(--bg);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        /* Card Actions (Dropdown) */
+        .card-actions {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+
+        .action-btn-trigger {
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            font-size: 1.25rem;
+            padding: 4px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .action-btn-trigger:hover {
+            background: var(--bg);
+            color: var(--primary);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            min-width: 140px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: var(--transition);
+            z-index: 10;
+            padding: 0.5rem 0;
+        }
+
+        .card-actions:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
             transform: translateY(0);
         }
 
-        .btn-add i {
-            margin-left: 0;
-            font-size: 14px;
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.5rem 1rem;
+            color: var(--primary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+        }
+
+        .dropdown-item:hover {
+            background: var(--bg);
+            color: var(--accent);
+        }
+
+        .dropdown-item.delete:hover {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        /* Card Meta */
+        .folder-meta {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .meta-item span {
+            font-size: 0.75rem;
+            color: var(--muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .meta-item strong {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        /* Card Footer */
+        .folder-footer {
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px dashed var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-date {
+            font-size: 0.8rem;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: 500;
+        }
+
+        .view-link {
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            transition: var(--transition);
+        }
+
+        .folder-card:hover .view-link {
+            gap: 0.5rem;
+        }
+
+        /* ========== EMPTY STATE ========== */
+        .empty-state {
+            grid-column: 1 / -1;
+            padding: 4rem 2rem;
+            text-align: center;
+            background: var(--card);
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-xl);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .empty-icon {
+            font-size: 3.5rem;
+            opacity: 0.8;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state h3 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--primary);
         }
 
         /* ========== MODAL STYLES ========== */
@@ -185,557 +454,172 @@
 
         .modal[aria-hidden="false"] {
             display: flex;
+            animation: fadeInModal 0.2s ease-out forwards;
         }
 
         .modal-overlay {
             position: absolute;
             inset: 0;
-            background: rgba(2, 6, 23, 0.55);
-            backdrop-filter: blur(3px);
-            transition: opacity 0.18s ease;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(4px);
         }
 
         .modal-content {
             position: relative;
             background: var(--card);
             width: 100%;
-            max-width: 520px;
-            border-radius: 12px;
-            padding: 20px;
+            max-width: 450px;
+            border-radius: var(--radius-lg);
+            padding: 2rem;
             box-shadow: var(--shadow-lg);
             z-index: 2;
-            transform: translateY(8px);
-            transition: transform 0.18s ease, opacity 0.18s ease;
+            transform: scale(0.95);
+            animation: scaleUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes fadeInModal {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes scaleUpModal {
+            from {
+                transform: scale(0.95) translateY(10px);
+            }
+
+            to {
+                transform: scale(1) translateY(0);
+            }
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 12px;
+            margin-bottom: 1.5rem;
         }
 
         .modal-title {
-            font-size: 18px;
+            font-size: 1.25rem;
             font-weight: 800;
             color: var(--primary);
             margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .modal-close {
-            background: transparent;
-            border: 0;
-            font-size: 20px;
-            line-height: 1;
-            cursor: pointer;
+            background: var(--bg);
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: var(--muted);
-            padding: 6px;
-            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
         }
 
         .modal-close:hover {
-            background: rgba(15, 23, 42, 0.03);
-            color: var(--primary);
+            background: #f1f5f9;
+            color: var(--danger);
         }
 
         .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-bottom: 12px;
+            margin-bottom: 1.25rem;
         }
 
-        label {
-            font-size: 13px;
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
             font-weight: 700;
-            color: var(--muted);
+            color: var(--primary-light);
+            margin-bottom: 0.5rem;
         }
 
         .form-control {
-            padding: 10px 12px;
+            width: 100%;
+            padding: 0.75rem 1rem;
             border-radius: 8px;
-            border: 1px solid var(--border);
-            outline: none;
-            font-size: 14px;
-            background: #fff;
+            border: 1.5px solid var(--border);
+            font-size: 0.95rem;
             color: var(--primary);
+            background: var(--bg);
+            outline: none;
+            transition: var(--transition);
+            font-family: inherit;
         }
 
         .form-control:focus {
+            background: var(--card);
             border-color: var(--accent);
-            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.06);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
         }
 
         .modal-actions {
             display: flex;
             justify-content: flex-end;
-            gap: 8px;
-            margin-top: 8px;
+            gap: 12px;
+            margin-top: 2rem;
         }
 
         .btn-secondary {
-            background: transparent;
+            background: var(--card);
             border: 1px solid var(--border);
-            color: var(--primary);
-            padding: 8px 12px;
+            color: var(--muted);
+            padding: 0.6rem 1.2rem;
             border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
             cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg);
+            color: var(--primary);
         }
 
         .btn-primary {
-            background: linear-gradient(90deg, var(--accent), #7c3aed);
-            color: #fff;
-            padding: 8px 12px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
             border-radius: 8px;
-            font-weight: 700;
-            border: 0;
-            cursor: pointer;
-        }
-
-        /* ========== RESPONSIVE ========== */
-        @media (max-width: 768px) {
-            .page-header {
-                flex-direction: column;
-                gap: 16px;
-                padding: 24px;
-            }
-
-            .header-main h2 {
-                font-size: 24px;
-            }
-
-            .header-meta {
-                width: 100%;
-            }
-
-            .page-actions {
-                width: 100%;
-                justify-content: flex-end;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .page-header {
-                padding: 16px;
-            }
-
-            .header-main h2 {
-                font-size: 20px;
-            }
-
-            .header-main small {
-                font-size: 13px;
-            }
-
-            .header-meta {
-                width: 100%;
-            }
-
-            .page-actions {
-                width: 100%;
-                justify-content: flex-end;
-            }
-        }
-
-        /* ========== SEARCH ========== */
-        .search-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--card);
-            border: 1.5px solid var(--border);
-            padding: 10px 16px;
-            border-radius: 999px;
-            transition: all 0.2s ease;
-            min-width: 280px;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .search-wrapper:focus-within {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        .search-wrapper i {
-            color: var(--muted);
-            font-size: 16px;
-        }
-
-        .search-wrapper input {
-            border: 0;
-            outline: none;
-            width: 100%;
-            font-size: 14px;
-            background: transparent;
-            color: var(--primary);
-        }
-
-        .search-wrapper input::placeholder {
-            color: var(--muted-light);
-        }
-
-        /* ========== STATS ========== */
-        .folder-stats-header {
-            display: flex;
-            gap: 16px;
-            align-items: center;
-            font-size: 13px;
-            color: var(--muted);
-            margin-bottom: 20px;
-        }
-
-        .stat-item {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-        }
-
-        .stat-badge {
-            background: var(--accent-soft);
-            color: var(--accent);
-            padding: 2px 8px;
-            border-radius: 999px;
             font-weight: 600;
-            font-size: 12px;
-        }
-
-        /* ========== GRID ========== */
-        .folder-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 24px;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* ========== FOLDER CARD ========== */
-        .folder-card {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, var(--card) 100%);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            min-height: 280px;
-            text-decoration: none;
-            color: inherit;
-            box-shadow: var(--shadow-sm);
-            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            font-size: 0.9rem;
             cursor: pointer;
-            position: relative;
-            overflow: hidden;
+            transition: var(--transition);
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
         }
 
-        .folder-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent), #7c3aed);
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.3s ease;
-        }
-
-        .folder-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-lg);
-            border-color: rgba(37, 99, 235, 0.2);
-        }
-
-        .folder-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        /* ========== CARD HEADER ========== */
-        .folder-header {
-            display: flex;
-            gap: 14px;
-            align-items: flex-start;
-            margin-bottom: 16px;
-        }
-
-        .folder-icon {
-            width: 52px;
-            height: 52px;
-            min-width: 52px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, var(--accent-soft), #e0e7ff);
-            border-radius: 12px;
-            font-size: 24px;
-            color: var(--accent);
-        }
-
-        .folder-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .folder-title {
-            font-weight: 700;
-            font-size: 16px;
-            color: var(--primary);
-            margin: 0;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-        }
-
-        .folder-code {
-            font-size: 12px;
-            color: var(--muted);
-            margin-top: 4px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* ========== CARD STATS ========== */
-        .folder-meta {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-
-        .meta-box {
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.04), rgba(124, 58, 237, 0.04));
-            border: 1px solid rgba(37, 99, 235, 0.08);
-            border-radius: 10px;
-            padding: 12px;
-            text-align: center;
-            transition: all 0.2s ease;
-        }
-
-        .folder-card:hover .meta-box {
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(124, 58, 237, 0.08));
-            border-color: rgba(37, 99, 235, 0.15);
-        }
-
-        .meta-box strong {
-            font-size: 20px;
-            font-weight: 800;
-            display: block;
-            color: var(--accent);
-        }
-
-        .meta-box span {
-            font-size: 11px;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            font-weight: 600;
-            margin-top: 4px;
-            display: block;
-        }
-
-        /* ========== CARD FOOTER ========== */
-        .folder-footer {
-            margin-top: auto;
-            padding-top: 14px;
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .footer-date {
-            font-size: 12px;
-            color: var(--muted);
-            display: flex;
-            gap: 4px;
-            align-items: center;
-        }
-
-        .footer-date i {
-            font-size: 12px;
-        }
-
-        .view-link {
-            color: var(--accent);
-            font-weight: 700;
-            display: flex;
-            gap: 4px;
-            align-items: center;
-            text-decoration: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            padding: 4px 8px;
-            border-radius: 6px;
-        }
-
-        .folder-card:hover .view-link {
-            background: var(--accent-soft);
-            transform: translateX(4px);
-        }
-
-        .view-link i {
-            font-size: 14px;
-        }
-
-        /* ========== EMPTY STATE ========== */
-        .empty-state {
-            grid-column: 1 / -1;
-            min-height: 320px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            gap: 16px;
-            border: 2px dashed var(--border);
-            border-radius: var(--radius);
-            background: linear-gradient(135deg, rgba(248, 250, 252, 0.5), rgba(240, 244, 248, 0.5));
-            color: var(--muted);
-        }
-
-        .empty-state-icon {
-            font-size: 48px;
-            color: var(--muted-light);
-        }
-
-        .empty-state h3 {
-            margin: 0;
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .empty-state p {
-            margin: 0;
-            font-size: 14px;
-            max-width: 380px;
-            color: var(--muted);
-            line-height: 1.6;
-        }
-
-        /* ========== NO RESULTS ========== */
-        .no-results {
-            grid-column: 1 / -1;
-            min-height: 280px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            color: var(--muted);
-        }
-
-        .no-results-icon {
-            font-size: 40px;
-            opacity: 0.5;
-        }
-
-        .no-results h3 {
-            margin: 0;
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .no-results p {
-            margin: 0;
-            font-size: 13px;
-        }
-
-        /* ========== RESPONSIVE ========== */
-        @media (max-width: 1024px) {
-            .folder-grid {
-                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            }
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
         }
 
         @media (max-width: 768px) {
-            .container-main {
-                padding: 24px 16px;
-            }
-
             .page-header {
+                padding: 2rem 1.5rem;
                 flex-direction: column;
-                gap: 16px;
+                align-items: flex-start;
             }
 
-            .page-header-left h2 {
-                font-size: 24px;
-            }
-
-            .search-wrapper {
+            .header-actions {
                 width: 100%;
-                min-width: auto;
-            }
-
-            .folder-grid {
-                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-                gap: 16px;
-            }
-
-            .folder-stats-header {
-                flex-wrap: wrap;
-                font-size: 12px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container-main {
-                padding: 16px 12px;
-            }
-
-            .page-header-left h2 {
-                font-size: 20px;
-            }
-
-            .page-header-left small {
-                font-size: 13px;
+                justify-content: flex-start;
             }
 
             .folder-grid {
                 grid-template-columns: 1fr;
-            }
-
-            .page-actions {
-                width: 100%;
-            }
-
-            .search-wrapper {
-                width: 100%;
-            }
-
-            .breadcrumb-nav {
-                font-size: 12px;
-            }
-        }
-
-        /* ========== ACCESSIBILITY ========== */
-        .folder-card:focus-visible {
-            outline: 2px solid var(--accent);
-            outline-offset: 2px;
-        }
-
-        /* ========== ANIMATIONS ========== */
-        @media (prefers-reduced-motion: reduce) {
-
-            .folder-card,
-            .search-wrapper {
-                transition: none;
             }
         }
     </style>
@@ -744,228 +628,247 @@
 @section('content')
     <div class="container-main">
 
-        {{-- <!-- BREADCRUMB -->
         <div class="breadcrumb-nav">
-            <a href="#">
-                <i class="bi bi-house-fill"></i> Projects
-            </a>
-            <i class="bi bi-chevron-right"></i>
-            <span>{{ $project->project_name ?? 'Project' }}</span>
-        </div> --}}
+            <a href="{{ route('document.project.index') ?? '#' }}"><i class="bx bx-briefcase"></i> Projects</a>
+            <i class="bx bx-chevron-right"></i>
+            <span class="text-slate-800">{{ $project->project_name ?? 'Project Detail' }}</span>
+        </div>
 
-        <!-- HEADER -->
         <div class="page-header">
-            <div class="header-main">
-                <h2>📂 {{ $project->project_name ?? 'Unnamed Project' }}</h2>
-                <small>Kelola folder dan dokumen transmittal dengan mudah</small>
+            <div class="header-content">
+                <h2><i class="bx bx-folder-open"></i> Folder System</h2>
+                <p>Kelola struktur folder dan dokumen transmittal untuk proyek
+                    <strong>{{ $project->project_name ?? 'Unnamed Project' }}</strong>.</p>
             </div>
 
-            <div class="page-actions">
-                {{-- Tombol buka modal --}}
+            <div class="header-actions">
                 <button id="open-add-folder" class="btn-add" type="button" aria-haspopup="dialog"
-                    aria-controls="add-folder-modal">
-                    + Tambah Folder <i class="bi bi-plus-lg" aria-hidden="true"></i>
+                    aria-controls="folder-modal">
+                    <i class="bx bx-plus"></i> Tambah Folder
                 </button>
-
-                {{-- Jika ingin mengaktifkan pencarian, uncomment bagian ini --}}
-                {{-- <div class="search-wrapper">
-                    <i class="bi bi-search"></i>
-                    <input id="folder-search" type="search" placeholder="Cari folder atau kode..." aria-label="Cari folder" />
-                </div> --}}
             </div>
         </div>
 
-        <!-- STATS -->
         @if ($folders->count() > 0)
-            <div class="folder-stats-header">
-                <span class="stat-item">
-                    📁 Total Folder:
-                    <span class="stat-badge" id="total-folders">{{ $folders->count() }}</span>
-                </span>
-                <span class="stat-item">
-                    📄 Total Dokumen:
-                    <span class="stat-badge" id="total-documents">{{ $folders->sum('documents_count') }}</span>
-                </span>
+            <div class="filter-stats">
+                <div class="stat-badge">Total Folder <span>{{ $folders->count() }}</span></div>
+                <div class="stat-badge">Total Dokumen <span>{{ $folders->sum('documents_count') }}</span></div>
             </div>
         @endif
 
-        <!-- FOLDER GRID -->
         <div id="folder-grid" class="folder-grid">
-
             @forelse($folders as $folder)
-                <a href="{{ route('document.list', ['project' => $project->id, 'folder' => $folder->id]) }}"
-                    class="folder-card" data-title="{{ strtolower($folder->folder_name) }}"
-                    data-code="{{ strtolower($folder->folder_code) }}" role="link" tabindex="0">
+                <div class="folder-card">
 
                     <div class="folder-header">
-                        <div class="folder-icon">📁</div>
+                        <div class="folder-avatar"><i class="bx bx-folder"></i></div>
                         <div class="folder-info">
-                            <h4 class="folder-title">{{ $folder->folder_name }}</h4>
-                            <div class="folder-code">{{ $folder->folder_code }}</div>
+                            <h4 title="{{ $folder->folder_name }}">{{ $folder->folder_name }}</h4>
+                            <div class="folder-code">{{ $folder->folder_code ?? 'NO-CODE' }}</div>
+                        </div>
+
+                        <div class="card-actions">
+                            <button class="action-btn-trigger"><i class="bx bx-dots-vertical-rounded"></i></button>
+                            <div class="dropdown-menu">
+                                <button class="dropdown-item btn-edit" data-id="{{ $folder->id }}"
+                                    data-name="{{ $folder->folder_name }}" data-code="{{ $folder->folder_code }}"
+                                    data-route="{{ route('document.folders.update', ['project' => $project->id, 'folder' => $folder->id]) }}">
+                                    <i class="bx bx-edit"></i> Edit Folder
+                                </button>
+
+                                <form
+                                    action="{{ route('document.folders.destroy', ['project' => $project->id, 'folder' => $folder->id]) }}"
+                                    method="POST" class="delete-form" style="margin: 0;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="dropdown-item delete">
+                                        <i class="bx bx-trash"></i> Hapus Folder
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="folder-meta">
-                        <div class="meta-box">
-                            <strong>{{ $folder->documents_count ?? 0 }}</strong>
-                            <span>Documents</span>
+                    <a href="{{ route('document.list', ['project' => $project->id, 'folder' => $folder->id]) }}"
+                        style="text-decoration: none; color: inherit; display:flex; flex-direction:column; flex:1;">
+                        <div class="folder-meta">
+                            <div class="meta-item">
+                                <span>Documents Inside</span>
+                                <strong>{{ $folder->documents_count ?? 0 }}</strong>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="folder-footer">
-                        <span class="footer-date">
-                            <i class="bi bi-calendar3"></i>
-                            {{ optional($folder->updated_at)->format('d M Y') ?? '—' }}
-                        </span>
-                        <span class="view-link">
-                            Open <i class="bi bi-arrow-right"></i>
-                        </span>
-                    </div>
-
-                </a>
+                        <div class="folder-footer">
+                            <div class="footer-date"><i class="bx bx-calendar"></i>
+                                {{ optional($folder->updated_at)->format('d M Y') ?? '—' }}</div>
+                            <div class="view-link">Buka <i class="bx bx-right-arrow-alt"></i></div>
+                        </div>
+                    </a>
+                </div>
             @empty
                 <div class="empty-state">
-                    <div class="empty-state-icon">📂</div>
-                    <h3>Belum ada folder</h3>
-                    <p>
-                        Folder belum dibuat. Silakan buat folder terlebih dahulu untuk mengelola dokumen transmittal.
-                    </p>
+                    <div class="empty-icon"><i class="bx bx-folder-open"></i></div>
+                    <h3>Belum ada Folder</h3>
+                    <p>Proyek ini belum memiliki folder. Silakan klik tombol "Tambah Folder" untuk mulai mengelola dokumen
+                        Anda.</p>
                 </div>
             @endforelse
-
-            <!-- NO RESULTS MESSAGE (Hidden by default) -->
-            <div id="no-results" class="no-results" style="display: none;">
-                <div class="no-results-icon">🔍</div>
-                <h3>Hasil tidak ditemukan</h3>
-                <p>Coba sesuaikan pencarian Anda</p>
-            </div>
-
         </div>
 
     </div>
 
-    {{-- MODAL: Tambah Folder --}}
-    <div id="add-folder-modal" class="modal" role="dialog" aria-hidden="true" aria-labelledby="add-folder-title"
-        aria-modal="true">
+    {{-- MODAL (Digunakan untuk Tambah & Edit) --}}
+    <div id="folder-modal" class="modal" role="dialog" aria-hidden="true" aria-labelledby="folder-title">
         <div class="modal-overlay" data-close-modal></div>
 
-        <div class="modal-content" role="document">
+        <div class="modal-content">
             <div class="modal-header">
-                <h3 id="add-folder-title" class="modal-title">Tambah Folder</h3>
-                <button class="modal-close" type="button" aria-label="Tutup modal" data-close-modal>×</button>
+                <h3 id="folder-title" class="modal-title"><i class="bx bx-folder-plus"></i> Tambah Folder Baru</h3>
+                <button class="modal-close" type="button" aria-label="Tutup modal" data-close-modal><i
+                        class="bx bx-x"></i></button>
             </div>
 
-            {{-- Ganti route('folder.store', ...) jika nama route di aplikasi berbeda --}}
-            <form id="add-folder-form" method="POST"
+            <form id="folder-form" method="POST"
                 action="{{ route('document.folders.store', ['project' => $project->id]) }}">
                 @csrf
+                <input type="hidden" name="_method" id="form-method" value="POST">
 
                 <div class="form-group">
-                    <label for="folder_name">Nama Folder</label>
+                    <label for="folder_name">Nama Folder <span style="color:var(--danger)">*</span></label>
                     <input id="folder_name" name="folder_name" type="text" class="form-control" required maxlength="120"
-                        placeholder="Masukkan nama folder" />
+                        placeholder="Contoh: Phase 1 Drawings" autocomplete="off" />
                 </div>
 
                 <div class="form-group">
-                    <label for="folder_code">Kode Folder (opsional)</label>
+                    <label for="folder_code">Kode Folder <span
+                            style="color:var(--muted); font-weight:normal;">(Opsional)</span></label>
                     <input id="folder_code" name="folder_code" type="text" class="form-control" maxlength="40"
-                        placeholder="Contoh: F-001" />
+                        placeholder="Contoh: F-001" autocomplete="off" />
                 </div>
 
                 <div class="modal-actions">
                     <button type="button" class="btn-secondary" data-close-modal>Batal</button>
-                    <button type="submit" class="btn-primary">Buat Folder</button>
+                    <button type="submit" class="btn-primary" id="btn-submit-text">Simpan Folder</button>
                 </div>
             </form>
         </div>
     </div>
 @endsection
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    (function() {
-        'use strict';
 
-        // Coba pasang handler saat DOM siap (fallback bila push/stack tidak dipanggil)
-        function initAddFolderModal() {
-            var openBtn = document.getElementById('open-add-folder');
-            var modal = document.getElementById('add-folder-modal');
+@push('js')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            'use strict';
 
-            console.log('[modal-debug] initAddFolderModal running', {
-                openBtn: !!openBtn,
-                modal: !!modal
-            });
+            // Modal Elements
+            const modal = document.getElementById('folder-modal');
+            const form = document.getElementById('folder-form');
+            const title = document.getElementById('folder-title');
+            const methodInput = document.getElementById('form-method');
+            const inputName = document.getElementById('folder_name');
+            const inputCode = document.getElementById('folder_code');
+            const btnSubmit = document.getElementById('btn-submit-text');
 
-            if (!openBtn || !modal) {
-                console.error('[modal-debug] open button or modal element not found');
-                return;
-            }
+            // Base URL for Store
+            const storeRoute = "{{ route('document.folders.store', ['project' => $project->id]) }}";
 
-            var overlay = modal.querySelector('.modal-overlay');
-            var closeTriggers = modal.querySelectorAll('[data-close-modal]');
-            var firstInput = modal.querySelector('input[name="folder_name"]');
-            var lastActive = null;
-
-            function showModal() {
-                lastActive = document.activeElement;
-                modal.style.display = 'flex'; // fallback inline
+            // Open Modal Helper
+            const openModal = () => {
                 modal.setAttribute('aria-hidden', 'false');
                 document.documentElement.style.overflow = 'hidden';
-                if (firstInput) firstInput.focus();
-                console.log('[modal-debug] modal opened');
-            }
+                setTimeout(() => {
+                    if (inputName) inputName.focus();
+                }, 100);
+            };
 
-            function hideModal() {
-                modal.style.display = 'none';
+            // Close Modal Helper
+            const closeModal = () => {
                 modal.setAttribute('aria-hidden', 'true');
                 document.documentElement.style.overflow = '';
-                if (lastActive && typeof lastActive.focus === 'function') lastActive.focus();
-                console.log('[modal-debug] modal closed');
+            };
+
+            // 1. ADD ACTION
+            const btnAdd = document.getElementById('open-add-folder');
+            if (btnAdd) {
+                btnAdd.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    title.innerHTML = '<i class="bx bx-folder-plus"></i> Tambah Folder Baru';
+                    form.action = storeRoute;
+                    methodInput.value = 'POST';
+                    inputName.value = '';
+                    inputCode.value = '';
+                    btnSubmit.textContent = 'Buat Folder';
+                    openModal();
+                });
             }
 
-            openBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                showModal();
-            }, false);
-
-            // Close triggers (buttons)
-            closeTriggers.forEach(function(btn) {
-                btn.addEventListener('click', function(e) {
+            // 2. EDIT ACTION
+            const editBtns = document.querySelectorAll('.btn-edit');
+            editBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
                     e.preventDefault();
-                    hideModal();
-                }, false);
+                    title.innerHTML = '<i class="bx bx-edit"></i> Edit Folder';
+                    form.action = btn.dataset.route; // Ganti URL action ke URL update
+                    methodInput.value = 'PUT'; // Ubah method menjadi PUT
+                    inputName.value = btn.dataset.name;
+                    inputCode.value = btn.dataset.code;
+                    btnSubmit.textContent = 'Update Folder';
+                    openModal();
+                });
             });
 
-            // Click overlay
-            if (overlay) {
-                overlay.addEventListener('click', function() {
-                    hideModal();
-                }, false);
-            }
+            // CLOSE ACTIONS
+            const closeTriggers = modal.querySelectorAll('[data-close-modal]');
+            closeTriggers.forEach(btn => btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                closeModal();
+            }));
 
-            // ESC closes modal
-            document.addEventListener('keydown', function(e) {
+            document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape' && modal.getAttribute('aria-hidden') === 'false') {
-                    hideModal();
+                    closeModal();
                 }
-            }, false);
-        }
+            });
 
-        // If document already loaded, init immediately; otherwise wait for DOMContentLoaded
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initAddFolderModal);
-        } else {
-            initAddFolderModal();
-        }
-    })();
-    // Notifikasi sukses
+            // 3. DELETE CONFIRMATION
+            const deleteForms = document.querySelectorAll('.delete-form');
+            deleteForms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: 'Yakin ingin menghapus?',
+                        text: "Semua dokumen di dalam folder ini juga akan terhapus permanen!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#dc2626',
+                        cancelButtonColor: '#64748b',
+                        confirmButtonText: 'Ya, Hapus!',
+                        cancelButtonText: 'Batal',
+                        customClass: {
+                            popup: 'rounded-xl'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
 
-    @if (session('success'))
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil!',
-            text: '{{ session('success') }}',
-            timer: 2500,
-            showConfirmButton: false
+            // 4. SWEETALERT NOTIFICATIONS (Dari Session Controller)
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: '{{ session('success') }}',
+                    timer: 2500,
+                    showConfirmButton: false,
+                    customClass: {
+                        popup: 'rounded-xl'
+                    }
+                });
+            @endif
         });
-    @endif
-</script>
+    </script>
+@endpush

@@ -3,285 +3,245 @@
 @section('title', 'Projects — Transmittal Portal')
 
 @push('css')
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <style>
         /* ========== CSS VARIABLES ========== */
         :root {
-            --primary: #0f172a;
-            --primary-light: #1e293b;
+            --primary: #1e293b;
+            --primary-light: #334155;
             --accent: #2563eb;
-            --accent-soft: #dbeafe;
-            --success: #16a34a;
-            --warning: #ea580c;
-            --danger: #dc2626;
+            --accent-hover: #1d4ed8;
+            --accent-soft: #eff6ff;
+            --success: #10b981;
+            --warning: #f59e0b;
             --bg: #f8fafc;
             --card: #ffffff;
             --muted: #64748b;
             --muted-light: #94a3b8;
             --border: #e2e8f0;
-            --radius: 14px;
-            --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.04);
-            --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
-            --shadow-lg: 0 16px 40px rgba(15, 23, 42, 0.12);
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+            --shadow-lg: 0 15px 35px -5px rgba(37, 99, 235, 0.08);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* ========== BASE STYLES ========== */
-        * {
-            box-sizing: border-box;
-        }
-
-        html,
         body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, var(--bg) 0%, #f0f4f8 100%);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
             color: var(--primary);
-            line-height: 1.6;
-        }
-
-        body {
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* ========== CONTAINER ========== */
         .container-main {
-            max-width: 1400px;
+            max-width: 1440px;
             margin: 0 auto;
-            padding: 40px 24px;
+            padding: 2.5rem 1.5rem;
         }
 
-        /* ========== HEADER ========== */
         /* ========== PAGE HEADER ========== */
         .page-header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            color: #fff;
-            padding: 32px;
-            border-radius: var(--radius);
-            margin-bottom: 32px;
-            box-shadow: var(--shadow);
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            border-radius: var(--radius-xl);
+            padding: 2.5rem 3rem;
+            color: white;
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            gap: 24px;
+            align-items: center;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 2.5rem;
+            position: relative;
+            overflow: hidden;
             flex-wrap: wrap;
+            gap: 2rem;
         }
 
-        .header-main h2 {
-            font-size: 28px;
+        /* Abstract glowing blobs inside header */
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .header-content h2 {
+            font-size: 2.25rem;
             font-weight: 800;
-            margin: 0 0 8px 0;
-            letter-spacing: -0.5px;
+            margin: 0 0 0.5rem 0;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
         }
 
-        .header-main small {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 14px;
-            line-height: 1.6;
-            display: block;
+        .header-content p {
+            color: #cbd5e1;
+            font-size: 1.05rem;
+            margin: 0;
+            max-width: 500px;
+            line-height: 1.5;
         }
 
-        .header-main small strong {
-            color: #fff;
-            font-weight: 600;
+        /* ========== SEARCH BAR IN HEADER ========== */
+        .header-actions {
+            position: relative;
+            z-index: 2;
+            flex-grow: 1;
+            max-width: 400px;
         }
 
-        .header-meta {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 16px 20px;
-            border-radius: 10px;
-            backdrop-filter: blur(10px);
-        }
-
-        .header-meta-label {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 12px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-
-        .header-meta-value {
-            color: #fff;
-            font-size: 15px;
-            font-weight: 600;
-            margin-top: 4px;
-        }
-
-        /* ========== RESPONSIVE ========== */
-        @media (max-width: 768px) {
-            .page-header {
-                flex-direction: column;
-                gap: 16px;
-                padding: 24px;
-            }
-
-            .header-main h2 {
-                font-size: 24px;
-            }
-
-            .header-meta {
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .page-header {
-                padding: 16px;
-            }
-
-            .header-main h2 {
-                font-size: 20px;
-            }
-
-            .header-main small {
-                font-size: 13px;
-            }
-        }
-
-        /* ========== SEARCH ========== */
         .search-wrapper {
             display: flex;
             align-items: center;
-            gap: 8px;
-            background: var(--card);
-            border: 1.5px solid var(--border);
-            padding: 10px 16px;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 12px 20px;
             border-radius: 999px;
-            transition: all 0.2s ease;
-            min-width: 280px;
-            box-shadow: var(--shadow-sm);
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+            width: 100%;
         }
 
         .search-wrapper:focus-within {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3);
         }
 
         .search-wrapper i {
-            color: var(--muted);
-            font-size: 16px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.25rem;
         }
 
         .search-wrapper input {
-            border: 0;
+            border: none;
             outline: none;
-            width: 100%;
-            font-size: 14px;
             background: transparent;
-            color: var(--primary);
+            color: white;
+            width: 100%;
+            font-size: 0.95rem;
+            font-family: inherit;
         }
 
         .search-wrapper input::placeholder {
-            color: var(--muted-light);
+            color: rgba(255, 255, 255, 0.6);
         }
 
-        /* ========== FILTERS & STATS ========== */
+        /* ========== STATS BAR ========== */
         .filter-stats {
             display: flex;
-            gap: 16px;
+            gap: 1.5rem;
             align-items: center;
-            font-size: 13px;
-            color: var(--muted);
-        }
-
-        .stat-item {
-            display: flex;
-            gap: 6px;
-            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
         }
 
         .stat-badge {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1.25rem;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--primary);
+            box-shadow: var(--shadow-sm);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-badge span {
             background: var(--accent-soft);
             color: var(--accent);
-            padding: 2px 8px;
+            padding: 0.1rem 0.6rem;
             border-radius: 999px;
-            font-weight: 600;
-            font-size: 12px;
+            font-weight: 800;
         }
 
-        /* ========== GRID ========== */
+        /* ========== PROJECT GRID ========== */
         .project-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 24px;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1.5rem;
         }
 
         /* ========== PROJECT CARD ========== */
         .project-card {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, var(--card) 100%);
+            background: var(--card);
             border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 20px;
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
             display: flex;
             flex-direction: column;
-            height: 100%;
-            min-height: 280px;
             text-decoration: none;
             color: inherit;
             box-shadow: var(--shadow-sm);
-            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-            cursor: pointer;
+            transition: var(--transition);
             position: relative;
-            overflow: hidden;
+            outline: none;
         }
 
+        /* Top Accent Line */
         .project-card::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent), #7c3aed);
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.3s ease;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), #60a5fa);
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            opacity: 0;
+            transition: var(--transition);
         }
 
-        .project-card:hover {
-            transform: translateY(-8px);
+        .project-card:hover,
+        .project-card:focus-visible {
+            transform: translateY(-6px);
             box-shadow: var(--shadow-lg);
-            border-color: rgba(37, 99, 235, 0.2);
+            border-color: #bfdbfe;
         }
 
-        .project-card:hover::before {
-            transform: scaleX(1);
+        .project-card:hover::before,
+        .project-card:focus-visible::before {
+            opacity: 1;
         }
 
-        /* ========== CARD HEADER ========== */
+        /* Header Area (Avatar + Title) */
         .project-header {
             display: flex;
-            gap: 12px;
+            gap: 1rem;
             align-items: flex-start;
-            margin-bottom: 16px;
+            margin-bottom: 1.5rem;
         }
 
-        .project-icon {
-            width: 48px;
-            height: 48px;
-            min-width: 48px;
+        .project-avatar {
+            width: 52px;
+            height: 52px;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, var(--accent-soft), #e0e7ff);
+            border-radius: var(--radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, var(--accent-soft), #e0e7ff);
-            border-radius: 12px;
-            font-size: 20px;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--accent);
+            text-transform: uppercase;
         }
 
         .project-info {
@@ -290,246 +250,143 @@
         }
 
         .project-info h4 {
-            margin: 0 0 4px 0;
-            font-size: 16px;
+            margin: 0 0 0.25rem 0;
+            font-size: 1.1rem;
             font-weight: 700;
             color: var(--primary);
+            white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
         }
 
         .project-code {
-            font-size: 12px;
+            font-size: 0.75rem;
             color: var(--muted);
-            font-weight: 500;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.05em;
+            background: var(--bg);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            display: inline-block;
         }
 
-        /* ========== CARD META ========== */
+        /* Meta Data (Folders & Docs) */
         .project-meta {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 16px;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: var(--radius-md);
         }
 
-        .meta-box {
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.04), rgba(124, 58, 237, 0.04));
-            border: 1px solid rgba(37, 99, 235, 0.08);
-            border-radius: 10px;
-            padding: 12px;
-            text-align: center;
-            transition: all 0.2s ease;
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
         }
 
-        .project-card:hover .meta-box {
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(124, 58, 237, 0.08));
-            border-color: rgba(37, 99, 235, 0.15);
-        }
-
-        .meta-box strong {
-            font-size: 20px;
-            font-weight: 800;
-            display: block;
-            color: var(--accent);
-        }
-
-        .meta-box span {
-            font-size: 11px;
+        .meta-item span {
+            font-size: 0.75rem;
             color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
             font-weight: 600;
-            margin-top: 4px;
-            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
-        /* ========== CARD FOOTER ========== */
+        .meta-item strong {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        /* Footer Area */
         .project-footer {
             margin-top: auto;
-            padding-top: 14px;
-            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+            border-top: 1px dashed var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 12px;
-            color: var(--muted);
         }
 
         .footer-date {
+            font-size: 0.8rem;
+            color: var(--muted);
             display: flex;
-            gap: 4px;
             align-items: center;
+            gap: 0.4rem;
+            font-weight: 500;
         }
 
-        .footer-date i {
-            font-size: 12px;
-        }
-
-        .view-project {
-            color: var(--accent);
+        .view-link {
+            font-size: 0.875rem;
             font-weight: 700;
+            color: var(--accent);
             display: flex;
-            gap: 4px;
             align-items: center;
-            transition: all 0.2s ease;
-            padding: 4px 8px;
-            border-radius: 6px;
+            gap: 0.25rem;
+            transition: var(--transition);
         }
 
-        .project-card:hover .view-project {
-            background: var(--accent-soft);
-            transform: translateX(4px);
+        .project-card:hover .view-link {
+            gap: 0.5rem;
+            /* Animate arrow moving right */
         }
 
-        .view-project i {
-            font-size: 14px;
-        }
-
-        /* ========== EMPTY STATE ========== */
+        /* ========== EMPTY & NO RESULTS ========== */
         .empty-state {
             grid-column: 1 / -1;
-            min-height: 320px;
+            padding: 4rem 2rem;
+            text-align: center;
+            background: var(--card);
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-xl);
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            text-align: center;
-            gap: 16px;
-            border: 2px dashed var(--border);
-            border-radius: var(--radius);
-            background: linear-gradient(135deg, rgba(248, 250, 252, 0.5), rgba(240, 244, 248, 0.5));
-            color: var(--muted);
+            gap: 1rem;
         }
 
-        .empty-state-icon {
-            font-size: 48px;
-            color: var(--muted-light);
+        .empty-icon {
+            font-size: 3.5rem;
+            opacity: 0.8;
+            margin-bottom: 0.5rem;
         }
 
         .empty-state h3 {
             margin: 0;
-            font-size: 20px;
-            font-weight: 700;
+            font-size: 1.25rem;
+            font-weight: 800;
             color: var(--primary);
         }
 
         .empty-state p {
             margin: 0;
-            font-size: 14px;
-            max-width: 380px;
             color: var(--muted);
-            line-height: 1.6;
-        }
-
-        /* ========== NO RESULTS ========== */
-        .no-results {
-            grid-column: 1 / -1;
-            min-height: 280px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            color: var(--muted);
-        }
-
-        .no-results-icon {
-            font-size: 40px;
-            opacity: 0.5;
-        }
-
-        .no-results h3 {
-            margin: 0;
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .no-results p {
-            margin: 0;
-            font-size: 13px;
+            font-size: 0.95rem;
+            max-width: 400px;
+            line-height: 1.5;
         }
 
         /* ========== RESPONSIVE ========== */
-        @media (max-width: 1024px) {
-            .project-grid {
-                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            }
-        }
-
         @media (max-width: 768px) {
-            .container-main {
-                padding: 24px 16px;
-            }
-
             .page-header {
+                padding: 2rem 1.5rem;
                 flex-direction: column;
-                gap: 16px;
+                align-items: flex-start;
             }
 
-            .page-header-left h2 {
-                font-size: 24px;
-            }
-
-            .search-wrapper {
+            .header-actions {
                 width: 100%;
-                min-width: auto;
-            }
-
-            .project-grid {
-                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-                gap: 16px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container-main {
-                padding: 16px 12px;
-            }
-
-            .page-header-left h2 {
-                font-size: 20px;
-            }
-
-            .page-header-left small {
-                font-size: 13px;
+                max-width: 100%;
             }
 
             .project-grid {
                 grid-template-columns: 1fr;
-            }
-
-            .page-actions {
-                width: 100%;
-            }
-
-            .search-wrapper {
-                width: 100%;
-            }
-
-            .filter-stats {
-                flex-wrap: wrap;
-                font-size: 12px;
-            }
-        }
-
-        /* ========== ACCESSIBILITY ========== */
-        .project-card:focus-visible {
-            outline: 2px solid var(--accent);
-            outline-offset: 2px;
-        }
-
-        /* ========== ANIMATIONS ========== */
-        @media (prefers-reduced-motion: reduce) {
-
-            .project-card,
-            .search-wrapper {
-                transition: none;
             }
         }
     </style>
@@ -538,95 +395,91 @@
 @section('content')
     <div class="container-main">
 
-        <!-- HEADER -->
         <div class="page-header">
-            <div class="header-main">
-                <h2>📁 Transmittal Document</h2>
-                <small>
-                    Kelola folder dan dokumen resmi per project dengan mudah<br>
-                </small>
+            <div class="header-content">
+                <h2>📁 Transmittal Documents</h2>
+                <p>Kelola struktur folder dan manajemen dokumen resmi untuk setiap proyek dengan mudah dan aman.</p>
             </div>
 
-            {{-- <div class="header-meta">
-                <div class="header-meta-label">📊 Statistik</div>
-                <div class="header-meta-value">{{ $projects->count() }} Project</div>
-                <div class="header-meta-value">{{ $projects->sum('folders_count') }} Folder</div>
-                <div class="header-meta-value">{{ $projects->sum('documents_count') }} Dokumen</div>
-                
-            </div> --}}
+            <div class="header-actions">
+                <div class="search-wrapper">
+                    <i class="bx bx-search"></i>
+                    <input type="text" id="project-search" placeholder="Cari nama project atau kode..." autocomplete="off">
+                </div>
+            </div>
         </div>
 
-        <!-- STATS -->
         @if ($projects->count() > 0)
-            <div class="filter-stats" style="margin-bottom: 20px;">
-                <span class="stat-item">
-                    📊 Total Project:
-                    <span class="stat-badge" id="total-projects">{{ $projects->count() }}</span>
-                </span>
-                <span class="stat-item">
-                    📂 Total Folder:
-                    <span class="stat-badge" id="total-folders">{{ $projects->sum('folders_count') }}</span>
-                </span>
-                <span class="stat-item">
-                    📄 Total Dokumen:
-                    <span class="stat-badge" id="total-documents">{{ $projects->sum('documents_count') }}</span>
-                </span>
+            <div class="filter-stats">
+                <div class="stat-badge">
+                    Total Project <span>{{ $projects->count() }}</span>
+                </div>
+                <div class="stat-badge">
+                    Total Folder <span>{{ $projects->sum('folders_count') }}</span>
+                </div>
+                <div class="stat-badge">
+                    Total Dokumen <span>{{ $projects->sum('documents_count') }}</span>
+                </div>
             </div>
         @endif
 
-        <!-- GRID -->
         <div id="project-grid" class="project-grid">
 
             @forelse ($projects as $project)
+                @php
+                    // Get first 1 or 2 letters of project name for avatar
+                    $initials = strtoupper(substr(preg_replace('/[^a-zA-Z]/', '', $project->project_name), 0, 2));
+                    if (empty($initials)) {
+                        $initials = 'PR';
+                    }
+                @endphp
+
                 <a href="{{ route('document.folder', $project->id) }}" class="project-card"
                     data-title="{{ strtolower($project->project_name) }}"
-                    data-code="{{ strtolower($project->project_number) }}" role="link" tabindex="0">
+                    data-code="{{ strtolower($project->project_number) }}">
 
                     <div class="project-header">
-                        <div class="project-icon">📋</div>
+                        <div class="project-avatar">{{ $initials }}</div>
                         <div class="project-info">
-                            <h4>{{ $project->project_name }}</h4>
+                            <h4 title="{{ $project->project_name }}">{{ $project->project_name }}</h4>
                             <div class="project-code">{{ $project->project_number }}</div>
                         </div>
                     </div>
 
                     <div class="project-meta">
-                        <div class="meta-box">
-                            <strong>{{ $project->folders_count }}</strong>
+                        <div class="meta-item">
                             <span>Folders</span>
+                            <strong>{{ $project->folders_count }}</strong>
                         </div>
-                        <div class="meta-box">
-                            <strong>{{ $project->documents_count }}</strong>
+                        <div class="meta-item">
                             <span>Documents</span>
+                            <strong>{{ $project->documents_count }}</strong>
                         </div>
                     </div>
 
                     <div class="project-footer">
-                        <span class="footer-date">
-                            <i class="bi bi-calendar3"></i>
-                            {{ optional($project->updated_at)->format('d M Y') ?? '—' }}
-                        </span>
-                        <span class="view-project">
-                            Open <i class="bi bi-arrow-right"></i>
-                        </span>
+                        <div class="footer-date">
+                            <i class="bx bx-calendar"></i>
+                            Updated {{ optional($project->updated_at)->format('d M Y') ?? '—' }}
+                        </div>
+                        <div class="view-link">
+                            Buka <i class="bx bx-right-arrow-alt"></i>
+                        </div>
                     </div>
                 </a>
             @empty
                 <div class="empty-state">
-                    <div class="empty-state-icon">📂</div>
-                    <h3>Belum ada project</h3>
-                    <p>
-                        Project belum dibuat. Silakan buat project terlebih dahulu untuk mulai mengelola
-                        folder dan dokumen transmittal.
-                    </p>
+                    <div class="empty-icon">🗂️</div>
+                    <h3>Belum ada Project</h3>
+                    <p>Sistem saat ini belum memiliki data project. Silakan hubungi Administrator untuk membuat project baru
+                        dan memulai manajemen dokumen.</p>
                 </div>
             @endforelse
 
-            <!-- NO RESULTS MESSAGE (Hidden by default) -->
-            <div id="no-results" class="no-results" style="display: none;">
-                <div class="no-results-icon">🔍</div>
+            <div id="no-results" class="empty-state" style="display: none;">
+                <div class="empty-icon">🔍</div>
                 <h3>Hasil tidak ditemukan</h3>
-                <p>Coba sesuaikan pencarian Anda</p>
+                <p>Tidak ada proyek yang cocok dengan kata kunci pencarian Anda. Coba gunakan kata kunci lain.</p>
             </div>
 
         </div>
@@ -636,32 +489,25 @@
 
 @push('scripts')
     <script>
-        (function() {
-            'use strict';
-
+        document.addEventListener('DOMContentLoaded', function() {
             const input = document.getElementById('project-search');
-            const grid = document.getElementById('project-grid');
             const noResults = document.getElementById('no-results');
 
             if (!input) return;
 
             const cards = Array.from(document.querySelectorAll('.project-card'));
-            const emptyState = document.querySelector('.empty-state');
-
-            function normalize(v) {
-                return (v || '').toLowerCase().trim();
-            }
+            const emptyState = document.querySelector('.empty-state:not(#no-results)');
 
             function updateDisplay() {
-                const query = normalize(input.value);
+                const query = input.value.toLowerCase().trim();
                 let visibleCount = 0;
 
                 cards.forEach(card => {
-                    const title = normalize(card.dataset.title);
-                    const code = normalize(card.dataset.code);
-                    const matches = query === '' || title.includes(query) || code.includes(query);
+                    const title = card.dataset.title;
+                    const code = card.dataset.code;
+                    const isMatch = query === '' || title.includes(query) || code.includes(query);
 
-                    if (matches) {
+                    if (isMatch) {
                         card.style.display = '';
                         visibleCount++;
                     } else {
@@ -669,37 +515,26 @@
                     }
                 });
 
-                // Show/hide empty state and no results
+                // Hide empty state if doing search
                 if (emptyState) {
-                    emptyState.style.display = cards.length === 0 ? '' : 'none';
+                    emptyState.style.display = (cards.length === 0) ? '' : 'none';
                 }
 
+                // Handle no results message
                 if (noResults) {
                     noResults.style.display = (cards.length > 0 && visibleCount === 0) ? '' : 'none';
                 }
             }
 
-            // Event listeners
             input.addEventListener('input', updateDisplay);
+
+            // Clear on Escape key
             input.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
                     input.value = '';
                     updateDisplay();
                 }
             });
-
-            // Initial display
-            updateDisplay();
-
-            // Focus management
-            cards.forEach(card => {
-                card.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        card.click();
-                    }
-                });
-            });
-        })();
+        });
     </script>
 @endpush
