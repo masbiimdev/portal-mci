@@ -1,1135 +1,922 @@
 @extends('layouts.home')
 
-@section('title', 'Dashboard — Portal MCI')
+@section('title', 'Home — Portal MCI')
 
 @push('css')
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
     <style>
+        /* ============== CSS VARIABLES (MODERN COLOR PALETTE) ============== */
         :root {
-            /* Color Palette */
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --primary-light: #eff6ff;
-            --secondary: #475569;
-            --success: #059669;
-            --success-light: #dcfce7;
-            --warning: #d97706;
-            --warning-light: #fef3c7;
-            --danger: #dc2626;
-            --danger-light: #fee2e2;
-
-            /* Surface & Background */
-            --bg-color: #f1f5f9;
-            --surface: #ffffff;
-            --surface-hover: #f8fafc;
-
-            /* Text */
-            --text-main: #0f172a;
+            --bg-main: #f4f7fb;
+            --panel: #ffffff;
+            
+            --primary: #1d4ed8;
+            --primary-hover: #1e40af;
+            --primary-soft: #eff6ff;
+            --primary-glow: rgba(29, 78, 216, 0.15);
+            
+            --text-dark: #0f172a;
             --text-muted: #64748b;
-            --border-color: #e2e8f0;
-
-            /* Shadows & Radius */
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
-            --shadow-float: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-
-            --radius-md: 12px;
-            --radius-lg: 16px;
-            --radius-xl: 24px;
-
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            --border: #e2e8f0;
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
+            
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.025);
+            --shadow-float: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+            
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
         }
 
+        /* ============== BASE STYLES ============== */
+        * { box-sizing: border-box; }
+        
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
+            height: 100%;
             margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-dark);
+            line-height: 1.6;
             -webkit-font-smoothing: antialiased;
+            background-image: radial-gradient(at 0% 0%, var(--primary-glow) 0px, transparent 50%);
+            background-attachment: fixed;
         }
 
         .container {
-            max-width: 1440px;
-            margin: 0 auto;
-            padding: 2rem 1.5rem;
+            max-width: 1240px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
         }
 
-        /* ============== HERO BANNER ============== */
-        .hero-banner {
-            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
-            border-radius: var(--radius-xl);
-            padding: 2.5rem 3rem;
-            color: white;
+        /* ============== HERO SECTION & HEADER ============== */
+        .header-grid {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            color: #ffffff;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: var(--shadow-lg);
-            margin-bottom: 2rem;
+            flex-direction: column;
+            justify-content: center;
             position: relative;
             overflow: hidden;
+            box-shadow: var(--shadow-md);
         }
 
-        /* Abstract glowing blobs inside banner */
-        .hero-banner::before {
+        .hero::after {
             content: '';
             position: absolute;
             top: -50%;
-            left: -10%;
+            right: -10%;
             width: 400px;
             height: 400px;
-            background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, transparent 70%);
-            border-radius: 50%;
-            pointer-events: none;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+            opacity: 0.3;
+            filter: blur(40px);
         }
 
-        .hero-banner::after {
-            content: '';
-            position: absolute;
-            bottom: -50%;
-            right: -5%;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(14, 165, 233, 0.2) 0%, transparent 70%);
-            border-radius: 50%;
-            pointer-events: none;
-        }
-
-        .hero-text {
-            position: relative;
-            z-index: 2;
-        }
-
-        .hero-text h1 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin: 0 0 0.5rem 0;
-            letter-spacing: -0.02em;
-        }
-
-        .hero-text p {
-            color: #cbd5e1;
-            font-size: 1.05rem;
+        .hero h1 {
             margin: 0;
-            max-width: 550px;
-            line-height: 1.6;
+            font-weight: 800;
+            font-size: 2rem;
+            letter-spacing: -0.02em;
+            z-index: 1;
         }
 
-        .hero-date {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            margin-bottom: 1rem;
-            backdrop-filter: blur(4px);
+        .hero p {
+            margin: 0.5rem 0 2rem 0;
+            color: #94a3b8;
+            font-size: 1.05rem;
+            z-index: 1;
         }
 
-        /* ============== KPI CARDS ============== */
-        .kpi-grid {
+        /* KPI Cards inside Hero */
+        .kpis {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 1rem;
+            z-index: 1;
         }
 
-        .kpi-card {
-            background: var(--surface);
-            padding: 1.5rem;
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow-sm);
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
+        .kpi {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.25rem;
+            border-radius: var(--radius-md);
+            transition: transform 0.2s, background 0.2s;
         }
 
-        .kpi-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
+        .kpi:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.1);
         }
 
-        .kpi-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .kpi-content {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .kpi-label {
-            font-size: 0.85rem;
+        .kpi .label {
+            font-size: 0.75rem;
+            color: #cbd5e1;
             font-weight: 600;
-            color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            margin-bottom: 0.5rem;
         }
 
-        .kpi-value {
-            font-size: 2rem;
+        .kpi .value {
+            font-size: 1.75rem;
             font-weight: 800;
-            color: var(--text-main);
-            line-height: 1;
+            margin-top: 0.25rem;
+            color: #ffffff;
+            font-family: 'JetBrains Mono', monospace;
         }
 
-        .kpi-icon-wrap {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-
-        .card-total::before {
-            background: var(--primary);
-        }
-
-        .card-total .kpi-icon-wrap {
-            background: var(--primary-light);
-            color: var(--primary);
-        }
-
-        .card-ok::before {
-            background: var(--success);
-        }
-
-        .card-ok .kpi-icon-wrap {
-            background: var(--success-light);
-            color: var(--success);
-        }
-
-        .card-proses::before {
-            background: var(--warning);
-        }
-
-        .card-proses .kpi-icon-wrap {
-            background: var(--warning-light);
-            color: var(--warning);
-        }
-
-        .card-due::before {
-            background: var(--danger);
-        }
-
-        .card-due .kpi-icon-wrap {
-            background: var(--danger-light);
-            color: var(--danger);
-        }
-
-        /* ============== BENTO LAYOUT ============== */
-        .main-layout {
-            display: grid;
-            grid-template-columns: 1fr 380px;
-            gap: 2rem;
-        }
-
-        @media (max-width: 1024px) {
-            .main-layout {
-                grid-template-columns: 1fr;
-            }
-
-            .hero-banner {
-                flex-direction: column;
-                align-items: flex-start;
-                padding: 2rem;
-            }
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-bottom: 1.25rem;
-        }
-
-        .section-title {
-            font-size: 1.25rem;
-            font-weight: 800;
-            color: var(--text-main);
-            margin: 0;
-        }
-
-        .section-link {
-            font-size: 0.875rem;
-            color: var(--primary);
-            font-weight: 600;
-            text-decoration: none;
-        }
-
-        .section-link:hover {
-            text-decoration: underline;
-        }
-
-        /* ============== QUICK ACTIONS ============== */
-        .quick-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.25rem;
-            margin-bottom: 2.5rem;
-        }
-
-        .action-card {
-            background: var(--surface);
-            border: 1px solid var(--border-color);
+        /* ============== WEATHER & TIME CARD ============== */
+        .weather-time-card {
+            background: var(--panel);
             border-radius: var(--radius-lg);
-            padding: 1.5rem;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            gap: 1rem;
-            text-decoration: none;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .action-card:hover {
-            border-color: var(--primary);
-            box-shadow: var(--shadow-md);
-            transform: translateY(-3px);
-        }
-
-        .action-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
         }
 
-        .action-text h4 {
-            margin: 0 0 0.25rem 0;
-            font-size: 1.05rem;
-            font-weight: 700;
-            color: var(--text-main);
+        .time-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 800;
+            font-size: 2.5rem;
+            color: var(--primary);
+            line-height: 1;
+            margin: 0.5rem 0;
+            text-shadow: 0 2px 10px var(--primary-glow);
         }
 
-        .action-text p {
-            margin: 0;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            line-height: 1.4;
+        .weather-widget {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            align-items: center;
+            width: 100%;
         }
 
-        /* ============== MODERN TABLE ============== */
-        .table-card {
-            background: var(--surface);
-            border-radius: var(--radius-xl);
-            border: 1px solid var(--border-color);
-            overflow: hidden;
+        .weather-widget .icon { font-size: 2.5rem; line-height: 1; }
+        
+        .weather-info { text-align: left; }
+        .weather-widget .temp { font-weight: 800; font-size: 1.5rem; color: var(--text-dark); line-height: 1.2; }
+        .weather-desc { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
+
+        /* ============== MAIN LAYOUT GRID ============== */
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--panel);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
             box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .card:hover { box-shadow: var(--shadow-md); }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #f1f5f9;
         }
 
-        .table-responsive {
+        .card-header h3, .card-header h4 {
+            margin: 0;
+            color: var(--text-dark);
+            font-weight: 800;
+            font-size: 1.15rem;
+            letter-spacing: -0.01em;
+        }
+
+        .card-header a {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-decoration: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: var(--radius-sm);
+            background: var(--primary-soft);
+            transition: all 0.2s;
+        }
+        .card-header a:hover { background: var(--primary); color: white; }
+
+        /* ============== QUICK ACTIONS ============== */
+        .quick {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        .quick .item {
+            padding: 1.25rem 1rem;
+            text-align: center;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 600;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            color: var(--text-dark);
+            font-size: 0.85rem;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .quick .item:hover {
+            background: var(--primary-soft);
+            border-color: var(--primary);
+            transform: translateY(-4px);
+            color: var(--primary-dark);
+            box-shadow: var(--shadow-md);
+        }
+
+        .quick .icon { font-size: 1.75rem; }
+
+        /* ============== ANNOUNCEMENTS (WIDER GRID) ============== */
+        .ann-list { 
+            display: grid; 
+            /* Menyesuaikan menjadi 2 kolom jika ruang cukup (responsive) */
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 1rem; 
+        }
+        
+        .ann {
+            display: flex;
+            gap: 1rem;
+            padding: 1.25rem;
+            border-radius: var(--radius-md);
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--primary);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .ann:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .ann.prio-high { border-left-color: var(--danger); }
+        .ann.prio-medium { border-left-color: var(--warning); }
+        .ann.prio-low { border-left-color: var(--text-muted); }
+
+        .ann .avatar {
+            width: 48px; height: 48px; min-width: 48px;
+            border-radius: 12px;
+            display: grid; place-items: center;
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-weight: 800; font-size: 1.1rem;
+        }
+
+        .ann .body { flex: 1; min-width: 0; }
+        .ann .title { font-weight: 700; color: var(--text-dark); margin: 0 0 0.25rem 0; font-size: 1rem; line-height: 1.3;}
+        .ann .excerpt { margin: 0; color: var(--text-muted); font-size: 0.85rem; line-height: 1.5; }
+        
+        .ann .meta {
+            margin-top: 0.75rem;
+            display: flex; gap: 0.75rem; align-items: center;
+            color: var(--text-muted); font-size: 0.75rem; font-weight: 500;
+        }
+
+        .badge-prio {
+            padding: 0.2rem 0.6rem; border-radius: 6px;
+            font-weight: 800; font-size: 0.65rem; text-transform: uppercase;
+        }
+        .prio-high .badge-prio { background: #fee2e2; color: #991b1b; }
+        .prio-medium .badge-prio { background: #fef9c3; color: #854d0e; }
+        .prio-low .badge-prio { background: #f1f5f9; color: #475569; }
+
+        /* ============== TABLE STYLING ============== */
+        .table-wrap {
             overflow-x: auto;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            white-space: nowrap;
+            font-size: 0.9rem;
+            background: white;
         }
 
-        th {
-            background: #f8fafc;
-            padding: 1.25rem 1.5rem;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
+        th, td {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
             text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        td {
-            padding: 1.25rem 1.5rem;
-            font-size: 0.95rem;
-            color: var(--text-main);
-            border-bottom: 1px solid var(--border-color);
             vertical-align: middle;
         }
 
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        tr:hover td {
-            background: var(--surface-hover);
-        }
-
-        /* Highlight Critical Row */
-        tr.row-critical td {
-            background: #fffcfc;
-        }
-
-        tr.row-critical:hover td {
-            background: #fee2e2;
-        }
-
-        .item-name-cell {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .item-avatar {
-            width: 42px;
-            height: 42px;
-            border-radius: 10px;
-            background: var(--bg-color);
-            border: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        thead th {
+            background: #f8fafc;
+            color: var(--text-muted);
             font-weight: 700;
-            font-size: 1rem;
-            color: var(--secondary);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
+
+        tbody tr:hover { background-color: #f8fafc; }
+        tbody tr:last-child td { border-bottom: none; }
 
         .badge {
-            padding: 0.4rem 0.75rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 999px;
             font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.35rem;
+            font-size: 0.7rem;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            display: inline-block;
         }
 
-        .badge-ok {
-            background: var(--success-light);
-            color: var(--success);
-        }
-
-        .badge-proses {
-            background: var(--warning-light);
-            color: var(--warning);
-        }
-
-        .badge-due {
-            background: var(--danger-light);
-            color: var(--danger);
-        }
-
-        .badge-unknown {
-            background: var(--bg-color);
-            color: var(--text-muted);
-        }
+        .badge.ok { background: #dcfce7; color: #065f46; }
+        .badge.proses { background: #fef9c3; color: #854d0e; }
+        .badge.due { background: #fee2e2; color: #991b1b; }
 
         .btn-action {
-            background: var(--bg-color);
+            padding: 0.4rem 1rem;
+            border: none;
+            background: var(--primary-soft);
             color: var(--primary);
-            border: 1px solid transparent;
-            padding: 0.4rem 0.8rem;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: 600;
+            border-radius: var(--radius-sm);
             cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .btn-action:hover {
-            background: var(--primary-light);
-            border-color: #bfdbfe;
-        }
-
-        /* ============== SIDEBAR ============== */
-        .sidebar-widget {
-            background: var(--surface);
-            border-radius: var(--radius-xl);
-            border: 1px solid var(--border-color);
-            padding: 1.5rem;
-            box-shadow: var(--shadow-sm);
-            margin-bottom: 1.5rem;
-        }
-
-        /* Combined Time & Weather */
-        .time-weather-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px dashed var(--border-color);
-        }
-
-        .time-area h2 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin: 0;
-            line-height: 1;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .time-area p {
-            margin: 5px 0 0 0;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        .weather-area {
-            text-align: right;
-        }
-
-        .weather-temp {
-            font-size: 1.5rem;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            justify-content: flex-end;
-        }
-
-        .weather-loc {
+            font-weight: 600;
             font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-top: 2px;
+            transition: all 0.2s ease;
         }
 
-        /* Prayer Widget */
-        .prayer-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
+        .btn-action:hover { background: var(--primary); color: white; }
+
+        /* ============== PRAYER WIDGET ============== */
+        .prayer-head .action {
+            background: none; border: none; color: var(--primary); font-size: 1.25rem;
+            cursor: pointer; padding: 0.25rem; transition: transform 0.3s;
+        }
+        .prayer-head .action:hover { transform: rotate(180deg); }
+
+        .prayer-info {
+            display: flex; justify-content: space-between;
+            font-size: 0.8rem; font-weight: 600; color: var(--text-muted);
+            margin-bottom: 1rem; padding: 0.75rem 1rem; background: #f8fafc; border-radius: var(--radius-sm);
         }
 
-        .prayer-header h3 {
-            margin: 0;
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--text-main);
+        /* Next Prayer Block */
+        .next-prayer-block {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+            border-radius: var(--radius-md); padding: 1.5rem;
+            color: white; text-align: center; margin-bottom: 1.25rem;
+            box-shadow: 0 10px 15px -3px var(--primary-glow);
+            position: relative; overflow: hidden;
         }
 
-        .prayer-card {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border-radius: var(--radius-md);
-            padding: 1.5rem;
-            text-align: center;
-            color: white;
-            margin-bottom: 1rem;
-        }
+        .np-label { font-size: 0.75rem; text-transform: uppercase; font-weight: 700; opacity: 0.8; letter-spacing: 0.05em; }
+        .np-name { font-size: 1.5rem; font-weight: 800; margin: 0.25rem 0; letter-spacing: -0.01em;}
+        .np-time { font-family: 'JetBrains Mono', monospace; font-size: 1.75rem; font-weight: 800; line-height: 1;}
+        .np-countdown { font-size: 0.85rem; font-weight: 500; opacity: 0.9; margin-top: 0.5rem;}
 
-        .prayer-card h4 {
-            margin: 0;
-            font-size: 0.85rem;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        /* Sleek Progress Bar */
+        .np-progress {
+            width: 100%; height: 4px; background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px; overflow: hidden; margin-top: 1rem;
         }
-
-        .prayer-card .time {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin: 0.5rem 0;
-            font-variant-numeric: tabular-nums;
+        .np-bar {
+            height: 100%; width: 0%; background: #ffffff;
+            border-radius: 4px; transition: width 1s linear;
         }
+        .np-bar.warning { background: #fca5a5; box-shadow: 0 0 10px #ef4444;}
 
-        .prayer-card .countdown {
-            font-size: 0.85rem;
-            color: #38bdf8;
-            font-weight: 600;
-            margin-bottom: 1rem;
+        /* Prayer List */
+        .prayer-list { display: grid; gap: 0.5rem; }
+        .pray-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0.85rem 1rem; border-radius: var(--radius-sm);
+            font-size: 0.9rem; font-weight: 600; color: var(--text-dark);
+            background: #f8fafc; transition: all 0.2s; border: 1px solid transparent;
         }
-
-        .progress-bg {
-            width: 100%;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            overflow: hidden;
+        .pray-row:hover { background: white; border-color: var(--border); box-shadow: var(--shadow-sm); }
+        .pray-row.next {
+            background: var(--primary-soft); color: var(--primary-dark);
+            border-color: var(--primary-glow); font-weight: 800;
         }
+        .pray-row.next .pray-time { color: var(--primary); }
+        .pray-time { font-family: 'JetBrains Mono', monospace; color: var(--text-muted); }
 
-        .progress-bar {
-            height: 100%;
-            background: #38bdf8;
-            border-radius: 10px;
-            transition: width 1s linear;
+        /* ============== MODAL ============== */
+        #detailModal {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 9999; display: none; opacity: 0; pointer-events: none;
+            transition: opacity 0.2s ease; justify-content: center; align-items: center;
         }
-
-        .prayer-list {
-            display: grid;
-            gap: 0.5rem;
+        #detailModal.show { display: flex; opacity: 1; pointer-events: auto; }
+        
+        #detailModal .backdrop {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); z-index: 1;
         }
-
-        .prayer-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.75rem 1rem;
-            background: var(--bg-color);
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            border: 1px solid transparent;
+        
+        #detailModal .modal-card {
+            position: relative; z-index: 2; background: var(--panel);
+            width: 100%; max-width: 450px; border-radius: var(--radius-lg);
+            padding: 2rem; box-shadow: var(--shadow-float);
+            transform: translateY(20px) scale(0.95); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
+        #detailModal.show .modal-card { transform: translateY(0) scale(1); }
 
-        .prayer-item.active {
-            background: var(--primary-light);
-            color: var(--primary-dark);
-            border-color: #bfdbfe;
-            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+        #modalBody { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.5rem 0; }
+        #modalBody > div { display: flex; flex-direction: column; gap: 0.25rem; }
+        #modalBody strong { color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        #modalBody .muted { color: var(--text-dark); font-size: 0.95rem; font-weight: 600; word-break: break-word; }
+
+        /* ============== TOAST ============== */
+        .toast {
+            position: fixed; bottom: 24px; right: 24px; background: var(--text-dark); color: white;
+            padding: 1rem 1.5rem; border-radius: var(--radius-sm); font-weight: 600; font-size: 0.9rem;
+            z-index: 10000; transform: translateY(100px); opacity: 0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-float);
         }
+        .toast.show { transform: translateY(0); opacity: 1; }
 
-        .prayer-item.active span:last-child {
-            font-weight: 800;
+        /* ============== RESPONSIVE ============== */
+        @media (max-width: 1024px) {
+            .header-grid, .layout { grid-template-columns: 1fr; }
+            .weather-time-card { padding: 1.5rem; }
         }
-
-        /* Tip Card */
-        .tip-card {
-            background: #fffbeb;
-            border: 1px solid #fde68a;
-            border-radius: var(--radius-lg);
-            padding: 1.25rem;
-        }
-
-        .tip-card h4 {
-            margin: 0 0 0.5rem 0;
-            font-size: 0.9rem;
-            color: #d97706;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .tip-card p {
-            margin: 0;
-            font-size: 0.85rem;
-            color: #92400e;
-            line-height: 1.5;
+        @media (max-width: 768px) {
+            .hero { padding: 1.5rem; }
+            .kpis { grid-template-columns: 1fr 1fr; }
+            .quick { grid-template-columns: 1fr 1fr; }
+            .ann-list { grid-template-columns: 1fr; }
+            #modalBody { grid-template-columns: 1fr; gap: 1rem; }
         }
     </style>
 @endpush
 
 @section('content')
     <div class="container">
+        
+        <div class="header-grid">
+            <div class="hero">
+                <h1>Halo, {{ Auth::user()->name ?? 'Pengguna' }}</h1>
+                <p>Ringkasan sistem, kalibrasi, dan inventaris MCI hari ini.</p>
 
-        <div class="hero-banner">
-            <div class="hero-text">
-                <div class="hero-date" id="heroDate">Memuat tanggal...</div>
-                <h1 id="greetingMsg">Selamat Datang, {{ Auth::user()->name ?? 'Pengguna' }}</h1>
-                <p>Pantau jadwal kalibrasi, cek ketersediaan inventory, dan kelola aktivitas hari ini dalam satu dashboard
-                    terintegrasi.</p>
-            </div>
-            <div style="position: relative; width: 150px; height: 150px; z-index: 1; display: none;" class="md-show">
-                <div
-                    style="position: absolute; width: 80px; height: 80px; background: rgba(255,255,255,0.2); border-radius: 20px; transform: rotate(15deg); top: 10px; left: 10px; backdrop-filter: blur(10px);">
+                <div class="kpis" aria-label="Key Performance Indicators">
+                    <div class="kpi" title="Total jumlah alat dalam sistem">
+                        <div class="label">Total Item</div>
+                        <div class="value">{{ number_format($totalTools ?? 0) }}</div>
+                    </div>
+                    <div class="kpi" title="Alat dengan status kalibrasi OK">
+                        <div class="label">Status OK</div>
+                        <div class="value" style="color: #6ee7b7;">{{ number_format($statusOk ?? 0) }}</div>
+                    </div>
+                    <div class="kpi" title="Alat dengan jadwal kalibrasi < 15 hari">
+                        <div class="label">Due Soon</div>
+                        <div class="value" style="color: #fca5a5;">{{ number_format($dueSoon ?? 0) }}</div>
+                    </div>
+                    <div class="kpi" title="Jumlah item dengan stok rendah">
+                        <div class="label">Low Stock</div>
+                        <div class="value" style="color: #fcd34d;">{{ number_format($lowStockCount ?? 0) }}</div>
+                    </div>
                 </div>
-                <div
-                    style="position: absolute; width: 100px; height: 100px; background: rgba(255,255,255,0.3); border-radius: 50%; bottom: 10px; right: 10px; backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; font-size: 2.5rem;">
-                    📊</div>
             </div>
-        </div>
 
-        <div class="kpi-grid">
-            <div class="kpi-card card-total">
-                <div class="kpi-content">
-                    <span class="kpi-label">Total Inventory</span>
-                    <span class="kpi-value">{{ number_format($totalTools ?? 0) }}</span>
+            <div class="weather-time-card">
+                <div class="muted" style="font-size:0.85rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Waktu Lokal</div>
+                <div id="localTime" class="time-display">--:--:--</div>
+                <div id="localDate" class="muted" style="font-weight:500; font-size:0.9rem;">Mendeteksi tanggal...</div>
+
+                <div class="weather-widget">
+                    <div id="weatherIcon" class="icon">⛅</div>
+                    <div class="weather-info">
+                        <div id="temp" class="temp">--°C</div>
+                        <div id="weatherDesc" class="weather-desc">Memuat cuaca...</div>
+                    </div>
                 </div>
-                <div class="kpi-icon-wrap"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                        stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                    </svg></div>
-            </div>
-            <div class="kpi-card card-ok">
-                <div class="kpi-content">
-                    <span class="kpi-label">Status OK</span>
-                    <span class="kpi-value">{{ number_format($statusOk ?? 0) }}</span>
-                </div>
-                <div class="kpi-icon-wrap"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                        stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg></div>
-            </div>
-            <div class="kpi-card card-proses">
-                <div class="kpi-content">
-                    <span class="kpi-label">Sedang Kalibrasi</span>
-                    <span class="kpi-value">{{ number_format($statusProses ?? 0) }}</span>
-                </div>
-                <div class="kpi-icon-wrap"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                        stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg></div>
-            </div>
-            <div class="kpi-card card-due">
-                <div class="kpi-content">
-                    <span class="kpi-label">Due &lt; 15 Hari</span>
-                    <span class="kpi-value">{{ number_format($dueSoon ?? 0) }}</span>
-                </div>
-                <div class="kpi-icon-wrap"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                        stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg></div>
             </div>
         </div>
 
-        <div class="main-layout">
-            <main>
-                <div class="section-header">
-                    <h2 class="section-title">Akses Cepat</h2>
-                </div>
-                <div class="quick-grid">
-                    <a href="/schedule" class="action-card">
-                        <div class="action-icon" style="background: #e0e7ff; color: #1d4ed8;">
-                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
+        <div class="layout" aria-live="polite">
+            
+            <div>
+                <div class="card" style="padding-bottom: 24px;">
+                    <div class="card-header">
+                        <h3>Akses Cepat</h3>
+                    </div>
+                    <div class="quick">
+                        <div class="item" onclick="location.href='/schedule'" role="button" tabindex="0">
+                            <span class="icon">📅</span> <span>Jadwal</span>
                         </div>
-                        <div class="action-text">
-                            <h4>Jadwal & Agenda</h4>
-                            <p>Pantau kegiatan saksi & inspeksi harian</p>
+                        <div class="item" onclick="location.href='/kalibrasi'" role="button" tabindex="0">
+                            <span class="icon">🛠</span> <span>Kalibrasi</span>
                         </div>
-                    </a>
-
-                    <a href="/kalibrasi" class="action-card">
-                        <div class="action-icon" style="background: #fef3c7; color: #d97706;">
-                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                            </svg>
+                        <div class="item" onclick="location.href='/portal/inventory'" role="button" tabindex="0">
+                            <span class="icon">📦</span> <span>Inventory</span>
                         </div>
-                        <div class="action-text">
-                            <h4>Modul Kalibrasi</h4>
-                            <p>Perbarui status instrumen pabrik</p>
+                        <div class="item" onclick="location.href='/export'" role="button" tabindex="0">
+                            <span class="icon">⬇</span> <span>Export</span>
                         </div>
-                    </a>
-
-                    <a href="/portal/inventory" class="action-card">
-                        <div class="action-icon" style="background: #dcfce7; color: #059669;">
-                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
-                            </svg>
-                        </div>
-                        <div class="action-text">
-                            <h4>Stok Material</h4>
-                            <p>Cek ketersediaan valve & spare part</p>
-                        </div>
-                    </a>
-
-                    <a href="/export" class="action-card">
-                        <div class="action-icon" style="background: #f3e8ff; color: #7e22ce;">
-                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                            </svg>
-                        </div>
-                        <div class="action-text">
-                            <h4>Unduh Laporan</h4>
-                            <p>Export data ke format Spreadsheet</p>
-                        </div>
-                    </a>
+                    </div>
                 </div>
 
-                <div class="section-header">
-                    <h2 class="section-title">Prioritas Kalibrasi</h2>
-                    <a href="/kalibrasi" class="section-link">Buka Modul &rarr;</a>
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Pengumuman Internal</h3>
+                        <a href="{{ route('announcements.index') ?? '#' }}">Semua Pengumuman</a>
+                    </div>
+                    <div class="ann-list">
+                        @forelse($announcements as $a)
+                            @php
+                                $prio = strtolower($a->priority ?? 'low');
+                                $prioClass = $prio === 'high' ? 'prio-high' : ($prio === 'medium' ? 'prio-medium' : 'prio-low');
+                                $author = optional($a->author)->name ?? 'Admin';
+                                $excerpt = \Illuminate\Support\Str::limit(strip_tags($a->content), 100);
+                            @endphp
+                            <article class="ann {{ $prioClass }}" onclick="window.location='{{ url('pengumuman/show/' . \Illuminate\Support\Str::slug($a->title)) }}'">
+                                <div class="avatar">{{ strtoupper(substr($author, 0, 1)) }}</div>
+                                <div class="body">
+                                    <h4 class="title">{{ $a->title }}</h4>
+                                    <div class="excerpt">{{ $excerpt }}</div>
+                                    <div class="meta">
+                                        <span class="badge-prio">{{ strtoupper($prio) }}</span>
+                                        <span>{{ $a->created_at->diffForHumans() }}</span>
+                                    </div>
+                                </div>
+                            </article>
+                        @empty
+                            <div style="text-align:center; padding:2rem; color:var(--text-muted); font-size:0.95rem; width:100%; border: 1px dashed var(--border); border-radius: var(--radius-md);">Belum ada pengumuman terbaru hari ini.</div>
+                        @endforelse
+                    </div>
                 </div>
 
-                <div class="table-card">
-                    <div class="table-responsive">
-                        <table>
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3>Kalibrasi Mendatang</h3>
+                            <div style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">Alat yang perlu diperhatikan</div>
+                        </div>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table role="table">
                             <thead>
                                 <tr>
-                                    <th>Instrumen</th>
+                                    <th>Info Alat</th>
                                     <th>Status</th>
-                                    <th>Jadwal Ulang</th>
-                                    <th>Aksi</th>
+                                    <th>Tgl Kalibrasi</th>
+                                    <th>Due Date</th>
+                                    <th style="text-align:right">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                @forelse($tools->take(6) as $t)
+                            <tbody id="toolsTbody">
+                                @forelse($tools->take(6) as $i => $t)
                                     @php
                                         $h = $t->latestHistory;
                                         $s = strtolower(optional($h)->status_kalibrasi ?? '-');
+                                        $badge = $s === 'ok' ? 'ok' : ($s === 'proses' ? 'proses' : 'due');
 
-                                        $badgeClass = 'badge-unknown';
-                                        $icon = '➖';
-                                        $isCritical = false;
-
-                                        if ($s === 'ok') {
-                                            $badgeClass = 'badge-ok';
-                                            $icon = '✓';
-                                        } elseif ($s === 'proses') {
-                                            $badgeClass = 'badge-proses';
-                                            $icon = '⚙️';
-                                        } elseif (str_contains($s, 'jatuh tempo') || $s === 'due') {
-                                            $badgeClass = 'badge-due';
-                                            $icon = '⚠️';
-                                            $isCritical = true;
-                                        }
-
-                                        $initial = strtoupper(substr($t->nama_alat, 0, 2));
+                                        $toolJson = [
+                                            'id' => $t->id,
+                                            'nama' => $t->nama_alat,
+                                            'merek' => $t->merek,
+                                            'no_seri' => $t->no_seri,
+                                            'history' => $h ? [
+                                                'status' => $h->status_kalibrasi,
+                                                'tgl_kalibrasi_ulang' => $h->tgl_kalibrasi_ulang ? $h->tgl_kalibrasi_ulang->format('d/m/Y') : null,
+                                                'keterangan' => $h->keterangan,
+                                            ] : null,
+                                        ];
                                     @endphp
-                                    <tr class="{{ $isCritical ? 'row-critical' : '' }}">
+                                    <tr data-tool='@json($toolJson)'>
                                         <td>
-                                            <div class="item-name-cell">
-                                                <div class="item-avatar"
-                                                    style="{{ $isCritical ? 'background: #fee2e2; color: #dc2626; border-color: #fca5a5;' : '' }}">
-                                                    {{ $initial }}</div>
-                                                <div>
-                                                    <div style="font-weight: 700; color: var(--text-main);">
-                                                        {{ $t->nama_alat }}</div>
-                                                    <div
-                                                        style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; font-family: monospace;">
-                                                        SN: {{ $t->no_seri }}</div>
-                                                </div>
-                                            </div>
+                                            <div style="font-weight:700; color:var(--text-dark);">{{ e($t->nama_alat) }}</div>
+                                            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">SN: {{ e($t->no_seri ?? '-') }}</div>
                                         </td>
-                                        <td><span class="badge {{ $badgeClass }}">{{ $icon }}
-                                                {{ strtoupper($s) }}</span></td>
-                                        <td
-                                            style="font-family: monospace; font-weight: 600; color: {{ $isCritical ? '#dc2626' : 'inherit' }}">
-                                            {{ optional($h)->tgl_kalibrasi_ulang ? $h->tgl_kalibrasi_ulang->format('d/m/Y') : '-' }}
-                                        </td>
-                                        <td>
-                                            <button class="btn-action">Detail</button>
-                                        </td>
+                                        <td><span class="badge {{ $badge }}">{{ optional($h)->status_kalibrasi ?? '-' }}</span></td>
+                                        <td style="font-family:'JetBrains Mono', monospace; font-size:0.85rem;">{{ optional($h)->tgl_kalibrasi ? $h->tgl_kalibrasi->format('d/m/Y') : '-' }}</td>
+                                        <td style="font-family:'JetBrains Mono', monospace; font-size:0.85rem; font-weight:700;">{{ optional($h)->tgl_kalibrasi_ulang ? $h->tgl_kalibrasi_ulang->format('d/m/Y') : '-' }}</td>
+                                        <td style="text-align:right"><button class="btn-action" data-action="detail">Detail</button></td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="4"
-                                            style="text-align:center; padding: 4rem 1rem; color: var(--text-muted);">
-                                            <svg class="w-12 h-12 mx-auto mb-3 text-slate-300" fill="none"
-                                                viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
-                                            <div style="font-weight: 600; font-size: 1.1rem; color: var(--text-main);">
-                                                Semua Aman!</div>
-                                            <p style="font-size: 0.9rem; margin-top: 0.25rem;">Tidak ada instrumen yang
-                                                mendekati batas kalibrasi.</p>
-                                        </td>
+                                        <td colspan="5" class="center" style="padding: 2rem; color: var(--text-muted);">Tidak ada data jadwal kalibrasi saat ini.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
                 </div>
-            </main>
+            </div>
 
-            <aside>
-                <div class="sidebar-widget">
-                    <div class="time-weather-header">
-                        <div class="time-area">
-                            <h2 id="localTime">--:--</h2>
-                            <p id="localDate">Memuat...</p>
-                        </div>
-                        <div class="weather-area">
-                            <div class="weather-temp">
-                                <span id="weatherIcon">⛅</span>
-                                <span id="temp">--°</span>
-                            </div>
-                            <div class="weather-loc" id="weatherCity">Mencari lokasi...</div>
+            <aside class="sidebar">
+
+                <div class="card pray-card" style="position: sticky; top: 20px;">
+                    <div class="card-header" style="margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:none;">
+                        <h3 style="display:flex; align-items:center; gap:8px;"><span style="font-size:1.3rem;">🕋</span> Jadwal Sholat</h3>
+                        <button id="prayerRefreshBtn" class="action" style="padding:0.3rem 0.5rem; background:none; border:none; font-size:1.1rem;" title="Refresh" aria-label="Refresh">↻</button>
+                    </div>
+
+                    <div class="prayer-info">
+                        <span id="prayerLocation">Mendeteksi lokasi...</span>
+                        <span id="prayerHijri" style="text-align:right;">—</span>
+                    </div>
+
+                    <div class="next-prayer-block">
+                        <div class="np-label">Mendekati Waktu</div>
+                        <div class="np-name" id="prayerNextLabel">—</div>
+                        <div class="np-time" id="nextPrayerTime">--:--</div>
+                        <div class="np-countdown" id="nextPrayerCountdown">Menghitung...</div>
+                        <div class="np-progress">
+                            <div class="np-bar" id="countdownBar"></div>
                         </div>
                     </div>
 
-                    <div class="prayer-section">
-                        <div class="prayer-header">
-                            <h3>Jadwal Sholat</h3>
-                            <svg class="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-
-                        <div class="prayer-card">
-                            <h4 id="prayerNextLabel">Berikutnya</h4>
-                            <div class="time" id="nextPrayerTime">--:--</div>
-                            <div class="countdown" id="nextPrayerCountdown">Menghitung...</div>
-                            <div class="progress-bg">
-                                <div id="prayerProgress" class="progress-bar" style="width: 0%;"></div>
-                            </div>
-                        </div>
-
-                        <div class="prayer-list" id="prayerListDOM">
-                            <div class="prayer-item"><span>Subuh</span><span>--:--</span></div>
-                            <div class="prayer-item"><span>Dzuhur</span><span>--:--</span></div>
-                            <div class="prayer-item"><span>Ashar</span><span>--:--</span></div>
-                            <div class="prayer-item"><span>Maghrib</span><span>--:--</span></div>
-                            <div class="prayer-item"><span>Isya</span><span>--:--</span></div>
-                        </div>
+                    <div class="prayer-list">
+                        <div class="pray-row" id="row-Imsak"><span class="pray-name">⏰ Imsak</span><span class="pray-time" id="pray-Imsak">--:--</span></div>
+                        <div class="pray-row" id="row-Fajr"><span class="pray-name">🌅 Subuh</span><span class="pray-time" id="pray-Fajr">--:--</span></div>
+                        <div class="pray-row" id="row-Sunrise"><span class="pray-name">🌄 Terbit</span><span class="pray-time" id="pray-Sunrise">--:--</span></div>
+                        <div class="pray-row" id="row-Dhuhr"><span class="pray-name">☀️ Dzuhur</span><span class="pray-time" id="pray-Dhuhr">--:--</span></div>
+                        <div class="pray-row" id="row-Asr"><span class="pray-name">🏜️ Ashar</span><span class="pray-time" id="pray-Asr">--:--</span></div>
+                        <div class="pray-row" id="row-Maghrib"><span class="pray-name">🌇 Maghrib</span><span class="pray-time" id="pray-Maghrib">--:--</span></div>
+                        <div class="pray-row" id="row-Isha"><span class="pray-name">🌃 Isya</span><span class="pray-time" id="pray-Isha">--:--</span></div>
                     </div>
                 </div>
 
-                <div class="tip-card">
-                    <h4><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg> Tip Sistem</h4>
-                    <p>Pastikan untuk mengekspor laporan inventory di akhir bulan untuk pencocokan data fisik di gudang.</p>
-                </div>
             </aside>
         </div>
     </div>
+
+    <div id="detailModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="backdrop" role="button" tabindex="-1"></div>
+        <div class="modal-card">
+            <header style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #f1f5f9; padding-bottom:1rem; margin-bottom:1rem;">
+                <h3 id="modalTitle" style="margin:0; font-weight:800; font-size:1.25rem; color:var(--text-dark);">Detail</h3>
+                <button id="modalClose" style="background:var(--bg-main); border:none; width:32px; height:32px; border-radius:50%; cursor:pointer; color:var(--text-muted); font-weight:bold;">✕</button>
+            </header>
+            <div id="modalBody"></div>
+            <div style="margin-top:1.5rem; text-align:right; border-top:1px solid #f1f5f9; padding-top:1.5rem;">
+                <button id="modalClose2" class="btn-action">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="mciToast" class="toast" role="status" aria-live="polite"></div>
 @endsection
 
 @push('js')
     <script>
         'use strict';
 
-        const DashboardApp = {
-            // Default ke Jakarta Timur
-            coords: {
-                lat: -6.2383,
-                lon: 106.9892
-            },
-            prayerTimings: null,
-            prayerInterval: null,
-
+        // ========== PRAYER TIMES MODULE ==========
+        const PrayerTimes = {
+            countdownInterval: null, currentTimings: {}, currentNextPrayer: null, dom: {},
             init() {
-                this.setGreeting();
-                this.initClock();
-                this.initLocationAndData();
+                this.cacheDom(); this.bindEvents(); this.fetchPrayerTimes();
+                this.countdownInterval = setInterval(() => this.updateCountdown(), 1000);
             },
-
-            // 0. DYNAMIC GREETING
-            setGreeting() {
-                const hour = new Date().getHours();
-                let greeting = 'Selamat Malam';
-                if (hour >= 5 && hour < 12) greeting = 'Selamat Pagi';
-                else if (hour >= 12 && hour < 15) greeting = 'Selamat Siang';
-                else if (hour >= 15 && hour < 18) greeting = 'Selamat Sore';
-
-                const name = "{{ Auth::user()->name ?? 'Pengguna' }}";
-                document.getElementById('greetingMsg').innerHTML =
-                    `${greeting}, ${name} <span style="font-size:2rem; vertical-align:middle;">👋</span>`;
-            },
-
-            // 1. CLOCK & DATE
-            initClock() {
-                const timeEl = document.getElementById('localTime');
-                const dateEl = document.getElementById('localDate');
-                const heroDate = document.getElementById('heroDate');
-
-                const updateTime = () => {
-                    const now = new Date();
-                    timeEl.textContent = now.toLocaleTimeString('id-ID', {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-
-                    const dateStr = now.toLocaleDateString('id-ID', {
-                        weekday: 'long',
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric'
-                    });
-                    dateEl.textContent = dateStr;
-                    if (heroDate) heroDate.textContent = dateStr;
+            cacheDom() {
+                this.dom = {
+                    refreshBtn: document.getElementById('prayerRefreshBtn'), location: document.getElementById('prayerLocation'),
+                    hijri: document.getElementById('prayerHijri'), nextLabel: document.getElementById('prayerNextLabel'),
+                    nextTime: document.getElementById('nextPrayerTime'), countdown: document.getElementById('nextPrayerCountdown'),
+                    progressBar: document.getElementById('countdownBar')
                 };
-
-                updateTime();
-                setInterval(updateTime, 1000);
             },
-
-            // 2. LOCATION & DATA FETCH
-            initLocationAndData() {
+            bindEvents() {
+                this.dom.refreshBtn?.addEventListener('click', () => {
+                    this.fetchPrayerTimes();
+                    if (window.AppDashboard?.showToast) AppDashboard.showToast('Memperbarui jadwal sholat...');
+                });
+            },
+            async fetchPrayerTimes() {
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(
-                        (pos) => {
-                            this.coords.lat = pos.coords.latitude;
-                            this.coords.lon = pos.coords.longitude;
-                            this.fetchData();
-                            this.getCityName(this.coords.lat, this.coords.lon);
-                        },
-                        () => {
-                            this.fetchData();
-                            document.getElementById('weatherCity').textContent = "Jakarta Timur (Default)";
-                        }, {
-                            timeout: 5000
-                        }
+                        (pos) => this.getPrayerData(pos.coords.latitude, pos.coords.longitude),
+                        () => this.getPrayerData(-6.2383, 106.9892), { timeout: 8000, maximumAge: 60000 }
                     );
-                } else {
-                    this.fetchData();
-                    document.getElementById('weatherCity').textContent = "Jakarta Timur (Default)";
-                }
+                } else this.getPrayerData(-6.2383, 106.9892);
             },
-
-            fetchData() {
-                this.fetchWeather();
-                this.fetchPrayer();
-            },
-
-            // 3. REVERSE GEOCODING (Get City Name)
-            async getCityName(lat, lon) {
+            async getPrayerData(lat, lon) {
                 try {
-                    const res = await fetch(
-                        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10`);
-                    const data = await res.json();
-                    let city = data.address.city || data.address.town || data.address.county || data.address
-                        .state || "Lokasi Anda";
-                    document.getElementById('weatherCity').textContent = city;
-                } catch (e) {
-                    document.getElementById('weatherCity').textContent = "GPS Aktif";
-                }
+                    const res = await fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=2`);
+                    const json = await res.json();
+                    if (!json?.data?.timings) return;
+
+                    const timings = json.data.timings;
+                    const hijriInfo = json.data.date.hijri || null;
+                    let locationLabel = `${lat.toFixed(3)}, ${lon.toFixed(3)}`;
+
+                    try {
+                        const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`);
+                        if (r.ok) {
+                            const loc = await r.json();
+                            if (loc?.address) {
+                                const parts = [];
+                                if (loc.address.city) parts.push(loc.address.city);
+                                else if (loc.address.town) parts.push(loc.address.town);
+                                if (loc.address.state) parts.push(loc.address.state);
+                                if (parts.length) locationLabel = parts.join(', ');
+                            }
+                        }
+                    } catch (e) {}
+
+                    this.displayPrayerTimes(timings, locationLabel, hijriInfo);
+                } catch (err) { console.error('Prayer fetch error:', err); }
             },
+            displayPrayerTimes(timings, locationLabel, hijriInfo) {
+                this.currentTimings = timings;
+                if (this.dom.location) this.dom.location.textContent = locationLabel;
+                if (hijriInfo && this.dom.hijri) this.dom.hijri.textContent = `${hijriInfo.day} ${hijriInfo.month.en} ${hijriInfo.year}`;
 
-            // 4. WEATHER (Open-Meteo)
-            async fetchWeather() {
-                try {
-                    const res = await fetch(
-                        `https://api.open-meteo.com/v1/forecast?latitude=${this.coords.lat}&longitude=${this.coords.lon}&current_weather=true`
-                        );
-                    const data = await res.json();
+                const keys = ['Imsak', 'Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+                keys.forEach(k => {
+                    const el = document.getElementById('pray-' + k);
+                    if (el) el.textContent = (timings[k] || '--:--').replace(/\s*\(.*\)$/, '');
+                });
 
-                    const temp = Math.round(data.current_weather.temperature);
-                    const code = data.current_weather.weathercode;
-
-                    let icon = '⛅';
-                    if (code === 0) icon = '☀️';
-                    else if (code >= 1 && code <= 3) icon = '⛅';
-                    else if (code >= 45 && code <= 48) icon = '🌫️';
-                    else if (code >= 51 && code <= 67) icon = '🌧️';
-                    else if (code >= 71 && code <= 77) icon = '❄️';
-                    else if (code >= 80 && code <= 99) icon = '⛈️';
-
-                    document.getElementById('weatherIcon').textContent = icon;
-                    document.getElementById('temp').textContent = `${temp}°C`;
-                } catch (error) {
-                    console.error("Gagal load cuaca:", error);
-                }
+                this.currentNextPrayer = this.getNextPrayer();
+                this.updateNextPrayerUI();
+                this.updateCountdown();
             },
-
-            // 5. PRAYER (Aladhan)
-            async fetchPrayer() {
-                try {
-                    const d = new Date();
-                    const res = await fetch(
-                        `https://api.aladhan.com/v1/timings/${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}?latitude=${this.coords.lat}&longitude=${this.coords.lon}&method=2`
-                        );
-                    const data = await res.json();
-
-                    this.prayerTimings = data.data.timings;
-
-                    if (this.prayerInterval) clearInterval(this.prayerInterval);
-                    this.prayerInterval = setInterval(() => this.calculateNextPrayer(), 1000);
-                    this.calculateNextPrayer();
-
-                } catch (error) {
-                    console.error("Gagal load sholat:", error);
-                }
-            },
-
-            // 6. PRAYER LOGIC & UI
-            calculateNextPrayer() {
-                if (!this.prayerTimings) return;
-
+            getNextPrayer() {
+                const order = ['Imsak', 'Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
                 const now = new Date();
-                const schedule = [{
-                        key: 'Fajr',
-                        name: 'Subuh',
-                        time: this.prayerTimings.Fajr
-                    },
-                    {
-                        key: 'Dhuhr',
-                        name: 'Dzuhur',
-                        time: this.prayerTimings.Dhuhr
-                    },
-                    {
-                        key: 'Asr',
-                        name: 'Ashar',
-                        time: this.prayerTimings.Asr
-                    },
-                    {
-                        key: 'Maghrib',
-                        name: 'Maghrib',
-                        time: this.prayerTimings.Maghrib
-                    },
-                    {
-                        key: 'Isha',
-                        name: 'Isya',
-                        time: this.prayerTimings.Isha
-                    }
-                ];
-
-                const listDom = document.getElementById('prayerListDOM');
-                let listHTML = '';
-                let nextPrayer = null;
-                let targetDate = null;
-
-                for (let p of schedule) {
-                    const [h, m] = p.time.split(':');
-                    let pDate = new Date();
-                    pDate.setHours(h, m, 0, 0);
-
-                    let isActive = false;
-                    if (pDate > now && !nextPrayer) {
-                        nextPrayer = p;
-                        targetDate = pDate;
-                        isActive = true;
-                    }
-
-                    listHTML +=
-                        `<div class="prayer-item ${isActive ? 'active' : ''}"><span>${p.name}</span><span>${p.time}</span></div>`;
+                for (const name of order) {
+                    const t = this.parseTimeToDate(this.currentTimings[name]);
+                    if (t && t > now) return name;
                 }
+                return 'Imsak';
+            },
+            updateNextPrayerUI() {
+                const next = this.currentNextPrayer;
+                const PRAY_LABELS = { 'Imsak':'Imsak', 'Fajr':'Subuh', 'Sunrise':'Terbit', 'Dhuhr':'Dzuhur', 'Asr':'Ashar', 'Maghrib':'Maghrib', 'Isha':'Isya' };
+                if (!next) return;
+                
+                if (this.dom.nextLabel) this.dom.nextLabel.textContent = PRAY_LABELS[next] || next;
+                if (this.dom.nextTime) this.dom.nextTime.textContent = (this.currentTimings[next] || '--:--').replace(/\s*\(.*\)$/, '');
 
-                if (!nextPrayer) {
-                    nextPrayer = {
-                        name: 'Subuh (Besok)',
-                        time: schedule[0].time
-                    };
-                    const [h, m] = schedule[0].time.split(':');
-                    targetDate = new Date();
-                    targetDate.setDate(targetDate.getDate() + 1);
-                    targetDate.setHours(h, m, 0, 0);
-                    listHTML = listHTML.replace('prayer-item', 'prayer-item active');
-                }
+                ['Imsak', 'Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'].forEach(k => {
+                    const row = document.getElementById('row-' + k);
+                    if (row) {
+                        row.classList.remove('next');
+                        if (k === next) row.classList.add('next');
+                    }
+                });
+            },
+            parseTimeToDate(timeStr) {
+                if (!timeStr) return null;
+                const m = timeStr.match(/(\d{1,2}):(\d{2})/);
+                if (!m) return null;
+                const d = new Date(); d.setHours(parseInt(m[1], 10), parseInt(m[2], 10), 0, 0);
+                return d;
+            },
+            updateCountdown() {
+                if (!this.dom.countdown || !this.currentNextPrayer) return;
+                const now = new Date();
+                let target = this.parseTimeToDate(this.currentTimings[this.currentNextPrayer]);
+                if (!target) return;
+                if (target < now) target.setDate(target.getDate() + 1);
 
-                listDom.innerHTML = listHTML;
+                const order = ['Imsak', 'Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+                const prevName = order.indexOf(this.currentNextPrayer) > 0 ? order[order.indexOf(this.currentNextPrayer) - 1] : 'Isha';
+                let prevTime = this.parseTimeToDate(this.currentTimings[prevName]);
+                if (prevTime && prevTime > target) prevTime.setDate(prevTime.getDate() - 1);
 
-                document.getElementById('prayerNextLabel').textContent = `Menuju ${nextPrayer.name}`;
-                document.getElementById('nextPrayerTime').textContent = nextPrayer.time;
+                let totalSeconds = Math.max(0, Math.floor((target - now) / 1000));
+                const h = Math.floor(totalSeconds / 3600), m = Math.floor((totalSeconds % 3600) / 60), s = totalSeconds % 60;
+                
+                let text = (h > 0 ? `${h}j ` : '') + (m > 0 ? `${m}m ` : '') + `${s}s`;
+                this.dom.countdown.textContent = `Tersisa: ${text}`;
 
-                const diffMs = targetDate - now;
-                const diffHrs = Math.floor(diffMs / 3600000);
-                const diffMins = Math.floor((diffMs % 3600000) / 60000);
-                const diffSecs = Math.floor((diffMs % 60000) / 1000);
-
-                let cdText = '';
-                if (diffHrs > 0) cdText += `${diffHrs}j `;
-                cdText += `${diffMins}m ${diffSecs}s`;
-                document.getElementById('nextPrayerCountdown').textContent = `- ${cdText} lagi`;
-
-                // Progress Bar Animasi (1 jam referensi)
-                const totalMs = 3600000;
-                const progressBar = document.getElementById('prayerProgress');
-
-                if (diffMs <= totalMs) {
-                    const percentage = 100 - ((diffMs / totalMs) * 100);
-                    progressBar.style.width = `${percentage}%`;
-                    progressBar.style.background = (diffMs < 600000) ? 'var(--danger)' :
-                    '#38bdf8'; // merah jika < 10 menit
-                } else {
-                    progressBar.style.width = '0%';
+                if (this.dom.progressBar && prevTime) {
+                    let percent = Math.max(0, Math.min(((now - prevTime) / (target - prevTime)) * 100, 100));
+                    this.dom.progressBar.style.width = percent + '%';
+                    if (totalSeconds <= 600) this.dom.progressBar.classList.add('warning');
+                    else this.dom.progressBar.classList.remove('warning');
                 }
             }
         };
 
-        document.addEventListener('DOMContentLoaded', () => DashboardApp.init());
+        // ========== APP DASHBOARD MODULE ==========
+        const AppDashboard = {
+            dom: {},
+            init() {
+                this.cacheDom();
+                this.bindEvents();
+                this.updateTime(); setInterval(() => this.updateTime(), 1000);
+                this.initWeather();
+                PrayerTimes.init();
+            },
+            cacheDom() {
+                this.dom = {
+                    localTime: document.getElementById('localTime'), localDate: document.getElementById('localDate'),
+                    weatherIcon: document.getElementById('weatherIcon'), temp: document.getElementById('temp'),
+                    weatherDesc: document.getElementById('weatherDesc'), toolsTbody: document.getElementById('toolsTbody'),
+                    detailModal: document.getElementById('detailModal'), detailModalBody: document.getElementById('modalBody'),
+                    modalClose: document.getElementById('modalClose'), modalClose2: document.getElementById('modalClose2'),
+                    mciToast: document.getElementById('mciToast')
+                };
+            },
+            bindEvents() {
+                this.dom.modalClose?.addEventListener('click', () => this.closeModal());
+                this.dom.modalClose2?.addEventListener('click', () => this.closeModal());
+                this.dom.detailModal?.addEventListener('click', (e) => { if (e.target.classList.contains('backdrop')) this.closeModal(); });
+                document.addEventListener('keydown', (e) => { if (e.key === 'Escape') this.closeModal(); });
+                
+                this.dom.toolsTbody?.addEventListener('click', (e) => {
+                    const btn = e.target.closest('[data-action="detail"]');
+                    if (!btn) return;
+                    const dataStr = btn.closest('tr').getAttribute('data-tool');
+                    if (dataStr) this.openModal(JSON.parse(dataStr));
+                });
+            },
+            updateTime() {
+                const now = new Date();
+                if (this.dom.localTime) this.dom.localTime.textContent = now.toLocaleTimeString('id-ID', { hour12: false });
+                if (this.dom.localDate) this.dom.localDate.textContent = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            },
+            async initWeather() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (pos) => this.fetchWeather(pos.coords.latitude, pos.coords.longitude),
+                        () => this.fetchWeather(-6.2383, 106.9892), { timeout: 6000, maximumAge: 60000 }
+                    );
+                } else this.fetchWeather(-6.2383, 106.9892);
+            },
+            async fetchWeather(lat, lon) {
+                try {
+                    const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+                    const data = await r.json();
+                    if (data?.current_weather) {
+                        const cw = data.current_weather;
+                        if (this.dom.temp) this.dom.temp.textContent = Math.round(cw.temperature) + '°C';
+                        const code = cw.weathercode;
+                        const icon = code === 0 ? '☀️' : (code <= 3 ? '⛅' : (code <= 48 ? '🌫️' : (code <= 77 ? '🌧️' : '🌦️')));
+                        if (this.dom.weatherIcon) this.dom.weatherIcon.textContent = icon;
+                        if (this.dom.weatherDesc) this.dom.weatherDesc.textContent = code === 0 ? 'Cerah' : 'Berawan / Hujan';
+                    }
+                } catch (e) {}
+            },
+            openModal(data) {
+                if (!this.dom.detailModal || !this.dom.detailModalBody) return;
+                document.getElementById('modalTitle').textContent = 'Info Spesifik Instrumen';
+                this.dom.detailModalBody.innerHTML = `
+                    <div><strong>Nama Instrumen</strong><div class="muted">${this.escapeHtml(data.nama || '-')}</div></div>
+                    <div><strong>Merek/Pabrikan</strong><div class="muted">${this.escapeHtml(data.merek || '-')}</div></div>
+                    <div><strong>Nomor Seri</strong><div class="muted">${this.escapeHtml(data.no_seri || '-')}</div></div>
+                    <div><strong>Status Terakhir</strong><div class="muted" style="text-transform:uppercase;">${this.escapeHtml(data.history?.status || '-')}</div></div>
+                    <div style="grid-column:1/-1;"><strong>Batas Kalibrasi Berikutnya</strong><div class="muted">${this.escapeHtml(data.history?.tgl_kalibrasi_ulang || '-')}</div></div>
+                    <div style="grid-column:1/-1;"><strong>Catatan Teknisi</strong><div class="muted" style="background:#f8fafc; padding:10px; border-radius:8px; border:1px solid #e2e8f0; font-weight:normal; font-size:0.9rem;">${this.escapeHtml(data.history?.keterangan || 'Tidak ada catatan khusus.')}</div></div>
+                `;
+                this.dom.detailModal.classList.add('show'); document.body.style.overflow = 'hidden';
+            },
+            closeModal() {
+                if (this.dom.detailModal) { this.dom.detailModal.classList.remove('show'); document.body.style.overflow = ''; }
+            },
+            showToast(msg, ms = 2500) {
+                if (!this.dom.mciToast) return;
+                this.dom.mciToast.textContent = msg; this.dom.mciToast.classList.add('show');
+                setTimeout(() => this.dom.mciToast.classList.remove('show'), ms);
+            },
+            escapeHtml(s) {
+                if (!s) return '';
+                const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+                return String(s).replace(/[&<>"']/g, m => map[m]);
+            }
+        };
+
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => AppDashboard.init());
+        else AppDashboard.init();
     </script>
 @endpush
