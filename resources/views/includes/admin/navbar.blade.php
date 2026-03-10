@@ -38,6 +38,23 @@
             </div>
         </div>
 
+        <div class="nav-smart-info d-none d-lg-flex mx-auto align-items-center gap-2">
+            <div class="info-pill clock-pill" title="Waktu Saat Ini">
+                <i class="bx bx-time-five"></i>
+                <span id="live-clock">--:--:--</span>
+            </div>
+
+            <div class="info-pill weather-pill" title="Cuaca Jakarta Timur">
+                <i class="bx bx-sun"></i>
+                <span id="live-weather">32°C Cerah</span>
+            </div>
+
+            <div class="info-pill prayer-pill" title="Jadwal Sholat Terdekat">
+                <i class="bx bx-mosque"></i>
+                <span id="prayer-countdown">Menghitung...</span>
+            </div>
+        </div>
+
         <ul class="navbar-nav flex-row align-items-center ms-auto gap-2 gap-sm-3">
 
             <li class="nav-item d-none d-sm-flex align-items-center">
@@ -102,13 +119,14 @@
             transition: all 0.3s ease;
         }
 
-        /* ============== GREETING & EMOJI ============== */
+        /* ============== GREETING ============== */
         .nav-greeting {
             font-size: 0.95rem;
             background: rgba(241, 245, 249, 0.6);
             padding: 0.4rem 1rem;
             border-radius: 999px;
             border: 1px solid rgba(226, 232, 240, 0.8);
+            white-space: nowrap;
         }
 
         .text-heading {
@@ -123,40 +141,73 @@
         }
 
         @keyframes wave {
-            0% {
+
+            0%,
+            60%,
+            100% {
                 transform: rotate(0.0deg)
             }
 
-            10% {
-                transform: rotate(14.0deg)
-            }
-
-            20% {
-                transform: rotate(-8.0deg)
-            }
-
+            10%,
             30% {
                 transform: rotate(14.0deg)
             }
 
+            20%,
             40% {
-                transform: rotate(-4.0deg)
+                transform: rotate(-8.0deg)
             }
 
             50% {
                 transform: rotate(10.0deg)
             }
-
-            60% {
-                transform: rotate(0.0deg)
-            }
-
-            100% {
-                transform: rotate(0.0deg)
-            }
         }
 
-        /* ============== ACTION ICONS (BELL & LOGOUT) ============== */
+        /* ============== SMART INFO PILLS ============== */
+        .nav-smart-info {
+            background: rgba(248, 250, 252, 0.7);
+            padding: 0.3rem;
+            border-radius: 12px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .info-pill {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: default;
+            transition: all 0.2s;
+        }
+
+        .info-pill i {
+            font-size: 1.1rem;
+        }
+
+        .clock-pill {
+            color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .weather-pill {
+            color: #f59e0b;
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        .prayer-pill {
+            color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .info-pill:hover {
+            filter: brightness(0.95);
+            transform: translateY(-1px);
+        }
+
+        /* ============== ACTION ICONS & PORTAL ============== */
         .action-icon-btn {
             display: grid;
             place-items: center;
@@ -168,7 +219,6 @@
             color: #64748b;
             cursor: pointer;
             transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-            /* Bouncy effect */
         }
 
         .action-icon-btn i {
@@ -182,7 +232,13 @@
             transform: translateY(-2px) scale(1.05);
         }
 
-        /* Pulsing dot for bell */
+        .logout-btn:hover {
+            background: #fee2e2;
+            border-color: #fca5a5;
+            color: #dc2626;
+        }
+
+        /* Pulse Indicator */
         .pulse-indicator {
             position: absolute;
             top: 8px;
@@ -218,14 +274,6 @@
             }
         }
 
-        /* Logout specific hover */
-        .logout-btn:hover {
-            background: #fee2e2;
-            border-color: #fca5a5;
-            color: #dc2626;
-        }
-
-        /* ============== PREMIUM PORTAL BUTTON ============== */
         .btn-premium-portal {
             display: inline-flex;
             align-items: center;
@@ -242,25 +290,20 @@
             transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .btn-premium-portal i {
-            font-size: 1.1rem;
-        }
-
         .btn-premium-portal:hover {
             transform: translateY(-2px) scale(1.02);
             box-shadow: 0 6px 15px -2px rgba(37, 99, 235, 0.5);
             background: linear-gradient(135deg, #1d4ed8 0%, #4338ca 100%);
         }
 
-        /* Divider */
         .nav-divider {
             height: 28px;
             width: 1px;
-            background: linear-gradient(to bottom, transparent, #cbd5e1, transparent);
             margin: 0 0.2rem;
+            background: linear-gradient(to bottom, transparent, #cbd5e1, transparent);
         }
 
-        /* ============== USER PROFILE WITH ONLINE STATUS ============== */
+        /* ============== USER PROFILE ============== */
         .profile-block {
             padding: 0.35rem;
             border-radius: 14px;
@@ -310,7 +353,6 @@
             background-color: #10b981;
             border-radius: 50%;
             border: 2px solid #ffffff;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
 
         .user-info .user-name {
@@ -328,8 +370,7 @@
             letter-spacing: 0.05em;
         }
 
-        /* ============== RESPONSIVE ============== */
-        @media (max-width: 575.98px) {
+        @media (max-width: 992px) {
             #layout-navbar {
                 margin-top: 0.5rem;
                 border-radius: 12px;
@@ -338,3 +379,97 @@
         }
     </style>
 </nav>
+
+@push('js')
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            // 1. FUNGSI JAM REALTIME
+            function updateClock() {
+                const now = new Date();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+                document.getElementById('live-clock').textContent = `${hours}:${minutes}:${seconds} WIB`;
+            }
+            setInterval(updateClock, 1000);
+            updateClock();
+
+            // 2. FUNGSI COUNTDOWN SHOLAT (Waktu Estimasi Jakarta)
+            // Catatan: Ini adalah waktu statis rata-rata. Untuk akurasi harian, gunakan API Aladhan.
+            const prayerSchedules = [{
+                    name: 'Subuh',
+                    time: '04:45'
+                },
+                {
+                    name: 'Dzuhur',
+                    time: '12:05'
+                },
+                {
+                    name: 'Ashar',
+                    time: '15:15'
+                },
+                {
+                    name: 'Maghrib',
+                    time: '18:05'
+                },
+                {
+                    name: 'Isya',
+                    time: '19:15'
+                }
+            ];
+
+            function updatePrayerCountdown() {
+                const now = new Date();
+                const currentTotalMinutes = (now.getHours() * 60) + now.getMinutes();
+
+                let nextPrayer = null;
+                let targetMinutes = 0;
+
+                // Cari sholat terdekat hari ini
+                for (let prayer of prayerSchedules) {
+                    let [p_hours, p_minutes] = prayer.time.split(':').map(Number);
+                    let p_totalMinutes = (p_hours * 60) + p_minutes;
+
+                    if (p_totalMinutes > currentTotalMinutes) {
+                        nextPrayer = prayer;
+                        targetMinutes = p_totalMinutes;
+                        break;
+                    }
+                }
+
+                // Jika semua sholat hari ini sudah lewat, targetnya Subuh besok
+                if (!nextPrayer) {
+                    nextPrayer = prayerSchedules[0]; // Subuh
+                    let [s_hours, s_minutes] = nextPrayer.time.split(':').map(Number);
+                    targetMinutes = (24 * 60) + (s_hours * 60) + s_minutes; // Tambah 24 jam
+                }
+
+                // Hitung selisih waktu
+                let diffMinutes = targetMinutes - currentTotalMinutes;
+                let diffH = Math.floor(diffMinutes / 60);
+                let diffM = diffMinutes % 60;
+
+                let countdownText = `${nextPrayer.name} dalam `;
+                if (diffH > 0) countdownText += `${diffH}j `;
+                countdownText += `${diffM}m`;
+
+                // Jika waktunya tiba (selisih kurang dari 5 menit)
+                if (diffMinutes <= 5 && diffMinutes >= 0) {
+                    countdownText = `Waktu ${nextPrayer.name} tiba!`;
+                    document.querySelector('.prayer-pill').style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+                    document.querySelector('.prayer-pill').style.color = '#ef4444'; // Berubah merah
+                } else {
+                    document.querySelector('.prayer-pill').style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+                    document.querySelector('.prayer-pill').style.color = '#10b981';
+                }
+
+                document.getElementById('prayer-countdown').textContent = countdownText;
+            }
+
+            // Jalankan penghitung sholat setiap 1 menit
+            setInterval(updatePrayerCountdown, 60000);
+            updatePrayerCountdown();
+        });
+    </script>
+@endpush

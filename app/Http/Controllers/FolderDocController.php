@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Project;
 use App\Folder;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule; // Pastikan untuk import class Rule
 
 class FolderDocController extends Controller
 {
@@ -26,7 +27,6 @@ class FolderDocController extends Controller
      */
     public function create(Project $project)
     {
-        // dd($project);
         return view('pages.admin.dokumen.folder.add', compact('project'));
     }
 
@@ -37,7 +37,15 @@ class FolderDocController extends Controller
     {
         $request->validate([
             'folder_name' => 'required|string|max:100',
-            'folder_code' => 'required|string|max:50',
+            'folder_code' => [
+                'required', 
+                'string', 
+                'max:50',
+                // Mencegah kode folder ganda di dalam project yang sama (menggunakan tabel document_folders)
+                Rule::unique('document_folders')->where(function ($query) use ($project) {
+                    return $query->where('document_project_id', $project->id);
+                })
+            ],
             'description' => 'nullable|string',
         ]);
 
@@ -48,7 +56,9 @@ class FolderDocController extends Controller
             'description'         => $request->description,
         ]);
 
-        return back()->with('success', 'Folder berhasil ditambahkan');
+        // Ubah redirect ke halaman index (Daftar Folder)
+        return redirect()->route('folders.index')
+                         ->with('success', 'Folder berhasil ditambahkan');
     }
 
     /**
@@ -66,7 +76,15 @@ class FolderDocController extends Controller
     {
         $request->validate([
             'folder_name' => 'required|string|max:100',
-            'folder_code' => 'required|string|max:50',
+            'folder_code' => [
+                'required', 
+                'string', 
+                'max:50',
+                // Mencegah kode ganda, namun abaikan folder yang sedang diedit ini
+                Rule::unique('document_folders')->where(function ($query) use ($project) {
+                    return $query->where('document_project_id', $project->id);
+                })->ignore($folder->id)
+            ],
             'description' => 'nullable|string',
         ]);
 
@@ -76,8 +94,10 @@ class FolderDocController extends Controller
             'description'
         ));
 
+        // BUG FIXED: Sebelumnya redirect ke 'folders.create' tanpa parameter.
+        // Seharusnya dikembalikan ke halaman index.
         return redirect()
-            ->route('folders.create')
+            ->route('folders.index')
             ->with('success', 'Folder berhasil diperbarui');
     }
 
@@ -87,13 +107,13 @@ class FolderDocController extends Controller
     public function destroy(Project $project, Folder $folder)
     {
         if ($folder->documents()->exists()) {
-            return back()->with('error', 'Folder masih memiliki dokumen');
+            return back()->with('error', 'Folder masih memiliki dokumen, tidak dapat dihapus!');
         }
 
         $folder->delete();
 
-        return redirect()
-            ->route('folders.create')
-            ->with('success', 'Folder berhasil dihapus');
+        // BUG FIXED: Gunakan back() agar tetap berada di halaman index/accordion.
+        // Jika pakai route('folders.create') akan menyebabkan error parameter.
+        return back()->with('success', 'Folder berhasil dihapus');
     }
-}
+} 
