@@ -2,384 +2,587 @@
 <html lang="id">
 
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>History Kalibrasi — {{ $tool->nama_alat ?? 'Alat' }}</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <title>History Kalibrasi — {{ $tool->nama_alat ?? 'Alat' }}</title>
 
-  <!-- Font -->
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 
-  <!-- Bootstrap (utilities + modal) -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-  <style>
-    :root{
-      --bg: #f7fbff;
-      --accent: #1765d1;
-      --muted: #6b7280;
-      --card: #ffffff;
-      --glass: rgba(255,255,255,0.9);
-      --radius: 12px;
-      --success: #16a34a;
-      --warning: #f59e0b;
-      --danger: #ef4444;
-      --shadow-sm: 0 8px 28px rgba(16,24,40,0.06);
-    }
+    <style>
+        :root {
+            --bg-body: #f1f5f9;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --surface: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
 
-    * { box-sizing: border-box; }
-    html,body {
-      height:100%;
-      margin:0;
-      font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial;
-      background: linear-gradient(180deg,var(--bg),#fbfbfe 100%);
-      color:#071133;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      font-size:14px;
-    }
+            --success-bg: #dcfce7;
+            --success-text: #16a34a;
+            --warning-bg: #fef3c7;
+            --warning-text: #d97706;
+            --danger-bg: #fee2e2;
+            --danger-text: #dc2626;
 
-    .container-main{
-      max-width:1100px;
-      margin:28px auto;
-      padding:20px;
-    }
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --shadow-card: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+            --shadow-hover: 0 12px 30px -5px rgba(15, 23, 42, 0.08);
+        }
 
-    /* Topbar */
-    .topbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:1rem;
-      margin-bottom:18px;
-    }
-    .topbar .title h1{
-      margin:0;
-      font-size:1.25rem;
-      color:var(--accent);
-      font-weight:700;
-    }
-    .subtitle{ color:var(--muted); font-size:0.95rem; margin-top:4px }
+        body {
+            height: 100%;
+            margin: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
+        }
 
-    /* Tool info */
-    .tool-info{
-      background: linear-gradient(180deg, rgba(255,255,255,0.92), var(--glass));
-      padding:14px;
-      border-radius:var(--radius);
-      box-shadow:var(--shadow-sm);
-      display:flex;
-      gap:1rem;
-      align-items:center;
-      justify-content:space-between;
-      border:1px solid rgba(15,23,42,0.04);
-      margin-bottom:20px;
-    }
-    .tool-left{ display:flex; gap:16px; align-items:center; min-width:0; }
-    .tool-left h2{ margin:0; font-size:1rem; font-weight:700; }
-    .tool-meta{ color:var(--muted); font-size:0.95rem; display:flex; gap:12px; flex-wrap:wrap; }
-    .qr-box{ width:92px; height:92px; border-radius:10px; overflow:hidden; background:#f3f6fb; display:flex; align-items:center; justify-content:center; flex-shrink:0; border:1px solid rgba(15,23,42,0.03); }
-    .qr-box img{ width:100%; height:100%; object-fit:cover; display:block; }
+        .container-main {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 24px;
+        }
 
-    /* Timeline */
-    .timeline{
-      position:relative;
-      padding-left:26px;
-      margin-top:8px;
-    }
-    .timeline::before{
-      content:"";
-      position:absolute;
-      left:18px;
-      top:12px;
-      bottom:12px;
-      width:4px;
-      background:linear-gradient(180deg,var(--accent), rgba(96,165,250,0.14));
-      border-radius:6px;
-    }
+        /* Topbar */
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e2e8f0;
+        }
 
-    .timeline-item{
-      position:relative;
-      margin-left:64px;
-      margin-bottom:18px;
-      display:grid;
-      grid-template-columns: 1fr auto;
-      gap:14px;
-      align-items:start;
-    }
+        .topbar h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
 
-    .timeline-bullet{
-      position:absolute;
-      left:-64px;
-      top:0;
-      width:56px;
-      height:56px;
-      border-radius:12px;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      color:#fff;
-      font-weight:700;
-      box-shadow: 0 8px 26px rgba(16,24,40,0.06);
-      border:5px solid #fff;
-      text-align:center;
-    }
-    .timeline-bullet small{ display:block; font-size:11px; line-height:1; }
+        .topbar p {
+            margin: 4px 0 0 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
 
-    .timeline-bullet.latest{ background:linear-gradient(180deg,var(--success), #059669) }
-    .timeline-bullet.ok{ background:linear-gradient(180deg,#10b981,#059669) }
-    .timeline-bullet.proses{ background:linear-gradient(180deg,#f59e0b,#f97316) }
-    .timeline-bullet.due{ background:linear-gradient(180deg,#ef4444,#dc2626) }
+        /* Tool Header Card */
+        .tool-header {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-card);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            gap: 20px;
+        }
 
-    .history-card{
-      background:var(--card);
-      border-radius:10px;
-      padding:16px;
-      box-shadow:0 8px 18px rgba(16,24,40,0.04);
-      border:1px solid rgba(15,23,42,0.04);
-      transition:transform .12s ease, box-shadow .12s ease;
-      min-width:0;
-    }
-    .history-card:hover{ transform:translateY(-6px); box-shadow:0 16px 40px rgba(16,24,40,0.06); }
+        .tool-identity h2 {
+            font-size: 1.35rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-    .history-meta{ color:var(--muted); font-size:0.9rem; margin-bottom:6px; }
-    .history-title{ font-weight:700; color:#071133; margin-bottom:8px; font-size:1rem }
+        .tool-specs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px 24px;
+        }
 
-    .badge-status{
-      display:inline-flex;
-      gap:.4rem;
-      align-items:center;
-      padding:.3rem .6rem;
-      border-radius:999px;
-      font-weight:600;
-      font-size:0.86rem;
-    }
-    .badge-ok{ background:#ecfdf5; color:var(--success); }
-    .badge-proses{ background:#fffbeb; color:#92400e; }
-    .badge-due{ background:#fff1f2; color:var(--danger); }
+        .spec-item {
+            display: flex;
+            flex-direction: column;
+        }
 
-    .history-meta-row{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; color:var(--muted); font-size:0.93rem; margin-top:10px; }
-    .history-actions{ display:flex; gap:8px; align-items:center; justify-content:flex-end; }
+        .spec-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
 
-    .pdf-frame{ width:100%; height:100%; border:0; display:block; }
+        .spec-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
 
-    .empty-state{
-      padding:48px; text-align:center; background:linear-gradient(180deg, rgba(23,101,209,0.03), rgba(96,165,250,0.02));
-      border-radius:12px; border:1px dashed rgba(15,23,42,0.04)
-    }
+        .qr-wrapper {
+            background: #fff;
+            padding: 8px;
+            border-radius: var(--radius-md);
+            border: 1px dashed #cbd5e1;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0;
+        }
 
-    .small-muted{ color:var(--muted); font-size:0.9rem; }
+        .qr-wrapper img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
 
-    /* Mobile tweaks */
-    @media (max-width:768px){
-      .timeline-item{ margin-left:56px; grid-template-columns:1fr; gap:12px; }
-      .timeline-bullet{ left:-56px; }
-      .tool-info{ flex-direction:column; align-items:stretch; gap:12px; }
-      .history-actions{ justify-content:flex-start; }
-      .history-card{ padding:12px; }
-      .history-title{ font-size:0.98rem; }
-      .qr-box{ width:80px; height:80px; }
-    }
+        /* Timeline Layout */
+        .timeline-container {
+            position: relative;
+            padding-left: 32px;
+            margin-top: 16px;
+        }
 
-    /* Small micro-polish */
-    .btn-ghost {
-      background: transparent;
-      border: 1px solid rgba(15,23,42,0.06);
-      color: var(--accent);
-    }
-    .muted { color:var(--muted); }
-  </style>
+        /* Garis Vertikal */
+        .timeline-container::before {
+            content: "";
+            position: absolute;
+            left: 22px;
+            /* Disesuaikan agar pas di tengah bullet */
+            top: 24px;
+            bottom: 24px;
+            width: 3px;
+            background: linear-gradient(to bottom, #93c5fd, #e2e8f0);
+            border-radius: 4px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-left: 56px;
+            margin-bottom: 24px;
+        }
+
+        /* Lingkaran Indikator */
+        .timeline-bullet {
+            position: absolute;
+            left: -88px;
+            /* Ditarik ke garis */
+            top: 16px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 800;
+            border: 4px solid var(--bg-body);
+            /* Memberi efek terpotong pada garis */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            z-index: 2;
+        }
+
+        .timeline-bullet.latest {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+        .timeline-bullet.ok {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+        }
+
+        .timeline-bullet.proses {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .timeline-bullet.due {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .timeline-bullet span {
+            font-size: 0.75rem;
+            line-height: 1;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .timeline-bullet i {
+            font-size: 1.25rem;
+        }
+
+        /* Card Riwayat */
+        .history-card {
+            background: var(--surface);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            box-shadow: var(--shadow-card);
+            transition: all 0.25s ease;
+        }
+
+        .history-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+            border-color: #cbd5e1;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            border-bottom: 1px dashed #e2e8f0;
+            padding-bottom: 12px;
+        }
+
+        .cal-date {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .cal-agency {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* Custom Badge Status */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge.ok {
+            background-color: var(--success-bg);
+            color: var(--success-text);
+            border: 1px solid #bbf7d0;
+        }
+
+        .status-badge.proses {
+            background-color: var(--warning-bg);
+            color: var(--warning-text);
+            border: 1px solid #fde68a;
+        }
+
+        .status-badge.due {
+            background-color: var(--danger-bg);
+            color: var(--danger-text);
+            border: 1px solid #fecdd3;
+        }
+
+        .history-body {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        /* Tombol PDF */
+        .btn-pdf {
+            background-color: #eff6ff;
+            color: var(--primary);
+            border: 1px solid #bfdbfe;
+            font-weight: 600;
+            font-size: 0.85rem;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn-pdf:hover {
+            background-color: var(--primary);
+            color: #fff;
+        }
+
+        /* Empty State */
+        .empty-state {
+            background: #ffffff;
+            border: 2px dashed #cbd5e1;
+            border-radius: var(--radius-lg);
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        /* Modal Tweaks */
+        .modal-content {
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: none;
+        }
+
+        .modal-header {
+            background-color: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .modal-body.pdf-dark {
+            background-color: #334155;
+        }
+
+        /* Responsif Mobile */
+        @media (max-width: 768px) {
+            .tool-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .qr-wrapper {
+                align-self: flex-start;
+                flex-direction: row;
+                gap: 16px;
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .timeline-container {
+                padding-left: 16px;
+            }
+
+            .timeline-container::before {
+                left: 16px;
+            }
+
+            .timeline-item {
+                margin-left: 40px;
+            }
+
+            .timeline-bullet {
+                left: -64px;
+                width: 40px;
+                height: 40px;
+            }
+
+            .timeline-bullet i {
+                font-size: 1rem;
+            }
+
+            .timeline-bullet span {
+                display: none;
+                /* Sembunyikan teks di bullet saat mobile */
+            }
+
+            .history-header {
+                flex-direction: column;
+                gap: 12px;
+            }
+        }
+    </style>
 </head>
 
 <body>
-  <div class="container-main">
-    <div class="topbar">
-      <div class="title">
-        <h1>History Kalibrasi</h1>
-        <div class="subtitle">Riwayat kalibrasi alat — detail, sertifikat, dan catatan</div>
-      </div>
+    <div class="container-main">
 
-      <div class="d-flex gap-2 align-items-center">
-        <a href="{{ route('histories.index') }}" class="btn btn-ghost btn-sm" aria-label="Kembali ke daftar history">
-          <!-- simple SVG back icon -->
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="margin-right:6px;vertical-align:middle">
-            <path d="M15 18l-6-6 6-6" stroke="#1765d1" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          Kembali
-        </a>
-      </div>
-    </div>
-
-    <!-- Tool Info -->
-    <div class="tool-info" role="region" aria-label="Informasi alat">
-      <div class="tool-left">
-        <div>
-          <h2 class="h5 mb-1" style="margin:0; font-weight:700">{{ e($tool->nama_alat) }}</h2>
-          <div class="tool-meta">
-            <div><strong>No Seri:</strong> <span class="small-muted">{{ e($tool->no_seri) ?? 'Tidak ada' }}</span></div>
-            <div><strong>Kapasitas:</strong> <span class="small-muted">{{ e($tool->kapasitas) ?? '-' }}</span></div>
-            <div><strong>Lokasi:</strong> <span class="small-muted">{{ e($tool->lokasi) ?? '-' }}</span></div>
-            <div><strong>Histori:</strong> <span id="historyCount" class="small-muted">0</span> Kali</div>
-          </div>
+        <div class="topbar">
+            <div>
+                <h1>Riwayat Kalibrasi</h1>
+                <p>Detail spesifikasi dan jejak rekam sertifikasi alat</p>
+            </div>
+            <a href="{{ route('histories.index') }}" class="btn btn-outline-secondary btn-sm fw-bold px-3 py-2"
+                style="border-radius: 8px;">
+                <i class='bx bx-left-arrow-alt fs-5 align-middle me-1'></i> Kembali
+            </a>
         </div>
-      </div>
 
-      <div class="d-flex align-items-center gap-3">
-        <div class="text-end small-muted" style="font-size:0.9rem">
-          <div>QR Alat</div>
-        </div>
-        <div class="qr-box" aria-hidden="true">
-          <img src="{{ $tool->qr_code_path ? asset('storage/' . $tool->qr_code_path) : 'https://dummyimage.com/100x100/1976d2/ffffff&text=QR' }}" alt="QR {{ e($tool->nama_alat) }}">
-        </div>
-      </div>
-    </div>
-
-    <!-- Timeline -->
-    <section id="timelineRoot" class="timeline" aria-live="polite">
-      @php $histories = $tool->histories->sortByDesc('tgl_kalibrasi'); @endphp
-
-      @if ($histories->isEmpty())
-        <div class="empty-state" aria-hidden="false">
-          <svg width="84" height="84" viewBox="0 0 24 24" fill="none" style="margin-bottom:12px">
-            <rect x="1" y="3" width="22" height="14" rx="2" fill="#eaf6ff"/>
-            <path d="M3 21h18" stroke="#d0eaff" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-          <h4 style="margin-bottom:6px">Belum Ada Riwayat</h4>
-          <p class="small-muted" style="margin:0">Alat ini belum memiliki riwayat kalibrasi. Anda dapat menambahkan riwayat baru melalui halaman tambah.</p>
-        </div>
-      @else
-        @foreach ($histories as $h)
-          @php
-            $isLatest = $loop->first;
-            $certUrl = $h->file_sertifikat ? asset('storage/' . $h->file_sertifikat) : null;
-            $status = strtoupper($h->status_kalibrasi ?? '');
-            $marker = $isLatest
-                ? 'latest'
-                : ($status === 'OK'
-                    ? 'ok'
-                    : ($status === 'PROSES'
-                        ? 'proses'
-                        : 'due'));
-          @endphp
-
-          <div class="timeline-item" data-history-id="{{ $h->id ?? $loop->index }}">
-            <div class="timeline-bullet {{ $marker }}" aria-hidden="true">
-              @if ($isLatest)
-                <small>Baru</small>
-              @else
-                <small>{{ $loop->iteration }}</small>
-              @endif
+        <div class="tool-header">
+            <div class="tool-identity">
+                <h2><i class='bx bx-check-shield fs-3'></i> {{ e($tool->nama_alat) }}</h2>
+                <div class="tool-specs">
+                    <div class="spec-item">
+                        <span class="spec-label">Merek</span>
+                        <span class="spec-value">{{ e($tool->merek) ?? '-' }}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Nomor Seri</span>
+                        <span class="spec-value">{{ e($tool->no_seri) ?? '-' }}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Kapasitas</span>
+                        <span class="spec-value">{{ e($tool->kapasitas) ?? '-' }}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Lokasi</span>
+                        <span class="spec-value"><i class='bx bx-map text-muted'></i>
+                            {{ e($tool->lokasi) ?? '-' }}</span>
+                    </div>
+                </div>
             </div>
 
-            <article class="history-card" aria-labelledby="history-{{ $h->id ?? $loop->index }}">
-              <div class="d-flex justify-content-between align-items-start" style="gap:12px; flex-wrap:wrap;">
-                <div style="min-width:0">
-                  <div class="history-meta">
-                    <strong id="history-{{ $h->id ?? $loop->index }}">{{ \Carbon\Carbon::parse($h->tgl_kalibrasi)->format('d M Y') }}</strong>
-                  </div>
+            <div class="qr-wrapper">
+                <img src="{{ $tool->qr_code_path ? asset('storage/' . $tool->qr_code_path) : 'https://dummyimage.com/100x100/e2e8f0/64748b&text=No+QR' }}"
+                    alt="QR Code">
+                <span class="mt-2 text-muted fw-bold" style="font-size: 0.7rem; letter-spacing: 0.5px;">SYSTEM QR</span>
+            </div>
+        </div>
 
-                  <div class="history-title">{{ e($h->lembaga_kalibrasi ?? '-') }}</div>
+        <h5 class="fw-bold mb-4 ms-2"><i class='bx bx-list-ul text-primary me-2'></i> Jejak Kalibrasi</h5>
 
-                  <div style="margin-top:6px">
-                    <span class="badge-status {{ $status === 'OK' ? 'badge-ok' : ($status === 'PROSES' ? 'badge-proses' : 'badge-due') }}">
-                      {{ $status ?? '-' }}
-                    </span>
-                  </div>
+        <div class="timeline-container">
+            @php $histories = $tool->histories->sortByDesc('tgl_kalibrasi'); @endphp
 
-                  <div class="history-meta-row" style="margin-top:10px;">
-                    <div><strong>No Sertifikat:</strong> <span class="small-muted">{{ e($h->no_sertifikat ?? '-') }}</span></div>
-                    <div><strong>Interval:</strong> <span class="small-muted">{{ e($h->interval_kalibrasi ?? '-') }}</span></div>
-                  </div>
+            @if ($histories->isEmpty())
+                <div class="empty-state">
+                    <i class='bx bx-folder-open mb-3' style="font-size: 4rem; color: #cbd5e1;"></i>
+                    <h5 class="fw-bold text-slate-700">Belum Ada Riwayat</h5>
+                    <p class="mb-0">Alat ini belum pernah dikalibrasi atau datanya belum dimasukkan ke sistem.</p>
                 </div>
+            @else
+                @foreach ($histories as $h)
+                    @php
+                        $isLatest = $loop->first;
+                        $certUrl = $h->file_sertifikat ? asset('storage/' . $h->file_sertifikat) : null;
+                        $statusRaw = strtoupper($h->status_kalibrasi ?? '');
 
-                <div class="history-actions">
-                  @if ($certUrl)
-                    <!-- Only view (no download) -->
-                    <button type="button" class="btn btn-sm btn-outline-primary btn-view-pdf" data-pdf="{{ $certUrl }}" title="Lihat sertifikat">
-                      <!-- document icon -->
-                      <svg width="14" height="14" viewBox="0 0 24 24" style="vertical-align:middle;margin-right:6px" fill="none">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z" stroke="#1765d1" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M14 2v6h6" stroke="#1765d1" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-                      </svg>
-                      Lihat
-                    </button>
-                  @else
-                    <span class="small-muted">Tidak ada sertifikat</span>
-                  @endif
-                </div>
-              </div>
-            </article>
-          </div>
-        @endforeach
-      @endif
-    </section>
-  </div>
+                        // Menentukan UI berdasarkan status
+                        $statusClass = 'due';
+                        $bulletIcon = 'bx-x';
+                        if (
+                            str_contains($statusRaw, 'PASS') ||
+                            str_contains($statusRaw, 'OK') ||
+                            str_contains($statusRaw, 'BAIK')
+                        ) {
+                            $statusClass = 'ok';
+                            $bulletIcon = 'bx-check';
+                        } elseif (str_contains($statusRaw, 'PROSES')) {
+                            $statusClass = 'proses';
+                            $bulletIcon = 'bx-time-five';
+                        }
 
-  <!-- PDF Modal (view only) -->
-  <div class="modal fade" id="pdfModal" tabindex="-1" aria-labelledby="pdfModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
-      <div class="modal-content" style="overflow:hidden;border-radius:12px">
-        <div class="modal-header">
-          <h5 class="modal-title" id="pdfModalLabel">Pratinjau Sertifikat</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                        $bulletTheme = $isLatest ? 'latest' : $statusClass;
+                    @endphp
+
+                    <div class="timeline-item">
+
+                        <div class="timeline-bullet {{ $bulletTheme }}"
+                            title="{{ $isLatest ? 'Kalibrasi Terakhir' : 'Riwayat Terdahulu' }}">
+                            @if ($isLatest)
+                                <i class='bx bx-star'></i>
+                                <span>New</span>
+                            @else
+                                <i class='bx {{ $bulletIcon }}'></i>
+                            @endif
+                        </div>
+
+                        <article class="history-card">
+                            <div class="history-header">
+                                <div>
+                                    <div class="cal-date">
+                                        {{ \Carbon\Carbon::parse($h->tgl_kalibrasi)->format('d F Y') }}</div>
+                                    <div class="cal-agency"><i class='bx bx-buildings me-1'></i>
+                                        {{ e($h->lembaga_kalibrasi ?? 'Lembaga Tidak Diketahui') }}</div>
+                                </div>
+                                <div>
+                                    <span class="status-badge {{ $statusClass }}">
+                                        <i class='bx {{ $bulletIcon }}'></i> {{ $statusRaw ?? '-' }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="history-body">
+                                <div class="spec-item">
+                                    <span class="spec-label">Jatuh Tempo Selanjutnya</span>
+                                    <span class="spec-value text-danger">
+                                        {{ $h->tgl_kalibrasi_ulang ? \Carbon\Carbon::parse($h->tgl_kalibrasi_ulang)->format('d M Y') : '-' }}
+                                    </span>
+                                </div>
+                                <div class="spec-item">
+                                    <span class="spec-label">Nomor Sertifikat</span>
+                                    <span class="spec-value"
+                                        style="font-family: monospace;">{{ e($h->no_sertifikat ?? '-') }}</span>
+                                </div>
+                                <div class="spec-item">
+                                    <span class="spec-label">Keterangan / Catatan</span>
+                                    <span class="spec-value">{{ e($h->keterangan ?? '-') }}</span>
+                                </div>
+                            </div>
+
+                            @if ($certUrl)
+                                <div class="border-top pt-3 mt-2">
+                                    <button type="button" class="btn-pdf" data-pdf="{{ $certUrl }}">
+                                        <i class='bx bxs-file-pdf fs-5 text-danger'></i> Lihat Sertifikat PDF
+                                    </button>
+                                </div>
+                            @endif
+                        </article>
+                    </div>
+                @endforeach
+            @endif
         </div>
-
-        <div class="modal-body p-0" style="height:82vh; max-height:92vh;">
-          <!-- we use object as fallback for browsers that may block iframe-pdf inline -->
-          <iframe id="pdfFrame" class="pdf-frame" src="" title="Pratinjau sertifikat" allow="fullscreen"></iframe>
-        </div>
-
-        <div class="modal-footer">
-          <small class="small-muted">Hanya pratinjau — fitur unduh telah dinonaktifkan.</small>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-        </div>
-      </div>
     </div>
-  </div>
 
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <div class="modal fade" id="pdfModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold d-flex align-items-center">
+                        <i class='bx bxs-file-pdf text-danger fs-4 me-2'></i> Pratinjau Dokumen Sertifikat
+                    </h5>
+                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"
+                        aria-label="Tutup"></button>
+                </div>
+                <div class="modal-body p-0 pdf-dark" style="height: 85vh;">
+                    <iframe id="pdfFrame" src="" width="100%" height="100%" style="border: none;"
+                        allow="fullscreen"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
 
-  <script>
-    (function () {
-      // Update history count
-      function refreshHistoryCount() {
-        const items = document.querySelectorAll(".timeline-item");
-        const countEl = document.getElementById("historyCount");
-        if (countEl) countEl.textContent = items.length;
-      }
-      document.addEventListener('DOMContentLoaded', refreshHistoryCount);
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup Modal
+            const pdfModalEl = document.getElementById('pdfModal');
+            const pdfFrame = document.getElementById('pdfFrame');
+            let bsModal = null;
 
-      // Modal & PDF view (view-only)
-      const pdfModalEl = document.getElementById('pdfModal');
-      const pdfFrame = document.getElementById('pdfFrame');
-      let bsModal = null;
+            if (pdfModalEl) {
+                bsModal = new bootstrap.Modal(pdfModalEl, {
+                    keyboard: true
+                });
 
-      if (pdfModalEl) {
-        bsModal = new bootstrap.Modal(pdfModalEl, {keyboard: true});
-        pdfModalEl.addEventListener('hidden.bs.modal', function () {
-          // Clear src to free memory and stop playback
-          if (pdfFrame) pdfFrame.src = '';
+                // Bersihkan iframe saat ditutup agar RAM ringan
+                pdfModalEl.addEventListener('hidden.bs.modal', function() {
+                    if (pdfFrame) pdfFrame.src = '';
+                });
+            }
+
+            // Event listener untuk semua tombol "Lihat Sertifikat"
+            document.addEventListener('click', function(ev) {
+                const btn = ev.target.closest(".btn-pdf");
+                if (!btn) return;
+                ev.preventDefault();
+
+                const url = btn.getAttribute("data-pdf");
+                if (!url) return;
+
+                pdfFrame.src = url;
+                if (bsModal) bsModal.show();
+            });
         });
-      }
-
-      // Delegate click for view buttons
-      document.addEventListener('click', function (ev) {
-        const btn = ev.target.closest("[data-pdf]");
-        if (!btn) return;
-        ev.preventDefault();
-        const url = btn.getAttribute("data-pdf");
-        if (!url) return;
-
-        // Set src (lazy-load)
-        // Use a sanitized url; if you need a viewer proxy (pdf.js) you can swap here
-        pdfFrame.src = url;
-
-        if (bsModal) bsModal.show();
-      });
-
-      // Accessibility: close modal with Escape handled by bootstrap automatically
-    })();
-  </script>
+    </script>
 </body>
 
 </html>
