@@ -60,7 +60,7 @@ class InventoryController extends Controller
         // 4️⃣ History transaksi terakhir
         // Barang masuk
         $in = MaterialIn::with(['material', 'user'])
-            ->select('id', 'material_id', 'qty_in as qty', 'notes', 'created_at as tanggal', 'stock_after','date_in')
+            ->select('id', 'material_id', 'qty_in as qty', 'notes', 'created_at as tanggal', 'stock_after', 'date_in')
             ->get()
             ->map(function ($item) {
                 $item->jenis = 'in';
@@ -71,7 +71,7 @@ class InventoryController extends Controller
 
         // Barang keluar
         $out = MaterialOut::with(['material', 'user'])
-            ->select('id', 'material_id', 'qty_out as qty', 'notes', 'created_at as tanggal', 'stock_after','date_out as date_in')
+            ->select('id', 'material_id', 'qty_out as qty', 'notes', 'created_at as tanggal', 'stock_after', 'date_out as date_in')
             ->get()
             ->map(function ($item) {
                 $item->jenis = 'out';
@@ -168,31 +168,37 @@ class InventoryController extends Controller
 
     public function reportPdf(Request $request)
     {
+        // 1. Naikkan limit memori dan waktu eksekusi
+        ini_set('memory_limit', '512M');
+        ini_set('max_execution_time', 300);
+
         $bulan = $request->bulan;
         $tahun = $request->tahun;
 
-        $materials = Material::with(['rack', 'incomings', 'outgoings', 'stockOpnameLatest'])
+        // 2. Optimasi Query menggunakan Subquery (addSelect) pengganti withSum
+        $materials = Material::with(['rack', 'stockOpnameLatest', 'valves', 'sparePart'])
+            ->addSelect([
+                'total_qty_in' => MaterialIn::selectRaw('IFNULL(SUM(qty_in), 0)')
+                    ->whereColumn('material_id', 'materials.id') // Relasi ke tabel material
+                    ->when($bulan && $tahun, function ($query) use ($bulan, $tahun) {
+                        $query->whereMonth('created_at', $bulan)
+                            ->whereYear('created_at', $tahun);
+                    })
+            ])
+            ->addSelect([
+                'total_qty_out' => MaterialOut::selectRaw('IFNULL(SUM(qty_out), 0)')
+                    ->whereColumn('material_id', 'materials.id') // Relasi ke tabel material
+                    ->when($bulan && $tahun, function ($query) use ($bulan, $tahun) {
+                        $query->whereMonth('created_at', $bulan)
+                            ->whereYear('created_at', $tahun);
+                    })
+            ])
             ->get()
             ->map(function ($item) use ($bulan, $tahun) {
+                // Ambil hasil perhitungan dari Subquery MySQL
+                $qty_in = (int) $item->total_qty_in;
+                $qty_out = (int) $item->total_qty_out;
 
-                // Filter incoming berdasarkan bulan & tahun
-                $filteredIncomings = $item->incomings->when($bulan && $tahun, function ($coll) use ($bulan, $tahun) {
-                    return $coll->filter(function ($in) use ($bulan, $tahun) {
-                        return \Carbon\Carbon::parse($in->created_at)->month == $bulan &&
-                            \Carbon\Carbon::parse($in->created_at)->year == $tahun;
-                    });
-                });
-
-                // Filter outgoing berdasarkan bulan & tahun
-                $filteredOutgoings = $item->outgoings->when($bulan && $tahun, function ($coll) use ($bulan, $tahun) {
-                    return $coll->filter(function ($out) use ($bulan, $tahun) {
-                        return \Carbon\Carbon::parse($out->created_at)->month == $bulan &&
-                            \Carbon\Carbon::parse($out->created_at)->year == $tahun;
-                    });
-                });
-
-                $qty_in = $filteredIncomings->sum('qty_in') ?? 0;
-                $qty_out = $filteredOutgoings->sum('qty_out') ?? 0;
                 $stock_akhir = $item->stock_awal + $qty_in - $qty_out;
                 $opname = optional($item->stockOpnameLatest)->stock_actual;
                 $selisih = $opname !== null ? $opname - $stock_akhir : null;
@@ -211,18 +217,82 @@ class InventoryController extends Controller
                 ];
             });
 
-        // Tidak ada filter qty_in/qty_out → tampilkan semua material
-
-        // Generate PDF
+        // 3. Generate PDF
         $pdf = Pdf::loadView('pages.admin.inventory.report.export.stock-pdf', [
             'materials' => $materials,
             'bulan' => $bulan,
             'tahun' => $tahun
         ])->setPaper('a4', 'landscape');
+
         $bulanNama = $bulan ? \Carbon\Carbon::createFromFormat('m', $bulan)->format('F') : 'AllMonths';
         $tahunNama = $tahun ?? 'AllYears';
         $filename = "Report-Kontrol-Barang-{$bulanNama}-{$tahunNama}.pdf";
 
         return $pdf->stream($filename);
+    }
+
+    // Di dalam Controller StockMovementController
+    public function StockMovement(Request $request)
+    {
+        // 1. Tangkap inputan filter dari user
+        $startDate = $request->start_date;
+        $endDate = $request->end_date;
+        $type = $request->type; // Berisi 'IN', 'OUT', atau kosong ('')
+
+        $incomings = collect(); // Siapkan wadah kosong
+        $outgoings = collect(); // Siapkan wadah kosong
+
+        // 2. Query Data Masuk (IN) -> Hanya dijalankan jika user TIDAK memfilter khusus "OUT"
+        if ($type !== 'OUT') {
+            $inQuery = MaterialIn::with(['material.sparePart', 'material.valves']);
+
+            // Filter Tanggal menggunakan date_in
+            if ($startDate && $endDate) {
+                $inQuery->whereDate('date_in', '>=', $startDate)
+                    ->whereDate('date_in', '<=', $endDate);
+            }
+
+            $incomings = $inQuery->get()->map(function ($item) {
+                return [
+                    'id' => 'IN-' . $item->id,
+                    // Tampilkan tanggal transaksi aslinya (date_in), bukan created_at
+                    'tanggal' => $item->date_in,
+                    'jenis' => 'IN',
+                    'material' => $item->material,
+                    'qty' => $item->qty_in,
+                    'operator' => $item->user->name ?? 'Admin',
+                    'keterangan' => $item->notes ?? '-'
+                ];
+            });
+        }
+
+        // 3. Query Data Keluar (OUT) -> Hanya dijalankan jika user TIDAK memfilter khusus "IN"
+        if ($type !== 'IN') {
+            $outQuery = MaterialOut::with(['material.sparePart', 'material.valves']);
+
+            // Filter Tanggal menggunakan date_out
+            if ($startDate && $endDate) {
+                $outQuery->whereDate('date_out', '>=', $startDate)
+                    ->whereDate('date_out', '<=', $endDate);
+            }
+
+            $outgoings = $outQuery->get()->map(function ($item) {
+                return [
+                    'id' => 'OUT-' . $item->id,
+                    // Tampilkan tanggal transaksi aslinya (date_out), bukan created_at
+                    'tanggal' => $item->date_out,
+                    'jenis' => 'OUT',
+                    'material' => $item->material,
+                    'qty' => $item->qty_out,
+                    'operator' => $item->user->name ?? 'Admin',
+                    'keterangan' => $item->notes ?? '-'
+                ];
+            });
+        }
+
+        // 4. Gabungkan (Merge) dan urutkan berdasarkan tanggal terbaru
+        $movements = $incomings->merge($outgoings)->sortByDesc('tanggal')->values();
+
+        return view('pages.admin.inventory.report.stock-movement', compact('movements'));
     }
 }

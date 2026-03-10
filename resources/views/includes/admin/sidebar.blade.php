@@ -263,6 +263,47 @@
                         </li>
                     </ul>
                 </li>
+                {{-- Stock Management --}}
+                <li class="menu-item ">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <div data-i18n="Stock Management">Stock Management</div>
+                    </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item ">
+                            <a href="{{ route('stock-card.index') }}" class="menu-link">
+                                <div data-i18n="Stock Card">Stock Card</div>
+                            </a>
+                        </li>
+                        <li class="menu-item ">
+                            <a href="{{ route('stock-opname.index') }}" class="menu-link">
+                                <div data-i18n="Stock Opname">Stock Opname</div>
+                            </a>
+                        </li>
+                        {{-- <li class="menu-item ">
+                            <a href="#" class="menu-link">
+                                <div data-i18n="Adjustment">Adjustment</div>
+                            </a>
+                        </li> --}}
+                    </ul>
+                </li>
+                {{-- Reports --}}
+                <li class="menu-item ">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <div data-i18n="Reports">Reports</div>
+                    </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item">
+                            <a href="{{ route('report.stock-summary') }}" class="menu-link">
+                                <div data-i18n="Stock Summary">Stock Summary</div>
+                            </a>
+                        </li>
+                        <li class="menu-item ">
+                            <a href="{{ route('report.stock-movement') }}" class="menu-link">
+                                <div data-i18n="Stock Movement">Stock Movement</div>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
             </ul>
         </li>
 

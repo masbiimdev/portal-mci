@@ -428,6 +428,28 @@
             font-size: 0.8rem;
         }
     </style>
+    <style>
+        /* Styling khusus untuk Balon Tooltip Error */
+        .error-tooltip .tooltip-inner {
+            background-color: #ff3e1d !important;
+            /* Merah khas error */
+            color: #ffffff;
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 6px;
+            box-shadow: 0 4px 10px rgba(255, 62, 29, 0.3);
+            font-size: 0.85rem;
+        }
+
+        /* Mengubah warna panah balon menjadi merah agar senada */
+        .error-tooltip.bs-tooltip-top .tooltip-arrow::before {
+            border-top-color: #ff3e1d !important;
+        }
+
+        .error-tooltip.bs-tooltip-bottom .tooltip-arrow::before {
+            border-bottom-color: #ff3e1d !important;
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -683,21 +705,63 @@
             table.on('draw', attachInputEvents);
             attachInputEvents();
 
+            // =========================================================================
+            // 1. KONFIGURASI TOAST SWEETALERT (Diturunkan sedikit)
+            // =========================================================================
             async function save(input) {
-                const qty = input.value;
+                // 1. Pastikan input tidak error (mencegah null)
+                const qty = (input.value || "").toString().trim();
                 const wrapper = input.closest(".day-cell");
-                const spinner = wrapper.querySelector(".spinner-overlay");
+                const spinner = wrapper ? wrapper.querySelector(".spinner-overlay") : null;
 
-                if (qty < 0) return;
+                // 2. Ambil nilai lama. Jika di HTML belum ada data-prev-value, 
+                // gunakan defaultValue (angka bawaan saat halaman pertama dimuat)
+                const prevValue = input.getAttribute('data-prev-value') !== null ?
+                    input.getAttribute('data-prev-value') :
+                    input.defaultValue;
+
+                // Jika user mengetik angka yang sama, batalkan (hemat database)
+                if (qty === prevValue) return;
+
+                // 3. Setup Konfigurasi Toast di dalam fungsi agar aman dari error "Swal is not defined"
+                const showToast = (icon, title, text) => {
+                    if (typeof Swal !== 'undefined') {
+                        Swal.mixin({
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3500,
+                            customClass: {
+                                popup: 'rounded-3 shadow-sm mt-5'
+                            }
+                        }).fire({
+                            icon,
+                            title,
+                            text
+                        });
+                    } else {
+                        alert(title + ": " + text); // Fallback jika SweetAlert gagal dimuat
+                    }
+                };
+
+                // Validasi angka minus
+                if (qty !== "" && parseFloat(qty) < 0) {
+                    input.value = prevValue;
+                    showToast('warning', 'Ditolak', 'Angka tidak boleh minus!');
+                    return;
+                }
 
                 const day = input.dataset.day;
                 const material = input.dataset.material;
                 const month = document.getElementById("monthSelect").value;
                 const year = document.getElementById("yearSelect").value;
-                const date = `${year}-${month}-${String(day).padStart(2,'0')}`;
+                const date = `${year}-${month}-${String(day).padStart(2, '0')}`;
 
+                // UI: Efek Loading
                 input.disabled = true;
-                spinner.classList.remove('d-none');
+                input.style.opacity = "0.6";
+                input.style.transition = "all 0.3s ease";
+                if (spinner) spinner.classList.remove('d-none');
 
                 try {
                     const response = await fetch(url, {
@@ -709,20 +773,69 @@
                         },
                         body: JSON.stringify({
                             material_id: material,
-                            qty_out: qty,
+                            qty_out: qty, // Pastikan ini sama dengan yang ditangkap di $request->qty_out di Controller
                             date_out: date
                         })
                     });
 
-                    if (response.ok) {
-                        if (qty === '' || qty === '0') input.classList.remove("filled");
-                        else input.classList.add("filled");
-                    } else throw new Error('Server returned error');
+                    // ==========================================
+                    // JIKA SERVER MENOLAK (HTTP 4xx / 5xx)
+                    // ==========================================
+                    if (!response.ok) {
+                        let errorMessage = 'Gagal menyimpan data ke server.';
+                        try {
+                            // Hanya coba parsing JSON jika responsnya gagal
+                            const errorData = await response.json();
+                            errorMessage = errorData.message || errorMessage;
+                        } catch (e) {}
+
+                        throw new Error(errorMessage);
+                    }
+
+                    // ==========================================
+                    // JIKA BERHASIL DISIMPAN (HTTP 200 OK)
+                    // ==========================================
+                    input.setAttribute('data-prev-value', qty);
+
+                    if (qty === '' || parseFloat(qty) === 0) {
+                        input.classList.remove("filled");
+                    } else {
+                        input.classList.add("filled");
+                    }
+
+                    // Efek kedip Hijau
+                    input.style.backgroundColor = "#e8fadf";
+                    input.style.color = "#28a745";
+                    setTimeout(() => {
+                        input.style.backgroundColor = "";
+                        input.style.color = "";
+                    }, 1000);
+
                 } catch (error) {
-                    alert("Gagal menyimpan data ke database.");
+                    // Tampilkan Error
+                    showToast('error', 'Gagal Disimpan', error.message);
+
+                    // Kembalikan kotak ke angka sebelumnya yang benar
+                    input.value = prevValue;
+                    if (prevValue === '' || parseFloat(prevValue) === 0) {
+                        input.classList.remove("filled");
+                    } else {
+                        input.classList.add("filled");
+                    }
+
+                    // Efek kedip Merah
+                    input.style.backgroundColor = "#fbeaea";
+                    input.style.color = "#dc3545";
+                    setTimeout(() => {
+                        input.style.backgroundColor = "";
+                        input.style.color = "";
+                    }, 1000);
+
                 } finally {
-                    spinner.classList.add('d-none');
+                    // Kembalikan kotak input agar bisa diketik lagi
                     input.disabled = false;
+                    input.style.opacity = "1";
+                    if (spinner) spinner.classList.add('d-none');
                 }
             }
 

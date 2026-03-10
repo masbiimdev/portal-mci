@@ -174,6 +174,7 @@ Route::middleware(['auth', 'module.access:inventory'])->group(function () {
     Route::get('/report/stock-summary', 'InventoryController@stockSummary')->name('report.stock-summary');
     Route::get('/report/stock-summary/pdf', 'InventoryController@reportPdf')->name('stock-summary.pdf');
     Route::get('/report/stock-summary/excel', 'InventoryController@reportExcel')->name('stock-summary.excel');
+    Route::get('/report/stock-movement', 'InventoryController@StockMovement')->name('report.stock-movement');
 });
 
 Route::middleware(['auth', 'module.access:production'])->group(function () {
