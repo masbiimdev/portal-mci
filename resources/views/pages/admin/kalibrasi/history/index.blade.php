@@ -198,6 +198,7 @@
             border-radius: 50%;
         }
 
+        /* Status Colors */
         .badge-danger {
             background: #fee2e2;
             color: #b91c1c;
@@ -226,6 +227,26 @@
         .badge-info::before {
             background: #0284c7;
             box-shadow: 0 0 0 2px #7dd3fc;
+        }
+
+        .badge-primary {
+            background: #e0e7ff;
+            color: #4338ca;
+        }
+
+        .badge-primary::before {
+            background: #4f46e5;
+            box-shadow: 0 0 0 2px #a5b4fc;
+        }
+
+        .badge-success {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .badge-success::before {
+            background: #16a34a;
+            box-shadow: 0 0 0 2px #86efac;
         }
 
         .badge-secondary {
@@ -367,7 +388,7 @@
                         <tr>
                             <th>Instrumen</th>
                             <th>Status Jadwal</th>
-                            <th>Jadwal Ulang</th>
+                            <th>Tanggal Kalibrasi</th>
                             <th>Interval</th>
                             <th class="text-center">Sertifikat</th>
                             <th class="text-center">Aksi</th>
@@ -379,16 +400,24 @@
                                 $lastHistory = $tool->histories->sortByDesc('tgl_kalibrasi_ulang')->first();
                                 $diff = 0;
 
-                                // Set angka raksasa agar item tanpa tanggal jatuh di paling bawah tabel
-                                $sortDate = 9999999999;
+                                // Default angka raksasa agar yang tak punya jadwal jatuh di paling bawah
+                                $sortDate = 99999999999;
 
                                 if ($lastHistory && $lastHistory->tgl_kalibrasi_ulang) {
                                     $today = \Carbon\Carbon::now()->startOfDay();
                                     $kalibrasi = \Carbon\Carbon::parse($lastHistory->tgl_kalibrasi_ulang)->startOfDay();
+
+                                    // Hitung selisih hari (Positif = Masa Depan, Negatif = Lewat)
                                     $diff = $today->diffInDays($kalibrasi, false);
 
-                                    // Set Timestamp untuk akurasi sorting
+                                    // Set Timestamp dasar
                                     $sortDate = $kalibrasi->timestamp;
+
+                                    // Logika Pintar Sorting:
+                                    // Jika Selesai (Lewat > 7 hari), tambahkan angka besar agar posisinya turun ke bawah
+                                    if ($diff < -7) {
+                                        $sortDate += 5000000000;
+                                    }
                                 }
                             @endphp
                             <tr>
@@ -412,13 +441,14 @@
 
                                 <td>
                                     @if ($lastHistory && $lastHistory->tgl_kalibrasi_ulang)
-                                        @if ($diff < 0)
-                                            <span class="badge-modern badge-danger">Terlewat {{ abs($diff) }} Hari</span>
-                                        @elseif ($diff >= 0 && $diff <= 30)
-                                            <span class="badge-modern badge-warning">Segera ({{ $diff }}
-                                                Hari)</span>
-                                        @elseif($diff > 30)
-                                            <span class="badge-modern badge-info">Aman ({{ $diff }} Hari)</span>
+                                        @if ($diff > 7)
+                                            <span class="badge-modern badge-info">Terjadwal</span>
+                                        @elseif ($diff > 0 && $diff <= 7)
+                                            <span class="badge-modern badge-warning">Saatnya Kalibrasi</span>
+                                        @elseif ($diff <= 0 && $diff >= -7)
+                                            <span class="badge-modern badge-primary">Proses Kalibrasi</span>
+                                        @else
+                                            <span class="badge-modern badge-success">Selesai</span>
                                         @endif
                                     @else
                                         <span class="badge-modern badge-secondary">Belum ada jadwal</span>
@@ -430,9 +460,22 @@
                                         <div class="fw-bold text-dark">
                                             {{ \Carbon\Carbon::parse($lastHistory->tgl_kalibrasi_ulang)->format('d M Y') }}
                                         </div>
-                                        <div class="text-muted" style="font-size: 0.75rem;">
-                                            {{ \Carbon\Carbon::parse($lastHistory->tgl_kalibrasi_ulang)->diffForHumans() }}
-                                        </div>
+
+                                        @if ($diff > 7)
+                                            <div class="text-muted" style="font-size: 0.75rem;">{{ $diff }} Hari
+                                                Lagi</div>
+                                        @elseif ($diff > 0 && $diff <= 7)
+                                            <div class="text-warning fw-semibold" style="font-size: 0.75rem;">Dalam
+                                                {{ $diff }} Hari</div>
+                                        @elseif ($diff <= 0 && $diff >= -7)
+                                            <div class="text-primary fw-semibold" style="font-size: 0.75rem;">
+                                                <i class="bx bx-sync bx-spin align-middle me-1"></i>Sedang Dikerjakan
+                                            </div>
+                                        @else
+                                            <div class="text-success fw-semibold" style="font-size: 0.75rem;">
+                                                <i class="bx bx-check-circle align-middle me-1"></i>Telah Dikalibrasi
+                                            </div>
+                                        @endif
                                     @else
                                         <span class="text-muted">-</span>
                                     @endif
@@ -524,7 +567,7 @@
                 responsive: true,
                 autoWidth: false,
                 pageLength: 10,
-                // MENGURUTKAN OTOMATIS: Kolom index 2 (Jadwal Ulang) secara Ascending
+                // Mengurutkan otomatis berdasarkan Timestamp di Kolom Tanggal (Index 2)
                 order: [
                     [2, 'asc']
                 ],
@@ -539,12 +582,10 @@
                     }
                 },
                 columnDefs: [{
-                    // Hilangkan panah sorting di kolom Sertifikat (4) dan Aksi (5)
                     orderable: false,
                     targets: [4, 5]
                 }],
                 drawCallback: function() {
-                    // Merapikan dropdown length (Show entries)
                     $('.dataTables_length select').addClass('form-select form-select-sm').css({
                         'display': 'inline-block',
                         'width': 'auto',
@@ -554,12 +595,12 @@
                 }
             });
 
-            // Menyambungkan Custom Search Box buatan kita ke Engine DataTables
+            // Hubungkan Custom Search Box ke DataTables
             $('#customSearchBox').on('keyup', function() {
                 table.search(this.value).draw();
             });
 
-            // SweetAlert untuk notifikasi sukses
+            // SweetAlert Notifikasi
             @if (session('success'))
                 Swal.fire({
                     icon: 'success',
