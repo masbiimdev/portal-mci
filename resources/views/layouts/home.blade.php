@@ -4,23 +4,47 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>@yield('title')</title>
-    <!-- Tailwind -->
-    <link rel="icon" type="image/x-icon"
+    <title>@yield('title', 'Portal MCI')</title>
+
+    <link rel="icon" type="image/jpeg"
         href="data:image/jpeg;base64,{{ base64_encode(file_get_contents(public_path('images/metinca-logo.jpeg'))) }}" />
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Heroicons -->
+
     <script src="https://unpkg.com/feather-icons"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Navbar Active Link Styling */
         .active-page {
             position: relative;
-            color: #1D4ED8;
-            /* Biru utama */
+            color: #1d4ed8;
+            /* blue-700 */
             font-weight: 600;
             padding-bottom: 4px;
             transition: color 0.3s ease;
-            /* smooth untuk teks */
         }
 
         .active-page::after {
@@ -30,91 +54,106 @@
             bottom: 0;
             height: 2px;
             width: 100%;
-            background-color: #1D4ED8;
+            background-color: #1d4ed8;
             transform: scaleX(0);
             transform-origin: left;
             transition: transform 0.3s ease;
-            /* animasi garis bawah */
         }
 
         .active-page:hover::after,
         .active-page.active-page-current::after {
             transform: scaleX(1);
-            /* garis bawah muncul */
         }
 
         .active-page:hover {
-            color: #1E40AF;
-            /* biru lebih gelap saat hover */
+            color: #1e40af;
+            /* blue-800 */
         }
     </style>
+
     @stack('css')
 </head>
 
-<body class="bg-gray-50">
+<body
+    class="bg-gray-50 text-gray-800 antialiased min-h-screen flex flex-col selection:bg-primary-500 selection:text-white">
 
     @include('includes.navbar')
 
-    @yield('content')
+    <main class="flex-grow w-full">
+        @yield('content')
+    </main>
+
+    @include('includes.footer')
+
     <script>
-        feather.replace();
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inisialisasi Ikon Feather
+            feather.replace();
 
-        // Dropdown notif
-        const notifBtn = document.getElementById("notifBtn");
-        const notifMenu = document.getElementById("notifMenu");
-        notifBtn.addEventListener("click", () => {
-            notifMenu.classList.toggle("hidden");
-        });
-
-        // Dropdown user
-        const userBtn = document.getElementById("userBtn");
-        const userMenu = document.getElementById("userMenu");
-        userBtn.addEventListener("click", () => {
-            userMenu.classList.toggle("hidden");
-        });
-
-        // Hamburger menu
-        const hamburger = document.getElementById("hamburger");
-        const mobileMenu = document.getElementById("mobileMenu");
-        hamburger.addEventListener("click", () => {
-            mobileMenu.classList.toggle("hidden");
-        });
-    </script>
-    <script>
-        // --- Tanggal Otomatis ---
-        const namaHari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-        const namaBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September",
-            "Oktober", "November", "Desember"
-        ];
-        const now = new Date();
-        const tanggal = `${namaHari[now.getDay()]}, ${now.getDate()} ${namaBulan[now.getMonth()]} ${now.getFullYear()}`;
-        document.getElementById("tanggal").innerText = tanggal;
-
-        // --- Cuaca Realtime ---
-        async function getWeather() {
-            const apiKey = "033c013fa9b31e5cc084074664b9454d"; // <-- ubah di sini
-            const city = "Tambun";
-            const url =
-            `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}&lang=id`;
-
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-
-                const suhu = parseFloat(data.main.temp).toFixed(1);
-                const kondisi = data.weather[0].description;
-                const icon = data.weather[0].icon;
-
-                document.getElementById("suhu").innerHTML = `${suhu}°C`;
-                document.getElementById("cuaca").innerHTML =
-                    `${city}, ${kondisi} <img src="https://openweathermap.org/img/wn/${icon}.png" alt="">`;
-            } catch (error) {
-                document.getElementById("cuaca").innerText = "Gagal memuat cuaca 😔";
-                console.error(error);
+            // --- Logika Menu Navbar (Pengamanan agar tidak error jika ID tidak ada) ---
+            const notifBtn = document.getElementById("notifBtn");
+            const notifMenu = document.getElementById("notifMenu");
+            if (notifBtn && notifMenu) {
+                notifBtn.addEventListener("click", () => notifMenu.classList.toggle("hidden"));
             }
-        }
 
-        getWeather();
+            const userBtn = document.getElementById("userBtn");
+            const userMenu = document.getElementById("userMenu");
+            if (userBtn && userMenu) {
+                userBtn.addEventListener("click", () => userMenu.classList.toggle("hidden"));
+            }
+
+            const hamburger = document.getElementById("hamburger");
+            const mobileMenu = document.getElementById("mobileMenu");
+            if (hamburger && mobileMenu) {
+                hamburger.addEventListener("click", () => mobileMenu.classList.toggle("hidden"));
+            }
+
+            // --- Tanggal Otomatis ---
+            const tanggalEl = document.getElementById("tanggal");
+            if (tanggalEl) {
+                const namaHari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+                const namaBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus",
+                    "September", "Oktober", "November", "Desember"
+                ];
+                const now = new Date();
+                tanggalEl.innerText =
+                    `${namaHari[now.getDay()]}, ${now.getDate()} ${namaBulan[now.getMonth()]} ${now.getFullYear()}`;
+            }
+
+            // --- Cuaca Realtime ---
+            const suhuEl = document.getElementById("suhu");
+            const cuacaEl = document.getElementById("cuaca");
+
+            // Hanya jalankan fetch cuaca JIKA elemen yang menampilkannya ada di halaman
+            if (suhuEl || cuacaEl) {
+                async function getWeather() {
+                    const apiKey = "033c013fa9b31e5cc084074664b9454d";
+                    const city = "Tambun";
+                    const url =
+                        `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}&lang=id`;
+
+                    try {
+                        const response = await fetch(url);
+                        if (!response.ok) throw new Error("Network response was not ok");
+                        const data = await response.json();
+
+                        const suhu = parseFloat(data.main.temp).toFixed(1);
+                        const kondisi = data.weather[0].description;
+                        const icon = data.weather[0].icon;
+
+                        // Perhatikan penggunaan flexbox inline agar icon sejajar dengan teks
+                        if (suhuEl) suhuEl.innerHTML = `${suhu}°C`;
+                        if (cuacaEl) cuacaEl.innerHTML =
+                            `<div style="display:flex; align-items:center; gap:4px;">${city}, ${kondisi} <img src="https://openweathermap.org/img/wn/${icon}.png" alt="ikon cuaca" style="width:30px; height:30px;"></div>`;
+                    } catch (error) {
+                        if (cuacaEl) cuacaEl.innerText = "Gagal memuat cuaca";
+                        console.error("Weather fetch error:", error);
+                    }
+                }
+                getWeather();
+            }
+        });
     </script>
 
     @stack('js')
