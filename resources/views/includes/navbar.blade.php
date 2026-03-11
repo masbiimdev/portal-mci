@@ -1,24 +1,33 @@
-<nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm transition-all duration-300"
+<nav class="sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-slate-200/60 shadow-[0_4px_30px_rgba(0,0,0,0.03)] transition-all duration-300"
     role="navigation" aria-label="Primary">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16 items-center">
+        <div class="flex justify-between h-20 items-center">
 
             <div class="flex items-center flex-shrink-0">
                 <a href="{{ url('/') }}" class="flex items-center gap-3 group">
                     <span
-                        class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-sky-400 shadow-md group-hover:shadow-lg transition-all duration-300 overflow-hidden">
+                        class="relative inline-flex items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-br from-blue-600 to-sky-400 shadow-lg shadow-sky-500/30 group-hover:shadow-sky-500/50 group-hover:-translate-y-0.5 transition-all duration-300 overflow-hidden">
                         <img src="{{ asset('images/metinca-logo.jpeg') }}" alt="Metinca Logo"
-                            class="w-full h-full object-cover">
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                     </span>
-                    <span class="text-xl font-bold text-slate-800 tracking-tight">Metinca<span
-                            class="text-sky-500 font-extrabold">.</span></span>
+                    <span
+                        class="text-2xl font-bold text-slate-800 tracking-tight group-hover:text-sky-600 transition-colors duration-300">
+                        Metinca<span class="text-sky-500 font-extrabold text-3xl leading-none">.</span>
+                    </span>
                 </a>
             </div>
 
-            <div class="hidden md:flex md:items-center md:space-x-2" id="primary-menu">
+            <div class="hidden lg:flex lg:items-center lg:space-x-1" id="primary-menu">
+
                 <a href="{{ url('/') }}"
-                    class="px-4 py-2 text-sm font-semibold rounded-full transition-all duration-200 {{ request()->is('/') ? 'text-sky-700 bg-sky-50' : 'text-slate-600 hover:text-sky-600 hover:bg-slate-50' }}"
-                    aria-current="{{ request()->is('/') ? 'page' : '' }}">Home</a>
+                    class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-full transition-all duration-300 {{ request()->is('/') ? 'text-sky-700 bg-sky-50 shadow-sm ring-1 ring-sky-100' : 'text-slate-600 hover:text-sky-600 hover:bg-slate-50' }}"
+                    aria-current="{{ request()->is('/') ? 'page' : '' }}">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    Home
+                </a>
 
                 @php
                     $isAktivitasActive =
@@ -27,10 +36,14 @@
 
                 <div class="relative group" id="aktivitasWrapper">
                     <button
-                        class="flex items-center gap-1 px-4 py-2 text-sm font-semibold rounded-full transition-all duration-200 {{ $isAktivitasActive ? 'text-sky-700 bg-sky-50' : 'text-slate-600 hover:text-sky-600 hover:bg-slate-50' }}"
+                        class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-full transition-all duration-300 {{ $isAktivitasActive ? 'text-sky-700 bg-sky-50 shadow-sm ring-1 ring-sky-100' : 'text-slate-600 hover:text-sky-600 hover:bg-slate-50' }}"
                         aria-haspopup="true">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
                         Aktivitas
-                        <svg class="w-4 h-4 text-slate-400 group-hover:text-sky-500 transition-transform duration-200"
+                        <svg class="w-4 h-4 text-slate-400 group-hover:text-sky-500 group-hover:rotate-180 transition-transform duration-300"
                             viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd"
                                 d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
@@ -39,83 +52,93 @@
                     </button>
 
                     <div
-                        class="absolute left-0 mt-2 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all duration-200 ease-out bg-white border border-gray-100 rounded-xl shadow-xl z-50 p-2">
-                        <a href="{{ url('/schedule') }}"
-                            class="block px-4 py-2.5 text-sm rounded-lg text-slate-700 hover:bg-sky-50 hover:text-sky-700 font-medium transition-colors">
-                            Witness / Inspection
-                        </a>
-                        <a href="{{ url('/kalibrasi') }}"
-                            class="block px-4 py-2.5 text-sm rounded-lg text-slate-700 hover:bg-sky-50 hover:text-sky-700 font-medium transition-colors">
-                            Kalibrasi
-                        </a>
+                        class="absolute left-0 mt-4 w-56 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-4 group-hover:translate-y-0 transition-all duration-300 ease-out z-50 pt-2">
+                        <div
+                            class="bg-white/95 backdrop-blur-xl border border-slate-100 rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] overflow-hidden p-2 relative">
+                            <div
+                                class="absolute -top-10 -right-10 w-20 h-20 bg-sky-100 rounded-full blur-2xl opacity-50 pointer-events-none">
+                            </div>
+
+                            <a href="{{ url('/schedule') }}"
+                                class="group/item flex items-center gap-3 px-4 py-3 text-sm rounded-xl text-slate-700 hover:bg-sky-50 hover:text-sky-700 font-medium transition-all">
+                                <span
+                                    class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg bg-slate-50 text-slate-500 group-hover/item:bg-white group-hover/item:text-sky-600 group-hover/item:shadow-sm transition-all">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </span>
+                                Witness / Inspection
+                            </a>
+                            <a href="{{ url('/kalibrasi') }}"
+                                class="group/item flex items-center gap-3 px-4 py-3 text-sm rounded-xl text-slate-700 hover:bg-sky-50 hover:text-sky-700 font-medium transition-all">
+                                <span
+                                    class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg bg-slate-50 text-slate-500 group-hover/item:bg-white group-hover/item:text-sky-600 group-hover/item:shadow-sm transition-all">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                </span>
+                                Kalibrasi
+                            </a>
+                        </div>
                     </div>
                 </div>
 
                 <a href="{{ url('/portal/inventory') }}"
-                    class="px-4 py-2 text-sm font-semibold rounded-full transition-all duration-200 {{ request()->is('portal/inventory*') ? 'text-sky-700 bg-sky-50' : 'text-slate-600 hover:text-sky-600 hover:bg-slate-50' }}">
+                    class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-full transition-all duration-300 {{ request()->is('portal/inventory*') ? 'text-sky-700 bg-sky-50 shadow-sm ring-1 ring-sky-100' : 'text-slate-600 hover:text-sky-600 hover:bg-slate-50' }}">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
                     Inventory
                 </a>
 
                 <a href="{{ url('/portal/document') }}"
-                    class="px-4 py-2 text-sm font-semibold rounded-full transition-all duration-200 {{ request()->is('portal/document*') ? 'text-sky-700 bg-sky-50' : 'text-slate-600 hover:text-sky-600 hover:bg-slate-50' }}">
+                    class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-full transition-all duration-300 {{ request()->is('portal/document*') ? 'text-sky-700 bg-sky-50 shadow-sm ring-1 ring-sky-100' : 'text-slate-600 hover:text-sky-600 hover:bg-slate-50' }}">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
                     Document
                 </a>
             </div>
 
-            <div class="flex items-center gap-2 sm:gap-4">
+            <div class="flex items-center gap-3 sm:gap-4 relative z-10">
 
-                <div class="relative group">
-                    <button
-                        class="relative p-2 rounded-full text-slate-500 hover:text-sky-600 hover:bg-sky-50 focus:outline-none transition-colors"
-                        aria-label="Notifications">
-                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                            stroke-width="1.5">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-                        </svg>
-                        @php $unread = session('unread_notifications', 5); @endphp
-                        @if ($unread > 0)
-                            <span
-                                class="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 ring-2 ring-white text-[9px] font-bold text-white">
-                                {{ $unread > 99 ? '99+' : $unread }}
-                            </span>
-                        @endif
-                    </button>
-
+                <div
+                    class="hidden sm:flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-slate-50/50 border border-slate-200/50 shadow-sm mr-1">
                     <div
-                        class="absolute right-0 mt-2 w-80 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all duration-200 ease-out bg-white border border-gray-100 rounded-2xl shadow-xl z-50 overflow-hidden">
-                        <div class="px-5 py-3 border-b border-gray-50 flex justify-between items-center bg-slate-50/50">
-                            <h4 class="text-sm font-bold text-slate-800">Notifikasi</h4>
-                            <span class="text-xs font-semibold text-sky-600 cursor-pointer hover:underline">Tandai
-                                dibaca</span>
-                        </div>
-                        <ul id="notifList" class="max-h-72 overflow-y-auto divide-y divide-gray-50">
-                            <li class="px-5 py-8 text-sm text-slate-400 text-center flex flex-col items-center">
-                                <svg class="w-8 h-8 mb-2 animate-spin text-sky-200" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10"
-                                        stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor"
-                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                    </path>
-                                </svg>
-                                Memuat...
-                            </li>
-                        </ul>
+                        class="flex items-center justify-center w-6 h-6 rounded-full bg-white shadow-sm border border-slate-100">
+                        <svg class="w-3.5 h-3.5 text-sky-500 animate-[spin_60s_linear_infinite]" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div class="flex flex-col">
+                        <span id="navTime"
+                            class="text-sm font-bold text-slate-700 leading-none font-mono tracking-tight">--:--:--</span>
+                        <span id="navDate"
+                            class="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-none mt-0.5">Memuat...</span>
                     </div>
                 </div>
 
                 <div class="relative group">
                     @auth
                         <button
-                            class="flex items-center gap-2 p-1 pr-3 rounded-full border border-gray-100 hover:border-sky-200 hover:bg-sky-50 hover:shadow-sm transition-all focus:outline-none">
+                            class="flex items-center gap-2.5 p-1.5 pr-4 rounded-full border border-slate-200 bg-white hover:border-sky-300 hover:bg-sky-50 hover:shadow-md transition-all duration-300 focus:outline-none group/btn">
                             <span
-                                class="h-8 w-8 rounded-full bg-gradient-to-tr from-sky-500 to-blue-600 flex items-center justify-center text-sm font-bold text-white shadow-inner">
+                                class="h-9 w-9 rounded-full bg-gradient-to-tr from-sky-500 to-blue-600 flex items-center justify-center text-sm font-bold text-white shadow-inner group-hover/btn:scale-105 transition-transform">
                                 {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                             </span>
-                            <span
-                                class="hidden sm:block text-sm font-semibold text-slate-700">{{ Auth::user()->name }}</span>
-                            <svg class="h-4 w-4 text-slate-400 group-hover:text-sky-500" viewBox="0 0 20 20"
-                                fill="currentColor">
+                            <span class="hidden md:block text-sm font-bold text-slate-700">{{ Auth::user()->name }}</span>
+                            <svg class="hidden md:block h-4 w-4 text-slate-400 group-hover/btn:text-sky-500 transition-colors"
+                                viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd"
                                     d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
                                     clip-rule="evenodd" />
@@ -123,49 +146,58 @@
                         </button>
 
                         <div
-                            class="absolute right-0 mt-2 w-56 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all duration-200 ease-out bg-white border border-gray-100 rounded-xl shadow-xl z-50 p-2">
-                            <div class="px-4 py-3 border-b border-gray-50 mb-1">
-                                <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Signed in as</p>
-                                <p class="text-sm font-bold text-slate-800 truncate">{{ Auth::user()->email ?? 'Admin' }}
-                                </p>
-                            </div>
-                            <a href="{{ route('dashboard') }}"
-                                class="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-slate-700 rounded-lg hover:bg-slate-50 hover:text-sky-600 transition-colors">
-                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                    stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                                </svg>
-                                Dashboard
-                            </a>
-                            <form action="{{ route('logout') }}" method="POST" class="m-0 mt-1">
-                                @csrf
-                                <button type="submit"
-                                    class="w-full flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-red-600 rounded-lg hover:bg-red-50 transition-colors">
-                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                        stroke-width="2">
+                            class="absolute right-0 mt-4 w-60 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-4 group-hover:translate-y-0 transition-all duration-300 ease-out z-50 pt-2">
+                            <div
+                                class="bg-white/95 backdrop-blur-xl border border-slate-100 rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] overflow-hidden p-2">
+                                <div class="px-4 py-3 border-b border-gray-50 mb-2 bg-slate-50/50 rounded-xl">
+                                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Signed
+                                        in as</p>
+                                    <p class="text-sm font-bold text-slate-800 truncate">
+                                        {{ Auth::user()->email ?? 'Admin' }}</p>
+                                </div>
+                                <a href="{{ route('dashboard') }}"
+                                    class="flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-slate-700 rounded-xl hover:bg-sky-50 hover:text-sky-600 transition-all">
+                                    <svg class="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24"
+                                        stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                            d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                                     </svg>
-                                    Sign Out
-                                </button>
-                            </form>
+                                    Dashboard
+                                </a>
+                                <form action="{{ route('logout') }}" method="POST"
+                                    class="m-0 mt-1 border-t border-slate-50 pt-1">
+                                    @csrf
+                                    <button type="submit"
+                                        class="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-red-600 rounded-xl hover:bg-red-50 transition-all">
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                            stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                        </svg>
+                                        Sign Out
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     @endauth
 
                     @guest
                         <a href="{{ route('login') }}"
-                            class="flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-sky-600 hover:bg-sky-700 rounded-full shadow-md hover:shadow-lg transition-all">
+                            class="flex items-center gap-2 px-6 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 rounded-full shadow-lg shadow-sky-500/30 hover:shadow-sky-500/50 hover:-translate-y-0.5 transition-all duration-300">
                             Login
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
                         </a>
                     @endguest
                 </div>
 
-                <div class="md:hidden flex items-center">
+                <div class="lg:hidden flex items-center ml-1">
                     <button id="hamburger"
-                        class="p-2 text-slate-500 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors">
+                        class="p-2.5 text-slate-500 hover:text-sky-600 hover:bg-sky-50 rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-sky-500/50">
                         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                            stroke-width="2">
+                            stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
                         </svg>
                     </button>
@@ -176,103 +208,157 @@
     </div>
 
     <div id="mobileMenu"
-        class="hidden md:hidden border-t border-gray-100 bg-white/95 backdrop-blur-md shadow-lg absolute w-full left-0 origin-top transform transition-all">
-        <div class="px-4 py-3 space-y-1">
-            <a href="{{ url('/') }}"
-                class="block px-4 py-3 rounded-xl font-semibold {{ request()->is('/') ? 'text-sky-700 bg-sky-50' : 'text-slate-600 hover:bg-slate-50' }}">Home</a>
+        class="lg:hidden overflow-hidden transition-all duration-300 ease-in-out max-h-0 bg-white border-t border-slate-100 shadow-xl absolute w-full left-0 origin-top z-40">
 
-            <div>
+        <div class="sm:hidden px-6 py-3 bg-slate-50/50 border-b border-slate-100 flex items-center gap-3">
+            <svg class="w-5 h-5 text-sky-500 animate-[spin_60s_linear_infinite]" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div class="flex flex-col">
+                <span id="navTimeMobile" class="text-sm font-bold text-slate-700 font-mono">--:--:--</span>
+                <span id="navDateMobile"
+                    class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Memuat...</span>
+            </div>
+        </div>
+
+        <div class="px-4 py-5 space-y-2 bg-slate-50/30">
+            <a href="{{ url('/') }}"
+                class="flex items-center gap-3 px-4 py-3.5 rounded-xl font-bold text-base transition-all {{ request()->is('/') ? 'text-sky-700 bg-white shadow-sm ring-1 ring-slate-200/50' : 'text-slate-600 hover:bg-white hover:text-sky-600' }}">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                Home
+            </a>
+
+            <div class="bg-white rounded-xl shadow-sm ring-1 ring-slate-200/50 overflow-hidden">
                 <button id="mobileAktToggle"
-                    class="w-full flex justify-between items-center px-4 py-3 rounded-xl font-semibold text-slate-600 hover:bg-slate-50">
-                    Aktivitas
-                    <svg id="mobileAktIcon" class="w-4 h-4 transition-transform duration-200" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    class="w-full flex justify-between items-center px-4 py-3.5 font-bold text-base text-slate-600 hover:bg-sky-50 hover:text-sky-700 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                            stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        Aktivitas
+                    </div>
+                    <svg id="mobileAktIcon" class="w-5 h-5 text-slate-400 transition-transform duration-300"
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
                     </svg>
                 </button>
-                <div id="mobileAktList" class="hidden pl-6 pr-4 py-2 space-y-1 border-l-2 border-slate-100 ml-4">
-                    <a href="{{ url('/activities/witness') }}"
-                        class="block px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-sky-50 hover:text-sky-700">Witness
-                        / Inspection</a>
-                    <a href="{{ url('/activities/kalibrasi') }}"
-                        class="block px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-sky-50 hover:text-sky-700">Kalibrasi</a>
+                <div id="mobileAktList"
+                    class="max-h-0 overflow-hidden transition-all duration-300 ease-in-out bg-slate-50/50">
+                    <div class="p-3 space-y-1">
+                        <a href="{{ url('/activities/witness') }}"
+                            class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold text-slate-600 hover:bg-sky-100 hover:text-sky-700 transition-colors">
+                            <span class="w-2 h-2 rounded-full bg-sky-400"></span> Witness / Inspection
+                        </a>
+                        <a href="{{ url('/activities/kalibrasi') }}"
+                            class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold text-slate-600 hover:bg-sky-100 hover:text-sky-700 transition-colors">
+                            <span class="w-2 h-2 rounded-full bg-blue-500"></span> Kalibrasi
+                        </a>
+                    </div>
                 </div>
             </div>
 
             <a href="{{ url('/portal/inventory') }}"
-                class="block px-4 py-3 rounded-xl font-semibold text-slate-600 hover:bg-slate-50">Inventory</a>
+                class="flex items-center gap-3 px-4 py-3.5 rounded-xl font-bold text-base transition-all {{ request()->is('portal/inventory*') ? 'text-sky-700 bg-white shadow-sm ring-1 ring-slate-200/50' : 'text-slate-600 hover:bg-white hover:text-sky-600' }}">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+                Inventory
+            </a>
+
             <a href="{{ url('/portal/document') }}"
-                class="block px-4 py-3 rounded-xl font-semibold text-slate-600 hover:bg-slate-50">Document</a>
+                class="flex items-center gap-3 px-4 py-3.5 rounded-xl font-bold text-base transition-all {{ request()->is('portal/document*') ? 'text-sky-700 bg-white shadow-sm ring-1 ring-slate-200/50' : 'text-slate-600 hover:bg-white hover:text-sky-600' }}">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Document
+            </a>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Mobile Menu Toggle
+            // === 1. REAL-TIME CLOCK LOGIC ===
+            const navTime = document.getElementById('navTime');
+            const navDate = document.getElementById('navDate');
+            const navTimeMobile = document.getElementById('navTimeMobile');
+            const navDateMobile = document.getElementById('navDateMobile');
+
+            function updateClock() {
+                const now = new Date();
+
+                // Format Jam (Contoh: 08:22:45)
+                const timeString = now.toLocaleTimeString('id-ID', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                });
+
+                // Format Tanggal (Contoh: 11 MAR 2026)
+                const dateString = now.toLocaleDateString('id-ID', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                }).replace('.', ''); // Menghilangkan titik jika ada (misal: "Mar.")
+
+                // Update Desktop Clock
+                if (navTime) navTime.textContent = timeString;
+                if (navDate) navDate.textContent = dateString;
+
+                // Update Mobile Clock
+                if (navTimeMobile) navTimeMobile.textContent = timeString;
+                if (navDateMobile) navDateMobile.textContent = dateString;
+            }
+
+            // Jalankan fungsi updateClock setiap 1000ms (1 detik)
+            setInterval(updateClock, 1000);
+            updateClock(); // Panggil sekali langsung saat halaman dimuat
+
+
+            // === 2. MOBILE MENU & ACCORDION LOGIC ===
             const hamburger = document.getElementById('hamburger');
             const mobileMenu = document.getElementById('mobileMenu');
+            let isMenuOpen = false;
 
             hamburger.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
+                isMenuOpen = !isMenuOpen;
+                if (isMenuOpen) {
+                    mobileMenu.style.maxHeight = mobileMenu.scrollHeight + "px";
+                } else {
+                    mobileMenu.style.maxHeight = "0px";
+                    // Tutup submenu otomatis jika menu utama ditutup
+                    if (isSubOpen) mToggle.click();
+                }
             });
 
-            // Mobile Submenu Toggle
             const mToggle = document.getElementById('mobileAktToggle');
             const mList = document.getElementById('mobileAktList');
             const mIcon = document.getElementById('mobileAktIcon');
+            let isSubOpen = false;
 
             mToggle.addEventListener('click', () => {
-                mList.classList.toggle('hidden');
+                isSubOpen = !isSubOpen;
                 mIcon.classList.toggle('-rotate-180');
-            });
-
-            // Fetch Notifications Simulation
-            const notifGroup = document.querySelector('.group[aria-label="Notifications"]');
-            const notifList = document.getElementById('notifList');
-            let isLoaded = false;
-
-            notifGroup.addEventListener('mouseenter', async () => {
-                if (isLoaded) return;
-                try {
-                    // Ganti dengan endpoint API real Anda
-                    // const res = await fetch('/notifications');
-                    // const data = await res.json();
-
-                    // Simulasi delay fetch
-                    setTimeout(() => {
-                        const dummyData = [{
-                                category: 'Sistem',
-                                message: 'Kalibrasi alat Valve A berhasil',
-                                time: '5 Menit lalu',
-                                icon: '✅'
-                            },
-                            {
-                                category: 'Peringatan',
-                                message: 'Inventory Pipa C menipis',
-                                time: '1 Jam lalu',
-                                icon: '⚠️'
-                            }
-                        ];
-
-                        notifList.innerHTML = dummyData.map(item => `
-                            <li class="px-5 py-3 hover:bg-sky-50 cursor-pointer transition-colors group/item">
-                                <div class="flex items-start gap-3">
-                                    <div class="text-xl bg-white shadow-sm p-1.5 rounded-lg group-hover/item:scale-110 transition-transform">${item.icon}</div>
-                                    <div class="flex-1">
-                                        <div class="flex justify-between items-baseline mb-0.5">
-                                            <span class="text-sm font-bold text-slate-800">${item.category}</span>
-                                            <span class="text-[10px] font-semibold text-slate-400">${item.time}</span>
-                                        </div>
-                                        <p class="text-xs font-medium text-slate-600 leading-snug">${item.message}</p>
-                                    </div>
-                                </div>
-                            </li>
-                        `).join('');
-                        isLoaded = true;
-                    }, 800);
-                } catch (e) {
-                    notifList.innerHTML =
-                        `<li class="px-5 py-4 text-sm text-red-500 font-medium text-center">Gagal memuat notifikasi</li>`;
+                if (isSubOpen) {
+                    mList.style.maxHeight = mList.scrollHeight + "px";
+                    // Update tinggi parent container dinamis
+                    if (isMenuOpen) {
+                        mobileMenu.style.maxHeight = (mobileMenu.scrollHeight + mList.scrollHeight) + "px";
+                    }
+                } else {
+                    mList.style.maxHeight = "0px";
+                    if (isMenuOpen) {
+                        mobileMenu.style.maxHeight = (mobileMenu.scrollHeight - mList.scrollHeight) + "px";
+                    }
                 }
             });
         });

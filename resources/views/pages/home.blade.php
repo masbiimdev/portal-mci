@@ -17,6 +17,9 @@
             --primary-soft: #eff6ff;
             --primary-glow: rgba(29, 78, 216, 0.15);
 
+            --accent: #4f46e5;
+            --accent-glow: rgba(79, 70, 229, 0.3);
+
             --text-dark: #0f172a;
             --text-muted: #64748b;
 
@@ -106,7 +109,6 @@
             z-index: 1;
         }
 
-        /* KPI Cards inside Hero */
         .kpis {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
@@ -208,6 +210,79 @@
             gap: 1.5rem;
         }
 
+        /* ============== DOCUMENT SPECIAL CARD ============== */
+        .document-card {
+            background: linear-gradient(135deg, var(--accent) 0%, #7c3aed 100%);
+            color: white;
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 10px 25px var(--accent-glow);
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .document-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 30px var(--accent-glow);
+        }
+
+        .document-card::before {
+            content: '📄';
+            position: absolute;
+            right: -10px;
+            bottom: -30px;
+            font-size: 10rem;
+            opacity: 0.15;
+            transform: rotate(-15deg);
+            pointer-events: none;
+        }
+
+        .document-card-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .document-card-content h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+
+        .document-card-content p {
+            margin: 0 0 1.25rem 0;
+            opacity: 0.9;
+            font-size: 0.95rem;
+            max-width: 80%;
+        }
+
+        .btn-document {
+            background: white;
+            color: var(--accent);
+            padding: 0.6rem 1.5rem;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-document:hover {
+            background: #f8fafc;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transform: scale(1.02);
+        }
+
+        /* ============== REGULAR CARDS & QUICK ACTIONS ============== */
         .card {
             background: var(--panel);
             border-radius: var(--radius-lg);
@@ -216,10 +291,6 @@
             border: 1px solid var(--border);
             margin-bottom: 1.5rem;
             transition: box-shadow 0.3s ease;
-        }
-
-        .card:hover {
-            box-shadow: var(--shadow-md);
         }
 
         .card-header {
@@ -231,8 +302,7 @@
             border-bottom: 1px solid #f1f5f9;
         }
 
-        .card-header h3,
-        .card-header h4 {
+        .card-header h3 {
             margin: 0;
             color: var(--text-dark);
             font-weight: 800;
@@ -256,7 +326,6 @@
             color: white;
         }
 
-        /* ============== QUICK ACTIONS ============== */
         .quick {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -273,7 +342,7 @@
             border: 1px solid var(--border);
             color: var(--text-dark);
             font-size: 0.85rem;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s ease;
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
@@ -284,7 +353,7 @@
             background: var(--primary-soft);
             border-color: var(--primary);
             transform: translateY(-4px);
-            color: var(--primary-dark);
+            color: var(--primary-hover);
             box-shadow: var(--shadow-md);
         }
 
@@ -292,11 +361,10 @@
             font-size: 1.75rem;
         }
 
-        /* ============== ANNOUNCEMENTS (WIDER GRID) ============== */
+        /* ============== ANNOUNCEMENTS ============== */
         .ann-list {
             display: grid;
-            /* Menyesuaikan menjadi 2 kolom jika ruang cukup (responsive) */
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 1rem;
         }
 
@@ -307,51 +375,68 @@
             border-radius: var(--radius-md);
             background: #ffffff;
             border: 1px solid var(--border);
-            border-left: 4px solid var(--primary);
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ann::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--primary);
+            transition: width 0.2s ease;
         }
 
         .ann:hover {
             transform: translateY(-4px);
             box-shadow: var(--shadow-md);
+            border-color: #cbd5e1;
         }
 
-        .ann.prio-high {
-            border-left-color: var(--danger);
+        .ann.prio-high::before {
+            background: var(--danger);
         }
 
-        .ann.prio-medium {
-            border-left-color: var(--warning);
+        .ann.prio-medium::before {
+            background: var(--warning);
         }
 
-        .ann.prio-low {
-            border-left-color: var(--text-muted);
+        .ann.prio-low::before {
+            background: var(--text-muted);
         }
 
         .ann .avatar {
             width: 48px;
             height: 48px;
             min-width: 48px;
-            border-radius: 12px;
+            border-radius: 50%;
             display: grid;
             place-items: center;
             background: var(--primary-soft);
             color: var(--primary);
             font-weight: 800;
             font-size: 1.1rem;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
         .ann .body {
             flex: 1;
             min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .ann .title {
             font-weight: 700;
             color: var(--text-dark);
             margin: 0 0 0.25rem 0;
-            font-size: 1rem;
+            font-size: 1.05rem;
             line-height: 1.3;
         }
 
@@ -360,6 +445,10 @@
             color: var(--text-muted);
             font-size: 0.85rem;
             line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .ann .meta {
@@ -369,11 +458,11 @@
             align-items: center;
             color: var(--text-muted);
             font-size: 0.75rem;
-            font-weight: 500;
+            font-weight: 600;
         }
 
         .badge-prio {
-            padding: 0.2rem 0.6rem;
+            padding: 0.25rem 0.6rem;
             border-radius: 6px;
             font-weight: 800;
             font-size: 0.65rem;
@@ -400,6 +489,7 @@
             overflow-x: auto;
             border-radius: var(--radius-sm);
             border: 1px solid var(--border);
+            -webkit-overflow-scrolling: touch;
         }
 
         table {
@@ -407,6 +497,7 @@
             border-collapse: collapse;
             font-size: 0.9rem;
             background: white;
+            min-width: 600px;
         }
 
         th,
@@ -424,6 +515,7 @@
             font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
+            white-space: nowrap;
         }
 
         tbody tr:hover {
@@ -439,9 +531,9 @@
             border-radius: 999px;
             font-weight: 700;
             font-size: 0.7rem;
-            letter-spacing: 0.02em;
             text-transform: uppercase;
             display: inline-block;
+            white-space: nowrap;
         }
 
         .badge.ok {
@@ -469,6 +561,7 @@
             font-weight: 600;
             font-size: 0.8rem;
             transition: all 0.2s ease;
+            white-space: nowrap;
         }
 
         .btn-action:hover {
@@ -503,7 +596,6 @@
             border-radius: var(--radius-sm);
         }
 
-        /* Next Prayer Block */
         .next-prayer-block {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
             border-radius: var(--radius-md);
@@ -545,7 +637,6 @@
             margin-top: 0.5rem;
         }
 
-        /* Sleek Progress Bar */
         .np-progress {
             width: 100%;
             height: 4px;
@@ -568,7 +659,6 @@
             box-shadow: 0 0 10px #ef4444;
         }
 
-        /* Prayer List */
         .prayer-list {
             display: grid;
             gap: 0.5rem;
@@ -596,7 +686,7 @@
 
         .pray-row.next {
             background: var(--primary-soft);
-            color: var(--primary-dark);
+            color: var(--primary-hover);
             border-color: var(--primary-glow);
             font-weight: 800;
         }
@@ -610,7 +700,7 @@
             color: var(--text-muted);
         }
 
-        /* ============== MODAL ============== */
+        /* ============== MODAL & TOAST ============== */
         #detailModal {
             position: fixed;
             top: 0;
@@ -647,7 +737,7 @@
             position: relative;
             z-index: 2;
             background: var(--panel);
-            width: 100%;
+            width: 90%;
             max-width: 450px;
             border-radius: var(--radius-lg);
             padding: 2rem;
@@ -687,7 +777,6 @@
             word-break: break-word;
         }
 
-        /* ============== TOAST ============== */
         .toast {
             position: fixed;
             bottom: 24px;
@@ -710,8 +799,12 @@
             opacity: 1;
         }
 
-        /* ============== RESPONSIVE ============== */
+        /* ============== RESPONSIVE (HP) ============== */
         @media (max-width: 1024px) {
+            .container {
+                padding: 0 1rem;
+                margin: 1rem auto;
+            }
 
             .header-grid,
             .layout {
@@ -721,28 +814,77 @@
             .weather-time-card {
                 padding: 1.5rem;
             }
+
+            .hero {
+                padding: 2rem;
+            }
         }
 
         @media (max-width: 768px) {
             .hero {
                 padding: 1.5rem;
+                text-align: center;
+            }
+
+            .hero::after {
+                display: none;
             }
 
             .kpis {
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.75rem;
+            }
+
+            .document-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 1.5rem;
+            }
+
+            .document-card::before {
+                font-size: 6rem;
+                bottom: -20px;
+                right: -10px;
+            }
+
+            .document-card-content p {
+                max-width: 100%;
             }
 
             .quick {
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.75rem;
             }
 
-            .ann-list {
-                grid-template-columns: 1fr;
+            .quick .item {
+                padding: 1rem 0.5rem;
+            }
+
+            .ann {
+                flex-direction: column;
+                gap: 0.75rem;
+                align-items: flex-start;
+            }
+
+            .ann .avatar {
+                width: 40px;
+                height: 40px;
+                min-width: 40px;
+                font-size: 1rem;
             }
 
             #modalBody {
                 grid-template-columns: 1fr;
                 gap: 1rem;
+            }
+
+            th,
+            td {
+                padding: 0.75rem 1rem;
+            }
+
+            .card {
+                padding: 1.25rem;
             }
         }
     </style>
@@ -796,6 +938,17 @@
         <div class="layout" aria-live="polite">
 
             <div>
+                <div class="document-card">
+                    <div class="document-card-content">
+                        <h3>Pusat Dokumen & Laporan</h3>
+                        <p>Akses terpusat ke seluruh dokumen inventaris, form standar operasional, dan sertifikat kalibrasi
+                            MCI.</p>
+                        <button onclick="location.href='/documents'" class="btn-document">
+                            Buka Dokumen <span>→</span>
+                        </button>
+                    </div>
+                </div>
+
                 <div class="card" style="padding-bottom: 24px;">
                     <div class="card-header">
                         <h3>Akses Cepat</h3>
@@ -828,7 +981,7 @@
                                 $prioClass =
                                     $prio === 'high' ? 'prio-high' : ($prio === 'medium' ? 'prio-medium' : 'prio-low');
                                 $author = optional($a->author)->name ?? 'Admin';
-                                $excerpt = \Illuminate\Support\Str::limit(strip_tags($a->content), 100);
+                                $excerpt = \Illuminate\Support\Str::limit(strip_tags($a->content), 80);
                             @endphp
                             <article class="ann {{ $prioClass }}"
                                 onclick="window.location='{{ url('pengumuman/show/' . \Illuminate\Support\Str::slug($a->title)) }}'">
@@ -844,8 +997,10 @@
                             </article>
                         @empty
                             <div
-                                style="text-align:center; padding:2rem; color:var(--text-muted); font-size:0.95rem; width:100%; border: 1px dashed var(--border); border-radius: var(--radius-md);">
-                                Belum ada pengumuman terbaru hari ini.</div>
+                                style="text-align:center; padding:3rem 1rem; color:var(--text-muted); width:100%; border: 1px dashed var(--border); border-radius: var(--radius-md);">
+                                <span style="font-size: 2rem; display:block; margin-bottom: 10px;">📭</span>
+                                <span style="font-weight: 500;">Belum ada pengumuman terbaru hari ini.</span>
+                            </div>
                         @endforelse
                     </div>
                 </div>
@@ -900,7 +1055,8 @@
                                             <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">SN:
                                                 {{ e($t->no_seri ?? '-') }}</div>
                                         </td>
-                                        <td><span
+                                        <td>
+                                            <span
                                                 class="badge {{ $badge }}">{{ optional($h)->status_kalibrasi ?? '-' }}</span>
                                         </td>
                                         <td style="font-family:'JetBrains Mono', monospace; font-size:0.85rem;">
@@ -910,13 +1066,16 @@
                                             style="font-family:'JetBrains Mono', monospace; font-size:0.85rem; font-weight:700;">
                                             {{ optional($h)->tgl_kalibrasi_ulang ? $h->tgl_kalibrasi_ulang->format('d/m/Y') : '-' }}
                                         </td>
-                                        <td style="text-align:right"><button class="btn-action"
-                                                data-action="detail">Detail</button></td>
+                                        <td style="text-align:right">
+                                            <button class="btn-action" data-action="detail">Detail</button>
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="center" style="padding: 2rem; color: var(--text-muted);">
-                                            Tidak ada data jadwal kalibrasi saat ini.</td>
+                                        <td colspan="5"
+                                            style="text-align:center; padding: 2.5rem; color: var(--text-muted);">
+                                            Tidak ada data jadwal kalibrasi saat ini.
+                                        </td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -926,7 +1085,6 @@
             </div>
 
             <aside class="sidebar">
-
                 <div class="card pray-card" style="position: sticky; top: 20px;">
                     <div class="card-header" style="margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:none;">
                         <h3 style="display:flex; align-items:center; gap:8px;"><span style="font-size:1.3rem;">🕋</span>
@@ -968,7 +1126,6 @@
                                 class="pray-time" id="pray-Isha">--:--</span></div>
                     </div>
                 </div>
-
             </aside>
         </div>
     </div>
@@ -989,7 +1146,6 @@
             </div>
         </div>
     </div>
-
     <div id="mciToast" class="toast" role="status" aria-live="polite"></div>
 @endsection
 
@@ -1027,15 +1183,24 @@
                 });
             },
             async fetchPrayerTimes() {
+                // Default location (Jakarta)
+                const defaultLat = -6.200000;
+                const defaultLon = 106.816666;
+
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(
                         (pos) => this.getPrayerData(pos.coords.latitude, pos.coords.longitude),
-                        () => this.getPrayerData(-6.2383, 106.9892), {
+                        (err) => {
+                            console.warn('Geolocation ditolak/gagal. Memuat data default.', err);
+                            this.getPrayerData(defaultLat, defaultLon);
+                        }, {
                             timeout: 8000,
                             maximumAge: 60000
                         }
                     );
-                } else this.getPrayerData(-6.2383, 106.9892);
+                } else {
+                    this.getPrayerData(defaultLat, defaultLon);
+                }
             },
             async getPrayerData(lat, lon) {
                 try {
@@ -1066,6 +1231,7 @@
                     this.displayPrayerTimes(timings, locationLabel, hijriInfo);
                 } catch (err) {
                     console.error('Prayer fetch error:', err);
+                    if (this.dom.location) this.dom.location.textContent = "Gagal memuat jadwal";
                 }
             },
             displayPrayerTimes(timings, locationLabel, hijriInfo) {
@@ -1212,21 +1378,27 @@
                 });
             },
             async initWeather() {
+                // Default location (Jakarta)
+                const defaultLat = -6.200000;
+                const defaultLon = 106.816666;
+
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(
                         (pos) => this.fetchWeather(pos.coords.latitude, pos.coords.longitude),
-                        () => this.fetchWeather(-6.2383, 106.9892), {
+                        (err) => this.fetchWeather(defaultLat, defaultLon), {
                             timeout: 6000,
                             maximumAge: 60000
                         }
                     );
-                } else this.fetchWeather(-6.2383, 106.9892);
+                } else {
+                    this.fetchWeather(defaultLat, defaultLon);
+                }
             },
             async fetchWeather(lat, lon) {
                 try {
                     const r = await fetch(
                         `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`
-                        );
+                    );
                     const data = await r.json();
                     if (data?.current_weather) {
                         const cw = data.current_weather;
@@ -1238,19 +1410,21 @@
                         if (this.dom.weatherDesc) this.dom.weatherDesc.textContent = code === 0 ? 'Cerah' :
                             'Berawan / Hujan';
                     }
-                } catch (e) {}
+                } catch (e) {
+                    if (this.dom.weatherDesc) this.dom.weatherDesc.textContent = "Gagal memuat cuaca";
+                }
             },
             openModal(data) {
                 if (!this.dom.detailModal || !this.dom.detailModalBody) return;
                 document.getElementById('modalTitle').textContent = 'Info Spesifik Instrumen';
                 this.dom.detailModalBody.innerHTML = `
-                    <div><strong>Nama Instrumen</strong><div class="muted">${this.escapeHtml(data.nama || '-')}</div></div>
-                    <div><strong>Merek/Pabrikan</strong><div class="muted">${this.escapeHtml(data.merek || '-')}</div></div>
-                    <div><strong>Nomor Seri</strong><div class="muted">${this.escapeHtml(data.no_seri || '-')}</div></div>
-                    <div><strong>Status Terakhir</strong><div class="muted" style="text-transform:uppercase;">${this.escapeHtml(data.history?.status || '-')}</div></div>
-                    <div style="grid-column:1/-1;"><strong>Batas Kalibrasi Berikutnya</strong><div class="muted">${this.escapeHtml(data.history?.tgl_kalibrasi_ulang || '-')}</div></div>
-                    <div style="grid-column:1/-1;"><strong>Catatan Teknisi</strong><div class="muted" style="background:#f8fafc; padding:10px; border-radius:8px; border:1px solid #e2e8f0; font-weight:normal; font-size:0.9rem;">${this.escapeHtml(data.history?.keterangan || 'Tidak ada catatan khusus.')}</div></div>
-                `;
+                <div><strong>Nama Instrumen</strong><div class="muted">${this.escapeHtml(data.nama || '-')}</div></div>
+                <div><strong>Merek/Pabrikan</strong><div class="muted">${this.escapeHtml(data.merek || '-')}</div></div>
+                <div><strong>Nomor Seri</strong><div class="muted">${this.escapeHtml(data.no_seri || '-')}</div></div>
+                <div><strong>Status Terakhir</strong><div class="muted" style="text-transform:uppercase;">${this.escapeHtml(data.history?.status || '-')}</div></div>
+                <div style="grid-column:1/-1;"><strong>Batas Kalibrasi Berikutnya</strong><div class="muted">${this.escapeHtml(data.history?.tgl_kalibrasi_ulang || '-')}</div></div>
+                <div style="grid-column:1/-1;"><strong>Catatan Teknisi</strong><div class="muted" style="background:#f8fafc; padding:10px; border-radius:8px; border:1px solid #e2e8f0; font-weight:normal; font-size:0.9rem;">${this.escapeHtml(data.history?.keterangan || 'Tidak ada catatan khusus.')}</div></div>
+            `;
                 this.dom.detailModal.classList.add('show');
                 document.body.style.overflow = 'hidden';
             },
