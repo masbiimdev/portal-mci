@@ -410,11 +410,10 @@
                                     // Hitung selisih hari (Positif = Masa Depan, Negatif = Lewat)
                                     $diff = $today->diffInDays($kalibrasi, false);
 
-                                    // Set Timestamp dasar
+                                    // Set Timestamp dasar untuk sorting
                                     $sortDate = $kalibrasi->timestamp;
 
-                                    // Logika Pintar Sorting:
-                                    // Jika Selesai (Lewat > 7 hari), tambahkan angka besar agar posisinya turun ke bawah
+                                    // Jika Selesai (Lewat > 7 hari), tambahkan angka besar agar posisinya turun ke bawah tabel
                                     if ($diff < -7) {
                                         $sortDate += 5000000000;
                                     }
@@ -441,10 +440,12 @@
 
                                 <td>
                                     @if ($lastHistory && $lastHistory->tgl_kalibrasi_ulang)
-                                        @if ($diff > 7)
+                                        @if ($diff > 30)
+                                            <span class="badge-modern badge-success">Valid</span>
+                                        @elseif ($diff > 7 && $diff <= 30)
                                             <span class="badge-modern badge-info">Terjadwal</span>
                                         @elseif ($diff > 0 && $diff <= 7)
-                                            <span class="badge-modern badge-warning">Saatnya Kalibrasi</span>
+                                            <span class="badge-modern badge-warning">Segera Kalibrasi</span>
                                         @elseif ($diff <= 0 && $diff >= -7)
                                             <span class="badge-modern badge-primary">Proses Kalibrasi</span>
                                         @else
@@ -461,12 +462,17 @@
                                             {{ \Carbon\Carbon::parse($lastHistory->tgl_kalibrasi_ulang)->format('d M Y') }}
                                         </div>
 
-                                        @if ($diff > 7)
-                                            <div class="text-muted" style="font-size: 0.75rem;">{{ $diff }} Hari
-                                                Lagi</div>
+                                        @if ($diff > 30)
+                                            <div class="text-success fw-semibold" style="font-size: 0.75rem;">
+                                                <i class="bx bx-check-shield align-middle me-1"></i>Aman
+                                                ({{ $diff }} Hari)
+                                            </div>
+                                        @elseif ($diff > 7 && $diff <= 30)
+                                            <div class="text-muted" style="font-size: 0.75rem;">Dalam {{ $diff }}
+                                                Hari</div>
                                         @elseif ($diff > 0 && $diff <= 7)
-                                            <div class="text-warning fw-semibold" style="font-size: 0.75rem;">Dalam
-                                                {{ $diff }} Hari</div>
+                                            <div class="text-warning fw-bold" style="font-size: 0.75rem;">Sisa
+                                                {{ $diff }} Hari!</div>
                                         @elseif ($diff <= 0 && $diff >= -7)
                                             <div class="text-primary fw-semibold" style="font-size: 0.75rem;">
                                                 <i class="bx bx-sync bx-spin align-middle me-1"></i>Sedang Dikerjakan
