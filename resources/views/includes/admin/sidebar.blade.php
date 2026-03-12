@@ -3,7 +3,7 @@
     .layout-menu {
         border-right: 1px solid rgba(0, 0, 0, 0.05);
         background-color: #ffffff !important;
-        /* Tambahan Pola (Pattern) Valve Transparan di Latar Belakang */
+        /* Pola (Pattern) Valve Transparan di Latar Belakang */
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg transform='rotate(-15 60 60)' fill='none' stroke='%233b82f6' stroke-width='1.5' stroke-opacity='0.04'%3E%3Cpolygon points='40,50 40,70 60,60'/%3E%3Cpolygon points='80,50 80,70 60,60'/%3E%3Cline x1='60' y1='60' x2='60' y2='35'/%3E%3Cline x1='45' y1='35' x2='75' y2='35'/%3E%3Ccircle cx='60' cy='60' r='3'/%3E%3C/g%3E%3C/svg%3E") !important;
         background-size: 120px 120px;
         background-repeat: repeat;
@@ -121,7 +121,7 @@
         font-weight: 700;
     }
 
-    /* ============== WIDGET BAWAH GAYA JEPANG (DYNAMIC ZEN) ============== */
+    /* ============== WIDGET BAWAH GAYA HIGH-TECH INDUSTRIAL ============== */
     .sidebar-bottom-widget {
         padding: 1.5rem 1.25rem 1.5rem 1.25rem;
         flex-shrink: 0;
@@ -130,183 +130,221 @@
         z-index: 2;
     }
 
-    .zen-sakura-card {
-        background: linear-gradient(135deg, #fff5f6 0%, #fee2e9 100%);
-        border-radius: 12px;
-        padding: 1.25rem 1rem;
+    .industrial-widget-card {
+        background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+        border-radius: 16px;
+        padding: 1.25rem;
         position: relative;
         overflow: hidden;
-        border: 1px solid #fecdd3;
-        box-shadow: 0 4px 15px rgba(251, 113, 133, 0.1);
+        border: 1px solid #1e293b;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.1);
         cursor: default;
-        transition: transform 0.3s ease;
+        transition: all 0.3s ease;
     }
 
-    .zen-sakura-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(251, 113, 133, 0.2);
+    .industrial-widget-card:hover {
+        border-color: #0ea5e9;
+        box-shadow: 0 10px 30px -5px rgba(14, 165, 233, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2);
     }
 
-    /* Area Animasi Kelopak */
-    .sakura-rain {
+    /* 1. Moving Blueprint Grid */
+    .ind-grid {
         position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-        pointer-events: none;
-        /* Mencegah bug klik */
-    }
-
-    /* Styling Kelopak Sakura yang lebih realistis dengan gradasi */
-    .petal {
-        position: absolute;
-        background: linear-gradient(135deg, #fda4af, #fecdd3);
-        border-radius: 100% 0 100% 0;
-        opacity: 0;
-        box-shadow: 0 2px 4px rgba(251, 113, 133, 0.2);
-    }
-
-    /* 1. ANIMASI JATUH (Vertikal) */
-    @keyframes fallingDown {
-        0% {
-            top: -20%;
-            opacity: 0;
-        }
-
-        15% {
-            opacity: 0.85;
-        }
-
-        85% {
-            opacity: 0.85;
-        }
-
-        100% {
-            top: 110%;
-            opacity: 0;
-        }
-    }
-
-    /* 2. ANIMASI TERBANG 3D (Berputar & Goyang Kiri Kanan) */
-    @keyframes tumbling3D {
-        0% {
-            transform: translateX(-15px) rotate(0deg) rotateX(0deg) rotateY(0deg);
-        }
-
-        50% {
-            transform: translateX(20px) rotate(180deg) rotateX(75deg) rotateY(60deg);
-        }
-
-        100% {
-            transform: translateX(-15px) rotate(360deg) rotateX(0deg) rotateY(120deg);
-        }
-    }
-
-    /* Set-up 8 Kelopak Bunga agar animasinya acak dan terlihat natural */
-    .petal:nth-child(1) {
-        width: 12px;
-        height: 14px;
-        left: 10%;
-        animation: fallingDown 6s linear infinite, tumbling3D 3.5s ease-in-out infinite;
-        animation-delay: 0s, 0s;
-    }
-
-    .petal:nth-child(2) {
-        width: 8px;
-        height: 10px;
-        left: 30%;
-        animation: fallingDown 8s linear infinite, tumbling3D 4.5s ease-in-out infinite;
-        animation-delay: 2s, 1s;
-        filter: blur(0.5px);
-    }
-
-    .petal:nth-child(3) {
-        width: 14px;
-        height: 16px;
-        left: 50%;
-        animation: fallingDown 5.5s linear infinite, tumbling3D 3s ease-in-out infinite;
-        animation-delay: 4s, 2s;
-    }
-
-    .petal:nth-child(4) {
-        width: 9px;
-        height: 11px;
-        left: 70%;
-        animation: fallingDown 7.5s linear infinite, tumbling3D 4s ease-in-out infinite;
-        animation-delay: 1.5s, 0.5s;
-        filter: blur(1px);
-    }
-
-    .petal:nth-child(5) {
-        width: 11px;
-        height: 13px;
-        left: 85%;
-        animation: fallingDown 9s linear infinite, tumbling3D 5s ease-in-out infinite;
-        animation-delay: 3s, 1.5s;
-    }
-
-    .petal:nth-child(6) {
-        width: 7px;
-        height: 9px;
-        left: 15%;
-        animation: fallingDown 6.5s linear infinite, tumbling3D 3.2s ease-in-out infinite;
-        animation-delay: 5s, 3s;
-        filter: blur(1.5px);
-    }
-
-    .petal:nth-child(7) {
-        width: 13px;
-        height: 15px;
-        left: 45%;
-        animation: fallingDown 8.5s linear infinite, tumbling3D 4.2s ease-in-out infinite;
-        animation-delay: 0.5s, 2.5s;
-    }
-
-    .petal:nth-child(8) {
-        width: 10px;
-        height: 12px;
-        left: 80%;
-        animation: fallingDown 7s linear infinite, tumbling3D 3.8s ease-in-out infinite;
-        animation-delay: 3.5s, 0s;
-    }
-
-
-    /* 3. ANIMASI GELOMBANG MENGALIR */
-    .japan-waves {
-        position: absolute;
-        bottom: -5px;
-        left: 0;
-        width: 100%;
-        height: 40px;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 150'%3E%3Cpath fill='%23fb7185' fill-opacity='0.15' d='M0,150 C120,130 140,130 250,150 C360,130 380,130 500,150 C620,130 640,130 800,150 L800,150 L0,150 Z'%3E%3C/path%3E%3Cpath fill='%23fb7185' fill-opacity='0.1' d='M0,150 C120,110 140,110 250,150 C360,110 380,110 500,150 C620,110 640,110 800,150 L800,150 L0,150 Z'%3E%3C/path%3E%3Cpath fill='%23fb7185' fill-opacity='0.05' d='M0,150 C120,90 140,90 250,150 C360,90 380,90 500,150 C620,90 640,90 800,150 L800,150 L0,150 Z'%3E%3C/path%3E%3C/svg%3E");
-        background-repeat: repeat-x;
-        /* Ulangi secara horizontal */
-        background-size: 400px 40px;
-        /* Lebar 400px per pola */
-        background-position: 0 bottom;
-        animation: oceanFlow 12s linear infinite;
-        /* Animasi ombak berjalan */
+        inset: 0;
+        background-image:
+            linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(56, 189, 248, 0.05) 1px, transparent 1px);
+        background-size: 15px 15px;
+        animation: panGrid 15s linear infinite;
         z-index: 0;
     }
 
-    /* Efek ombak berjalan ke arah kiri tanpa batas */
-    @keyframes oceanFlow {
-        0% {
-            background-position: 0 bottom;
-        }
-
+    @keyframes panGrid {
         100% {
-            background-position: -400px bottom;
+            background-position: 30px 30px;
         }
     }
 
-    /* Teks Status */
-    .zen-status-content {
+    /* 2. Rotating Gears */
+    .ind-gear {
+        position: absolute;
+        opacity: 0.15;
+        z-index: 0;
+        color: #38bdf8;
+    }
+
+    .ind-gear.g1 {
+        right: -20px;
+        top: -20px;
+        width: 100px;
+        height: 100px;
+        animation: spinGear 20s linear infinite;
+    }
+
+    .ind-gear.g2 {
+        right: 50px;
+        top: 30px;
+        width: 60px;
+        height: 60px;
+        animation: spinGear 12s linear infinite reverse;
+    }
+
+    @keyframes spinGear {
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* 3. Content Layout */
+    .ind-content {
         position: relative;
         z-index: 2;
-        text-align: center;
+    }
+
+    .ind-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    .ind-status-dot {
+        width: 8px;
+        height: 8px;
+        background-color: #10b981;
+        border-radius: 50%;
+        box-shadow: 0 0 8px #10b981;
+        animation: pulseHeartbeat 2s infinite;
+    }
+
+    @keyframes pulseHeartbeat {
+        0% {
+            transform: scale(0.95);
+            opacity: 0.8;
+            box-shadow: 0 0 5px #10b981;
+        }
+
+        50% {
+            transform: scale(1.1);
+            opacity: 1;
+            box-shadow: 0 0 12px #10b981;
+        }
+
+        100% {
+            transform: scale(0.95);
+            opacity: 0.8;
+            box-shadow: 0 0 5px #10b981;
+        }
+    }
+
+    .ind-title {
+        color: #e2e8f0;
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+    }
+
+    /* 4. Animated Pressure Gauge */
+    .ind-gauge-container {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        margin-bottom: 16px;
+    }
+
+    .ind-gauge {
+        width: 65px;
+        height: 35px;
+        overflow: visible;
+        filter: drop-shadow(0 0 4px rgba(14, 165, 233, 0.4));
+    }
+
+    .ind-needle {
+        transform-origin: 50px 45px;
+        animation: needleTwitch 4s infinite alternate ease-in-out;
+    }
+
+    @keyframes needleTwitch {
+        0% {
+            transform: rotate(35deg);
+        }
+
+        20% {
+            transform: rotate(40deg);
+        }
+
+        40% {
+            transform: rotate(32deg);
+        }
+
+        60% {
+            transform: rotate(45deg);
+        }
+
+        80% {
+            transform: rotate(38deg);
+        }
+
+        100% {
+            transform: rotate(42deg);
+        }
+    }
+
+    .ind-value {
+        color: #38bdf8;
+        font-size: 1.25rem;
+        font-weight: 900;
+        font-family: monospace;
+        line-height: 1;
+        text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+    }
+
+    .ind-unit {
+        font-size: 0.6rem;
+        color: #94a3b8;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    /* 5. Dynamic 3D Fluid Pipe */
+    .ind-pipe-wrapper {
+        position: relative;
+        height: 14px;
+        background: #0f172a;
+        border-radius: 8px;
+        border: 1px solid #334155;
+        box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.8);
+        overflow: hidden;
+    }
+
+    .ind-fluid {
+        width: 100%;
+        height: 100%;
+        background: repeating-linear-gradient(-45deg,
+                #0ea5e9,
+                #0ea5e9 10px,
+                #0284c7 10px,
+                #0284c7 20px);
+        background-size: 28px 28px;
+        animation: flowStripe 0.8s linear infinite;
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    @keyframes flowStripe {
+        100% {
+            background-position: 28px 0;
+        }
+    }
+
+    .ind-pipe-glare {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 40%;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
+        border-radius: 8px 8px 0 0;
+        pointer-events: none;
     }
 </style>
 
@@ -570,27 +608,46 @@
     </ul>
 
     <div class="sidebar-bottom-widget">
-        <div class="zen-sakura-card">
+        <div class="industrial-widget-card">
 
-            <div class="sakura-rain">
-                <div class="petal"></div>
-                <div class="petal"></div>
-                <div class="petal"></div>
-                <div class="petal"></div>
-                <div class="petal"></div>
-                <div class="petal"></div>
-                <div class="petal"></div>
-                <div class="petal"></div>
+            <div class="ind-grid"></div>
+
+            <svg class="ind-gear g1" viewBox="0 0 100 100" fill="currentColor">
+                <path
+                    d="M50 8C47 8 45 10 45 13L43 20C38 21 34 24 30 27L24 23C22 21 19 22 17 24L11 30C9 32 10 35 12 37L16 43C15 48 15 52 16 57L12 63C10 65 9 68 11 70L17 76C19 78 22 79 24 77L30 73C34 76 38 79 43 80L45 87C45 90 47 92 50 92L58 92C61 92 63 90 63 87L65 80C70 79 74 76 78 73L84 77C86 79 89 78 91 76L97 70C99 68 98 65 96 63L92 57C93 52 93 48 92 43L96 37C98 35 99 32 97 30L91 24C89 22 86 21 84 23L78 27C74 24 70 21 65 20L63 13C63 10 61 8 58 8L50 8ZM50 35C58.28 35 65 41.72 65 50C65 58.28 58.28 65 50 65C41.72 65 35 58.28 35 50C35 41.72 41.72 35 50 35Z" />
+            </svg>
+            <svg class="ind-gear g2" viewBox="0 0 100 100" fill="currentColor">
+                <path
+                    d="M50 8C47 8 45 10 45 13L43 20C38 21 34 24 30 27L24 23C22 21 19 22 17 24L11 30C9 32 10 35 12 37L16 43C15 48 15 52 16 57L12 63C10 65 9 68 11 70L17 76C19 78 22 79 24 77L30 73C34 76 38 79 43 80L45 87C45 90 47 92 50 92L58 92C61 92 63 90 63 87L65 80C70 79 74 76 78 73L84 77C86 79 89 78 91 76L97 70C99 68 98 65 96 63L92 57C93 52 93 48 92 43L96 37C98 35 99 32 97 30L91 24C89 22 86 21 84 23L78 27C74 24 70 21 65 20L63 13C63 10 61 8 58 8L50 8ZM50 35C58.28 35 65 41.72 65 50C65 58.28 58.28 65 50 65C41.72 65 35 58.28 35 50C35 41.72 41.72 35 50 35Z" />
+            </svg>
+
+            <div class="ind-content">
+                <div class="ind-header">
+                    <span class="ind-status-dot"></span>
+                    <span class="ind-title">Sys Active</span>
+                </div>
+
+                <div class="ind-gauge-container">
+                    <svg viewBox="0 0 100 50" class="ind-gauge">
+                        <path d="M 10 45 A 40 40 0 0 1 90 45" fill="none" stroke="#1e293b" stroke-width="8"
+                            stroke-linecap="round" />
+                        <path d="M 10 45 A 40 40 0 0 1 70 15" fill="none" stroke="#0ea5e9" stroke-width="8"
+                            stroke-linecap="round" />
+                        <circle cx="50" cy="45" r="5" fill="#94a3b8" />
+                        <line x1="50" y1="45" x2="25" y2="15" stroke="#f8fafc"
+                            stroke-width="2.5" stroke-linecap="round" class="ind-needle" />
+                    </svg>
+                    <div class="ind-value">
+                        120 <span class="ind-unit">PSI</span>
+                    </div>
+                </div>
+
+                <div class="ind-pipe-wrapper">
+                    <div class="ind-fluid"></div>
+                    <div class="ind-pipe-glare"></div>
+                </div>
             </div>
 
-            <div class="japan-waves"></div>
-
-            <div class="zen-status-content">
-                <i class='bx bx-wind text-rose-400 mb-1' style="font-size: 1.25rem; color: #fb7185;"></i>
-                <h6 class="fw-bold mb-1" style="font-size: 0.8rem; color: #881337;">Metinca Portal</h6>
-                <p class="mb-0" style="font-size: 0.7rem; color: #db2777; font-weight: 500; letter-spacing: 0.5px;">
-                    メティンカ (v1.0)</p>
-            </div>
         </div>
     </div>
 

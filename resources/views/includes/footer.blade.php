@@ -125,7 +125,7 @@
 
             <div class="md:col-span-4 lg:col-span-5">
                 <h3 class="text-xs font-bold text-slate-800 uppercase tracking-widest mb-5 flex items-center gap-2">
-                    <i data-feather="radio" class="w-3.5 h-3.5 text-blue-600"></i> Kantor Pusat
+                    <i data-feather="radio" class="w-3.5 h-3.5 text-blue-600"></i> Office Information
                 </h3>
                 <ul class="space-y-4">
                     <li

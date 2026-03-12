@@ -280,58 +280,48 @@ class HomeController extends Controller
     public function storeOrUpdateResult(Request $request)
     {
         $validated = $request->validate([
-            'result_id' => 'nullable|exists:activity_item_results,id',
             'activity_id' => 'required|exists:activities,id',
             'part_name' => 'required|string',
             'material' => 'nullable|string',
             'qty' => 'nullable|integer',
             'inspector_name' => 'required|string',
             'pic' => 'required|string',
-            'inspection_time' => 'nullable|date_format:Y-m-d H:i:s',
-            'result' => 'required|string',
+            'result' => 'required|string|in:OK,PA,OH,NG', // Pastikan divalidasi
             'remarks' => 'nullable|string',
         ]);
 
-        if (!empty($validated['result_id'])) {
-            $res = ActivityItemResult::findOrFail($validated['result_id']);
-            $res->update([
-                'activity_id' => $validated['activity_id'],
-                'part_name' => $validated['part_name'],
-                'material' => $validated['material'] ?? null,
-                'qty' => $validated['qty'] ?? null,
-                'inspector_name' => $validated['inspector_name'],
-                'pic' => $validated['pic'],
-                'result' => $validated['result'],
-                'status' => 'Checked',
-                'remarks' => $validated['remarks'] ?? null,
-                'user_id' => Auth::check() ? Auth::id() : null,
-            ]);
-            $message = 'Hasil pemeriksaan berhasil diperbarui!';
-        } else {
-            $inspectionTime = $validated['inspection_time'] ?? now()->toDateTimeString();
+        $inspectionTime = now()->toDateTimeString();
 
-            $res = ActivityItemResult::create([
+        // LOGIKA ANTI BOCOR: 
+        // Selalu cari berdasarkan activity_id DAN part_name.
+        // Jika ketemu, update baris itu. Jika tidak, buat baris baru.
+        $res = ActivityItemResult::updateOrCreate(
+            [
+                // Kondisi pencarian (Jangan sampai update punya orang lain)
                 'activity_id' => $validated['activity_id'],
-                'part_name' => $validated['part_name'],
-                'material' => $validated['material'] ?? null,
-                'qty' => $validated['qty'] ?? null,
+                'part_name'   => trim($validated['part_name']),
+            ],
+            [
+                // Data yang akan di-update/disimpan
+                'material'       => $validated['material'] ?? null,
+                'qty'            => $validated['qty'] ?? null,
                 'inspector_name' => $validated['inspector_name'],
-                'pic' => $validated['pic'],
+                'pic'            => $validated['pic'],
                 'inspection_time' => $inspectionTime,
-                'result' => $validated['result'],
-                'status' => 'Checked',
-                'remarks' => $validated['remarks'] ?? null,
-                'user_id' => Auth::check() ? Auth::id() : null,
-            ]);
-            $message = 'Hasil pemeriksaan berhasil disimpan!';
-        }
+                'result'         => $validated['result'],
+                'status'         => 'Checked',
+                'remarks'        => $validated['remarks'] ?? null,
+                'user_id'        => Auth::check() ? Auth::id() : null,
+            ]
+        );
 
+        // Update status activity parent
         $activity = Activity::find($validated['activity_id']);
         if ($activity) {
             $activity->update(['has_result' => true]);
         }
 
-        return redirect()->back()->with('success', $message);
+        return redirect()->back()->with('success', 'Hasil inspeksi untuk ' . $validated['part_name'] . ' berhasil disimpan!');
     }
 
     /**

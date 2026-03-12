@@ -528,7 +528,7 @@
             </div>
         </div>
 
-        <div class="modern-card border-warning">
+        {{-- <div class="modern-card border-warning">
             <div class="modern-card-header" style="background: #fffbeb; border-bottom-color: #fde68a;">
                 <div>
                     <h5 class="modern-card-title text-warning" style="color: #d97706 !important;">
@@ -606,7 +606,7 @@
                     </div>
                 @endif
             </div>
-        </div>
+        </div> --}}
 
         <div class="modern-card">
             <div class="modern-card-header">

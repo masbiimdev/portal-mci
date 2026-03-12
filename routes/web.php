@@ -20,6 +20,7 @@ use App\Http\Controllers\FolderDocController;
 use App\Http\Controllers\HomeDocController;
 use App\Http\Controllers\KalibrasiDashboardController;
 use App\Http\Controllers\ProjectDocController;
+                                                                                    use App\Http\Controllers\AiChatController;
 use Illuminate\Http\Request;
 
 /*
@@ -29,6 +30,8 @@ use Illuminate\Http\Request;
 */
 
 // Route tanpa auth
+// Route untuk AI Chatbot
+Route::post('/api/ai-chat', [AiChatController::class, 'ask']);
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/schedule', [HomeController::class, 'jadwal'])->name('jadwal');
 Route::post('/schedule/result', [HomeController::class, 'storeOrUpdateResult'])->name('jadwal.store');
