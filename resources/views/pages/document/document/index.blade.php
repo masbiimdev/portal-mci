@@ -851,12 +851,12 @@
     <div class="container-main">
 
         <div class="breadcrumb-nav">
-            <a href="{{ route('document.project.index') ?? '#' }}">
+            <a href="{{ url('/portal/document') }}">
                 <i class="bx bx-briefcase"></i> Projects
             </a>
             <i class="bx bx-chevron-right"></i>
             <a href="{{ route('document.folder', $project->id) ?? '#' }}">
-                {{ $project->project_name ?? 'Project' }}
+                {{ $project->project_name ?? 'Project' }}|{{ $project->project_number ?? '1234' }}
             </a>
             <i class="bx bx-chevron-right"></i>
             <span

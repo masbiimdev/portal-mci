@@ -629,16 +629,16 @@
     <div class="container-main">
 
         <div class="breadcrumb-nav">
-            <a href="{{ route('document.project.index') ?? '#' }}"><i class="bx bx-briefcase"></i> Projects</a>
+            <a href="{{ url('/portal/document') }}"><i class="bx bx-briefcase"></i> Projects</a>
             <i class="bx bx-chevron-right"></i>
-            <span class="text-slate-800">{{ $project->project_name ?? 'Project Detail' }}</span>
+            <span class="text-slate-800">{{ $project->project_name ?? 'Project Detail' }} | {{ $project->project_number ?? '1234' }}</span>
         </div>
 
         <div class="page-header">
             <div class="header-content">
                 <h2><i class="bx bx-folder-open"></i> Folder System</h2>
                 <p>Kelola struktur folder dan dokumen transmittal untuk proyek
-                    <strong>{{ $project->project_name ?? 'Unnamed Project' }}</strong>.
+                    <strong>{{ $project->project_name ?? 'Unnamed Project' }} | {{ $project->project_number ?? '1234' }}</strong>.
                 </p>
             </div>
 
