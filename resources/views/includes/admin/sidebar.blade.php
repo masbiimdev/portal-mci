@@ -3,7 +3,6 @@
     .layout-menu {
         border-right: 1px solid rgba(0, 0, 0, 0.05);
         background-color: #ffffff !important;
-        /* Pola (Pattern) Valve Transparan di Latar Belakang */
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg transform='rotate(-15 60 60)' fill='none' stroke='%233b82f6' stroke-width='1.5' stroke-opacity='0.04'%3E%3Cpolygon points='40,50 40,70 60,60'/%3E%3Cpolygon points='80,50 80,70 60,60'/%3E%3Cline x1='60' y1='60' x2='60' y2='35'/%3E%3Cline x1='45' y1='35' x2='75' y2='35'/%3E%3Ccircle cx='60' cy='60' r='3'/%3E%3C/g%3E%3C/svg%3E") !important;
         background-size: 120px 120px;
         background-repeat: repeat;
@@ -82,7 +81,6 @@
         color: #2563eb !important;
     }
 
-    /* Sub-menu styling */
     .menu-sub .menu-link {
         margin: 0 1rem 0 2.5rem;
         padding-left: 1rem;
@@ -107,11 +105,6 @@
         box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
     }
 
-    .menu-sub .menu-link:hover::before {
-        background-color: #94a3b8;
-    }
-
-    /* Menu Headers */
     .menu-header {
         font-size: 0.7rem;
         text-transform: uppercase;
@@ -121,7 +114,7 @@
         font-weight: 700;
     }
 
-    /* ============== WIDGET BAWAH GAYA HIGH-TECH INDUSTRIAL ============== */
+    /* ============== WIDGET PIXEL ART AQUARIUM ============== */
     .sidebar-bottom-widget {
         padding: 1.5rem 1.25rem 1.5rem 1.25rem;
         flex-shrink: 0;
@@ -130,221 +123,196 @@
         z-index: 2;
     }
 
-    .industrial-widget-card {
-        background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
-        border-radius: 16px;
-        padding: 1.25rem;
+    .pixel-tank-card {
+        /* Base Water Color */
+        background: linear-gradient(180deg, #8aece5 0%, #4da0d3 100%);
+
+        /* The Dark Purple Tank Frame */
+        border: 6px solid #4a3b69;
+        border-top: 12px solid #4a3b69;
+        border-bottom: 8px solid #4a3b69;
+        border-radius: 4px;
+
+        padding: 0;
         position: relative;
         overflow: hidden;
-        border: 1px solid #1e293b;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.1);
-        cursor: default;
-        transition: all 0.3s ease;
+        box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.3), inset 0 2px 8px rgba(0, 0, 0, 0.2);
+        height: 140px;
+        image-rendering: pixelated;
+        /* Forces retro pixel rendering */
     }
 
-    .industrial-widget-card:hover {
-        border-color: #0ea5e9;
-        box-shadow: 0 10px 30px -5px rgba(14, 165, 233, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2);
-    }
-
-    /* 1. Moving Blueprint Grid */
-    .ind-grid {
+    /* 1. Pixel Sand/Ground */
+    .pixel-sand {
         position: absolute;
-        inset: 0;
-        background-image:
-            linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(56, 189, 248, 0.05) 1px, transparent 1px);
-        background-size: 15px 15px;
-        animation: panGrid 15s linear infinite;
-        z-index: 0;
-    }
-
-    @keyframes panGrid {
-        100% {
-            background-position: 30px 30px;
-        }
-    }
-
-    /* 2. Rotating Gears */
-    .ind-gear {
-        position: absolute;
-        opacity: 0.15;
-        z-index: 0;
-        color: #38bdf8;
-    }
-
-    .ind-gear.g1 {
-        right: -20px;
-        top: -20px;
-        width: 100px;
-        height: 100px;
-        animation: spinGear 20s linear infinite;
-    }
-
-    .ind-gear.g2 {
-        right: 50px;
-        top: 30px;
-        width: 60px;
-        height: 60px;
-        animation: spinGear 12s linear infinite reverse;
-    }
-
-    @keyframes spinGear {
-        100% {
-            transform: rotate(360deg);
-        }
-    }
-
-    /* 3. Content Layout */
-    .ind-content {
-        position: relative;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 25px;
+        background-color: #c49988;
+        border-top: 2px solid #8f5d4f;
+        background-image: repeating-linear-gradient(45deg,
+                transparent,
+                transparent 2px,
+                rgba(143, 93, 79, 0.2) 2px,
+                rgba(143, 93, 79, 0.2) 4px);
         z-index: 2;
     }
 
-    .ind-header {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 12px;
+    /* 2. Pixel Bubbles (Kotak bukan bulat) */
+    .pixel-bubble {
+        position: absolute;
+        background: transparent;
+        border: 2px solid #ffffff;
+        opacity: 0.6;
+        z-index: 3;
+        animation: pixelFloatUp linear infinite;
     }
 
-    .ind-status-dot {
+    .pb1 {
+        width: 6px;
+        height: 6px;
+        left: 15%;
+        bottom: -10px;
+        animation-duration: 4s;
+        animation-delay: 0s;
+    }
+
+    .pb2 {
+        width: 4px;
+        height: 4px;
+        left: 45%;
+        bottom: -10px;
+        animation-duration: 3s;
+        animation-delay: 1.5s;
+    }
+
+    .pb3 {
         width: 8px;
         height: 8px;
-        background-color: #10b981;
-        border-radius: 50%;
-        box-shadow: 0 0 8px #10b981;
-        animation: pulseHeartbeat 2s infinite;
+        left: 80%;
+        bottom: -10px;
+        animation-duration: 5s;
+        animation-delay: 0.5s;
+        border-width: 1px;
     }
 
-    @keyframes pulseHeartbeat {
+    @keyframes pixelFloatUp {
         0% {
-            transform: scale(0.95);
-            opacity: 0.8;
-            box-shadow: 0 0 5px #10b981;
-        }
-
-        50% {
-            transform: scale(1.1);
-            opacity: 1;
-            box-shadow: 0 0 12px #10b981;
-        }
-
-        100% {
-            transform: scale(0.95);
-            opacity: 0.8;
-            box-shadow: 0 0 5px #10b981;
-        }
-    }
-
-    .ind-title {
-        color: #e2e8f0;
-        font-size: 0.75rem;
-        font-weight: 800;
-        letter-spacing: 1.5px;
-        text-transform: uppercase;
-    }
-
-    /* 4. Animated Pressure Gauge */
-    .ind-gauge-container {
-        display: flex;
-        align-items: flex-end;
-        justify-content: space-between;
-        margin-bottom: 16px;
-    }
-
-    .ind-gauge {
-        width: 65px;
-        height: 35px;
-        overflow: visible;
-        filter: drop-shadow(0 0 4px rgba(14, 165, 233, 0.4));
-    }
-
-    .ind-needle {
-        transform-origin: 50px 45px;
-        animation: needleTwitch 4s infinite alternate ease-in-out;
-    }
-
-    @keyframes needleTwitch {
-        0% {
-            transform: rotate(35deg);
+            transform: translateY(0);
+            opacity: 0;
         }
 
         20% {
-            transform: rotate(40deg);
-        }
-
-        40% {
-            transform: rotate(32deg);
-        }
-
-        60% {
-            transform: rotate(45deg);
+            opacity: 0.8;
         }
 
         80% {
-            transform: rotate(38deg);
+            opacity: 0.5;
         }
 
         100% {
-            transform: rotate(42deg);
+            transform: translateY(-130px) translateX(-5px);
+            opacity: 0;
         }
     }
 
-    .ind-value {
-        color: #38bdf8;
-        font-size: 1.25rem;
-        font-weight: 900;
-        font-family: monospace;
-        line-height: 1;
-        text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
-    }
-
-    .ind-unit {
-        font-size: 0.6rem;
-        color: #94a3b8;
-        font-family: 'Plus Jakarta Sans', sans-serif;
-    }
-
-    /* 5. Dynamic 3D Fluid Pipe */
-    .ind-pipe-wrapper {
-        position: relative;
-        height: 14px;
-        background: #0f172a;
-        border-radius: 8px;
-        border: 1px solid #334155;
-        box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.8);
-        overflow: hidden;
-    }
-
-    .ind-fluid {
-        width: 100%;
-        height: 100%;
-        background: repeating-linear-gradient(-45deg,
-                #0ea5e9,
-                #0ea5e9 10px,
-                #0284c7 10px,
-                #0284c7 20px);
-        background-size: 28px 28px;
-        animation: flowStripe 0.8s linear infinite;
-        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
-    }
-
-    @keyframes flowStripe {
-        100% {
-            background-position: 28px 0;
-        }
-    }
-
-    .ind-pipe-glare {
+    /* 3. Pixel Fishes (Menggunakan SVG Base64 agar menyerupai gambar) */
+    .pixel-fish {
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 40%;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
-        border-radius: 8px 8px 0 0;
-        pointer-events: none;
+        width: 24px;
+        height: 24px;
+        background-size: contain;
+        background-repeat: no-repeat;
+        z-index: 4;
+    }
+
+    /* Ikan Ungu (Gerak ke kanan) */
+    .fish-purple {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%232b2045' d='M4 5h3v-1h2v1h1v-1h2v1h1v4h-1v1h-1v1h-1v1h-3v-1h-2v-1h-1v1h-1v-1h-1v-2h-1v-1h1v-1h1z'/%3E%3Cpath fill='%237e305e' d='M5 5h2v-1h2v1h1v4h-1v1h-1v1h-3v-1h-1v-1h-1v-2h1v-1z'/%3E%3Crect fill='%23f2c752' x='10' y='6' width='1' height='1'/%3E%3Cpath fill='%23f2c752' d='M2 6h1v2h-1zM11 4h1v1h-1zM7 11h1v1h-1z'/%3E%3C/svg%3E");
+        top: 25px;
+        left: -30px;
+        animation: swimRight 18s linear infinite;
+    }
+
+    /* Ikan Biru (Gerak ke kiri) */
+    .fish-blue {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%232b2045' d='M12 5h-3v-1h-2v1h-1v-1h-2v1h-1v4h1v1h1v1h1v1h3v-1h2v-1h1v1h1v-1h1v-2h1v-1h-1v-1h-1z'/%3E%3Cpath fill='%23253b75' d='M11 5h-2v-1h-2v1h-1v4h1v1h1v1h3v-1h1v-1h1v-2h-1v-1z'/%3E%3Crect fill='%23f2c752' x='5' y='6' width='1' height='1'/%3E%3Cpath fill='%23f2c752' d='M14 6h-1v2h1zM5 4h-1v1h1zM9 11h-1v1h1z'/%3E%3C/svg%3E");
+        top: 60px;
+        right: -30px;
+        animation: swimLeft 22s linear infinite;
+    }
+
+    @keyframes swimRight {
+        0% {
+            transform: translateX(0) translateY(0);
+        }
+
+        30% {
+            transform: translateX(80px) translateY(-5px);
+        }
+
+        70% {
+            transform: translateX(180px) translateY(5px);
+        }
+
+        100% {
+            transform: translateX(280px) translateY(0);
+        }
+    }
+
+    @keyframes swimLeft {
+        0% {
+            transform: translateX(0) translateY(0);
+        }
+
+        40% {
+            transform: translateX(-100px) translateY(8px);
+        }
+
+        80% {
+            transform: translateX(-200px) translateY(-4px);
+        }
+
+        100% {
+            transform: translateX(-280px) translateY(0);
+        }
+    }
+
+    /* 4. Panel Informasi bergaya Retro/8-bit */
+    .pixel-info-panel {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        background: #2b2045;
+        /* Background ungu gelap khas UI game retro */
+        border: 2px solid #1c152d;
+        padding: 4px 8px;
+        z-index: 10;
+        box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
+    }
+
+    .pixel-title {
+        color: #8aece5;
+        font-family: 'Courier New', Courier, monospace;
+        /* Monospace font */
+        font-size: 0.65rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 2px;
+    }
+
+    .pixel-value {
+        color: #ffffff;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 0.9rem;
+        font-weight: bold;
+    }
+
+    .pixel-unit {
+        color: #f2c752;
+        font-size: 0.65rem;
     }
 </style>
 
@@ -572,8 +540,8 @@
                 <div data-i18n="Document">Document Management</div>
             </a>
             <ul class="menu-sub">
-                <li class="menu-item {{ request()->routeIs('document.dashboard') ? 'active' : '' }}">
-                    <a href="#" class="menu-link">
+                <li class="menu-item {{ request()->routeIs('document.index') ? 'active' : '' }}">
+                    <a href="{{ route('document.index') }}" class="menu-link">
                         <div data-i18n="Dashboard">Dashboard</div>
                     </a>
                 </li>
@@ -608,43 +576,21 @@
     </ul>
 
     <div class="sidebar-bottom-widget">
-        <div class="industrial-widget-card">
+        <div class="pixel-tank-card">
 
-            <div class="ind-grid"></div>
+            <div class="pixel-sand"></div>
 
-            <svg class="ind-gear g1" viewBox="0 0 100 100" fill="currentColor">
-                <path
-                    d="M50 8C47 8 45 10 45 13L43 20C38 21 34 24 30 27L24 23C22 21 19 22 17 24L11 30C9 32 10 35 12 37L16 43C15 48 15 52 16 57L12 63C10 65 9 68 11 70L17 76C19 78 22 79 24 77L30 73C34 76 38 79 43 80L45 87C45 90 47 92 50 92L58 92C61 92 63 90 63 87L65 80C70 79 74 76 78 73L84 77C86 79 89 78 91 76L97 70C99 68 98 65 96 63L92 57C93 52 93 48 92 43L96 37C98 35 99 32 97 30L91 24C89 22 86 21 84 23L78 27C74 24 70 21 65 20L63 13C63 10 61 8 58 8L50 8ZM50 35C58.28 35 65 41.72 65 50C65 58.28 58.28 65 50 65C41.72 65 35 58.28 35 50C35 41.72 41.72 35 50 35Z" />
-            </svg>
-            <svg class="ind-gear g2" viewBox="0 0 100 100" fill="currentColor">
-                <path
-                    d="M50 8C47 8 45 10 45 13L43 20C38 21 34 24 30 27L24 23C22 21 19 22 17 24L11 30C9 32 10 35 12 37L16 43C15 48 15 52 16 57L12 63C10 65 9 68 11 70L17 76C19 78 22 79 24 77L30 73C34 76 38 79 43 80L45 87C45 90 47 92 50 92L58 92C61 92 63 90 63 87L65 80C70 79 74 76 78 73L84 77C86 79 89 78 91 76L97 70C99 68 98 65 96 63L92 57C93 52 93 48 92 43L96 37C98 35 99 32 97 30L91 24C89 22 86 21 84 23L78 27C74 24 70 21 65 20L63 13C63 10 61 8 58 8L50 8ZM50 35C58.28 35 65 41.72 65 50C65 58.28 58.28 65 50 65C41.72 65 35 58.28 35 50C35 41.72 41.72 35 50 35Z" />
-            </svg>
+            <div class="pixel-bubble pb1"></div>
+            <div class="pixel-bubble pb2"></div>
+            <div class="pixel-bubble pb3"></div>
 
-            <div class="ind-content">
-                <div class="ind-header">
-                    <span class="ind-status-dot"></span>
-                    <span class="ind-title">Sys Active</span>
-                </div>
+            <div class="pixel-fish fish-purple"></div>
+            <div class="pixel-fish fish-blue"></div>
 
-                <div class="ind-gauge-container">
-                    <svg viewBox="0 0 100 50" class="ind-gauge">
-                        <path d="M 10 45 A 40 40 0 0 1 90 45" fill="none" stroke="#1e293b" stroke-width="8"
-                            stroke-linecap="round" />
-                        <path d="M 10 45 A 40 40 0 0 1 70 15" fill="none" stroke="#0ea5e9" stroke-width="8"
-                            stroke-linecap="round" />
-                        <circle cx="50" cy="45" r="5" fill="#94a3b8" />
-                        <line x1="50" y1="45" x2="25" y2="15" stroke="#f8fafc"
-                            stroke-width="2.5" stroke-linecap="round" class="ind-needle" />
-                    </svg>
-                    <div class="ind-value">
-                        120 <span class="ind-unit">PSI</span>
-                    </div>
-                </div>
-
-                <div class="ind-pipe-wrapper">
-                    <div class="ind-fluid"></div>
-                    <div class="ind-pipe-glare"></div>
+            <div class="pixel-info-panel">
+                <div class="pixel-title">Sys.Fluid</div>
+                <div class="pixel-value">
+                    Normal <span class="pixel-unit">Lvl</span>
                 </div>
             </div>
 

@@ -13,6 +13,7 @@ class ProjectDocController extends Controller
         $projects = Project::orderBy('created_at', 'desc')->get();
         return view('pages.admin.dokumen.project.index', compact('projects'));
     }
+    
 
     // Form buat project baru
     public function create()
@@ -107,7 +108,7 @@ class ProjectDocController extends Controller
         $project = Project::findOrFail($id);
         $project->delete();
 
-        return redirect()->route('projects.index')
+        return redirect()->route('document.project.index')
             ->with('success', 'Project berhasil dihapus');
     }
 }

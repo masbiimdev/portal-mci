@@ -638,7 +638,8 @@
             <div class="header-content">
                 <h2><i class="bx bx-folder-open"></i> Folder System</h2>
                 <p>Kelola struktur folder dan dokumen transmittal untuk proyek
-                    <strong>{{ $project->project_name ?? 'Unnamed Project' }}</strong>.</p>
+                    <strong>{{ $project->project_name ?? 'Unnamed Project' }}</strong>.
+                </p>
             </div>
 
             <div class="header-actions">
@@ -724,8 +725,9 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 id="folder-title" class="modal-title"><i class="bx bx-folder-plus"></i> Tambah Folder Baru</h3>
-                <button class="modal-close" type="button" aria-label="Tutup modal" data-close-modal><i
-                        class="bx bx-x"></i></button>
+                <button class="modal-close" type="button" aria-label="Tutup modal" data-close-modal>
+                    <i class="bx bx-x"></i>
+                </button>
             </div>
 
             <form id="folder-form" method="POST"
@@ -744,6 +746,14 @@
                             style="color:var(--muted); font-weight:normal;">(Opsional)</span></label>
                     <input id="folder_code" name="folder_code" type="text" class="form-control" maxlength="40"
                         placeholder="Contoh: F-001" autocomplete="off" />
+                </div>
+
+                {{-- TAMBAHAN: Kolom Deskripsi --}}
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label for="description">Deskripsi <span
+                            style="color:var(--muted); font-weight:normal;">(Opsional)</span></label>
+                    <textarea id="description" name="description" class="form-control" rows="3"
+                        placeholder="Tambahkan keterangan atau tujuan folder ini dibuat..." style="resize: vertical; min-height: 80px;"></textarea>
                 </div>
 
                 <div class="modal-actions">

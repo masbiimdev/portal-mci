@@ -38,8 +38,8 @@ class FolderDocController extends Controller
         $request->validate([
             'folder_name' => 'required|string|max:100',
             'folder_code' => [
-                'required', 
-                'string', 
+                'required',
+                'string',
                 'max:50',
                 // Mencegah kode folder ganda di dalam project yang sama (menggunakan tabel document_folders)
                 Rule::unique('document_folders')->where(function ($query) use ($project) {
@@ -57,8 +57,7 @@ class FolderDocController extends Controller
         ]);
 
         // Ubah redirect ke halaman index (Daftar Folder)
-        return redirect()->route('folders.index')
-                         ->with('success', 'Folder berhasil ditambahkan');
+        return redirect()->back()->with('success', 'Folder berhasil ditambahkan');
     }
 
     /**
@@ -77,8 +76,8 @@ class FolderDocController extends Controller
         $request->validate([
             'folder_name' => 'required|string|max:100',
             'folder_code' => [
-                'required', 
-                'string', 
+                'required',
+                'string',
                 'max:50',
                 // Mencegah kode ganda, namun abaikan folder yang sedang diedit ini
                 Rule::unique('document_folders')->where(function ($query) use ($project) {
@@ -96,9 +95,7 @@ class FolderDocController extends Controller
 
         // BUG FIXED: Sebelumnya redirect ke 'folders.create' tanpa parameter.
         // Seharusnya dikembalikan ke halaman index.
-        return redirect()
-            ->route('folders.index')
-            ->with('success', 'Folder berhasil diperbarui');
+         return redirect()->back()->with('success', 'Folder berhasil diperbarui');
     }
 
     /**
@@ -116,4 +113,4 @@ class FolderDocController extends Controller
         // Jika pakai route('folders.create') akan menyebabkan error parameter.
         return back()->with('success', 'Folder berhasil dihapus');
     }
-} 
+}

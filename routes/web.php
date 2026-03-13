@@ -259,6 +259,7 @@ Route::middleware(['auth', 'module.access:document'])
         Route::post('/document/project/store', [ProjectDocController::class, 'store'])->name('project.store');
         Route::get('/document/project/{project}/edit', [ProjectDocController::class, 'edit'])->name('project.edit');
         Route::put('/document/project/{project}', [ProjectDocController::class, 'update'])->name('project.update');
+        Route::delete('/document/project/{project}', [ProjectDocController::class, 'destroy'])->name('project.destroy');
         // Folder
 
         Route::get('/folders', [FolderDocController::class, 'index'])
