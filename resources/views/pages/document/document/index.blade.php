@@ -868,6 +868,7 @@
             if ($last) {
                 $lastRev = $last->revision ?? '0';
                 $lastTitle = $last->title ?? '—';
+                $lastDocNum = $last->document_no ? "({$last->document_no})" : '';
                 $lastUser = optional($last->user)->name ?? ($last->updated_by ?? 'System');
                 $lastDate = $last->updated_at ? $last->updated_at->format('d M Y H:i') . ' WIB' : '—';
             }
@@ -896,7 +897,7 @@
                     <div class="meta-update">
                         <h5 class="meta-label" style="color: var(--primary);">Update Terakhir</h5>
                         <a href="{{ route('document.show', $last->id) }}"
-                            title="{{ $lastTitle }}">{{ $lastTitle }}</a>
+                            title="{{ $lastDocNum }} {{ $lastTitle }}">{{ $lastDocNum }} {{ $lastTitle }}</a>
                         <p>Oleh <strong style="color: var(--primary);">{{ $lastUser }}</strong> &bull;
                             {{ $lastDate }}</p>
                     </div>
