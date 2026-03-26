@@ -21,6 +21,7 @@ return array(
     'App\\Folder' => $baseDir . '/app/Folder.php',
     'App\\Http\\Controllers\\AccessController' => $baseDir . '/app/Http/Controllers/AccessController.php',
     'App\\Http\\Controllers\\ActivityController' => $baseDir . '/app/Http/Controllers/ActivityController.php',
+    'App\\Http\\Controllers\\AiChatController' => $baseDir . '/app/Http/Controllers/AiChatController.php',
     'App\\Http\\Controllers\\AnnonController' => $baseDir . '/app/Http/Controllers/AnnonController.php',
     'App\\Http\\Controllers\\Auth\\ConfirmPasswordController' => $baseDir . '/app/Http/Controllers/Auth/ConfirmPasswordController.php',
     'App\\Http\\Controllers\\Auth\\ForgotPasswordController' => $baseDir . '/app/Http/Controllers/Auth/ForgotPasswordController.php',

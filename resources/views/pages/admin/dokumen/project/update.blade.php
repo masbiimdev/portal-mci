@@ -39,8 +39,9 @@
 
             {{-- Body Card --}}
             <div class="card-body pt-4">
-                {{-- Pastikan route ini sesuai dengan nama route update project Anda --}}
-                <form action="{{ route('document.project.update', $project->id) }}" method="POST">
+                {{-- PENTING: Tambahkan enctype="multipart/form-data" untuk upload file --}}
+                <form action="{{ route('document.project.update', $project->id) }}" method="POST"
+                    enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
@@ -88,6 +89,35 @@
                         </div>
                     </div>
 
+                    {{-- Project Image --}}
+                    <div class="mb-3 row">
+                        <label for="project_image" class="col-sm-2 col-form-label fw-semibold text-secondary">
+                            Gambar Project
+                        </label>
+                        <div class="col-sm-10">
+                            {{-- Tampilkan gambar lama jika ada --}}
+                            @if ($project->project_image)
+                                <div class="mb-2">
+                                    <img src="{{ asset($project->project_image) }}" alt="Current Project Image"
+                                        class="img-thumbnail" style="max-height: 150px; border-radius: 8px;">
+                                    <div class="mt-1">
+                                        <small class="text-muted">Gambar saat ini. Biarkan kosong jika tidak ingin
+                                            mengubahnya.</small>
+                                    </div>
+                                </div>
+                            @endif
+
+                            <input type="file" id="project_image" name="project_image"
+                                class="form-control @error('project_image') is-invalid @enderror"
+                                accept="image/jpeg, image/png, image/jpg">
+                            <small class="text-muted">Format yang diizinkan: JPG, JPEG, PNG. Maksimal ukuran file:
+                                2MB.</small>
+                            @error('project_image')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
                     {{-- Start Date --}}
                     <div class="mb-3 row">
                         <label for="start_date" class="col-sm-2 col-form-label fw-semibold text-secondary">Start
@@ -121,8 +151,8 @@
                             Status <span class="text-danger">*</span>
                         </label>
                         <div class="col-sm-10">
-                            <select id="status" name="status" class="form-select @error('status') is-invalid @enderror"
-                                required>
+                            <select id="status" name="status"
+                                class="form-select @error('status') is-invalid @enderror" required>
                                 @php
                                     $statuses = ['PENDING', 'ACTIVE', 'ARCHIVED'];
                                 @endphp

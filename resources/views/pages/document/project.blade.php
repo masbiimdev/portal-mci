@@ -242,6 +242,16 @@
             font-weight: 800;
             color: var(--accent);
             text-transform: uppercase;
+            overflow: hidden;
+            /* Tambahkan ini agar gambar tidak keluar kotak */
+        }
+
+        /* Tambahan CSS khusus untuk gambar di dalam avatar */
+        .project-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: var(--radius-md);
         }
 
         .project-info {
@@ -334,7 +344,6 @@
 
         .project-card:hover .view-link {
             gap: 0.5rem;
-            /* Animate arrow moving right */
         }
 
         /* ========== EMPTY & NO RESULTS ========== */
@@ -439,7 +448,14 @@
                     data-code="{{ strtolower($project->project_number) }}">
 
                     <div class="project-header">
-                        <div class="project-avatar">{{ $initials }}</div>
+                        <div class="project-avatar">
+                            {{-- Menampilkan gambar secara langsung dari folder public, fallback ke inisial jika tidak ada --}}
+                            @if ($project->project_image)
+                                <img src="{{ asset($project->project_image) }}" alt="{{ $project->project_name }}">
+                            @else
+                                {{ $initials }}
+                            @endif
+                        </div>
                         <div class="project-info">
                             <h4 title="{{ $project->project_name }}">{{ $project->project_name }}</h4>
                             <div class="project-code">{{ $project->project_number }}</div>
@@ -449,11 +465,11 @@
                     <div class="project-meta">
                         <div class="meta-item">
                             <span>Folders</span>
-                            <strong>{{ $project->folders_count }}</strong>
+                            <strong>{{ $project->folders_count ?? 0 }}</strong>
                         </div>
                         <div class="meta-item">
                             <span>Documents</span>
-                            <strong>{{ $project->documents_count }}</strong>
+                            <strong>{{ $project->documents_count ?? 0 }}</strong>
                         </div>
                     </div>
 

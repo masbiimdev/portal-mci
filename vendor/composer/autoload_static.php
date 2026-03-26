@@ -603,6 +603,7 @@ class ComposerStaticInitc3d88fa6639c9463d85260309c03bb68
         'App\\Folder' => __DIR__ . '/../..' . '/app/Folder.php',
         'App\\Http\\Controllers\\AccessController' => __DIR__ . '/../..' . '/app/Http/Controllers/AccessController.php',
         'App\\Http\\Controllers\\ActivityController' => __DIR__ . '/../..' . '/app/Http/Controllers/ActivityController.php',
+        'App\\Http\\Controllers\\AiChatController' => __DIR__ . '/../..' . '/app/Http/Controllers/AiChatController.php',
         'App\\Http\\Controllers\\AnnonController' => __DIR__ . '/../..' . '/app/Http/Controllers/AnnonController.php',
         'App\\Http\\Controllers\\Auth\\ConfirmPasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ConfirmPasswordController.php',
         'App\\Http\\Controllers\\Auth\\ForgotPasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ForgotPasswordController.php',

@@ -30,13 +30,14 @@
             </div>
 
             <div class="card-body">
-                <form action="{{ route('document.project.store') }}" method="POST">
+                {{-- Tambahkan enctype="multipart/form-data" untuk memungkinkan upload file --}}
+                <form action="{{ route('document.project.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
                     {{-- Project Number --}}
                     <div class="mb-3 row">
                         <label class="col-sm-2 col-form-label fw-semibold">
-                            Project Number
+                            Project Number <span class="text-danger">*</span>
                         </label>
                         <div class="col-sm-10">
                             <input type="text" name="project_number" class="form-control"
@@ -47,7 +48,7 @@
                     {{-- Project Name --}}
                     <div class="mb-3 row">
                         <label class="col-sm-2 col-form-label fw-semibold">
-                            Project Name
+                            Project Name <span class="text-danger">*</span>
                         </label>
                         <div class="col-sm-10">
                             <input type="text" name="project_name" class="form-control" value="{{ old('project_name') }}"
@@ -65,10 +66,23 @@
                         </div>
                     </div>
 
+                    {{-- Project Image --}}
+                    <div class="mb-3 row">
+                        <label class="col-sm-2 col-form-label fw-semibold">
+                            Project Image
+                        </label>
+                        <div class="col-sm-10">
+                            <input type="file" name="project_image" class="form-control"
+                                accept="image/jpeg, image/png, image/jpg">
+                            <small class="text-muted">Format yang diizinkan: JPG, JPEG, PNG. Maksimal ukuran file: 2MB.
+                                (Opsional)</small>
+                        </div>
+                    </div>
+
                     {{-- Status --}}
                     <div class="mb-3 row">
                         <label class="col-sm-2 col-form-label fw-semibold">
-                            Status
+                            Status <span class="text-danger">*</span>
                         </label>
                         <div class="col-sm-10">
                             <select name="status" class="form-select" required>
@@ -103,7 +117,7 @@
                     </div>
 
                     {{-- Action --}}
-                    <div class="row justify-content-end">
+                    <div class="row justify-content-end mt-4">
                         <div class="col-sm-10">
                             <button type="submit" class="btn btn-success">
                                 <i class="bx bx-save"></i> Simpan Project
