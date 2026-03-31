@@ -20,7 +20,8 @@ use App\Http\Controllers\FolderDocController;
 use App\Http\Controllers\HomeDocController;
 use App\Http\Controllers\KalibrasiDashboardController;
 use App\Http\Controllers\ProjectDocController;
-                                                                                    use App\Http\Controllers\AiChatController;
+use App\Http\Controllers\AiChatController;
+use App\Http\Controllers\NcrController;
 use Illuminate\Http\Request;
 
 /*
@@ -43,6 +44,9 @@ Route::get('tracking/search', 'TrackingController@ajaxSearch')->name('tracking.a
 Route::get('tracking/{jobcard}/history', 'TrackingController@ajaxHistory')->name('tracking.ajax.history');
 // Kalibrasi Scan
 Route::get('/scan/{token}', [ToolController::class, 'scan'])->name('tools.scan');
+
+// NCR Log HomePage
+Route::get('/portal/ncr', [NcrController::class, 'indexHome'])->name('ncr.home');
 
 // Dokumen Control
 // PROJECT
@@ -302,4 +306,20 @@ Route::middleware(['auth', 'module.access:document'])
 
         // Route::delete('/document/{document}', [DocumentController::class, 'destroy'])
         //     ->name('destroy');
+    });
+
+
+Route::middleware(['auth', 'module.access:ncr'])
+    ->prefix('ncr')
+    ->name('ncr.')
+    ->group(function () {
+        Route::get('/', [NcrController::class, 'index'])->name('index');
+        Route::get('/dashboard', [NcrController::class, 'dashboard'])->name('dashboard');
+        Route::get('/create', [NcrController::class, 'create'])->name('create');
+        Route::get('/{tool_id}', [NcrController::class, 'show'])->name('show'); // <-- this
+        Route::post('/', [NcrController::class, 'store'])->name('store');
+        Route::get('/{history}/edit', [NcrController::class, 'edit'])->name('edit');
+        Route::put('/{history}', [NcrController::class, 'update'])->name('update');
+        Route::delete('/{history}', [NcrController::class, 'destroy'])->name('destroy');
+        Route::get('/{history}/download', [NcrController::class, 'downloadCertificate'])->name('download');
     });

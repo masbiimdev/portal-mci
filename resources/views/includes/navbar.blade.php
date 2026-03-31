@@ -30,8 +30,12 @@
                 </a>
 
                 @php
+                    // Tambahkan pengecekan route ncr agar tab aktivitas menyala saat berada di NCR Log
                     $isAktivitasActive =
-                        request()->is('activities*') || request()->is('witness*') || request()->is('kalibrasi*');
+                        request()->is('activities*') ||
+                        request()->is('witness*') ||
+                        request()->is('kalibrasi*') ||
+                        request()->is('portal/ncr*');
                 @endphp
 
                 <div class="relative group" id="aktivitasWrapper">
@@ -84,6 +88,19 @@
                                     </svg>
                                 </span>
                                 Kalibrasi
+                            </a>
+                            {{-- MENU NCR LOG DIPINDAHKAN KE SINI --}}
+                            <a href="{{ url('/portal/ncr') }}"
+                                class="group/item flex items-center gap-3 px-4 py-3 text-sm rounded-xl text-slate-700 hover:bg-sky-50 hover:text-sky-700 font-medium transition-all">
+                                <span
+                                    class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg bg-slate-50 text-slate-500 group-hover/item:bg-white group-hover/item:text-sky-600 group-hover/item:shadow-sm transition-all">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                                    </svg>
+                                </span>
+                                NCR Log
                             </a>
                         </div>
                     </div>
@@ -207,6 +224,7 @@
         </div>
     </div>
 
+    {{-- MOBILE MENU --}}
     <div id="mobileMenu"
         class="lg:hidden overflow-hidden transition-all duration-300 ease-in-out max-h-0 bg-white border-t border-slate-100 shadow-xl absolute w-full left-0 origin-top z-40">
 
@@ -260,6 +278,11 @@
                             class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold text-slate-600 hover:bg-sky-100 hover:text-sky-700 transition-colors">
                             <span class="w-2 h-2 rounded-full bg-blue-500"></span> Kalibrasi
                         </a>
+                        {{-- MENU NCR LOG DIPINDAHKAN KE SINI UNTUK MOBILE --}}
+                        <a href="{{ url('/portal/ncr') }}"
+                            class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold text-slate-600 hover:bg-sky-100 hover:text-sky-700 transition-colors">
+                            <span class="w-2 h-2 rounded-full bg-indigo-500"></span> NCR Log
+                        </a>
                     </div>
                 </div>
             </div>
@@ -295,7 +318,6 @@
             function updateClock() {
                 const now = new Date();
 
-                // Format Jam (Contoh: 08:22:45)
                 const timeString = now.toLocaleTimeString('id-ID', {
                     hour: '2-digit',
                     minute: '2-digit',
@@ -303,26 +325,20 @@
                     hour12: false
                 });
 
-                // Format Tanggal (Contoh: 11 MAR 2026)
                 const dateString = now.toLocaleDateString('id-ID', {
                     day: '2-digit',
                     month: 'short',
                     year: 'numeric'
-                }).replace('.', ''); // Menghilangkan titik jika ada (misal: "Mar.")
+                }).replace('.', '');
 
-                // Update Desktop Clock
                 if (navTime) navTime.textContent = timeString;
                 if (navDate) navDate.textContent = dateString;
-
-                // Update Mobile Clock
                 if (navTimeMobile) navTimeMobile.textContent = timeString;
                 if (navDateMobile) navDateMobile.textContent = dateString;
             }
 
-            // Jalankan fungsi updateClock setiap 1000ms (1 detik)
             setInterval(updateClock, 1000);
-            updateClock(); // Panggil sekali langsung saat halaman dimuat
-
+            updateClock();
 
             // === 2. MOBILE MENU & ACCORDION LOGIC ===
             const hamburger = document.getElementById('hamburger');
@@ -335,7 +351,6 @@
                     mobileMenu.style.maxHeight = mobileMenu.scrollHeight + "px";
                 } else {
                     mobileMenu.style.maxHeight = "0px";
-                    // Tutup submenu otomatis jika menu utama ditutup
                     if (isSubOpen) mToggle.click();
                 }
             });
@@ -350,7 +365,6 @@
                 mIcon.classList.toggle('-rotate-180');
                 if (isSubOpen) {
                     mList.style.maxHeight = mList.scrollHeight + "px";
-                    // Update tinggi parent container dinamis
                     if (isMenuOpen) {
                         mobileMenu.style.maxHeight = (mobileMenu.scrollHeight + mList.scrollHeight) + "px";
                     }

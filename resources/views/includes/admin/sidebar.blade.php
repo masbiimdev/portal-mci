@@ -405,26 +405,56 @@
 
         {{-- QUALITY CONTROL --}}
         <li
-            class="menu-item {{ request()->routeIs('kalibrasi.*') || request()->routeIs('tools.*') || request()->routeIs('histories.*') ? 'active open' : '' }}">
+            class="menu-item {{ request()->routeIs('kalibrasi.*') || request()->routeIs('tools.*') || request()->routeIs('histories.*') || request()->routeIs('ncr.*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-check-shield"></i>
                 <div data-i18n="Quality Control">Quality Control</div>
             </a>
             <ul class="menu-sub">
-                <li class="menu-item {{ request()->routeIs('kalibrasi.dashboard') ? 'active' : '' }}">
-                    <a href="{{ route('kalibrasi.dashboard') }}" class="menu-link">
-                        <div data-i18n="Dashboard">Dashboard QC</div>
+
+                {{-- SUB 1: KALIBRASI --}}
+                <li
+                    class="menu-item {{ request()->routeIs('kalibrasi.*') || request()->routeIs('tools.*') || request()->routeIs('histories.*') ? 'active open' : '' }}">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <div data-i18n="Kalibrasi">Kalibrasi</div>
                     </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item {{ request()->routeIs('kalibrasi.dashboard') ? 'active' : '' }}">
+                            <a href="{{ route('kalibrasi.dashboard') }}" class="menu-link">
+                                <div data-i18n="Dashboard">Dashboard QC</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ request()->routeIs('tools.index') ? 'active' : '' }}">
+                            <a href="{{ route('tools.index') }}" class="menu-link">
+                                <div data-i18n="Master Alat">Master Alat</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ request()->routeIs('histories.index') ? 'active' : '' }}">
+                            <a href="{{ route('histories.index') }}" class="menu-link">
+                                <div data-i18n="History Kalibrasi">History Kalibrasi</div>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
-                <li class="menu-item {{ request()->routeIs('tools.index') ? 'active' : '' }}">
-                    <a href="{{ route('tools.index') }}" class="menu-link">
-                        <div data-i18n="Master Alat">Master Alat</div>
+
+                {{-- SUB 2: NCR LOG --}}
+                <li class="menu-item {{ request()->routeIs('ncr.*') ? 'active open' : '' }}">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <div data-i18n="NCR Log">NCR Log</div>
                     </a>
-                </li>
-                <li class="menu-item {{ request()->routeIs('histories.index') ? 'active' : '' }}">
-                    <a href="{{ route('histories.index') }}" class="menu-link">
-                        <div data-i18n="History Kalibrasi">History Kalibrasi</div>
-                    </a>
+                    <ul class="menu-sub">
+                        {{-- Tambahan menu Dashboard agar sama persis seperti Kalibrasi --}}
+                        <li class="menu-item {{ request()->routeIs('ncr.dashboard') ? 'active' : '' }}">
+                            <a href="{{ route('ncr.dashboard') }}" class="menu-link">
+                                <div data-i18n="Dashboard NCR">Dashboard NCR</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ request()->routeIs('ncr.index') ? 'active' : '' }}">
+                            <a href="{{ route('ncr.index') }}" class="menu-link">
+                                <div data-i18n="Daftar NCR">Daftar NCR</div>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
             </ul>
         </li>
