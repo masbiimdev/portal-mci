@@ -979,68 +979,68 @@
                 </div>
             </div>
         </div>
-        <div class="document-card shadow-lg">
-            <div class="document-card-content">
-                <h3>Pusat Dokumen & Laporan</h3>
-                <p>Akses terpusat ke seluruh dokumen inventaris, form standar operasional (SOP), dan sertifikat
-                    kalibrasi MCI.</p>
-                <a href="/portal/document" class="btn-document">
-                    Buka Ruang Dokumen <i class='bx bx-right-arrow-alt fs-5'></i>
-                </a>
-            </div>
-        </div>
-
-        <div class="card border-0">
-            <div class="card-header">
-                <h3><i class='bx bx-grid-alt text-primary fs-4'></i> Akses Cepat</h3>
-            </div>
-            <div class="quick">
-                <div class="item" onclick="location.href='/schedule'"><i class='bx bx-calendar icon'></i>
-                    <span>Jadwal</span>
-                </div>
-                <div class="item" onclick="location.href='/kalibrasi'"><i class='bx bx-wrench icon'></i>
-                    <span>Kalibrasi</span>
-                </div>
-                <div class="item" onclick="location.href='/portal/inventory'"><i class='bx bx-package icon'></i>
-                    <span>Inventory</span></div>
-                <div class="item" onclick="location.href='/export'"><i class='bx bx-export icon'></i>
-                    <span>Export Data</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="card border-0">
-            <div class="card-header">
-                <h3><i class='bx bx-bell text-warning fs-4'></i> Pengumuman Internal</h3>
-                <a href="{{ route('announcements.index') ?? '#' }}" class="btn-action"
-                    style="padding: 0.3rem 0.8rem; background: var(--primary-soft);">Lihat Semua</a>
-            </div>
-            <div class="ann-list">
-                @forelse($announcements ?? [] as $a)
-                    @php
-                        $prio = strtolower($a->priority ?? 'low');
-                        $prioClass = $prio === 'high' ? 'prio-high' : ($prio === 'medium' ? 'prio-medium' : 'prio-low');
-                        $author = optional($a->author)->name ?? 'Admin';
-                    @endphp
-                    <article class="ann {{ $prioClass }}"
-                        onclick="window.location='{{ url('pengumuman/show/' . \Illuminate\Support\Str::slug($a->title)) }}'">
-                        <div class="avatar">{{ strtoupper(substr($author, 0, 1)) }}</div>
-                        <div class="body">
-                            <h4 class="title">{{ $a->title }}</h4>
-                            <div class="excerpt">{{ \Illuminate\Support\Str::limit(strip_tags($a->content), 80) }}
-                            </div>
-                        </div>
-                    </article>
-                @empty
-                    <div class="text-center py-4 text-muted border rounded" style="background:#f8fafc;">Belum ada
-                        pengumuman</div>
-                @endforelse
-            </div>
-        </div>
 
         <div class="layout fade-in-up delay-2">
             <div class="main-content">
+                <div class="document-card shadow-lg">
+                    <div class="document-card-content">
+                        <h3>Pusat Dokumen & Laporan</h3>
+                        <p>Akses terpusat ke seluruh dokumen inventaris, form standar operasional (SOP), dan sertifikat
+                            kalibrasi MCI.</p>
+                        <a href="/portal/document" class="btn-document">
+                            Buka Ruang Dokumen <i class='bx bx-right-arrow-alt fs-5'></i>
+                        </a>
+                    </div>
+                </div>
 
+                <div class="card border-0">
+                    <div class="card-header">
+                        <h3><i class='bx bx-grid-alt text-primary fs-4'></i> Akses Cepat</h3>
+                    </div>
+                    <div class="quick">
+                        <div class="item" onclick="location.href='/schedule'"><i class='bx bx-calendar icon'></i>
+                            <span>Jadwal</span>
+                        </div>
+                        <div class="item" onclick="location.href='/kalibrasi'"><i class='bx bx-wrench icon'></i>
+                            <span>Kalibrasi</span>
+                        </div>
+                        <div class="item" onclick="location.href='/portal/inventory'"><i class='bx bx-package icon'></i>
+                            <span>Inventory</span></div>
+                        <div class="item" onclick="location.href='/export'"><i class='bx bx-export icon'></i>
+                            <span>Export Data</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0">
+                    <div class="card-header">
+                        <h3><i class='bx bx-bell text-warning fs-4'></i> Pengumuman Internal</h3>
+                        <a href="{{ route('announcements.index') ?? '#' }}" class="btn-action"
+                            style="padding: 0.3rem 0.8rem; background: var(--primary-soft);">Lihat Semua</a>
+                    </div>
+                    <div class="ann-list">
+                        @forelse($announcements ?? [] as $a)
+                            @php
+                                $prio = strtolower($a->priority ?? 'low');
+                                $prioClass =
+                                    $prio === 'high' ? 'prio-high' : ($prio === 'medium' ? 'prio-medium' : 'prio-low');
+                                $author = optional($a->author)->name ?? 'Admin';
+                            @endphp
+                            <article class="ann {{ $prioClass }}"
+                                onclick="window.location='{{ url('pengumuman/show/' . \Illuminate\Support\Str::slug($a->title)) }}'">
+                                <div class="avatar">{{ strtoupper(substr($author, 0, 1)) }}</div>
+                                <div class="body">
+                                    <h4 class="title">{{ $a->title }}</h4>
+                                    <div class="excerpt">{{ \Illuminate\Support\Str::limit(strip_tags($a->content), 80) }}
+                                    </div>
+                                </div>
+                            </article>
+                        @empty
+                            <div class="text-center py-4 text-muted border rounded" style="background:#f8fafc;">Belum ada
+                                pengumuman</div>
+                        @endforelse
+                    </div>
+                </div>
                 <div class="card border-0">
                     <div class="card-header pb-3" style="border-bottom: none;">
                         <h3><i class='bx bx-layer text-primary fs-4'></i> Pantauan Operasional</h3>
