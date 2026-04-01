@@ -1412,44 +1412,42 @@
     </div>
 @endsection
 
-@push('js')
-    <script>
-        // ========== 1. TAB INTERACTION LOGIC ==========
-        document.addEventListener('DOMContentLoaded', () => {
+<script>
+    // ========== 1. TAB INTERACTION & MODAL LOGIC ==========
+    document.addEventListener('DOMContentLoaded', () => {
+        // Logika Tabs
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabPanes = document.querySelectorAll('.tab-pane');
 
-            // Logika Tabs
-            const tabBtns = document.querySelectorAll('.tab-btn');
-            const tabPanes = document.querySelectorAll('.tab-pane');
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabPanes.forEach(p => p.classList.remove('active'));
 
-            tabBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    tabBtns.forEach(b => b.classList.remove('active'));
-                    tabPanes.forEach(p => p.classList.remove('active'));
-
-                    btn.classList.add('active');
-                    const targetPane = document.getElementById(btn.dataset.target);
-                    if (targetPane) targetPane.classList.add('active');
-                });
+                btn.classList.add('active');
+                const targetPane = document.getElementById(btn.dataset.target);
+                if (targetPane) targetPane.classList.add('active');
             });
+        });
 
-            // Modal Logic (menggunakan dataset murni HTML anti error)
-            const modal = document.getElementById('detailModal');
+        // Modal Logic (menggunakan dataset murni HTML anti error)
+        const modal = document.getElementById('detailModal');
 
-            document.body.addEventListener('click', function(e) {
-                // Delegasi event 
-                const btnDetail = e.target.closest('tr[data-action="detail"]');
-                if (btnDetail) {
-                    e.preventDefault();
-                    e.stopPropagation();
+        document.body.addEventListener('click', function(e) {
+            // Delegasi event untuk btn-action Detail
+            const btnDetail = e.target.closest('tr[data-action="detail"]');
+            if (btnDetail) {
+                e.preventDefault();
+                e.stopPropagation();
 
-                    // Ambil Data
-                    const nama = btnDetail.getAttribute('data-nama') || '-';
-                    const merek = btnDetail.getAttribute('data-merek') || '-';
-                    const seri = btnDetail.getAttribute('data-seri') || '-';
-                    const tgl = btnDetail.getAttribute('data-tgl') || '-';
+                // Ambil Data
+                const nama = btnDetail.getAttribute('data-nama') || '-';
+                const merek = btnDetail.getAttribute('data-merek') || '-';
+                const seri = btnDetail.getAttribute('data-seri') || '-';
+                const tgl = btnDetail.getAttribute('data-tgl') || '-';
 
-                    // Render Modal Premium
-                    document.getElementById('modalBody').innerHTML = `
+                // Render Modal Premium
+                document.getElementById('modalBody').innerHTML = `
                         <div style="background:#f8fafc; padding:16px 20px; border-radius:16px; border:1px solid var(--border);">
                             <div style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase; font-weight:800; letter-spacing:1px;">Nama Instrumen</div>
                             <div style="font-weight:800; color:var(--text-dark); font-size:1.2rem; margin-top:4px;">${nama}</div>
@@ -1469,220 +1467,289 @@
                             <div style="font-family:'JetBrains Mono', monospace; font-size:2rem; font-weight:800; color:var(--danger); margin-top:8px;">${tgl}</div>
                         </div>
                     `;
-                    modal.classList.add('show');
-                }
+                modal.classList.add('show');
+            }
 
-                // Tutup Modal
-                if (e.target.closest('#modalClose') || e.target.closest('#modalClose2') || e.target
-                    .classList.contains('backdrop')) {
-                    modal.classList.remove('show');
-                }
-            });
+            // Tutup Modal
+            if (e.target.closest('#modalClose') || e.target.closest('#modalClose2') || e.target
+                .classList.contains('backdrop')) {
+                modal.classList.remove('show');
+            }
         });
+    });
 
-        // ========== 2. LOCAL TIME LOGIC ==========
-        function updateTime() {
-            const now = new Date();
-            const timeEl = document.getElementById('localTime');
-            const dateEl = document.getElementById('localDate');
 
-            if (timeEl) timeEl.textContent = now.toLocaleTimeString('id-ID', {
-                hour12: false
-            });
-            if (dateEl) dateEl.textContent = now.toLocaleDateString('id-ID', {
-                weekday: 'long',
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-            });
-        }
-        setInterval(updateTime, 1000);
-        updateTime();
+    // ========== 2. MASTER DASHBOARD APP (CLOCK, WEATHER, PRAYER) ==========
+    const DashboardApp = {
+        prayerTimings: {},
+        prayerInterval: null,
 
-        // ========== 3. PRAYER TIMES FULL MODULE (KEMENAG RI) ==========
-        const PrayerTimes = {
-            countdownInterval: null,
-            currentTimings: {},
-            currentNextPrayer: null,
-            dom: {},
-            init() {
-                this.cacheDom();
-                this.bindEvents();
-                this.fetchPrayerTimes();
-                this.countdownInterval = setInterval(() => this.updateCountdown(), 1000);
-            },
-            cacheDom() {
-                this.dom = {
-                    refreshBtn: document.getElementById('prayerRefreshBtn'),
-                    location: document.getElementById('prayerLocation'),
-                    hijri: document.getElementById('prayerHijri'),
-                    nextLabel: document.getElementById('prayerNextLabel'),
-                    nextTime: document.getElementById('nextPrayerTime'),
-                    countdown: document.getElementById('nextPrayerCountdown'),
-                    progressBar: document.getElementById('countdownBar')
-                };
-            },
-            bindEvents() {
-                this.dom.refreshBtn?.addEventListener('click', () => {
-                    const icon = this.dom.refreshBtn.querySelector('i');
+        init() {
+            // A. Jalankan Jam Lokal
+            this.updateTime();
+            setInterval(() => this.updateTime(), 1000);
+
+            // B. Tarik API Lokasi, Cuaca, dan Sholat (Hanya 1x Geolocation)
+            this.fetchData();
+
+            // C. Tombol Refresh Sholat & Cuaca
+            const refreshBtn = document.getElementById('prayerRefreshBtn');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', () => {
+                    const icon = refreshBtn.querySelector('i');
                     if (icon) {
                         icon.style.transform = 'rotate(360deg)';
                         icon.style.transition = 'transform 0.5s ease';
-                    }
-                    setTimeout(() => {
-                        if (icon) {
+                        setTimeout(() => {
                             icon.style.transform = 'none';
                             icon.style.transition = 'none';
-                        }
-                    }, 500);
-                    this.fetchPrayerTimes();
+                        }, 500);
+                    }
+                    this.fetchData();
                 });
-            },
-            async fetchPrayerTimes() {
-                const defaultLat = -6.200000;
-                const defaultLon = 106.816666;
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(
-                        (pos) => this.getPrayerData(pos.coords.latitude, pos.coords.longitude),
-                        (err) => this.getPrayerData(defaultLat, defaultLon, "Jakarta (Default)"), {
-                            timeout: 8000,
-                            maximumAge: 60000
-                        }
-                    );
-                } else {
-                    this.getPrayerData(defaultLat, defaultLon, "Jakarta (Default)");
-                }
-            },
-            async getPrayerData(lat, lon, fallbackName = null) {
+            }
+        },
+
+        // --- FUNGSI JAM ---
+        updateTime() {
+            const now = new Date();
+            const timeEl = document.getElementById('localTime');
+            const dateEl = document.getElementById('localDate');
+            if (timeEl) {
+                const h = String(now.getHours()).padStart(2, '0');
+                const m = String(now.getMinutes()).padStart(2, '0');
+                timeEl.innerHTML = `${h}<span class="time-blink">:</span>${m}`;
+            }
+            if (dateEl) {
+                dateEl.textContent = now.toLocaleDateString('id-ID', {
+                    weekday: 'long',
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                });
+            }
+        },
+
+        // --- FUNGSI GEOLOCATION MASTER ---
+        async fetchData() {
+            const defaultLat = -6.200000;
+            const defaultLon = 106.816666; // Jakarta Pusat
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => this.processAPIs(pos.coords.latitude, pos.coords.longitude),
+                    (err) => this.processAPIs(defaultLat, defaultLon, "Jakarta (Default)"), {
+                        timeout: 8000,
+                        maximumAge: 60000
+                    }
+                );
+            } else {
+                this.processAPIs(defaultLat, defaultLon, "Jakarta (Default)");
+            }
+        },
+
+        // --- EKSEKUSI API CUACA & SHOLAT BERSAMAAN ---
+        async processAPIs(lat, lon, fallbackName = null) {
+            // 1. Resolve Nama Kota (Nominatim)
+            let locationName = fallbackName;
+            if (!locationName) {
                 try {
-                    // METHOD 20 = Kementerian Agama RI
-                    const res = await fetch(
-                        `https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=20`);
-                    const json = await res.json();
-                    if (!json?.data?.timings) return;
-
-                    const timings = json.data.timings;
-                    const hijriInfo = json.data.date.hijri || null;
-                    let locationLabel = fallbackName || `${lat.toFixed(2)}, ${lon.toFixed(2)}`;
-
-                    if (!fallbackName) {
-                        try {
-                            const r = await fetch(
-                                `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`
-                            );
-                            if (r.ok) {
-                                const loc = await r.json();
-                                if (loc?.address) {
-                                    const parts = [];
-                                    if (loc.address.city) parts.push(loc.address.city);
-                                    else if (loc.address.town) parts.push(loc.address.town);
-                                    else if (loc.address.county) parts.push(loc.address.county);
-                                    if (loc.address.state) parts.push(loc.address.state);
-                                    if (parts.length) locationLabel = parts.join(', ');
-                                }
-                            }
-                        } catch (e) {
-                            console.warn("Reverse geocode failed");
+                    const resCity = await fetch(
+                        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`);
+                    if (resCity.ok) {
+                        const loc = await resCity.json();
+                        if (loc?.address) {
+                            const parts = [];
+                            if (loc.address.city) parts.push(loc.address.city);
+                            else if (loc.address.town) parts.push(loc.address.town);
+                            else if (loc.address.county) parts.push(loc.address.county);
+                            if (loc.address.state) parts.push(loc.address.state);
+                            if (parts.length) locationName = parts.join(', ');
                         }
                     }
-                    this.displayPrayerTimes(timings, locationLabel, hijriInfo);
-                } catch (err) {
-                    if (this.dom.location) this.dom.location.textContent = "Gagal memuat API Jadwal";
-                }
-            },
-            displayPrayerTimes(timings, locationLabel, hijriInfo) {
-                this.currentTimings = timings;
-                if (this.dom.location) this.dom.location.innerHTML =
-                    `<i class='bx bx-map text-primary'></i> ${locationLabel}`;
-                if (hijriInfo && this.dom.hijri) this.dom.hijri.textContent =
-                    `${hijriInfo.day} ${hijriInfo.month.en} ${hijriInfo.year}`;
-
-                const keys = ['Imsak', 'Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-                keys.forEach(k => {
-                    const el = document.getElementById('pray-' + k);
-                    if (el) el.textContent = (timings[k] || '--:--').replace(/\s*\(.*\)$/, '');
-                });
-
-                this.currentNextPrayer = this.getNextPrayer();
-                this.updateNextPrayerUI();
-                this.updateCountdown();
-            },
-            getNextPrayer() {
-                const order = ['Imsak', 'Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-                const now = new Date();
-                for (const name of order) {
-                    const t = this.parseTimeToDate(this.currentTimings[name]);
-                    if (t && t > now) return name;
-                }
-                return 'Imsak';
-            },
-            updateNextPrayerUI() {
-                const next = this.currentNextPrayer;
-                const PRAY_LABELS = {
-                    'Imsak': 'Imsak',
-                    'Fajr': 'Subuh',
-                    'Sunrise': 'Terbit',
-                    'Dhuhr': 'Dzuhur',
-                    'Asr': 'Ashar',
-                    'Maghrib': 'Maghrib',
-                    'Isha': 'Isya'
-                };
-                if (!next) return;
-
-                if (this.dom.nextLabel) this.dom.nextLabel.textContent = PRAY_LABELS[next] || next;
-                if (this.dom.nextTime) this.dom.nextTime.textContent = (this.currentTimings[next] || '--:--').replace(
-                    /\s*\(.*\)$/, '');
-
-                ['Imsak', 'Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'].forEach(k => {
-                    const row = document.getElementById('row-' + k);
-                    if (row) {
-                        row.classList.remove('active');
-                        if (k === next) row.classList.add('active');
-                    }
-                });
-            },
-            parseTimeToDate(timeStr) {
-                if (!timeStr) return null;
-                const m = timeStr.match(/(\d{1,2}):(\d{2})/);
-                if (!m) return null;
-                const d = new Date();
-                d.setHours(parseInt(m[1], 10), parseInt(m[2], 10), 0, 0);
-                return d;
-            },
-            updateCountdown() {
-                if (!this.dom.countdown || !this.currentNextPrayer) return;
-                const now = new Date();
-                let target = this.parseTimeToDate(this.currentTimings[this.currentNextPrayer]);
-                if (!target) return;
-                if (target < now) target.setDate(target.getDate() + 1);
-
-                const order = ['Imsak', 'Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-                const prevName = order.indexOf(this.currentNextPrayer) > 0 ? order[order.indexOf(this
-                    .currentNextPrayer) - 1] : 'Isha';
-                let prevTime = this.parseTimeToDate(this.currentTimings[prevName]);
-                if (prevTime && prevTime > target) prevTime.setDate(prevTime.getDate() - 1);
-
-                let totalSeconds = Math.max(0, Math.floor((target - now) / 1000));
-                const h = Math.floor(totalSeconds / 3600),
-                    m = Math.floor((totalSeconds % 3600) / 60),
-                    s = totalSeconds % 60;
-
-                let text = (h > 0 ? `${h}j ` : '') + (m > 0 ? `${m}m ` : '') + `${s}s`;
-                this.dom.countdown.textContent = `Tersisa ${text}`;
-
-                if (this.dom.progressBar && prevTime) {
-                    let percent = Math.max(0, Math.min(((now - prevTime) / (target - prevTime)) * 100, 100));
-                    this.dom.progressBar.style.width = percent + '%';
-                    if (totalSeconds <= 600) this.dom.progressBar.classList.add('warning');
-                    else this.dom.progressBar.classList.remove('warning');
+                } catch (e) {
+                    console.warn("Geocode failed");
                 }
             }
-        };
+            if (!locationName) locationName = `${lat.toFixed(2)}, ${lon.toFixed(2)}`;
 
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => PrayerTimes.init());
-        } else {
-            PrayerTimes.init();
+            // Terapkan nama lokasi ke UI Cuaca dan UI Sholat
+            const locCuacaEl = document.getElementById('weatherLocation');
+            const locSholatEl = document.getElementById('prayerLocation');
+            if (locCuacaEl) locCuacaEl.textContent = locationName;
+            if (locSholatEl) locSholatEl.innerHTML = `<i class='bx bx-map text-primary'></i> ${locationName}`;
+
+
+            // 2. Fetch Cuaca (Open-Meteo)
+            try {
+                const resWeather = await fetch(
+                    `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`
+                    );
+                const dataW = await resWeather.json();
+                if (dataW?.current_weather) {
+                    const cw = dataW.current_weather;
+                    const tempEl = document.getElementById('temp');
+                    const iconEl = document.getElementById('weatherIcon');
+                    const descEl = document.getElementById('weatherDesc');
+
+                    if (tempEl) tempEl.textContent = Math.round(cw.temperature) + '°C';
+
+                    // Parse WMO Weather Code
+                    const code = cw.weathercode;
+                    let icon = '☀️';
+                    let desc = 'Cerah';
+                    if (code === 0) {
+                        icon = '☀️';
+                        desc = 'Cerah';
+                    } else if (code >= 1 && code <= 3) {
+                        icon = '⛅';
+                        desc = 'Berawan';
+                    } else if (code >= 45 && code <= 48) {
+                        icon = '🌫️';
+                        desc = 'Berkabut';
+                    } else if (code >= 51 && code <= 67) {
+                        icon = '🌧️';
+                        desc = 'Hujan Ringan';
+                    } else if (code >= 71 && code <= 77) {
+                        icon = '❄️';
+                        desc = 'Salju';
+                    } else if (code >= 80 && code <= 82) {
+                        icon = '🌦️';
+                        desc = 'Hujan Lebat';
+                    } else if (code >= 95 && code <= 99) {
+                        icon = '⛈️';
+                        desc = 'Badai Petir';
+                    }
+
+                    if (iconEl) iconEl.textContent = icon;
+                    if (descEl) descEl.textContent = desc;
+                }
+            } catch (e) {
+                const descEl = document.getElementById('weatherDesc');
+                if (descEl) descEl.textContent = "Data cuaca gagal dimuat";
+            }
+
+
+            // 3. Fetch Jadwal Sholat (Aladhan Method 20 Kemenag RI)
+            try {
+                const resPrayer = await fetch(
+                    `https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=20`);
+                const jsonP = await resPrayer.json();
+                if (jsonP?.data?.timings) {
+                    this.prayerTimings = jsonP.data.timings;
+
+                    // Set Hijri Date
+                    const hijriInfo = jsonP.data.date.hijri || null;
+                    const hijriEl = document.getElementById('prayerHijri');
+                    if (hijriInfo && hijriEl) {
+                        hijriEl.textContent = `${hijriInfo.day} ${hijriInfo.month.en} ${hijriInfo.year}`;
+                    }
+
+                    // Set Tabel Jadwal
+                    const keys = ['Imsak', 'Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+                    keys.forEach(k => {
+                        const el = document.getElementById('pray-' + k);
+                        if (el) el.textContent = (this.prayerTimings[k] || '--:--').replace(
+                            /\s*\(.*\)$/, '');
+                    });
+
+                    // Jalankan fungsi countdown sholat
+                    if (this.prayerInterval) clearInterval(this.prayerInterval);
+                    this.updatePrayerCountdown();
+                    this.prayerInterval = setInterval(() => this.updatePrayerCountdown(), 1000);
+                }
+            } catch (e) {
+                if (locSholatEl) locSholatEl.innerHTML =
+                    `<i class='bx bx-error text-danger'></i> Gagal memuat jadwal`;
+            }
+        },
+
+        // --- FUNGSI COUNTDOWN SHOLAT ---
+        updatePrayerCountdown() {
+            if (!this.prayerTimings) return;
+
+            const order = ['Imsak', 'Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+            const now = new Date();
+
+            let nextPrayerName = 'Imsak';
+            for (const name of order) {
+                const t = this.parseTimeStr(this.prayerTimings[name]);
+                if (t && t > now) {
+                    nextPrayerName = name;
+                    break;
+                }
+            }
+
+            // Update UI Label & Waktu Target
+            const PRAY_LABELS = {
+                'Imsak': 'Imsak',
+                'Fajr': 'Subuh',
+                'Sunrise': 'Terbit',
+                'Dhuhr': 'Dzuhur',
+                'Asr': 'Ashar',
+                'Maghrib': 'Maghrib',
+                'Isha': 'Isya'
+            };
+            const nextLabelEl = document.getElementById('prayerNextLabel');
+            const nextTimeEl = document.getElementById('nextPrayerTime');
+
+            if (nextLabelEl) nextLabelEl.textContent = PRAY_LABELS[nextPrayerName] || nextPrayerName;
+            if (nextTimeEl) nextTimeEl.textContent = (this.prayerTimings[nextPrayerName] || '--:--').replace(
+                /\s*\(.*\)$/, '');
+
+            // Hilight Tabel Jadwal
+            ['Imsak', 'Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'].forEach(k => {
+                const row = document.getElementById('row-' + k);
+                if (row) {
+                    row.classList.remove('active');
+                    if (k === nextPrayerName) row.classList.add('active');
+                }
+            });
+
+            // Kalkulasi Mundur (Countdown)
+            let targetTime = this.parseTimeStr(this.prayerTimings[nextPrayerName]);
+            if (!targetTime) return;
+            if (targetTime < now) targetTime.setDate(targetTime.getDate() + 1); // Jika besok
+
+            const prevName = order.indexOf(nextPrayerName) > 0 ? order[order.indexOf(nextPrayerName) - 1] : 'Isha';
+            let prevTime = this.parseTimeStr(this.prayerTimings[prevName]);
+            if (prevTime && prevTime > targetTime) prevTime.setDate(prevTime.getDate() - 1);
+
+            let totalSeconds = Math.max(0, Math.floor((targetTime - now) / 1000));
+            const h = Math.floor(totalSeconds / 3600);
+            const m = Math.floor((totalSeconds % 3600) / 60);
+            const s = totalSeconds % 60;
+
+            const countdownEl = document.getElementById('nextPrayerCountdown');
+            if (countdownEl) {
+                let text = (h > 0 ? `${h}j ` : '') + (m > 0 ? `${m}m ` : '') + `${s}s`;
+                countdownEl.textContent = `Tersisa ${text}`;
+            }
+
+            // Progress Bar
+            const pBar = document.getElementById('countdownBar');
+            if (pBar && prevTime) {
+                let percent = Math.max(0, Math.min(((now - prevTime) / (targetTime - prevTime)) * 100, 100));
+                pBar.style.width = percent + '%';
+                if (totalSeconds <= 600) pBar.classList.add('warning'); // Merah jika sisa 10 menit
+                else pBar.classList.remove('warning');
+            }
+        },
+
+        parseTimeStr(timeStr) {
+            if (!timeStr) return null;
+            const m = timeStr.match(/(\d{1,2}):(\d{2})/);
+            if (!m) return null;
+            const d = new Date();
+            d.setHours(parseInt(m[1], 10), parseInt(m[2], 10), 0, 0);
+            return d;
         }
-    </script>
-@endpush
+    };
+
+    // Initialize Everything when DOM is Ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => DashboardApp.init());
+    } else {
+        DashboardApp.init();
+    }
+</script>
