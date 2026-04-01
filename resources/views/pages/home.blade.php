@@ -9,27 +9,37 @@
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 
     <style>
-        /* ============== CSS VARIABLES ============== */
+        /* ============== CSS VARIABLES (PREMIUM BENTO) ============== */
         :root {
-            --bg-main: #f8fafc;
+            --bg-main: #f4f7fb;
             --panel: #ffffff;
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --primary-soft: #eff6ff;
-            --primary-glow: rgba(37, 99, 235, 0.15);
-            --accent: #6366f1;
+
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --primary-soft: #e0e7ff;
+            --primary-glow: rgba(79, 70, 229, 0.15);
+
+            --accent: #0ea5e9;
             --text-dark: #0f172a;
             --text-muted: #64748b;
             --border: #e2e8f0;
-            --radius-xl: 24px;
-            --radius-lg: 16px;
-            --radius-md: 12px;
-            --shadow-sm: 0 2px 5px rgba(15, 23, 42, 0.04);
-            --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06);
-            --shadow-lg: 0 10px 25px rgba(15, 23, 42, 0.08);
+
+            --radius-xl: 28px;
+            --radius-lg: 20px;
+            --radius-md: 16px;
+            --radius-sm: 10px;
+
+            /* Ultra-soft shadows */
+            --shadow-sm: 0 2px 4px rgba(15, 23, 42, 0.02), 0 1px 2px rgba(15, 23, 42, 0.04);
+            --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.05), 0 2px 4px rgba(15, 23, 42, 0.03);
+            --shadow-lg: 0 15px 35px rgba(15, 23, 42, 0.08), 0 5px 15px rgba(15, 23, 42, 0.04);
+
             --success: #10b981;
+            --success-soft: #d1fae5;
             --danger: #ef4444;
+            --danger-soft: #fee2e2;
             --warning: #f59e0b;
+            --warning-soft: #fef3c7;
         }
 
         body {
@@ -37,19 +47,20 @@
             font-family: 'Inter', sans-serif;
             background: var(--bg-main);
             color: var(--text-dark);
-            background-image: radial-gradient(var(--border) 1px, transparent 0);
+            background-image: radial-gradient(#cbd5e1 1px, transparent 0);
             background-size: 32px 32px;
+            -webkit-font-smoothing: antialiased;
         }
 
         .container {
-            max-width: 1280px;
-            margin: 2rem auto;
+            max-width: 1320px;
+            margin: 2.5rem auto;
             padding: 0 1.5rem;
         }
 
         /* ============== ANIMATIONS ============== */
         .fade-in-up {
-            animation: fadeInUp 0.6s ease-out forwards;
+            animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             opacity: 0;
             transform: translateY(20px);
         }
@@ -72,7 +83,7 @@
         /* ============== HERO & KPI ============== */
         .header-grid {
             display: grid;
-            grid-template-columns: 1fr 340px;
+            grid-template-columns: 1fr 360px;
             gap: 1.5rem;
             margin-bottom: 1.5rem;
         }
@@ -80,39 +91,55 @@
         .hero {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             border-radius: var(--radius-xl);
-            padding: 2.5rem;
+            padding: 2.5rem 3rem;
             color: #ffffff;
             position: relative;
             overflow: hidden;
             box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Ornamental Background Grid in Hero */
+        .hero::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            opacity: 0.5;
+            pointer-events: none;
         }
 
         .hero::before {
             content: '';
             position: absolute;
-            top: -20%;
-            left: -10%;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
-            opacity: 0.2;
-            filter: blur(40px);
+            top: -50%;
+            right: -20%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 60%);
+            opacity: 0.3;
+            filter: blur(50px);
             z-index: 0;
         }
 
         .hero h1 {
             margin: 0;
             font-weight: 800;
-            font-size: 2.2rem;
-            letter-spacing: -0.03em;
+            font-size: 2.4rem;
+            letter-spacing: -0.04em;
             z-index: 1;
             position: relative;
         }
 
         .hero p {
-            margin: 0.5rem 0 2.5rem 0;
+            margin: 0.5rem 0 2rem 0;
             color: #94a3b8;
-            font-size: 1.05rem;
+            font-size: 1.1rem;
             z-index: 1;
             position: relative;
             font-weight: 500;
@@ -120,50 +147,52 @@
 
         .kpis {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1.25rem;
             position: relative;
             z-index: 1;
         }
 
         .kpi {
             background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 1.25rem;
+            padding: 1.25rem 1.5rem;
             border-radius: var(--radius-lg);
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .kpi:hover {
-            transform: translateY(-4px);
+            transform: translateY(-5px);
             background: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            border-color: rgba(255, 255, 255, 0.2);
         }
 
         .kpi .label {
             font-size: 0.75rem;
             color: #cbd5e1;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         .kpi .value {
-            font-size: 1.8rem;
+            font-size: 2rem;
             font-weight: 800;
             color: #ffffff;
             font-family: 'JetBrains Mono', monospace;
-            margin-top: 4px;
+            margin-top: 6px;
+            line-height: 1;
         }
 
-        /* ============== WEATHER CARD ============== */
+        /* ============== WEATHER & TIME CARD ============== */
         .weather-time-card {
             background: var(--panel);
             border-radius: var(--radius-xl);
-            padding: 2rem;
+            padding: 2.5rem 2rem;
             text-align: center;
-            box-shadow: var(--shadow-lg);
+            box-shadow: var(--shadow-md);
             border: 1px solid var(--border);
             display: flex;
             flex-direction: column;
@@ -180,33 +209,33 @@
             right: 0;
             height: 6px;
             background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: var(--radius-xl) var(--radius-xl) 0 0;
         }
 
         .clock-wrapper {
-            margin: 1rem 0;
+            margin: 0.5rem 0 1.5rem;
         }
 
         .time-display {
             font-family: 'JetBrains Mono', monospace;
             font-weight: 800;
-            font-size: 3rem;
+            font-size: 3.25rem;
             letter-spacing: -2px;
             color: var(--text-dark);
             line-height: 1;
             margin: 0;
-            text-shadow: 0 4px 10px rgba(15, 23, 42, 0.05);
+            text-shadow: 0 4px 10px rgba(15, 23, 42, 0.03);
         }
 
         .date-display {
             font-size: 0.95rem;
             font-weight: 600;
             color: var(--text-muted);
-            margin-top: 0.5rem;
+            margin-top: 0.75rem;
         }
 
         .weather-widget {
-            margin-top: 1rem;
-            padding-top: 1.25rem;
+            padding-top: 1.5rem;
             border-top: 1px dashed var(--border);
             display: flex;
             justify-content: center;
@@ -216,7 +245,7 @@
         }
 
         .weather-widget .icon {
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             line-height: 1;
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
         }
@@ -229,7 +258,7 @@
 
         .weather-widget .temp {
             font-weight: 800;
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             line-height: 1.1;
             color: var(--text-dark);
         }
@@ -245,7 +274,7 @@
         /* ============== MAIN LAYOUT GRID ============== */
         .layout {
             display: grid;
-            grid-template-columns: 1fr 340px;
+            grid-template-columns: 1fr 360px;
             gap: 1.5rem;
         }
 
@@ -256,10 +285,15 @@
             border: 1px solid var(--border);
             margin-bottom: 1.5rem;
             overflow: hidden;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-md);
         }
 
         .card-header {
-            padding: 1.5rem;
+            padding: 1.75rem 1.75rem 1.25rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -270,22 +304,30 @@
             margin: 0;
             color: var(--text-dark);
             font-weight: 800;
-            font-size: 1.15rem;
+            font-size: 1.2rem;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+        }
+
+        .card-header h3 i {
+            background: var(--primary-soft);
+            color: var(--primary);
+            padding: 8px;
+            border-radius: 10px;
+            font-size: 1.2rem;
         }
 
         /* ============== PREMIUM TABS SYSTEM ============== */
         .modern-tabs-wrapper {
-            padding: 0 1.5rem 1rem;
+            padding: 0 1.75rem 1.25rem;
             border-bottom: 1px solid #f1f5f9;
         }
 
         .modern-tabs-container {
             display: inline-flex;
             background: #f1f5f9;
-            padding: 0.35rem;
+            padding: 0.4rem;
             border-radius: 999px;
             gap: 0.25rem;
             overflow-x: auto;
@@ -304,9 +346,9 @@
         .tab-btn {
             background: transparent;
             border: none;
-            padding: 0.75rem 1.5rem;
+            padding: 0.7rem 1.5rem;
             border-radius: 999px;
-            font-size: 0.875rem;
+            font-size: 0.9rem;
             font-weight: 700;
             color: var(--text-muted);
             cursor: pointer;
@@ -318,12 +360,13 @@
 
         .tab-btn:hover {
             color: var(--text-dark);
+            background: rgba(255, 255, 255, 0.5);
         }
 
         .tab-btn.active {
             background: white;
             color: var(--primary);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
             transform: scale(1.02);
         }
 
@@ -352,12 +395,12 @@
         }
 
         .tab-content {
-            padding: 1.5rem;
+            padding: 1.5rem 1.75rem;
         }
 
         .tab-pane {
             display: none;
-            animation: fadeInUpTab 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            animation: fadeInUpTab 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             opacity: 0;
             transform: translateY(15px);
         }
@@ -376,8 +419,9 @@
         /* ============== CONTENT STYLING ============== */
         .table-wrap {
             overflow-x: auto;
-            border-radius: 14px;
+            border-radius: var(--radius-md);
             border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
         }
 
         table {
@@ -389,7 +433,7 @@
 
         th,
         td {
-            padding: 1rem 1.25rem;
+            padding: 1.15rem 1.25rem;
             border-bottom: 1px solid var(--border);
             text-align: left;
             vertical-align: middle;
@@ -406,6 +450,7 @@
 
         tbody tr {
             transition: background 0.2s;
+            cursor: pointer;
         }
 
         tbody tr:hover {
@@ -417,30 +462,34 @@
         }
 
         .badge {
-            padding: 0.35rem 0.85rem;
+            padding: 0.4rem 0.85rem;
             border-radius: 999px;
             font-weight: 700;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
             border: 1px solid transparent;
+            letter-spacing: 0.03em;
         }
 
         .badge.ok {
-            background: #dcfce7;
-            color: #059669;
+            background: var(--success-soft);
+            color: var(--success);
+            border-color: rgba(16, 185, 129, 0.2);
         }
 
         .badge.proses {
-            background: #fef3c7;
-            color: #d97706;
+            background: var(--warning-soft);
+            color: var(--warning);
+            border-color: rgba(245, 158, 11, 0.2);
         }
 
         .badge.due {
-            background: #fee2e2;
-            color: #dc2626;
+            background: var(--danger-soft);
+            color: var(--danger);
+            border-color: rgba(239, 68, 68, 0.2);
         }
 
         .btn-action {
@@ -452,7 +501,7 @@
             border-radius: 10px;
             cursor: pointer;
             font-weight: 700;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             transition: all 0.2s ease;
             box-shadow: var(--shadow-sm);
             display: inline-flex;
@@ -469,39 +518,76 @@
             transform: translateY(-2px);
         }
 
+        .btn-action-primary {
+            background: var(--primary-soft);
+            color: var(--primary);
+            border-color: transparent;
+        }
+
+        .btn-action-primary:hover {
+            background: var(--primary);
+            color: white;
+        }
+
         /* NCR List */
         .ncr-list {
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
+            gap: 1rem;
         }
 
         .ncr-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem 1.25rem;
-            border-radius: 14px;
+            padding: 1.25rem;
+            border-radius: var(--radius-md);
             background: #f8fafc;
             border: 1px solid var(--border);
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
             text-decoration: none;
             color: inherit;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Left border accent for NCR */
+        .ncr-row::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            transition: 0.3s;
+        }
+
+        .ncr-row.due::before {
+            background-color: var(--danger);
+        }
+
+        .ncr-row.proses::before {
+            background-color: var(--warning);
         }
 
         .ncr-row:hover {
             background: white;
-            border-color: var(--primary-glow);
-            box-shadow: var(--shadow-sm);
+            border-color: var(--border);
+            box-shadow: var(--shadow-md);
             transform: translateX(4px);
+        }
+
+        .ncr-row:hover::before {
+            width: 6px;
         }
 
         .ncr-info {
             display: flex;
             flex-direction: column;
-            gap: 0.25rem;
+            gap: 0.3rem;
             max-width: 70%;
+            padding-left: 0.5rem;
         }
 
         .ncr-id {
@@ -509,10 +595,13 @@
             font-size: 0.85rem;
             font-weight: 800;
             color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .ncr-issue {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-weight: 600;
             color: var(--text-dark);
             white-space: nowrap;
@@ -521,19 +610,19 @@
         }
 
         .status-dot {
-            width: 6px;
-            height: 6px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
-            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.8);
         }
 
         .badge.due .status-dot {
-            background: #dc2626;
+            background: var(--danger);
             animation: pulse 1.5s infinite;
         }
 
         .badge.proses .status-dot {
-            background: #d97706;
+            background: var(--warning);
             animation: pulse 2s infinite;
         }
 
@@ -556,7 +645,7 @@
             background: linear-gradient(135deg, var(--primary) 0%, #4338ca 100%);
             color: white;
             border-radius: var(--radius-lg);
-            padding: 2rem 2.5rem;
+            padding: 2.5rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -576,9 +665,9 @@
             content: '\eb32';
             font-family: 'boxicons';
             position: absolute;
-            right: -10px;
-            bottom: -30px;
-            font-size: 12rem;
+            right: -5%;
+            bottom: -40px;
+            font-size: 14rem;
             opacity: 0.1;
             transform: rotate(-15deg);
             pointer-events: none;
@@ -586,80 +675,93 @@
 
         .document-card-content h3 {
             margin: 0 0 0.5rem;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             font-weight: 800;
             position: relative;
             z-index: 1;
         }
 
         .document-card-content p {
-            margin: 0 0 1.25rem;
+            margin: 0 0 1.5rem;
             opacity: 0.9;
-            font-size: 0.95rem;
+            font-size: 1rem;
             max-width: 80%;
             position: relative;
             z-index: 1;
+            line-height: 1.5;
         }
 
         .btn-document {
             background: white;
             color: var(--primary);
-            padding: 0.75rem 1.5rem;
+            padding: 0.85rem 1.75rem;
             border-radius: 99px;
-            font-weight: 700;
+            font-weight: 800;
             font-size: 0.95rem;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
             border: none;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s;
             box-shadow: var(--shadow-md);
             position: relative;
             z-index: 1;
+            text-decoration: none;
         }
 
         .btn-document:hover {
             background: #f8fafc;
-            transform: scale(1.03);
+            transform: scale(1.05);
             box-shadow: var(--shadow-lg);
+            color: var(--primary-hover);
         }
 
         .quick {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-            padding: 0 1.5rem 1.5rem;
+            gap: 1.25rem;
+            padding: 0 1.75rem 1.75rem;
         }
 
         .quick .item {
-            padding: 1.25rem 1rem;
+            padding: 1.5rem 1rem;
             text-align: center;
             border-radius: var(--radius-md);
             cursor: pointer;
-            font-weight: 600;
-            background: #f8fafc;
+            font-weight: 700;
+            background: var(--bg-main);
             border: 1px solid transparent;
             color: var(--text-dark);
             font-size: 0.85rem;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.75rem;
             align-items: center;
         }
 
         .quick .item:hover {
             background: var(--panel);
-            border-color: var(--primary-glow);
+            border-color: var(--primary-soft);
             transform: translateY(-5px);
             color: var(--primary);
-            box-shadow: var(--shadow-lg);
+            box-shadow: var(--shadow-md);
         }
 
         .quick .icon {
-            font-size: 2rem;
+            font-size: 2.2rem;
             color: var(--primary);
+            background: white;
+            padding: 12px;
+            border-radius: 14px;
+            box-shadow: var(--shadow-sm);
+            transition: 0.3s;
+        }
+
+        .quick .item:hover .icon {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-md);
         }
 
         /* ============== SIDEBAR (PRAYER & ANN) ============== */
@@ -671,10 +773,10 @@
 
         .ann {
             display: flex;
-            gap: 1rem;
+            gap: 1.25rem;
             padding: 1.25rem;
             border-radius: var(--radius-md);
-            background: #f8fafc;
+            background: var(--bg-main);
             border: 1px solid transparent;
             transition: all 0.3s ease;
             cursor: pointer;
@@ -688,19 +790,19 @@
         }
 
         .ann .avatar {
-            width: 44px;
-            height: 44px;
-            min-width: 44px;
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
             border-radius: 50%;
             display: grid;
             place-items: center;
             background: var(--primary-soft);
             color: var(--primary);
             font-weight: 800;
-            font-size: 1rem;
+            font-size: 1.1rem;
         }
 
-        /* ============== PRAYER WIDGET (REDESIGNED) ============== */
+        /* ============== PRAYER WIDGET (PREMIUM) ============== */
         .pray-card {
             position: sticky;
             top: 20px;
@@ -710,7 +812,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.25rem;
+            margin-bottom: 1.5rem;
         }
 
         .prayer-header .location {
@@ -719,7 +821,7 @@
             color: var(--text-muted);
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
         }
 
         .prayer-header .hijri {
@@ -734,11 +836,11 @@
         .next-prayer-block {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             border-radius: var(--radius-md);
-            padding: 1.5rem;
+            padding: 1.75rem;
             color: white;
             text-align: center;
             margin-bottom: 1.5rem;
-            box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.4);
+            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4);
             position: relative;
             overflow: hidden;
         }
@@ -748,8 +850,19 @@
             position: absolute;
             right: -20px;
             top: -20px;
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .next-prayer-block::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            bottom: -30px;
+            width: 80px;
+            height: 80px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
         }
@@ -758,26 +871,27 @@
             font-size: 0.75rem;
             text-transform: uppercase;
             font-weight: 800;
-            opacity: 0.8;
+            opacity: 0.9;
             letter-spacing: 0.1em;
             margin-bottom: 0.5rem;
         }
 
         .np-name {
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             font-weight: 800;
             margin: 0;
             line-height: 1;
             position: relative;
             z-index: 1;
+            letter-spacing: 1px;
         }
 
         .np-time {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 2.5rem;
+            font-size: 3rem;
             font-weight: 800;
             line-height: 1.2;
-            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
             margin-bottom: 0.5rem;
             position: relative;
             z-index: 1;
@@ -788,11 +902,12 @@
             font-weight: 700;
             background: rgba(0, 0, 0, 0.2);
             display: inline-block;
-            padding: 0.35rem 1rem;
+            padding: 0.4rem 1.25rem;
             border-radius: 99px;
             backdrop-filter: blur(4px);
             position: relative;
             z-index: 1;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .np-progress {
@@ -801,7 +916,7 @@
             background: rgba(255, 255, 255, 0.2);
             border-radius: 4px;
             overflow: hidden;
-            margin-top: 1rem;
+            margin-top: 1.25rem;
             position: relative;
             z-index: 1;
         }
@@ -834,8 +949,8 @@
             font-size: 0.95rem;
             font-weight: 600;
             color: var(--text-dark);
-            background: #f8fafc;
-            border: 1px solid var(--border);
+            background: var(--bg-main);
+            border: 1px solid transparent;
             transition: all 0.2s;
         }
 
@@ -843,13 +958,13 @@
             background: white;
             transform: translateX(4px);
             box-shadow: var(--shadow-sm);
-            border-color: var(--primary-soft);
+            border-color: var(--border);
         }
 
         .pray-row.next {
-            background: #ecfdf5;
+            background: var(--success-soft);
             color: #065f46;
-            border-color: #a7f3d0;
+            border-color: rgba(16, 185, 129, 0.2);
             box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.1);
         }
 
@@ -888,8 +1003,8 @@
         #detailModal .backdrop {
             position: absolute;
             inset: 0;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(8px);
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(12px);
             cursor: pointer;
         }
 
@@ -898,9 +1013,9 @@
             z-index: 2;
             background: var(--panel);
             width: 90%;
-            max-width: 500px;
+            max-width: 480px;
             border-radius: var(--radius-xl);
-            padding: 2rem;
+            padding: 2.5rem;
             box-shadow: var(--shadow-lg);
             transform: translateY(30px) scale(0.95);
             transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -922,6 +1037,16 @@
                 top: 0;
             }
         }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 2rem 1.5rem;
+            }
+
+            .quick {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
     </style>
 @endpush
 
@@ -933,33 +1058,83 @@
                 ->orderBy('issue_date', 'desc')
                 ->take(5)
                 ->get() ?? collect([]);
-        // 2. Ambil Data Tools/Kalibrasi (Asumsi $tools dikirim dari controller)
+        // 2. Ambil Data Tools/Kalibrasi
         $toolsData = optional($tools)->take(5) ?? [];
 
-        // Hitung Count untuk Badge Tab
         $countKalibrasi = count($toolsData);
         $countNcr = $portalNcrs->count();
     @endphp
 
     <div class="container">
+        @php
+            // Hitung Total Seluruh Data dari Database
+            $totalTools = \App\Tool::count() ?? 0; // Ganti Tool dengan nama model Alat/Instrumen Anda
+            $totalNcrAll = \App\Ncr::count() ?? 0;
+            $totalInventory = \App\Material::count() ?? 0; // Ganti dengan model Inventory Anda
+            $totalDocument = \App\Document::count() ?? 0; // Ganti dengan model Dokumen Anda
+
+            // Data untuk tampilan Tab dan List
+            $portalNcrs =
+                \App\Ncr::whereIn('status', ['Open', 'Monitoring'])
+                    ->orderBy('issue_date', 'desc')
+                    ->take(5)
+                    ->get() ?? collect([]);
+            $toolsData = optional($tools)->take(5) ?? [];
+            $countKalibrasi = count($toolsData);
+            $countNcr = $portalNcrs->count();
+        @endphp
 
         <div class="header-grid fade-in-up">
             <div class="hero">
                 <h1>Halo, {{ Auth::user()->name ?? 'Tim MCI' }} 👋</h1>
-                <p>Ringkasan sistem operasional, inventaris, dan jadwal hari ini.</p>
-                <div class="kpis">
+                <p>Ringkasan akumulasi seluruh data operasional di dalam sistem saat ini.</p>
+
+                <div class="kpis" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));">
+
                     <div class="kpi">
-                        <div class="label">Total Item</div>
-                        <div class="value">{{ number_format($totalTools ?? 0) }}</div>
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <div
+                                style="background: rgba(59, 130, 246, 0.2); padding: 6px; border-radius: 8px; display: flex;">
+                                <i class='bx bx-target-lock' style="color: #60a5fa; font-size: 1.2rem;"></i>
+                            </div>
+                            <div class="label">Total Alat</div>
+                        </div>
+                        <div class="value">{{ number_format($totalTools) }}</div>
                     </div>
+
                     <div class="kpi">
-                        <div class="label">Status OK</div>
-                        <div class="value text-success">{{ number_format($statusOk ?? 0) }}</div>
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <div
+                                style="background: rgba(239, 68, 68, 0.2); padding: 6px; border-radius: 8px; display: flex;">
+                                <i class='bx bx-error-alt' style="color: #f87171; font-size: 1.2rem;"></i>
+                            </div>
+                            <div class="label">Total NCR</div>
+                        </div>
+                        <div class="value">{{ number_format($totalNcrAll) }}</div>
                     </div>
+
                     <div class="kpi">
-                        <div class="label">Due Soon</div>
-                        <div class="value text-danger">{{ number_format($dueSoon ?? 0) }}</div>
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <div
+                                style="background: rgba(245, 158, 11, 0.2); padding: 6px; border-radius: 8px; display: flex;">
+                                <i class='bx bx-package' style="color: #fbbf24; font-size: 1.2rem;"></i>
+                            </div>
+                            <div class="label">Inventory</div>
+                        </div>
+                        <div class="value">{{ number_format($totalInventory) }}</div>
                     </div>
+
+                    <div class="kpi">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <div
+                                style="background: rgba(16, 185, 129, 0.2); padding: 6px; border-radius: 8px; display: flex;">
+                                <i class='bx bx-folder-open' style="color: #34d399; font-size: 1.2rem;"></i>
+                            </div>
+                            <div class="label">Dokumen</div>
+                        </div>
+                        <div class="value">{{ number_format($totalDocument) }}</div>
+                    </div>
+
                 </div>
             </div>
 
@@ -982,68 +1157,10 @@
 
         <div class="layout fade-in-up delay-2">
             <div class="main-content">
-                <div class="document-card shadow-lg">
-                    <div class="document-card-content">
-                        <h3>Pusat Dokumen & Laporan</h3>
-                        <p>Akses terpusat ke seluruh dokumen inventaris, form standar operasional (SOP), dan sertifikat
-                            kalibrasi MCI.</p>
-                        <a href="/portal/document" class="btn-document">
-                            Buka Ruang Dokumen <i class='bx bx-right-arrow-alt fs-5'></i>
-                        </a>
-                    </div>
-                </div>
 
-                <div class="card border-0">
-                    <div class="card-header">
-                        <h3><i class='bx bx-grid-alt text-primary fs-4'></i> Akses Cepat</h3>
-                    </div>
-                    <div class="quick">
-                        <div class="item" onclick="location.href='/schedule'"><i class='bx bx-calendar icon'></i>
-                            <span>Jadwal</span>
-                        </div>
-                        <div class="item" onclick="location.href='/kalibrasi'"><i class='bx bx-wrench icon'></i>
-                            <span>Kalibrasi</span>
-                        </div>
-                        <div class="item" onclick="location.href='/portal/inventory'"><i class='bx bx-package icon'></i>
-                            <span>Inventory</span></div>
-                        <div class="item" onclick="location.href='/export'"><i class='bx bx-export icon'></i>
-                            <span>Export Data</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card border-0">
-                    <div class="card-header">
-                        <h3><i class='bx bx-bell text-warning fs-4'></i> Pengumuman Internal</h3>
-                        <a href="{{ route('announcements.index') ?? '#' }}" class="btn-action"
-                            style="padding: 0.3rem 0.8rem; background: var(--primary-soft);">Lihat Semua</a>
-                    </div>
-                    <div class="ann-list">
-                        @forelse($announcements ?? [] as $a)
-                            @php
-                                $prio = strtolower($a->priority ?? 'low');
-                                $prioClass =
-                                    $prio === 'high' ? 'prio-high' : ($prio === 'medium' ? 'prio-medium' : 'prio-low');
-                                $author = optional($a->author)->name ?? 'Admin';
-                            @endphp
-                            <article class="ann {{ $prioClass }}"
-                                onclick="window.location='{{ url('pengumuman/show/' . \Illuminate\Support\Str::slug($a->title)) }}'">
-                                <div class="avatar">{{ strtoupper(substr($author, 0, 1)) }}</div>
-                                <div class="body">
-                                    <h4 class="title">{{ $a->title }}</h4>
-                                    <div class="excerpt">{{ \Illuminate\Support\Str::limit(strip_tags($a->content), 80) }}
-                                    </div>
-                                </div>
-                            </article>
-                        @empty
-                            <div class="text-center py-4 text-muted border rounded" style="background:#f8fafc;">Belum ada
-                                pengumuman</div>
-                        @endforelse
-                    </div>
-                </div>
                 <div class="card border-0">
                     <div class="card-header pb-3" style="border-bottom: none;">
-                        <h3><i class='bx bx-layer text-primary fs-4'></i> Pantauan Operasional</h3>
+                        <h3><i class='bx bx-layer'></i> Pantauan Operasional</h3>
                     </div>
 
                     <div class="modern-tabs-wrapper">
@@ -1067,7 +1184,7 @@
 
                         <div id="tab-kalibrasi" class="tab-pane active">
                             <div class="table-wrap">
-                                <table>
+                                <table role="table">
                                     <thead>
                                         <tr>
                                             <th>Info Alat</th>
@@ -1083,15 +1200,15 @@
                                                 $s = strtolower(optional($h)->status_kalibrasi ?? '-');
                                                 $badge = $s === 'ok' ? 'ok' : ($s === 'proses' ? 'proses' : 'due');
                                             @endphp
-                                            <tr data-nama="{{ $t->nama_alat }}" data-merek="{{ $t->merek ?? '-' }}"
-                                                data-seri="{{ $t->no_seri ?? '-' }}"
+                                            <tr data-action="detail" data-nama="{{ $t->nama_alat }}"
+                                                data-merek="{{ $t->merek ?? '-' }}" data-seri="{{ $t->no_seri ?? '-' }}"
                                                 data-tgl="{{ optional($h)->tgl_kalibrasi_ulang ? $h->tgl_kalibrasi_ulang->format('d/m/Y') : '-' }}">
                                                 <td>
                                                     <div
-                                                        style="font-weight:700; color:var(--text-dark); font-size:0.95rem;">
+                                                        style="font-weight:800; color:var(--text-dark); font-size:0.95rem;">
                                                         {{ e($t->nama_alat) }}</div>
                                                     <div
-                                                        style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">
+                                                        style="font-size:0.8rem; color:var(--text-muted); margin-top:4px; font-family: 'JetBrains Mono', monospace;">
                                                         <i class='bx bx-barcode'></i> SN: {{ e($t->no_seri ?? '-') }}
                                                     </div>
                                                 </td>
@@ -1099,21 +1216,20 @@
                                                         class="badge {{ $badge }}">{{ optional($h)->status_kalibrasi ?? '-' }}</span>
                                                 </td>
                                                 <td
-                                                    style="font-family:'JetBrains Mono', monospace; font-size:0.85rem; font-weight:700; color: var(--danger);">
+                                                    style="font-family:'JetBrains Mono', monospace; font-size:0.9rem; font-weight:800; color: var(--danger);">
                                                     {{ optional($h)->tgl_kalibrasi_ulang ? $h->tgl_kalibrasi_ulang->format('d/m/Y') : '-' }}
                                                 </td>
-                                                <td style="text-align:right"><button class="btn-action"
-                                                        data-action="detail"><i class='bx bx-search-alt-2'></i>
-                                                        Detail</button></td>
+                                                <td style="text-align:right"><button class="btn-action"><i
+                                                            class='bx bx-search-alt-2'></i> Detail</button></td>
                                             </tr>
                                         @empty
                                             <tr>
                                                 <td colspan="4"
                                                     style="text-align:center; padding: 4rem 1rem; color: var(--text-muted);">
                                                     <i class='bx bx-check-shield'
-                                                        style="font-size: 3rem; color: var(--success); margin-bottom: 10px;"></i><br><span
-                                                        style="font-weight: 700; color: var(--text-dark); font-size: 1.1rem;">Semua
-                                                        Aman!</span><br>Tidak ada jadwal mendesak.
+                                                        style="font-size: 3.5rem; color: var(--success); margin-bottom: 15px;"></i><br><span
+                                                        style="font-weight: 800; color: var(--text-dark); font-size: 1.2rem;">Semua
+                                                        Aman!</span><br>Tidak ada jadwal kalibrasi mendesak saat ini.
                                                 </td>
                                             </tr>
                                         @endforelse
@@ -1125,10 +1241,12 @@
                         <div id="tab-ncr" class="tab-pane">
                             <div class="ncr-list">
                                 @forelse($portalNcrs as $ncr)
-                                    @php $statusClass = $ncr->status == 'Open' ? 'badge-danger' : 'badge-warning'; @endphp
-                                    <a href="{{ route('ncr.home') ?? '#' }}" class="ncr-row">
+                                    @php $statusClass = $ncr->status == 'Open' ? 'badge-danger due' : 'badge-warning proses'; @endphp
+                                    <a href="{{ route('ncr.home') ?? '#' }}"
+                                        class="ncr-row {{ $ncr->status == 'Open' ? 'due' : 'proses' }}">
                                         <div class="ncr-info">
-                                            <span class="ncr-id">{{ $ncr->no_ncr }}</span>
+                                            <span class="ncr-id"><i class='bx bx-error-alt'></i>
+                                                {{ $ncr->no_ncr }}</span>
                                             <span class="ncr-issue">{{ $ncr->issue }}</span>
                                         </div>
                                         <div><span class="badge {{ $statusClass }}"><span class="status-dot"></span>
@@ -1136,24 +1254,91 @@
                                     </a>
                                 @empty
                                     <div
-                                        style="text-align:center; padding:4rem 1rem; color:var(--text-muted); border: 1px dashed var(--border); border-radius: var(--radius-lg); background: #f8fafc;">
+                                        style="text-align:center; padding:4rem 1rem; color:var(--text-muted); border: 2px dashed var(--border); border-radius: var(--radius-lg); background: #f8fafc;">
                                         <i class='bx bx-check-shield'
-                                            style="font-size: 3rem; color: var(--success); margin-bottom: 10px;"></i><br><span
-                                            style="display:block; font-weight: 700; font-size: 1.1rem; color: var(--text-dark);">Tidak
-                                            Ada Masalah Aktif</span><span style="font-size: 0.9rem;">Semua proses
-                                            operasional berjalan dengan standar mutu.</span>
+                                            style="font-size: 3.5rem; color: var(--success); margin-bottom: 15px;"></i><br><span
+                                            style="display:block; font-weight: 800; font-size: 1.2rem; color: var(--text-dark);">Tidak
+                                            Ada Masalah Aktif</span><span
+                                            style="font-size: 0.95rem; font-weight:500;">Semua
+                                            proses operasional berjalan dengan standar mutu.</span>
                                     </div>
                                 @endforelse
                             </div>
                             @if ($countNcr > 0)
                                 <div style="margin-top: 1.5rem; text-align: center;">
-                                    <a href="{{ route('ncr.home') ?? '#' }}" class="btn-action"
-                                        style="padding: 0.7rem 1.5rem; border-radius: 99px;">Buka Penuh Log NCR <i
+                                    <a href="{{ route('ncr.home') ?? '#' }}" class="btn-action btn-action-primary"
+                                        style="padding: 0.75rem 1.5rem; border-radius: 99px;">Buka Penuh Log NCR <i
                                             class='bx bx-right-arrow-alt fs-5'></i></a>
                                 </div>
                             @endif
                         </div>
 
+                    </div>
+                </div>
+
+                <div class="document-card shadow-lg">
+                    <div class="document-card-content">
+                        <h3>Pusat Dokumen & Laporan</h3>
+                        <p>Akses terpusat ke seluruh dokumen inventaris, SOP, dan sertifikat kalibrasi instrumen MCI.</p>
+                        <a href="/portal/document" class="btn-document">
+                            Buka Ruang Dokumen <i class='bx bx-right-arrow-alt fs-5'></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card border-0">
+                    <div class="card-header">
+                        <h3><i class='bx bx-grid-alt'></i> Akses Cepat</h3>
+                    </div>
+                    <div class="quick">
+                        <div class="item" onclick="location.href='/schedule'">
+                            <div class="icon"><i class='bx bx-calendar'></i></div>
+                            <span>Jadwal</span>
+                        </div>
+                        <div class="item" onclick="location.href='/kalibrasi'">
+                            <div class="icon"><i class='bx bx-wrench'></i></div>
+                            <span>Kalibrasi</span>
+                        </div>
+                        <div class="item" onclick="location.href='/portal/inventory'">
+                            <div class="icon"><i class='bx bx-package'></i></div>
+                            <span>Inventory</span>
+                        </div>
+                        <div class="item" onclick="location.href='/export'">
+                            <div class="icon"><i class='bx bx-export'></i></div>
+                            <span>Export Data</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0">
+                    <div class="card-header">
+                        <h3><i class='bx bx-bell'></i> Pengumuman Internal</h3>
+                        <a href="{{ route('announcements.index') ?? '#' }}" class="btn-action btn-action-primary"
+                            style="padding: 0.4rem 1rem;">Lihat Semua</a>
+                    </div>
+                    <div class="ann-list">
+                        @forelse($announcements ?? [] as $a)
+                            @php
+                                $prio = strtolower($a->priority ?? 'low');
+                                $prioClass =
+                                    $prio === 'high' ? 'prio-high' : ($prio === 'medium' ? 'prio-medium' : 'prio-low');
+                                $author = optional($a->author)->name ?? 'Admin';
+                            @endphp
+                            <article class="ann {{ $prioClass }}"
+                                onclick="window.location='{{ url('pengumuman/show/' . \Illuminate\Support\Str::slug($a->title)) }}'">
+                                <div class="avatar">{{ strtoupper(substr($author, 0, 1)) }}</div>
+                                <div class="body">
+                                    <h4 class="title">{{ $a->title }}</h4>
+                                    <div class="excerpt">{{ \Illuminate\Support\Str::limit(strip_tags($a->content), 80) }}
+                                    </div>
+                                </div>
+                            </article>
+                        @empty
+                            <div class="text-center py-5 text-muted border rounded-lg"
+                                style="background:#f8fafc; border-style: dashed !important;"><i
+                                    class='bx bx-message-rounded-dots fs-1 mb-2'></i><br>Belum ada pengumuman terbaru.
+                            </div>
+                        @endforelse
                     </div>
                 </div>
 
@@ -1210,17 +1395,17 @@
         <div class="backdrop" role="button"></div>
         <div class="modal-card">
             <header
-                style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #f1f5f9; padding-bottom:1rem;">
-                <h3 style="margin:0; font-weight:800; font-size:1.25rem;"><i class='bx bx-info-circle text-primary'></i>
-                    Detail Instrumen</h3>
-                <button id="modalClose" class="btn-action" style="padding:0.4rem; border-radius:50%;"><i
-                        class='bx bx-x fs-5'></i></button>
+                style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px dashed var(--border); padding-bottom:1.25rem;">
+                <h3 style="margin:0; font-weight:800; font-size:1.4rem; display:flex; align-items:center; gap:10px;"><i
+                        class='bx bx-info-circle text-primary'></i> Detail Alat</h3>
+                <button id="modalClose" class="btn-action" style="padding:0.5rem; border-radius:50%;"><i
+                        class='bx bx-x fs-4'></i></button>
             </header>
 
-            <div id="modalBody" style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin:1.5rem 0;">
+            <div id="modalBody" style="display:flex; flex-direction:column; gap:1.25rem; margin:1.5rem 0;">
             </div>
 
-            <div style="text-align:right; border-top:1px solid #f1f5f9; padding-top:1.5rem;">
+            <div style="text-align:right; border-top:1px dashed var(--border); padding-top:1.5rem; margin-top:1rem;">
                 <button id="modalClose2" class="btn-action">Tutup Panel</button>
             </div>
         </div>
@@ -1247,34 +1432,47 @@
                 });
             });
 
-            // Logika Modal Detail Kalibrasi
+            // Modal Logic (menggunakan dataset murni HTML anti error)
             const modal = document.getElementById('detailModal');
 
-            // Menggunakan event delegation pada body agar aman
             document.body.addEventListener('click', function(e) {
-                // Buka Modal
-                const btnDetail = e.target.closest('[data-action="detail"]');
+                // Delegasi event 
+                const btnDetail = e.target.closest('tr[data-action="detail"]');
                 if (btnDetail) {
                     e.preventDefault();
                     e.stopPropagation();
-                    const tr = btnDetail.closest('tr');
 
-                    // Ambil Data Lewat Dataset HTML murni (anti error JSON)
-                    const nama = tr.getAttribute('data-nama') || '-';
-                    const merek = tr.getAttribute('data-merek') || '-';
-                    const seri = tr.getAttribute('data-seri') || '-';
-                    const tgl = tr.getAttribute('data-tgl') || '-';
+                    // Ambil Data
+                    const nama = btnDetail.getAttribute('data-nama') || '-';
+                    const merek = btnDetail.getAttribute('data-merek') || '-';
+                    const seri = btnDetail.getAttribute('data-seri') || '-';
+                    const tgl = btnDetail.getAttribute('data-tgl') || '-';
 
+                    // Render Modal Premium
                     document.getElementById('modalBody').innerHTML = `
-                        <div><strong style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase;">Nama Instrumen</strong><div style="font-weight:700; color:var(--text-dark); font-size:1rem; margin-top:4px;">${nama}</div></div>
-                        <div><strong style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase;">Merek/Pabrikan</strong><div style="font-weight:600; color:var(--text-dark); margin-top:4px;">${merek}</div></div>
-                        <div><strong style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase;">Nomor Seri</strong><div style="font-family:'JetBrains Mono', monospace; font-weight:600; color:var(--text-dark); margin-top:4px;">${seri}</div></div>
-                        <div style="grid-column:1/-1;"><strong style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase;">Due Date Kalibrasi</strong><div style="font-size:1.25rem; font-weight:800; color:var(--danger); margin-top:4px;">${tgl}</div></div>
+                        <div style="background:#f8fafc; padding:16px 20px; border-radius:16px; border:1px solid var(--border);">
+                            <div style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase; font-weight:800; letter-spacing:1px;">Nama Instrumen</div>
+                            <div style="font-weight:800; color:var(--text-dark); font-size:1.2rem; margin-top:4px;">${nama}</div>
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem;">
+                            <div style="background:#f8fafc; padding:16px; border-radius:16px; border:1px solid var(--border);">
+                                <div style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase; font-weight:800; letter-spacing:1px;">Pabrikan</div>
+                                <div style="font-weight:700; color:var(--text-dark); font-size:1rem; margin-top:4px;">${merek}</div>
+                            </div>
+                            <div style="background:#f8fafc; padding:16px; border-radius:16px; border:1px solid var(--border);">
+                                <div style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase; font-weight:800; letter-spacing:1px;">Nomor Seri</div>
+                                <div style="font-family:'JetBrains Mono', monospace; font-weight:700; font-size:1rem; color:var(--text-dark); margin-top:4px;">${seri}</div>
+                            </div>
+                        </div>
+                        <div style="background:var(--danger-soft); padding:20px; border-radius:16px; border:1px solid rgba(239, 68, 68, 0.2); text-align:center;">
+                            <div style="color:var(--danger); font-size:0.8rem; text-transform:uppercase; font-weight:800; letter-spacing:1px;">Due Date Kalibrasi Berikutnya</div>
+                            <div style="font-family:'JetBrains Mono', monospace; font-size:2rem; font-weight:800; color:var(--danger); margin-top:8px;">${tgl}</div>
+                        </div>
                     `;
                     modal.classList.add('show');
                 }
 
-                // Tutup Modal (Bisa klik tombol X, Tutup Panel, atau area gelap)
+                // Tutup Modal
                 if (e.target.closest('#modalClose') || e.target.closest('#modalClose2') || e.target
                     .classList.contains('backdrop')) {
                     modal.classList.remove('show');
@@ -1301,7 +1499,7 @@
         setInterval(updateTime, 1000);
         updateTime();
 
-        // ========== 3. PRAYER TIMES FULL MODULE ==========
+        // ========== 3. PRAYER TIMES FULL MODULE (KEMENAG RI) ==========
         const PrayerTimes = {
             countdownInterval: null,
             currentTimings: {},
@@ -1341,7 +1539,6 @@
                 });
             },
             async fetchPrayerTimes() {
-                // Lokasi Default: Jakarta
                 const defaultLat = -6.200000;
                 const defaultLon = 106.816666;
                 if (navigator.geolocation) {
@@ -1358,7 +1555,7 @@
             },
             async getPrayerData(lat, lon, fallbackName = null) {
                 try {
-                    // Menggunakan Method 20 (Kemenag RI) agar jadwal sholat sangat akurat untuk Indonesia
+                    // METHOD 20 = Kementerian Agama RI
                     const res = await fetch(
                         `https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=20`);
                     const json = await res.json();
@@ -1439,8 +1636,8 @@
                 ['Imsak', 'Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'].forEach(k => {
                     const row = document.getElementById('row-' + k);
                     if (row) {
-                        row.classList.remove('next');
-                        if (k === next) row.classList.add('next');
+                        row.classList.remove('active');
+                        if (k === next) row.classList.add('active');
                     }
                 });
             },
