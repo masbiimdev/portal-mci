@@ -9,72 +9,36 @@
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 
     <style>
-        /* ============== CSS VARIABLES (MODERN COLOR PALETTE) ============== */
+        /* ============== CSS VARIABLES ============== */
         :root {
             --bg-main: #f8fafc;
             --panel: #ffffff;
-
             --primary: #2563eb;
             --primary-hover: #1d4ed8;
             --primary-soft: #eff6ff;
             --primary-glow: rgba(37, 99, 235, 0.15);
-
             --accent: #6366f1;
-            --accent-glow: rgba(99, 102, 241, 0.3);
-
             --text-dark: #0f172a;
             --text-muted: #64748b;
-
             --border: #e2e8f0;
             --radius-xl: 24px;
             --radius-lg: 16px;
             --radius-md: 12px;
-            --radius-sm: 8px;
-
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
-            --shadow-float: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-
+            --shadow-sm: 0 2px 5px rgba(15, 23, 42, 0.04);
+            --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06);
+            --shadow-lg: 0 10px 25px rgba(15, 23, 42, 0.08);
             --success: #10b981;
-            --warning: #f59e0b;
             --danger: #ef4444;
-        }
-
-        /* ============== BASE STYLES & SCROLLBAR ============== */
-        * {
-            box-sizing: border-box;
+            --warning: #f59e0b;
         }
 
         body {
             margin: 0;
-            padding: 0;
-            font-family: 'Inter', system-ui, sans-serif;
+            font-family: 'Inter', sans-serif;
             background: var(--bg-main);
             color: var(--text-dark);
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            /* Subtle Background Pattern */
             background-image: radial-gradient(var(--border) 1px, transparent 0);
             background-size: 32px 32px;
-        }
-
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
         }
 
         .container {
@@ -98,10 +62,6 @@
             animation-delay: 0.2s;
         }
 
-        .delay-3 {
-            animation-delay: 0.3s;
-        }
-
         @keyframes fadeInUp {
             to {
                 opacity: 1;
@@ -109,7 +69,7 @@
             }
         }
 
-        /* ============== HERO SECTION & HEADER ============== */
+        /* ============== HERO & KPI ============== */
         .header-grid {
             display: grid;
             grid-template-columns: 1fr 340px;
@@ -122,15 +82,11 @@
             border-radius: var(--radius-xl);
             padding: 2.5rem;
             color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
             position: relative;
             overflow: hidden;
             box-shadow: var(--shadow-lg);
         }
 
-        /* Glowing Orbs in Hero */
         .hero::before {
             content: '';
             position: absolute;
@@ -144,25 +100,13 @@
             z-index: 0;
         }
 
-        .hero::after {
-            content: '';
-            position: absolute;
-            bottom: -20%;
-            right: -10%;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
-            opacity: 0.2;
-            filter: blur(50px);
-            z-index: 0;
-        }
-
         .hero h1 {
             margin: 0;
             font-weight: 800;
             font-size: 2.2rem;
             letter-spacing: -0.03em;
             z-index: 1;
+            position: relative;
         }
 
         .hero p {
@@ -170,51 +114,25 @@
             color: #94a3b8;
             font-size: 1.05rem;
             z-index: 1;
+            position: relative;
             font-weight: 500;
         }
 
         .kpis {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
             gap: 1rem;
+            position: relative;
             z-index: 1;
         }
 
-        /* Glassmorphism KPI Cards */
         .kpi {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             padding: 1.25rem;
             border-radius: var(--radius-lg);
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .kpi::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-        }
-
-        .kpi:nth-child(1)::before {
-            background: #3b82f6;
-        }
-
-        .kpi:nth-child(2)::before {
-            background: #10b981;
-        }
-
-        .kpi:nth-child(3)::before {
-            background: #ef4444;
-        }
-
-        .kpi:nth-child(4)::before {
-            background: #f59e0b;
+            transition: all 0.3s ease;
         }
 
         .kpi:hover {
@@ -234,14 +152,14 @@
         .kpi .value {
             font-size: 1.8rem;
             font-weight: 800;
-            margin-top: 0.25rem;
             color: #ffffff;
             font-family: 'JetBrains Mono', monospace;
+            margin-top: 4px;
         }
 
-        /* ============== WEATHER & TIME CARD (DARK GLASS) ============== */
+        /* ============== WEATHER CARD ============== */
         .weather-time-card {
-            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            background: var(--panel);
             border-radius: var(--radius-xl);
             padding: 2rem;
             text-align: center;
@@ -252,7 +170,6 @@
             justify-content: center;
             align-items: center;
             position: relative;
-            overflow: hidden;
         }
 
         .weather-time-card::before {
@@ -261,23 +178,35 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 4px;
+            height: 6px;
             background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
+        .clock-wrapper {
+            margin: 1rem 0;
         }
 
         .time-display {
             font-family: 'JetBrains Mono', monospace;
             font-weight: 800;
-            font-size: 2.8rem;
+            font-size: 3rem;
+            letter-spacing: -2px;
             color: var(--text-dark);
             line-height: 1;
-            margin: 0.5rem 0;
-            letter-spacing: -2px;
+            margin: 0;
+            text-shadow: 0 4px 10px rgba(15, 23, 42, 0.05);
+        }
+
+        .date-display {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
         }
 
         .weather-widget {
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
+            margin-top: 1rem;
+            padding-top: 1.25rem;
             border-top: 1px dashed var(--border);
             display: flex;
             justify-content: center;
@@ -287,22 +216,28 @@
         }
 
         .weather-widget .icon {
-            font-size: 2.8rem;
+            font-size: 2.2rem;
             line-height: 1;
-            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .weather-widget .info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
         }
 
         .weather-widget .temp {
             font-weight: 800;
-            font-size: 1.8rem;
-            color: var(--text-dark);
+            font-size: 1.4rem;
             line-height: 1.1;
+            color: var(--text-dark);
         }
 
-        .weather-desc {
-            font-size: 0.85rem;
+        .weather-widget .desc {
+            font-size: 0.75rem;
+            font-weight: 700;
             color: var(--text-muted);
-            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -314,7 +249,309 @@
             gap: 1.5rem;
         }
 
-        /* ============== DOCUMENT SPECIAL CARD ============== */
+        .card {
+            background: var(--panel);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .card-header h3 {
+            margin: 0;
+            color: var(--text-dark);
+            font-weight: 800;
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ============== PREMIUM TABS SYSTEM ============== */
+        .modern-tabs-wrapper {
+            padding: 0 1.5rem 1rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .modern-tabs-container {
+            display: inline-flex;
+            background: #f1f5f9;
+            padding: 0.35rem;
+            border-radius: 999px;
+            gap: 0.25rem;
+            overflow-x: auto;
+            white-space: nowrap;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.03);
+            max-width: 100%;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .modern-tabs-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-dark);
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+            transform: scale(1.02);
+        }
+
+        .tab-btn i {
+            font-size: 1.25rem;
+            transition: transform 0.3s ease;
+        }
+
+        .tab-btn.active i {
+            transform: scale(1.15);
+        }
+
+        .tab-badge {
+            background: #e2e8f0;
+            color: var(--text-muted);
+            padding: 2px 10px;
+            border-radius: 99px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active .tab-badge {
+            background: var(--primary-soft);
+            color: var(--primary);
+        }
+
+        .tab-content {
+            padding: 1.5rem;
+        }
+
+        .tab-pane {
+            display: none;
+            animation: fadeInUpTab 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            opacity: 0;
+            transform: translateY(15px);
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        @keyframes fadeInUpTab {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ============== CONTENT STYLING ============== */
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            min-width: 600px;
+        }
+
+        th,
+        td {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        thead th {
+            background: #f8fafc;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+        }
+
+        tbody tr {
+            transition: background 0.2s;
+        }
+
+        tbody tr:hover {
+            background-color: var(--primary-soft);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            padding: 0.35rem 0.85rem;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            border: 1px solid transparent;
+        }
+
+        .badge.ok {
+            background: #dcfce7;
+            color: #059669;
+        }
+
+        .badge.proses {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .badge.due {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .btn-action {
+            padding: 0.5rem 1.25rem;
+            border: none;
+            background: white;
+            border: 1px solid var(--border);
+            color: var(--text-dark);
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+
+        .btn-action:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        /* NCR List */
+        .ncr-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .ncr-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            border-radius: 14px;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .ncr-row:hover {
+            background: white;
+            border-color: var(--primary-glow);
+            box-shadow: var(--shadow-sm);
+            transform: translateX(4px);
+        }
+
+        .ncr-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            max-width: 70%;
+        }
+
+        .ncr-id {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .ncr-issue {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+        }
+
+        .badge.due .status-dot {
+            background: #dc2626;
+            animation: pulse 1.5s infinite;
+        }
+
+        .badge.proses .status-dot {
+            background: #d97706;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(currentColor, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 6px rgba(currentColor, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(currentColor, 0);
+            }
+        }
+
+        /* ============== QUICK ACCESS & DOCS ============== */
         .document-card {
             background: linear-gradient(135deg, var(--primary) 0%, #4338ca 100%);
             color: white;
@@ -337,7 +574,6 @@
 
         .document-card::before {
             content: '\eb32';
-            /* Boxicons Document Pattern */
             font-family: 'boxicons';
             position: absolute;
             right: -10px;
@@ -348,22 +584,21 @@
             pointer-events: none;
         }
 
-        .document-card-content {
-            position: relative;
-            z-index: 2;
-        }
-
         .document-card-content h3 {
-            margin: 0 0 0.5rem 0;
+            margin: 0 0 0.5rem;
             font-size: 1.5rem;
             font-weight: 800;
+            position: relative;
+            z-index: 1;
         }
 
         .document-card-content p {
-            margin: 0 0 1.25rem 0;
+            margin: 0 0 1.25rem;
             opacity: 0.9;
             font-size: 0.95rem;
             max-width: 80%;
+            position: relative;
+            z-index: 1;
         }
 
         .btn-document {
@@ -380,6 +615,8 @@
             cursor: pointer;
             transition: all 0.2s;
             box-shadow: var(--shadow-md);
+            position: relative;
+            z-index: 1;
         }
 
         .btn-document:hover {
@@ -388,56 +625,11 @@
             box-shadow: var(--shadow-lg);
         }
 
-        /* ============== REGULAR CARDS & QUICK ACTIONS ============== */
-        .card {
-            background: var(--panel);
-            border-radius: var(--radius-lg);
-            padding: 1.5rem;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border);
-            margin-bottom: 1.5rem;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.25rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #f1f5f9;
-        }
-
-        .card-header h3 {
-            margin: 0;
-            color: var(--text-dark);
-            font-weight: 800;
-            font-size: 1.15rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .card-header a {
-            color: var(--primary);
-            font-weight: 600;
-            font-size: 0.85rem;
-            text-decoration: none;
-            padding: 0.4rem 0.8rem;
-            border-radius: 99px;
-            background: var(--primary-soft);
-            transition: all 0.2s;
-        }
-
-        .card-header a:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        /* Quick Icons */
         .quick {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 1rem;
+            padding: 0 1.5rem 1.5rem;
         }
 
         .quick .item {
@@ -470,11 +662,11 @@
             color: var(--primary);
         }
 
-        /* ============== ANNOUNCEMENTS ============== */
+        /* ============== SIDEBAR (PRAYER & ANN) ============== */
         .ann-list {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 1rem;
+            padding: 0 1.5rem 1.5rem;
         }
 
         .ann {
@@ -482,211 +674,61 @@
             gap: 1rem;
             padding: 1.25rem;
             border-radius: var(--radius-md);
-            background: var(--panel);
-            border: 1px solid var(--border);
+            background: #f8fafc;
+            border: 1px solid transparent;
             transition: all 0.3s ease;
             cursor: pointer;
         }
 
         .ann:hover {
-            transform: translateY(-4px);
+            background: white;
+            transform: translateY(-3px);
             box-shadow: var(--shadow-md);
-            border-color: #cbd5e1;
+            border-color: var(--border);
         }
 
         .ann .avatar {
-            width: 48px;
-            height: 48px;
-            min-width: 48px;
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
             border-radius: 50%;
             display: grid;
             place-items: center;
             background: var(--primary-soft);
             color: var(--primary);
             font-weight: 800;
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
 
-        .ann.prio-high .avatar {
-            background: #fee2e2;
-            color: #dc2626;
-        }
-
-        .ann.prio-medium .avatar {
-            background: #fef3c7;
-            color: #d97706;
-        }
-
-        .ann .body {
-            flex: 1;
-            min-width: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .ann .title {
-            font-weight: 700;
-            color: var(--text-dark);
-            margin: 0 0 0.25rem 0;
-            font-size: 1.05rem;
-        }
-
-        .ann .excerpt {
-            margin: 0;
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .ann .meta {
-            margin-top: 0.75rem;
-            display: flex;
-            gap: 0.75rem;
-            align-items: center;
-            color: var(--text-muted);
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .badge-prio {
-            padding: 0.25rem 0.6rem;
-            border-radius: 6px;
-            font-weight: 800;
-            font-size: 0.65rem;
-            text-transform: uppercase;
-        }
-
-        .prio-high .badge-prio {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .prio-medium .badge-prio {
-            background: #fef9c3;
-            color: #854d0e;
-        }
-
-        .prio-low .badge-prio {
-            background: #f1f5f9;
-            color: #475569;
-        }
-
-        /* ============== TABLE STYLING ============== */
-        .table-wrap {
-            overflow-x: auto;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border);
-            -webkit-overflow-scrolling: touch;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-            background: white;
-            min-width: 600px;
-        }
-
-        th,
-        td {
-            padding: 1rem 1.25rem;
-            border-bottom: 1px solid var(--border);
-            text-align: left;
-            vertical-align: middle;
-        }
-
-        thead th {
-            background: #f8fafc;
-            color: var(--text-muted);
-            font-weight: 700;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            white-space: nowrap;
-        }
-
-        tbody tr {
-            transition: background 0.2s;
-        }
-
-        tbody tr:hover {
-            background-color: var(--primary-soft);
-        }
-
-        tbody tr:last-child td {
-            border-bottom: none;
-        }
-
-        .badge {
-            padding: 0.35rem 0.75rem;
-            border-radius: 999px;
-            font-weight: 700;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            display: inline-block;
-            white-space: nowrap;
-            border: 1px solid transparent;
-        }
-
-        .badge.ok {
-            background: #dcfce7;
-            color: #065f46;
-            border-color: #a7f3d0;
-        }
-
-        .badge.proses {
-            background: #fef9c3;
-            color: #854d0e;
-            border-color: #fde047;
-        }
-
-        .badge.due {
-            background: #fee2e2;
-            color: #991b1b;
-            border-color: #fca5a5;
-        }
-
-        .btn-action {
-            padding: 0.4rem 1rem;
-            border: none;
-            background: var(--primary-soft);
-            color: var(--primary);
-            border-radius: 99px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.8rem;
-            transition: all 0.2s ease;
-            white-space: nowrap;
-        }
-
-        .btn-action:hover {
-            background: var(--primary);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-sm);
-        }
-
-        /* ============== PRAYER WIDGET ============== */
+        /* ============== PRAYER WIDGET (REDESIGNED) ============== */
         .pray-card {
             position: sticky;
             top: 20px;
         }
 
-        .prayer-info {
+        .prayer-header {
             display: flex;
             justify-content: space-between;
-            font-size: 0.8rem;
-            font-weight: 600;
+            align-items: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .prayer-header .location {
+            font-size: 0.85rem;
+            font-weight: 700;
             color: var(--text-muted);
-            margin-bottom: 1rem;
-            padding: 0.75rem 1rem;
-            background: #f8fafc;
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .prayer-header .hijri {
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--primary);
+            background: var(--primary-soft);
+            padding: 4px 10px;
+            border-radius: 8px;
         }
 
         .next-prayer-block {
@@ -695,52 +737,73 @@
             padding: 1.5rem;
             color: white;
             text-align: center;
-            margin-bottom: 1.25rem;
-            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.4);
             position: relative;
             overflow: hidden;
+        }
+
+        .next-prayer-block::after {
+            content: '';
+            position: absolute;
+            right: -20px;
+            top: -20px;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
         }
 
         .np-label {
             font-size: 0.75rem;
             text-transform: uppercase;
-            font-weight: 700;
-            opacity: 0.9;
-            letter-spacing: 0.05em;
+            font-weight: 800;
+            opacity: 0.8;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
         }
 
         .np-name {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 800;
-            margin: 0.25rem 0;
-            letter-spacing: -0.01em;
+            margin: 0;
+            line-height: 1;
+            position: relative;
+            z-index: 1;
         }
 
         .np-time {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: 800;
-            line-height: 1;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            line-height: 1.2;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
         }
 
         .np-countdown {
             font-size: 0.85rem;
-            font-weight: 600;
+            font-weight: 700;
             background: rgba(0, 0, 0, 0.2);
             display: inline-block;
-            padding: 0.2rem 0.8rem;
+            padding: 0.35rem 1rem;
             border-radius: 99px;
-            margin-top: 0.75rem;
+            backdrop-filter: blur(4px);
+            position: relative;
+            z-index: 1;
         }
 
         .np-progress {
             width: 100%;
             height: 6px;
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 4px;
             overflow: hidden;
             margin-top: 1rem;
+            position: relative;
+            z-index: 1;
         }
 
         .np-bar {
@@ -766,50 +829,52 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.85rem 1rem;
-            border-radius: var(--radius-sm);
-            font-size: 0.9rem;
+            padding: 0.85rem 1.25rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
             font-weight: 600;
             color: var(--text-dark);
             background: #f8fafc;
+            border: 1px solid var(--border);
             transition: all 0.2s;
-            border: 1px solid transparent;
         }
 
         .pray-row:hover {
             background: white;
-            border-color: var(--border);
-            box-shadow: var(--shadow-sm);
             transform: translateX(4px);
+            box-shadow: var(--shadow-sm);
+            border-color: var(--primary-soft);
         }
 
         .pray-row.next {
             background: #ecfdf5;
             color: #065f46;
             border-color: #a7f3d0;
+            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.1);
+        }
+
+        .pray-row.next .pray-name {
             font-weight: 800;
         }
 
         .pray-row.next .pray-time {
             color: #059669;
+            font-weight: 800;
         }
 
         .pray-time {
             font-family: 'JetBrains Mono', monospace;
             color: var(--text-muted);
+            font-weight: 700;
         }
 
-        /* ============== MODAL & TOAST ============== */
+        /* ============== MODAL ============== */
         #detailModal {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
+            inset: 0;
             z-index: 9999;
             display: none;
             opacity: 0;
-            pointer-events: none;
             transition: opacity 0.3s ease;
             justify-content: center;
             align-items: center;
@@ -818,7 +883,6 @@
         #detailModal.show {
             display: flex;
             opacity: 1;
-            pointer-events: auto;
         }
 
         #detailModal .backdrop {
@@ -826,7 +890,7 @@
             inset: 0;
             background: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(8px);
-            z-index: 1;
+            cursor: pointer;
         }
 
         #detailModal .modal-card {
@@ -837,7 +901,7 @@
             max-width: 500px;
             border-radius: var(--radius-xl);
             padding: 2rem;
-            box-shadow: var(--shadow-float);
+            box-shadow: var(--shadow-lg);
             transform: translateY(30px) scale(0.95);
             transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
@@ -846,66 +910,11 @@
             transform: translateY(0) scale(1);
         }
 
-        #modalBody {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin: 1.5rem 0;
-        }
-
-        #modalBody>div {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-
-        #modalBody strong {
-            color: var(--text-muted);
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        #modalBody .muted {
-            color: var(--text-dark);
-            font-size: 0.95rem;
-            font-weight: 600;
-            word-break: break-word;
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            background: var(--text-dark);
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: var(--radius-sm);
-            font-weight: 600;
-            font-size: 0.9rem;
-            z-index: 10000;
-            transform: translateY(100px);
-            opacity: 0;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: var(--shadow-float);
-        }
-
-        .toast.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        /* ============== RESPONSIVE (MOBILE FIXES) ============== */
         @media (max-width: 1024px) {
-            .container {
-                padding: 0 1.2rem;
-                margin: 1.5rem auto;
-            }
 
             .header-grid,
             .layout {
                 grid-template-columns: 1fr;
-                gap: 1.5rem;
             }
 
             .pray-card {
@@ -913,324 +922,283 @@
                 top: 0;
             }
         }
-
-        @media (max-width: 768px) {
-            .hero {
-                padding: 2rem 1.5rem;
-                text-align: center;
-            }
-
-            .hero::before,
-            .hero::after {
-                display: none;
-            }
-
-            .kpis {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1rem;
-            }
-
-            .document-card {
-                flex-direction: column;
-                text-align: center;
-                padding: 2rem 1.5rem;
-            }
-
-            .document-card::before {
-                font-size: 8rem;
-                bottom: -20px;
-                right: 50%;
-                transform: translateX(50%) rotate(0deg);
-                opacity: 0.05;
-            }
-
-            .document-card-content p {
-                max-width: 100%;
-                margin-bottom: 1.5rem;
-            }
-
-            .quick {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1rem;
-            }
-
-            .ann {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: flex-start;
-            }
-
-            .ann .avatar {
-                width: 40px;
-                height: 40px;
-                min-width: 40px;
-                font-size: 1rem;
-            }
-
-            #modalBody {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-
-            .card {
-                padding: 1.25rem;
-            }
-
-            th,
-            td {
-                padding: 1rem;
-            }
-        }
     </style>
 @endpush
 
 @section('content')
+    @php
+        // 1. Ambil Data NCR
+        $portalNcrs =
+            \App\Ncr::whereIn('status', ['Open', 'Monitoring'])
+                ->orderBy('issue_date', 'desc')
+                ->take(5)
+                ->get() ?? collect([]);
+        // 2. Ambil Data Tools/Kalibrasi (Asumsi $tools dikirim dari controller)
+        $toolsData = optional($tools)->take(5) ?? [];
+
+        // Hitung Count untuk Badge Tab
+        $countKalibrasi = count($toolsData);
+        $countNcr = $portalNcrs->count();
+    @endphp
+
     <div class="container">
 
         <div class="header-grid fade-in-up">
             <div class="hero">
-                <h1>Halo, {{ Auth::user()->name ?? 'Tim' }} 👋</h1>
-                <p>Ringkasan sistem operasional, inventaris, dan jadwal MCI hari ini.</p>
-
-                <div class="kpis" aria-label="Key Performance Indicators">
-                    <div class="kpi" title="Total jumlah alat dalam sistem">
+                <h1>Halo, {{ Auth::user()->name ?? 'Tim MCI' }} 👋</h1>
+                <p>Ringkasan sistem operasional, inventaris, dan jadwal hari ini.</p>
+                <div class="kpis">
+                    <div class="kpi">
                         <div class="label">Total Item</div>
                         <div class="value">{{ number_format($totalTools ?? 0) }}</div>
                     </div>
-                    <div class="kpi" title="Alat dengan status kalibrasi OK">
+                    <div class="kpi">
                         <div class="label">Status OK</div>
-                        <div class="value" style="color: #6ee7b7;">{{ number_format($statusOk ?? 0) }}</div>
+                        <div class="value text-success">{{ number_format($statusOk ?? 0) }}</div>
                     </div>
-                    <div class="kpi" title="Alat dengan jadwal kalibrasi < 15 hari">
+                    <div class="kpi">
                         <div class="label">Due Soon</div>
-                        <div class="value" style="color: #fca5a5;">{{ number_format($dueSoon ?? 0) }}</div>
-                    </div>
-                    <div class="kpi" title="Jumlah item dengan stok rendah">
-                        <div class="label">Low Stock</div>
-                        <div class="value" style="color: #fcd34d;">{{ number_format($lowStockCount ?? 0) }}</div>
+                        <div class="value text-danger">{{ number_format($dueSoon ?? 0) }}</div>
                     </div>
                 </div>
             </div>
 
-            <div class="weather-time-card">
-                <div class="muted"
-                    style="font-size:0.85rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; color: var(--primary);">
-                    Waktu Lokal
+            <div class="weather-time-card fade-in-up delay-1">
+                <div class="text-primary fw-bold small text-uppercase tracking-wider"><i class='bx bx-time-five'></i> Waktu
+                    Lokal</div>
+                <div class="clock-wrapper">
+                    <div id="localTime" class="time-display">--:--:--</div>
+                    <div id="localDate" class="date-display">Mendeteksi...</div>
                 </div>
-                <div id="localTime" class="time-display">--:--:--</div>
-                <div id="localDate" class="muted" style="font-weight:500; font-size:0.95rem;">Mendeteksi tanggal...</div>
-
                 <div class="weather-widget">
                     <div id="weatherIcon" class="icon">⛅</div>
-                    <div class="weather-info">
+                    <div class="info">
                         <div id="temp" class="temp">--°C</div>
-                        <div id="weatherDesc" class="weather-desc">Memuat cuaca...</div>
+                        <div id="weatherDesc" class="desc">Memuat cuaca...</div>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="document-card shadow-lg">
+            <div class="document-card-content">
+                <h3>Pusat Dokumen & Laporan</h3>
+                <p>Akses terpusat ke seluruh dokumen inventaris, form standar operasional (SOP), dan sertifikat
+                    kalibrasi MCI.</p>
+                <a href="/portal/document" class="btn-document">
+                    Buka Ruang Dokumen <i class='bx bx-right-arrow-alt fs-5'></i>
+                </a>
+            </div>
+        </div>
 
-        <div class="layout fade-in-up delay-1" aria-live="polite">
-
-            <div>
-                <div class="document-card shadow-lg">
-                    <div class="document-card-content">
-                        <h3>Pusat Dokumen & Laporan</h3>
-                        <p>Akses terpusat ke seluruh dokumen inventaris, form standar operasional (SOP), dan sertifikat
-                            kalibrasi MCI.</p>
-                        <button onclick="location.href='/portal/document'" class="btn-document">
-                            Buka Ruang Dokumen <i class='bx bx-right-arrow-alt fs-5'></i>
-                        </button>
-                    </div>
+        <div class="card border-0">
+            <div class="card-header">
+                <h3><i class='bx bx-grid-alt text-primary fs-4'></i> Akses Cepat</h3>
+            </div>
+            <div class="quick">
+                <div class="item" onclick="location.href='/schedule'"><i class='bx bx-calendar icon'></i>
+                    <span>Jadwal</span>
                 </div>
-
-                <div class="card border-0">
-                    <div class="card-header">
-                        <h3><i class='bx bx-grid-alt text-primary fs-4'></i> Akses Cepat</h3>
-                    </div>
-                    <div class="quick">
-                        <div class="item" onclick="location.href='/schedule'" role="button" tabindex="0">
-                            <i class='bx bx-calendar icon'></i> <span>Jadwal</span>
-                        </div>
-                        <div class="item" onclick="location.href='/kalibrasi'" role="button" tabindex="0">
-                            <i class='bx bx-wrench icon'></i> <span>Kalibrasi</span>
-                        </div>
-                        <div class="item" onclick="location.href='/portal/inventory'" role="button" tabindex="0">
-                            <i class='bx bx-package icon'></i> <span>Inventory</span>
-                        </div>
-                        <div class="item" onclick="location.href='/export'" role="button" tabindex="0">
-                            <i class='bx bx-export icon'></i> <span>Export Data</span>
-                        </div>
-                    </div>
+                <div class="item" onclick="location.href='/kalibrasi'"><i class='bx bx-wrench icon'></i>
+                    <span>Kalibrasi</span>
                 </div>
-
-                <div class="card border-0">
-                    <div class="card-header">
-                        <h3><i class='bx bx-bell text-warning fs-4'></i> Pengumuman Internal</h3>
-                        <a href="{{ route('announcements.index') ?? '#' }}">Lihat Semua</a>
-                    </div>
-                    <div class="ann-list">
-                        @forelse($announcements ?? [] as $a)
-                            @php
-                                $prio = strtolower($a->priority ?? 'low');
-                                $prioClass =
-                                    $prio === 'high' ? 'prio-high' : ($prio === 'medium' ? 'prio-medium' : 'prio-low');
-                                $author = optional($a->author)->name ?? 'Admin';
-                                $excerpt = \Illuminate\Support\Str::limit(strip_tags($a->content), 80);
-                            @endphp
-                            <article class="ann {{ $prioClass }}"
-                                onclick="window.location='{{ url('pengumuman/show/' . \Illuminate\Support\Str::slug($a->title)) }}'">
-                                <div class="avatar">{{ strtoupper(substr($author, 0, 1)) }}</div>
-                                <div class="body">
-                                    <h4 class="title">{{ $a->title }}</h4>
-                                    <div class="excerpt">{{ $excerpt }}</div>
-                                    <div class="meta">
-                                        <span class="badge-prio">{{ strtoupper($prio) }}</span>
-                                        <span><i class='bx bx-time-five'></i> {{ $a->created_at->diffForHumans() }}</span>
-                                    </div>
-                                </div>
-                            </article>
-                        @empty
-                            <div
-                                style="text-align:center; padding:3rem 1rem; color:var(--text-muted); width:100%; border: 2px dashed var(--border); border-radius: var(--radius-md); background: #f8fafc;">
-                                <i class='bx bx-envelope' style="font-size: 3rem; color: #cbd5e1; margin-bottom: 10px;"></i>
-                                <span style="display:block; font-weight: 600; color: #475569; font-size: 1.1rem;">Belum ada
-                                    pengumuman</span>
-                                <span style="font-size: 0.9rem;">Informasi terbaru akan muncul di sini.</span>
-                            </div>
-                        @endforelse
-                    </div>
-                </div>
-
-                <div class="card border-0">
-                    <div class="card-header">
-                        <div>
-                            <h3><i class='bx bx-target-lock text-danger fs-4'></i> Kalibrasi Mendatang</h3>
-                            <div style="font-size:0.85rem; color:var(--text-muted); margin-top:4px;">Daftar instrumen yang
-                                mendekati jadwal kalibrasi ulang.</div>
-                        </div>
-                    </div>
-
-                    <div class="table-wrap">
-                        <table role="table">
-                            <thead>
-                                <tr>
-                                    <th>Info Alat</th>
-                                    <th>Status</th>
-                                    <th>Tgl Kalibrasi</th>
-                                    <th>Due Date</th>
-                                    <th style="text-align:right">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="toolsTbody">
-                                @forelse(optional($tools)->take(6) ?? [] as $i => $t)
-                                    @php
-                                        $h = $t->latestHistory;
-                                        $s = strtolower(optional($h)->status_kalibrasi ?? '-');
-                                        $badge = $s === 'ok' ? 'ok' : ($s === 'proses' ? 'proses' : 'due');
-
-                                        $toolJson = [
-                                            'id' => $t->id,
-                                            'nama' => $t->nama_alat,
-                                            'merek' => $t->merek,
-                                            'no_seri' => $t->no_seri,
-                                            'history' => $h
-                                                ? [
-                                                    'status' => $h->status_kalibrasi,
-                                                    'tgl_kalibrasi_ulang' => $h->tgl_kalibrasi_ulang
-                                                        ? $h->tgl_kalibrasi_ulang->format('d/m/Y')
-                                                        : null,
-                                                    'keterangan' => $h->keterangan,
-                                                ]
-                                                : null,
-                                        ];
-                                    @endphp
-                                    <tr data-tool="{{ htmlspecialchars(json_encode($toolJson), ENT_QUOTES, 'UTF-8') }}">
-                                        <td>
-                                            <div style="font-weight:700; color:var(--text-dark); font-size:0.95rem;">
-                                                {{ e($t->nama_alat) }}</div>
-                                            <div
-                                                style="font-size:0.75rem; color:var(--text-muted); margin-top:2px; display:flex; align-items:center; gap: 4px;">
-                                                <i class='bx bx-barcode'></i> SN: {{ e($t->no_seri ?? '-') }}
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span
-                                                class="badge {{ $badge }}">{{ optional($h)->status_kalibrasi ?? '-' }}</span>
-                                        </td>
-                                        <td
-                                            style="font-family:'JetBrains Mono', monospace; font-size:0.85rem; color: var(--text-muted);">
-                                            {{ optional($h)->tgl_kalibrasi ? $h->tgl_kalibrasi->format('d/m/Y') : '-' }}
-                                        </td>
-                                        <td
-                                            style="font-family:'JetBrains Mono', monospace; font-size:0.85rem; font-weight:700; color: var(--danger);">
-                                            {{ optional($h)->tgl_kalibrasi_ulang ? $h->tgl_kalibrasi_ulang->format('d/m/Y') : '-' }}
-                                        </td>
-                                        <td style="text-align:right">
-                                            <button class="btn-action" data-action="detail"><i
-                                                    class='bx bx-search-alt-2'></i> Detail</button>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="5"
-                                            style="text-align:center; padding: 3rem; color: var(--text-muted);">
-                                            <i class='bx bx-check-shield'
-                                                style="font-size: 2.5rem; color: var(--success); margin-bottom: 10px;"></i><br>
-                                            <span style="font-weight: 600;">Semua Aman!</span><br>
-                                            Tidak ada data jadwal kalibrasi mendesak saat ini.
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="item" onclick="location.href='/portal/inventory'"><i class='bx bx-package icon'></i>
+                    <span>Inventory</span></div>
+                <div class="item" onclick="location.href='/export'"><i class='bx bx-export icon'></i>
+                    <span>Export Data</span>
                 </div>
             </div>
+        </div>
 
-            <aside class="sidebar fade-in-up delay-2">
-                <div class="card pray-card border-0 shadow-lg">
-                    <div class="card-header"
-                        style="margin-bottom:1rem; padding-bottom:1rem; border-bottom:1px solid var(--border);">
-                        <h3 style="display:flex; align-items:center; gap:8px;"><i class='bx bx-moon text-accent fs-4'></i>
-                            Jadwal Sholat</h3>
-                        <button id="prayerRefreshBtn" class="action"
-                            style="padding:0.3rem; background:#f8fafc; border:1px solid var(--border); border-radius: 8px; font-size:1.2rem; display:flex; align-items:center; justify-content:center;"
-                            title="Refresh Lokasi" aria-label="Refresh">
-                            <i class='bx bx-refresh'></i>
-                        </button>
+        <div class="card border-0">
+            <div class="card-header">
+                <h3><i class='bx bx-bell text-warning fs-4'></i> Pengumuman Internal</h3>
+                <a href="{{ route('announcements.index') ?? '#' }}" class="btn-action"
+                    style="padding: 0.3rem 0.8rem; background: var(--primary-soft);">Lihat Semua</a>
+            </div>
+            <div class="ann-list">
+                @forelse($announcements ?? [] as $a)
+                    @php
+                        $prio = strtolower($a->priority ?? 'low');
+                        $prioClass = $prio === 'high' ? 'prio-high' : ($prio === 'medium' ? 'prio-medium' : 'prio-low');
+                        $author = optional($a->author)->name ?? 'Admin';
+                    @endphp
+                    <article class="ann {{ $prioClass }}"
+                        onclick="window.location='{{ url('pengumuman/show/' . \Illuminate\Support\Str::slug($a->title)) }}'">
+                        <div class="avatar">{{ strtoupper(substr($author, 0, 1)) }}</div>
+                        <div class="body">
+                            <h4 class="title">{{ $a->title }}</h4>
+                            <div class="excerpt">{{ \Illuminate\Support\Str::limit(strip_tags($a->content), 80) }}
+                            </div>
+                        </div>
+                    </article>
+                @empty
+                    <div class="text-center py-4 text-muted border rounded" style="background:#f8fafc;">Belum ada
+                        pengumuman</div>
+                @endforelse
+            </div>
+        </div>
+
+        <div class="layout fade-in-up delay-2">
+            <div class="main-content">
+
+                <div class="card border-0">
+                    <div class="card-header pb-3" style="border-bottom: none;">
+                        <h3><i class='bx bx-layer text-primary fs-4'></i> Pantauan Operasional</h3>
                     </div>
 
-                    <div class="prayer-info">
-                        <span id="prayerLocation"><i class='bx bx-map pin'></i> Mendeteksi...</span>
-                        <span id="prayerHijri" style="text-align:right; font-weight: 700; color: var(--primary);">—</span>
-                    </div>
-
-                    <div class="next-prayer-block">
-                        <div class="np-label">Mendekati Waktu</div>
-                        <div class="np-name" id="prayerNextLabel">—</div>
-                        <div class="np-time" id="nextPrayerTime">--:--</div>
-                        <div class="np-countdown" id="nextPrayerCountdown">Menghitung mundur...</div>
-                        <div class="np-progress">
-                            <div class="np-bar" id="countdownBar"></div>
+                    <div class="modern-tabs-wrapper">
+                        <div class="modern-tabs-container">
+                            <button class="tab-btn active" data-target="tab-kalibrasi">
+                                <i class='bx bx-target-lock'></i> Kalibrasi Mendatang
+                                @if ($countKalibrasi > 0)
+                                    <span class="tab-badge">{{ $countKalibrasi }}</span>
+                                @endif
+                            </button>
+                            <button class="tab-btn" data-target="tab-ncr">
+                                <i class='bx bx-error-circle'></i> Log NCR Aktif
+                                @if ($countNcr > 0)
+                                    <span class="tab-badge">{{ $countNcr }}</span>
+                                @endif
+                            </button>
                         </div>
                     </div>
 
-                    <div class="prayer-list">
-                        <div class="pray-row" id="row-Imsak"><span class="pray-name">Imsak</span><span class="pray-time"
-                                id="pray-Imsak">--:--</span></div>
-                        <div class="pray-row" id="row-Fajr"><span class="pray-name">Subuh</span><span class="pray-time"
-                                id="pray-Fajr">--:--</span></div>
-                        <div class="pray-row" id="row-Sunrise"><span class="pray-name">Terbit</span><span
-                                class="pray-time" id="pray-Sunrise">--:--</span></div>
-                        <div class="pray-row" id="row-Dhuhr"><span class="pray-name">Dzuhur</span><span
-                                class="pray-time" id="pray-Dhuhr">--:--</span></div>
-                        <div class="pray-row" id="row-Asr"><span class="pray-name">Ashar</span><span class="pray-time"
-                                id="pray-Asr">--:--</span></div>
-                        <div class="pray-row" id="row-Maghrib"><span class="pray-name">Maghrib</span><span
-                                class="pray-time" id="pray-Maghrib">--:--</span></div>
-                        <div class="pray-row" id="row-Isha"><span class="pray-name">Isya</span><span class="pray-time"
-                                id="pray-Isha">--:--</span></div>
+                    <div class="tab-content">
+
+                        <div id="tab-kalibrasi" class="tab-pane active">
+                            <div class="table-wrap">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Info Alat</th>
+                                            <th>Status</th>
+                                            <th>Due Date</th>
+                                            <th style="text-align:right">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="toolsTbody">
+                                        @forelse($toolsData as $t)
+                                            @php
+                                                $h = $t->latestHistory;
+                                                $s = strtolower(optional($h)->status_kalibrasi ?? '-');
+                                                $badge = $s === 'ok' ? 'ok' : ($s === 'proses' ? 'proses' : 'due');
+                                            @endphp
+                                            <tr data-nama="{{ $t->nama_alat }}" data-merek="{{ $t->merek ?? '-' }}"
+                                                data-seri="{{ $t->no_seri ?? '-' }}"
+                                                data-tgl="{{ optional($h)->tgl_kalibrasi_ulang ? $h->tgl_kalibrasi_ulang->format('d/m/Y') : '-' }}">
+                                                <td>
+                                                    <div
+                                                        style="font-weight:700; color:var(--text-dark); font-size:0.95rem;">
+                                                        {{ e($t->nama_alat) }}</div>
+                                                    <div
+                                                        style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">
+                                                        <i class='bx bx-barcode'></i> SN: {{ e($t->no_seri ?? '-') }}
+                                                    </div>
+                                                </td>
+                                                <td><span
+                                                        class="badge {{ $badge }}">{{ optional($h)->status_kalibrasi ?? '-' }}</span>
+                                                </td>
+                                                <td
+                                                    style="font-family:'JetBrains Mono', monospace; font-size:0.85rem; font-weight:700; color: var(--danger);">
+                                                    {{ optional($h)->tgl_kalibrasi_ulang ? $h->tgl_kalibrasi_ulang->format('d/m/Y') : '-' }}
+                                                </td>
+                                                <td style="text-align:right"><button class="btn-action"
+                                                        data-action="detail"><i class='bx bx-search-alt-2'></i>
+                                                        Detail</button></td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="4"
+                                                    style="text-align:center; padding: 4rem 1rem; color: var(--text-muted);">
+                                                    <i class='bx bx-check-shield'
+                                                        style="font-size: 3rem; color: var(--success); margin-bottom: 10px;"></i><br><span
+                                                        style="font-weight: 700; color: var(--text-dark); font-size: 1.1rem;">Semua
+                                                        Aman!</span><br>Tidak ada jadwal mendesak.
+                                                </td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div id="tab-ncr" class="tab-pane">
+                            <div class="ncr-list">
+                                @forelse($portalNcrs as $ncr)
+                                    @php $statusClass = $ncr->status == 'Open' ? 'badge-danger' : 'badge-warning'; @endphp
+                                    <a href="{{ route('ncr.home') ?? '#' }}" class="ncr-row">
+                                        <div class="ncr-info">
+                                            <span class="ncr-id">{{ $ncr->no_ncr }}</span>
+                                            <span class="ncr-issue">{{ $ncr->issue }}</span>
+                                        </div>
+                                        <div><span class="badge {{ $statusClass }}"><span class="status-dot"></span>
+                                                {{ $ncr->status }}</span></div>
+                                    </a>
+                                @empty
+                                    <div
+                                        style="text-align:center; padding:4rem 1rem; color:var(--text-muted); border: 1px dashed var(--border); border-radius: var(--radius-lg); background: #f8fafc;">
+                                        <i class='bx bx-check-shield'
+                                            style="font-size: 3rem; color: var(--success); margin-bottom: 10px;"></i><br><span
+                                            style="display:block; font-weight: 700; font-size: 1.1rem; color: var(--text-dark);">Tidak
+                                            Ada Masalah Aktif</span><span style="font-size: 0.9rem;">Semua proses
+                                            operasional berjalan dengan standar mutu.</span>
+                                    </div>
+                                @endforelse
+                            </div>
+                            @if ($countNcr > 0)
+                                <div style="margin-top: 1.5rem; text-align: center;">
+                                    <a href="{{ route('ncr.home') ?? '#' }}" class="btn-action"
+                                        style="padding: 0.7rem 1.5rem; border-radius: 99px;">Buka Penuh Log NCR <i
+                                            class='bx bx-right-arrow-alt fs-5'></i></a>
+                                </div>
+                            @endif
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <aside class="sidebar fade-in-up delay-3">
+                <div class="card border-0 shadow-sm pray-card">
+                    <div class="card-header pb-0 border-0 d-flex justify-content-between align-items-center">
+                        <h3 class="mb-0 fs-5"><i class='bx bx-moon text-indigo-500'></i> Jadwal Sholat</h3>
+                        <button id="prayerRefreshBtn" class="btn-action p-2" title="Refresh Lokasi"
+                            style="border-radius: 8px;"><i class='bx bx-refresh fs-5'></i></button>
+                    </div>
+                    <div class="p-4 pt-2">
+                        <div class="prayer-header">
+                            <div class="location" id="prayerLocation"><i class='bx bx-map text-primary'></i>
+                                Mendeteksi...</div>
+                            <div class="hijri" id="prayerHijri">—</div>
+                        </div>
+
+                        <div class="next-prayer-block">
+                            <div class="np-label">Waktu Berikutnya</div>
+                            <div class="np-name" id="prayerNextLabel">—</div>
+                            <div class="np-time" id="nextPrayerTime">--:--</div>
+                            <div class="np-countdown" id="nextPrayerCountdown">Menghitung mundur...</div>
+                            <div class="np-progress">
+                                <div class="np-bar" id="countdownBar"></div>
+                            </div>
+                        </div>
+
+                        <div class="prayer-list">
+                            <div class="pray-row" id="row-Imsak"><span class="pray-name">Imsak</span><span
+                                    class="pray-time" id="pray-Imsak">--:--</span></div>
+                            <div class="pray-row" id="row-Fajr"><span class="pray-name">Subuh</span><span
+                                    class="pray-time" id="pray-Fajr">--:--</span></div>
+                            <div class="pray-row" id="row-Sunrise"><span class="pray-name">Terbit</span><span
+                                    class="pray-time" id="pray-Sunrise">--:--</span></div>
+                            <div class="pray-row" id="row-Dhuhr"><span class="pray-name">Dzuhur</span><span
+                                    class="pray-time" id="pray-Dhuhr">--:--</span></div>
+                            <div class="pray-row" id="row-Asr"><span class="pray-name">Ashar</span><span
+                                    class="pray-time" id="pray-Asr">--:--</span></div>
+                            <div class="pray-row" id="row-Maghrib"><span class="pray-name">Maghrib</span><span
+                                    class="pray-time" id="pray-Maghrib">--:--</span></div>
+                            <div class="pray-row" id="row-Isha"><span class="pray-name">Isya</span><span
+                                    class="pray-time" id="pray-Isha">--:--</span></div>
+                        </div>
                     </div>
                 </div>
             </aside>
@@ -1238,36 +1206,102 @@
         </div>
     </div>
 
-    <div id="detailModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-        <div class="backdrop" role="button" tabindex="-1"></div>
+    <div id="detailModal" role="dialog" aria-modal="true">
+        <div class="backdrop" role="button"></div>
         <div class="modal-card">
             <header
-                style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #f1f5f9; padding-bottom:1rem; margin-bottom:1rem;">
-                <h3 id="modalTitle"
-                    style="margin:0; font-weight:800; font-size:1.25rem; color:var(--text-dark); display:flex; align-items:center; gap: 8px;">
-                    <i class='bx bx-info-circle text-primary'></i> Detail Instrumen
-                </h3>
-                <button id="modalClose"
-                    style="background:#f1f5f9; border:none; width:36px; height:36px; border-radius:50%; cursor:pointer; color:var(--text-muted); font-size:1.2rem; display:grid; place-items:center; transition: background 0.2s;">
-                    <i class='bx bx-x'></i>
-                </button>
+                style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #f1f5f9; padding-bottom:1rem;">
+                <h3 style="margin:0; font-weight:800; font-size:1.25rem;"><i class='bx bx-info-circle text-primary'></i>
+                    Detail Instrumen</h3>
+                <button id="modalClose" class="btn-action" style="padding:0.4rem; border-radius:50%;"><i
+                        class='bx bx-x fs-5'></i></button>
             </header>
-            <div id="modalBody"></div>
-            <div style="margin-top:1.5rem; text-align:right; border-top:1px solid #f1f5f9; padding-top:1.5rem;">
-                <button id="modalClose2" class="btn-action px-4 py-2" style="font-size: 0.95rem;">Tutup Panel</button>
+
+            <div id="modalBody" style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin:1.5rem 0;">
+            </div>
+
+            <div style="text-align:right; border-top:1px solid #f1f5f9; padding-top:1.5rem;">
+                <button id="modalClose2" class="btn-action">Tutup Panel</button>
             </div>
         </div>
     </div>
-
-    <div id="mciToast" class="toast" role="status" aria-live="polite"></div>
-
 @endsection
 
 @push('js')
     <script>
-        'use strict';
+        // ========== 1. TAB INTERACTION LOGIC ==========
+        document.addEventListener('DOMContentLoaded', () => {
 
-        // ========== PRAYER TIMES MODULE ==========
+            // Logika Tabs
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabPanes = document.querySelectorAll('.tab-pane');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    tabPanes.forEach(p => p.classList.remove('active'));
+
+                    btn.classList.add('active');
+                    const targetPane = document.getElementById(btn.dataset.target);
+                    if (targetPane) targetPane.classList.add('active');
+                });
+            });
+
+            // Logika Modal Detail Kalibrasi
+            const modal = document.getElementById('detailModal');
+
+            // Menggunakan event delegation pada body agar aman
+            document.body.addEventListener('click', function(e) {
+                // Buka Modal
+                const btnDetail = e.target.closest('[data-action="detail"]');
+                if (btnDetail) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const tr = btnDetail.closest('tr');
+
+                    // Ambil Data Lewat Dataset HTML murni (anti error JSON)
+                    const nama = tr.getAttribute('data-nama') || '-';
+                    const merek = tr.getAttribute('data-merek') || '-';
+                    const seri = tr.getAttribute('data-seri') || '-';
+                    const tgl = tr.getAttribute('data-tgl') || '-';
+
+                    document.getElementById('modalBody').innerHTML = `
+                        <div><strong style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase;">Nama Instrumen</strong><div style="font-weight:700; color:var(--text-dark); font-size:1rem; margin-top:4px;">${nama}</div></div>
+                        <div><strong style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase;">Merek/Pabrikan</strong><div style="font-weight:600; color:var(--text-dark); margin-top:4px;">${merek}</div></div>
+                        <div><strong style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase;">Nomor Seri</strong><div style="font-family:'JetBrains Mono', monospace; font-weight:600; color:var(--text-dark); margin-top:4px;">${seri}</div></div>
+                        <div style="grid-column:1/-1;"><strong style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase;">Due Date Kalibrasi</strong><div style="font-size:1.25rem; font-weight:800; color:var(--danger); margin-top:4px;">${tgl}</div></div>
+                    `;
+                    modal.classList.add('show');
+                }
+
+                // Tutup Modal (Bisa klik tombol X, Tutup Panel, atau area gelap)
+                if (e.target.closest('#modalClose') || e.target.closest('#modalClose2') || e.target
+                    .classList.contains('backdrop')) {
+                    modal.classList.remove('show');
+                }
+            });
+        });
+
+        // ========== 2. LOCAL TIME LOGIC ==========
+        function updateTime() {
+            const now = new Date();
+            const timeEl = document.getElementById('localTime');
+            const dateEl = document.getElementById('localDate');
+
+            if (timeEl) timeEl.textContent = now.toLocaleTimeString('id-ID', {
+                hour12: false
+            });
+            if (dateEl) dateEl.textContent = now.toLocaleDateString('id-ID', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        // ========== 3. PRAYER TIMES FULL MODULE ==========
         const PrayerTimes = {
             countdownInterval: null,
             currentTimings: {},
@@ -1292,7 +1326,6 @@
             },
             bindEvents() {
                 this.dom.refreshBtn?.addEventListener('click', () => {
-                    // Tambahkan animasi putar pada ikon refresh
                     const icon = this.dom.refreshBtn.querySelector('i');
                     if (icon) {
                         icon.style.transform = 'rotate(360deg)';
@@ -1304,24 +1337,17 @@
                             icon.style.transition = 'none';
                         }
                     }, 500);
-
                     this.fetchPrayerTimes();
-                    if (window.AppDashboard?.showToast) AppDashboard.showToast(
-                        'Memperbarui lokasi & jadwal sholat...');
                 });
             },
             async fetchPrayerTimes() {
-                // Default location (Jakarta, Indonesia)
+                // Lokasi Default: Jakarta
                 const defaultLat = -6.200000;
                 const defaultLon = 106.816666;
-
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(
                         (pos) => this.getPrayerData(pos.coords.latitude, pos.coords.longitude),
-                        (err) => {
-                            console.warn('Geolocation ditolak/gagal. Memuat data Jakarta.', err);
-                            this.getPrayerData(defaultLat, defaultLon, "Jakarta (Default)");
-                        }, {
+                        (err) => this.getPrayerData(defaultLat, defaultLon, "Jakarta (Default)"), {
                             timeout: 8000,
                             maximumAge: 60000
                         }
@@ -1332,8 +1358,9 @@
             },
             async getPrayerData(lat, lon, fallbackName = null) {
                 try {
+                    // Menggunakan Method 20 (Kemenag RI) agar jadwal sholat sangat akurat untuk Indonesia
                     const res = await fetch(
-                        `https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=2`);
+                        `https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=20`);
                     const json = await res.json();
                     if (!json?.data?.timings) return;
 
@@ -1345,7 +1372,7 @@
                         try {
                             const r = await fetch(
                                 `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`
-                                );
+                            );
                             if (r.ok) {
                                 const loc = await r.json();
                                 if (loc?.address) {
@@ -1353,25 +1380,23 @@
                                     if (loc.address.city) parts.push(loc.address.city);
                                     else if (loc.address.town) parts.push(loc.address.town);
                                     else if (loc.address.county) parts.push(loc.address.county);
-
                                     if (loc.address.state) parts.push(loc.address.state);
                                     if (parts.length) locationLabel = parts.join(', ');
                                 }
                             }
                         } catch (e) {
-                            console.warn("Reverse geocode failed", e);
+                            console.warn("Reverse geocode failed");
                         }
                     }
-
                     this.displayPrayerTimes(timings, locationLabel, hijriInfo);
                 } catch (err) {
-                    console.error('Prayer fetch error:', err);
                     if (this.dom.location) this.dom.location.textContent = "Gagal memuat API Jadwal";
                 }
             },
             displayPrayerTimes(timings, locationLabel, hijriInfo) {
                 this.currentTimings = timings;
-                if (this.dom.location) this.dom.location.innerHTML = `<i class='bx bx-map pin'></i> ${locationLabel}`;
+                if (this.dom.location) this.dom.location.innerHTML =
+                    `<i class='bx bx-map text-primary'></i> ${locationLabel}`;
                 if (hijriInfo && this.dom.hijri) this.dom.hijri.textContent =
                     `${hijriInfo.day} ${hijriInfo.month.en} ${hijriInfo.year}`;
 
@@ -1392,7 +1417,7 @@
                     const t = this.parseTimeToDate(this.currentTimings[name]);
                     if (t && t > now) return name;
                 }
-                return 'Imsak'; // Besok
+                return 'Imsak';
             },
             updateNextPrayerUI() {
                 const next = this.currentNextPrayer;
@@ -1446,7 +1471,7 @@
                     s = totalSeconds % 60;
 
                 let text = (h > 0 ? `${h}j ` : '') + (m > 0 ? `${m}m ` : '') + `${s}s`;
-                this.dom.countdown.textContent = `Tersisa waktu ${text}`;
+                this.dom.countdown.textContent = `Tersisa ${text}`;
 
                 if (this.dom.progressBar && prevTime) {
                     let percent = Math.max(0, Math.min(((now - prevTime) / (target - prevTime)) * 100, 100));
@@ -1457,143 +1482,10 @@
             }
         };
 
-        // ========== APP DASHBOARD MODULE ==========
-        const AppDashboard = {
-            dom: {},
-            init() {
-                this.cacheDom();
-                this.bindEvents();
-                this.updateTime();
-                setInterval(() => this.updateTime(), 1000);
-                this.initWeather();
-                PrayerTimes.init();
-            },
-            cacheDom() {
-                this.dom = {
-                    localTime: document.getElementById('localTime'),
-                    localDate: document.getElementById('localDate'),
-                    weatherIcon: document.getElementById('weatherIcon'),
-                    temp: document.getElementById('temp'),
-                    weatherDesc: document.getElementById('weatherDesc'),
-                    toolsTbody: document.getElementById('toolsTbody'),
-                    detailModal: document.getElementById('detailModal'),
-                    detailModalBody: document.getElementById('modalBody'),
-                    modalClose: document.getElementById('modalClose'),
-                    modalClose2: document.getElementById('modalClose2'),
-                    mciToast: document.getElementById('mciToast')
-                };
-            },
-            bindEvents() {
-                this.dom.modalClose?.addEventListener('click', () => this.closeModal());
-                this.dom.modalClose2?.addEventListener('click', () => this.closeModal());
-                this.dom.detailModal?.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('backdrop')) this.closeModal();
-                });
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape') this.closeModal();
-                });
-
-                this.dom.toolsTbody?.addEventListener('click', (e) => {
-                    const btn = e.target.closest('[data-action="detail"]');
-                    if (!btn) return;
-                    const dataStr = btn.closest('tr').getAttribute('data-tool');
-                    if (dataStr) this.openModal(JSON.parse(dataStr));
-                });
-            },
-            updateTime() {
-                const now = new Date();
-                if (this.dom.localTime) this.dom.localTime.textContent = now.toLocaleTimeString('id-ID', {
-                    hour12: false
-                });
-                if (this.dom.localDate) this.dom.localDate.textContent = now.toLocaleDateString('id-ID', {
-                    weekday: 'long',
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric'
-                });
-            },
-            async initWeather() {
-                const defaultLat = -6.200000;
-                const defaultLon = 106.816666;
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(
-                        (pos) => this.fetchWeather(pos.coords.latitude, pos.coords.longitude),
-                        (err) => this.fetchWeather(defaultLat, defaultLon), {
-                            timeout: 6000,
-                            maximumAge: 60000
-                        }
-                    );
-                } else {
-                    this.fetchWeather(defaultLat, defaultLon);
-                }
-            },
-            async fetchWeather(lat, lon) {
-                try {
-                    const r = await fetch(
-                        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`
-                        );
-                    const data = await r.json();
-                    if (data?.current_weather) {
-                        const cw = data.current_weather;
-                        if (this.dom.temp) this.dom.temp.textContent = Math.round(cw.temperature) + '°C';
-                        const code = cw.weathercode;
-                        const icon = code === 0 ? '☀️' : (code <= 3 ? '⛅' : (code <= 48 ? '🌫️' : (code <= 77 ?
-                            '🌧️' : '🌦️')));
-                        if (this.dom.weatherIcon) this.dom.weatherIcon.textContent = icon;
-                        if (this.dom.weatherDesc) this.dom.weatherDesc.textContent = code === 0 ? 'Cerah Berawan' :
-                            'Potensi Hujan/Mendung';
-                    }
-                } catch (e) {
-                    if (this.dom.weatherDesc) this.dom.weatherDesc.textContent = "Gagal memuat API cuaca";
-                }
-            },
-            openModal(data) {
-                if (!this.dom.detailModal || !this.dom.detailModalBody) return;
-
-                // Set warna badge sesuai status
-                let statusBadge = "bg-label-secondary";
-                let statusText = (data.history?.status || '-').toLowerCase();
-                if (statusText === 'ok') statusBadge = "badge ok";
-                else if (statusText === 'proses') statusBadge = "badge proses";
-                else if (statusText === 'due' || statusText === 'overdue') statusBadge = "badge due";
-
-                this.dom.detailModalBody.innerHTML = `
-                <div><strong>Nama Instrumen</strong><div class="muted">${this.escapeHtml(data.nama || '-')}</div></div>
-                <div><strong>Merek/Pabrikan</strong><div class="muted">${this.escapeHtml(data.merek || '-')}</div></div>
-                <div><strong>Nomor Seri</strong><div class="muted" style="font-family:'JetBrains Mono', monospace;">${this.escapeHtml(data.no_seri || '-')}</div></div>
-                <div><strong>Status Terakhir</strong><div class="muted mt-1"><span class="${statusBadge}">${this.escapeHtml(data.history?.status || 'Belum Ada')}</span></div></div>
-                <div style="grid-column:1/-1;"><strong>Tenggat Kalibrasi Berikutnya</strong><div class="muted text-danger" style="font-size: 1.1rem;">${this.escapeHtml(data.history?.tgl_kalibrasi_ulang || '-')}</div></div>
-                <div style="grid-column:1/-1;"><strong>Catatan / Keterangan Teknisi</strong><div class="muted" style="background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #e2e8f0; font-weight:normal; font-size:0.9rem; line-height:1.5;">${this.escapeHtml(data.history?.keterangan || 'Tidak ada catatan khusus yang dilampirkan oleh tim kalibrasi.')}</div></div>
-                `;
-                this.dom.detailModal.classList.add('show');
-                document.body.style.overflow = 'hidden';
-            },
-            closeModal() {
-                if (this.dom.detailModal) {
-                    this.dom.detailModal.classList.remove('show');
-                    document.body.style.overflow = '';
-                }
-            },
-            showToast(msg, ms = 3000) {
-                if (!this.dom.mciToast) return;
-                this.dom.mciToast.innerHTML = `<i class='bx bx-info-circle me-2'></i> ${msg}`;
-                this.dom.mciToast.classList.add('show');
-                setTimeout(() => this.dom.mciToast.classList.remove('show'), ms);
-            },
-            escapeHtml(s) {
-                if (!s) return '';
-                const map = {
-                    '&': '&amp;',
-                    '<': '&lt;',
-                    '>': '&gt;',
-                    '"': '&quot;',
-                    "'": '&#39;'
-                };
-                return String(s).replace(/[&<>"']/g, m => map[m]);
-            }
-        };
-
-        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => AppDashboard.init());
-        else AppDashboard.init();
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => PrayerTimes.init());
+        } else {
+            PrayerTimes.init();
+        }
     </script>
 @endpush

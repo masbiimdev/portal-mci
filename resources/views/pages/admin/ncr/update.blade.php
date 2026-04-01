@@ -272,7 +272,7 @@
                             <label class="form-label-premium">Nomor Dokumen NCR <span class="text-danger">*</span></label>
                             <div class="position-relative">
                                 <i class="bi bi-hash input-group-text-premium"></i>
-                                <input type="text" name="no_ncr" class="form-control-premium has-icon"
+                                <input type="text" disabled name="no_ncr" class="form-control-premium has-icon"
                                     value="{{ old('no_ncr', $ncr->no_ncr) }}" required>
                             </div>
                             <small class="text-muted fw-semibold mt-1 d-block" style="font-size: 0.7rem;"><i
@@ -286,7 +286,8 @@
                             <div class="position-relative">
                                 <i class="bi bi-calendar-event input-group-text-premium"></i>
                                 <input type="date" name="issue_date" class="form-control-premium has-icon"
-                                    value="{{ old('issue_date', $ncr->issue_date) }}" required>
+                                    value="{{ old('issue_date', \Carbon\Carbon::parse($ncr->issue_date)->format('Y-m-d')) }}"
+                                    required>
                             </div>
                         </div>
 
