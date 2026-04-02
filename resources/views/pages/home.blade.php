@@ -1476,6 +1476,11 @@
                 <div class="weather-widget">
                     <div id="weatherIcon" class="icon">⛅</div>
                     <div class="info">
+                        <div class="location-badge">
+                            <i class='bx bx-map'></i>
+                            <span id="weatherLocation">Mendeteksi kota...</span>
+                        </div>
+
                         <div id="temp" class="temp">--°C</div>
                         <div id="weatherDesc" class="desc">Memuat cuaca...</div>
                     </div>
