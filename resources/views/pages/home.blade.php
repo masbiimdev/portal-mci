@@ -145,32 +145,78 @@
             font-weight: 500;
         }
 
+        /* ============== HERO KPI PREMIUM GLASSMORPHISM ============== */
         .kpis {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 1.25rem;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            margin-top: 1.5rem;
             position: relative;
             z-index: 1;
         }
 
         .kpi {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 1.25rem 1.5rem;
+            padding: 1.5rem;
             border-radius: var(--radius-lg);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            /* Animasi membal yang smooth */
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Efek kilau saat di-hover */
+        .kpi::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
         }
 
         .kpi:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-8px) scale(1.02);
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .kpi:hover::before {
+            opacity: 1;
+        }
+
+        .kpi-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .kpi-icon-wrapper {
+            padding: 10px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
         }
 
         .kpi .label {
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             color: #cbd5e1;
             font-weight: 700;
             text-transform: uppercase;
@@ -178,12 +224,141 @@
         }
 
         .kpi .value {
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: 800;
             color: #ffffff;
             font-family: 'JetBrains Mono', monospace;
-            margin-top: 6px;
-            line-height: 1;
+            line-height: 1.1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .kpi-sub {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Warna khusus untuk Icon di dalam Dark Mode */
+        .icon-blue {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+        }
+
+        .text-blue {
+            color: #60a5fa;
+        }
+
+        .icon-red {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+
+        .text-red {
+            color: #f87171;
+        }
+
+        .icon-orange {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+        }
+
+        .text-orange {
+            color: #fbbf24;
+        }
+
+        .icon-green {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+        }
+
+        .text-green {
+            color: #34d399;
+        }
+
+        /* ============== QUICK ACCESS PREMIUM ============== */
+        .quick {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+            padding: 0 1.75rem 1.75rem;
+        }
+
+        .quick .item {
+            padding: 1.5rem 1rem;
+            text-align: center;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            font-weight: 700;
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            color: var(--text-dark);
+            font-size: 0.95rem;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Glow effect di background item saat dihover */
+        .quick .item::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: radial-gradient(circle at center, var(--primary-glow) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .quick .item:hover {
+            background: var(--panel);
+            border-color: var(--primary);
+            transform: translateY(-8px);
+            color: var(--primary);
+            box-shadow: 0 12px 24px var(--primary-glow);
+        }
+
+        .quick .item:hover::after {
+            opacity: 1;
+        }
+
+        .quick .icon {
+            font-size: 2.2rem;
+            color: var(--primary);
+            background: var(--panel);
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 18px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .quick .item:hover .icon {
+            transform: scale(1.15) rotate(8deg);
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 8px 20px var(--primary-glow);
+            border-radius: 22px;
+            /* Morphing shape */
         }
 
         /* ============== WEATHER & TIME CARD ============== */
@@ -1048,6 +1223,141 @@
             }
         }
     </style>
+    <style>
+        /* ============== ANIMASI KHUSUS HERO ============== */
+        @keyframes breatheGlow {
+            0% {
+                transform: scale(1) translate(0, 0);
+                opacity: 0.2;
+            }
+
+            33% {
+                transform: scale(1.1) translate(-20px, 10px);
+                opacity: 0.4;
+            }
+
+            66% {
+                transform: scale(0.95) translate(20px, -10px);
+                opacity: 0.3;
+            }
+
+            100% {
+                transform: scale(1) translate(0, 0);
+                opacity: 0.2;
+            }
+        }
+
+        @keyframes moveGrid {
+            0% {
+                background-position: 0 0;
+            }
+
+            100% {
+                background-position: 30px 30px;
+            }
+        }
+
+        @keyframes heroTextReveal {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ============== HERO STYLING ============== */
+        .hero {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-radius: var(--radius-xl);
+            padding: 2.5rem 3rem;
+            color: #ffffff;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Ornamental Background Grid Bergerak */
+        .hero::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            opacity: 0.6;
+            pointer-events: none;
+            /* Efek aliran grid ke arah bawah-kanan */
+            animation: moveGrid 4s linear infinite;
+        }
+
+        /* Cahaya (Orb) yang Bergerak & Bernapas */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 60%);
+            filter: blur(50px);
+            z-index: 0;
+            pointer-events: none;
+            /* Efek cahaya membesar & berpindah perlahan */
+            animation: breatheGlow 12s ease-in-out infinite;
+        }
+
+        .hero h1 {
+            margin: 0;
+            font-weight: 800;
+            font-size: 2.4rem;
+            letter-spacing: -0.04em;
+            z-index: 1;
+            position: relative;
+            opacity: 0;
+            transform: translateY(20px);
+            /* Teks masuk lebih dulu */
+            animation: heroTextReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+        }
+
+        .hero p {
+            margin: 0.5rem 0 2rem 0;
+            color: #94a3b8;
+            font-size: 1.1rem;
+            z-index: 1;
+            position: relative;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(20px);
+            /* Deskripsi masuk setelah H1 */
+            animation: heroTextReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.25s forwards;
+        }
+
+        /* Staggered Entry untuk Kartu KPI di dalam Hero */
+        .hero .kpi {
+            opacity: 0;
+            transform: translateY(25px);
+            animation: heroTextReveal 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .hero .kpi:nth-child(1) {
+            animation-delay: 0.35s;
+        }
+
+        .hero .kpi:nth-child(2) {
+            animation-delay: 0.45s;
+        }
+
+        .hero .kpi:nth-child(3) {
+            animation-delay: 0.55s;
+        }
+
+        .hero .kpi:nth-child(4) {
+            animation-delay: 0.65s;
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -1079,9 +1389,8 @@
                     ->orderBy('issue_date', 'desc')
                     ->take(5)
                     ->get() ?? collect([]);
-            $toolsData = optional($tools)->take(5) ?? [];
-            $countKalibrasi = count($toolsData);
             $countNcr = $portalNcrs->count();
+            $countKalibrasi = isset($toolsNeedCalibration) ? $toolsNeedCalibration->count() : 0;
         @endphp
 
         <div class="header-grid fade-in-up">
@@ -1089,52 +1398,71 @@
                 <h1>Halo, {{ Auth::user()->name ?? 'Tim MCI' }} 👋</h1>
                 <p>Ringkasan akumulasi seluruh data operasional di dalam sistem saat ini.</p>
 
-                <div class="kpis" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));">
-
+                <div class="kpis">
                     <div class="kpi">
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                            <div
-                                style="background: rgba(59, 130, 246, 0.2); padding: 6px; border-radius: 8px; display: flex;">
-                                <i class='bx bx-target-lock' style="color: #60a5fa; font-size: 1.2rem;"></i>
+                        <div class="kpi-header">
+                            <div class="kpi-icon-wrapper icon-blue">
+                                <i class='bx bx-target-lock'></i>
                             </div>
                             <div class="label">Total Alat</div>
                         </div>
                         <div class="value">{{ number_format($totalTools) }}</div>
+                        <div class="kpi-sub text-orange">
+                            <i class='bx bx-time-five'></i>
+                            <span><strong>{{ $countKalibrasi ?? 0 }}</strong> butuh kalibrasi (H-30)</span>
+                        </div>
                     </div>
 
                     <div class="kpi">
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                            <div
-                                style="background: rgba(239, 68, 68, 0.2); padding: 6px; border-radius: 8px; display: flex;">
-                                <i class='bx bx-error-alt' style="color: #f87171; font-size: 1.2rem;"></i>
+                        <div class="kpi-header">
+                            <div class="kpi-icon-wrapper icon-red">
+                                <i class='bx bx-error-alt'></i>
                             </div>
                             <div class="label">Total NCR</div>
                         </div>
                         <div class="value">{{ number_format($totalNcrAll) }}</div>
+                        <div class="kpi-sub text-red">
+                            <i class='bx bx-trending-up'></i>
+                            <span><strong>+{{ $ncrThisMonth ?? 0 }}</strong> laporan bulan ini</span>
+                        </div>
                     </div>
 
                     <div class="kpi">
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                            <div
-                                style="background: rgba(245, 158, 11, 0.2); padding: 6px; border-radius: 8px; display: flex;">
-                                <i class='bx bx-package' style="color: #fbbf24; font-size: 1.2rem;"></i>
+                        <div class="kpi-header">
+                            <div class="kpi-icon-wrapper icon-orange">
+                                <i class='bx bx-package'></i>
                             </div>
                             <div class="label">Inventory</div>
                         </div>
-                        <div class="value">{{ number_format($totalInventory) }}</div>
+                        <div class="value">{{ number_format($totalStock) }}</div>
+                        <div class="kpi-sub"
+                            style="display: flex; flex-direction: column; gap: 8px; align-items: flex-start; margin-top: 12px;">
+                            <span class="text-green"
+                                style="display: flex; align-items: center; gap: 6px; font-size: 0.85rem;">
+                                <i class='bx bx-down-arrow-circle' style="font-size: 1.1rem;"></i>
+                                <span><strong>{{ $inventoryInToday ?? 0 }}</strong> masuk bulan ini</span>
+                            </span>
+                            <span class="text-red"
+                                style="display: flex; align-items: center; gap: 6px; font-size: 0.85rem;">
+                                <i class='bx bx-up-arrow-circle' style="font-size: 1.1rem;"></i>
+                                <span><strong>{{ $inventoryOutToday ?? 0 }}</strong> keluar bulan ini</span>
+                            </span>
+                        </div>
                     </div>
 
                     <div class="kpi">
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                            <div
-                                style="background: rgba(16, 185, 129, 0.2); padding: 6px; border-radius: 8px; display: flex;">
-                                <i class='bx bx-folder-open' style="color: #34d399; font-size: 1.2rem;"></i>
+                        <div class="kpi-header">
+                            <div class="kpi-icon-wrapper icon-green">
+                                <i class='bx bx-folder-open'></i>
                             </div>
                             <div class="label">Dokumen</div>
                         </div>
                         <div class="value">{{ number_format($totalDocument) }}</div>
+                        <div class="kpi-sub text-green">
+                            <i class='bx bx-file-blank'></i>
+                            <span><strong>+{{ $documentInToday ?? 0 }}</strong> masuk bulan ini</span>
+                        </div>
                     </div>
-
                 </div>
             </div>
 
@@ -1157,7 +1485,61 @@
 
         <div class="layout fade-in-up delay-2">
             <div class="main-content">
+                <div class="card border-0">
+                    <div class="card-header">
+                        <h3><i class='bx bx-grid-alt'></i> Akses Cepat</h3>
+                    </div>
+                    <div class="quick">
+                        <div class="item" onclick="location.href='/schedule'">
+                            <div class="icon"><i class='bx bx-calendar'></i></div>
+                            <span>Jadwal</span>
+                        </div>
+                        <div class="item" onclick="location.href='/kalibrasi'">
+                            <div class="icon"><i class='bx bx-wrench'></i></div>
+                            <span>Kalibrasi</span>
+                        </div>
+                        <div class="item" onclick="location.href='/portal/inventory'">
+                            <div class="icon"><i class='bx bx-package'></i></div>
+                            <span>Inventory</span>
+                        </div>
+                        <div class="item" onclick="location.href='/portal/document'">
+                            <div class="icon"><i class='bx bx-clipboard'></i></div>
+                            <span>Document</span>
+                        </div>
+                    </div>
+                </div>
 
+                <div class="card border-0">
+                    <div class="card-header">
+                        <h3><i class='bx bx-bell'></i> Pengumuman Internal</h3>
+                        <a href="{{ route('announcements.index') ?? '#' }}" class="btn-action btn-action-primary"
+                            style="padding: 0.4rem 1rem;">Lihat Semua</a>
+                    </div>
+                    <div class="ann-list">
+                        @forelse($announcements ?? [] as $a)
+                            @php
+                                $prio = strtolower($a->priority ?? 'low');
+                                $prioClass =
+                                    $prio === 'high' ? 'prio-high' : ($prio === 'medium' ? 'prio-medium' : 'prio-low');
+                                $author = optional($a->author)->name ?? 'Admin';
+                            @endphp
+                            <article class="ann {{ $prioClass }}"
+                                onclick="window.location='{{ url('pengumuman/show/' . \Illuminate\Support\Str::slug($a->title)) }}'">
+                                <div class="avatar">{{ strtoupper(substr($author, 0, 1)) }}</div>
+                                <div class="body">
+                                    <h4 class="title">{{ $a->title }}</h4>
+                                    <div class="excerpt">{{ \Illuminate\Support\Str::limit(strip_tags($a->content), 80) }}
+                                    </div>
+                                </div>
+                            </article>
+                        @empty
+                            <div class="text-center py-5 text-muted border rounded-lg"
+                                style="background:#f8fafc; border-style: dashed !important;"><i
+                                    class='bx bx-message-rounded-dots fs-1 mb-2'></i><br>Belum ada pengumuman terbaru.
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
                 <div class="card border-0">
                     <div class="card-header pb-3" style="border-bottom: none;">
                         <h3><i class='bx bx-layer'></i> Pantauan Operasional</h3>
@@ -1194,42 +1576,52 @@
                                         </tr>
                                     </thead>
                                     <tbody id="toolsTbody">
-                                        @forelse($toolsData as $t)
+                                        @forelse($toolsNeedCalibration ?? [] as $history)
                                             @php
-                                                $h = $t->latestHistory;
-                                                $s = strtolower(optional($h)->status_kalibrasi ?? '-');
+                                                // Karena $history adalah model CalibrationHistory, kita ambil relasi alatnya
+                                                $t = $history->tool ?? null;
+                                                $s = strtolower($history->status_kalibrasi ?? '-');
                                                 $badge = $s === 'ok' ? 'ok' : ($s === 'proses' ? 'proses' : 'due');
                                             @endphp
-                                            <tr data-action="detail" data-nama="{{ $t->nama_alat }}"
-                                                data-merek="{{ $t->merek ?? '-' }}" data-seri="{{ $t->no_seri ?? '-' }}"
-                                                data-tgl="{{ optional($h)->tgl_kalibrasi_ulang ? $h->tgl_kalibrasi_ulang->format('d/m/Y') : '-' }}">
+                                            <tr data-action="detail"
+                                                data-nama="{{ optional($t)->nama_alat ?? 'Alat Dihapus' }}"
+                                                data-merek="{{ optional($t)->merek ?? '-' }}"
+                                                data-seri="{{ optional($t)->no_seri ?? '-' }}"
+                                                data-tgl="{{ $history->tgl_kalibrasi_ulang ? $history->tgl_kalibrasi_ulang->format('d/m/Y') : '-' }}">
                                                 <td>
                                                     <div
                                                         style="font-weight:800; color:var(--text-dark); font-size:0.95rem;">
-                                                        {{ e($t->nama_alat) }}</div>
+                                                        {{ e(optional($t)->nama_alat ?? 'Tidak ada data alat') }}
+                                                    </div>
                                                     <div
                                                         style="font-size:0.8rem; color:var(--text-muted); margin-top:4px; font-family: 'JetBrains Mono', monospace;">
-                                                        <i class='bx bx-barcode'></i> SN: {{ e($t->no_seri ?? '-') }}
+                                                        <i class='bx bx-barcode'></i> SN:
+                                                        {{ e(optional($t)->no_seri ?? '-') }}
                                                     </div>
                                                 </td>
-                                                <td><span
-                                                        class="badge {{ $badge }}">{{ optional($h)->status_kalibrasi ?? '-' }}</span>
+                                                <td>
+                                                    <span
+                                                        class="badge {{ $badge }}">{{ $history->status_kalibrasi ?? '-' }}</span>
                                                 </td>
                                                 <td
                                                     style="font-family:'JetBrains Mono', monospace; font-size:0.9rem; font-weight:800; color: var(--danger);">
-                                                    {{ optional($h)->tgl_kalibrasi_ulang ? $h->tgl_kalibrasi_ulang->format('d/m/Y') : '-' }}
+                                                    {{ $history->tgl_kalibrasi_ulang ? $history->tgl_kalibrasi_ulang->format('d/m/Y') : '-' }}
                                                 </td>
-                                                <td style="text-align:right"><button class="btn-action"><i
-                                                            class='bx bx-search-alt-2'></i> Detail</button></td>
+                                                <td style="text-align:right">
+                                                    <button class="btn-action"><i class='bx bx-search-alt-2'></i>
+                                                        Detail</button>
+                                                </td>
                                             </tr>
                                         @empty
                                             <tr>
                                                 <td colspan="4"
                                                     style="text-align:center; padding: 4rem 1rem; color: var(--text-muted);">
                                                     <i class='bx bx-check-shield'
-                                                        style="font-size: 3.5rem; color: var(--success); margin-bottom: 15px;"></i><br><span
+                                                        style="font-size: 3.5rem; color: var(--success); margin-bottom: 15px;"></i><br>
+                                                    <span
                                                         style="font-weight: 800; color: var(--text-dark); font-size: 1.2rem;">Semua
-                                                        Aman!</span><br>Tidak ada jadwal kalibrasi mendesak saat ini.
+                                                        Aman!</span><br>
+                                                    Tidak ada jadwal kalibrasi mendesak saat ini.
                                                 </td>
                                             </tr>
                                         @endforelse
@@ -1273,72 +1665,6 @@
                             @endif
                         </div>
 
-                    </div>
-                </div>
-
-                <div class="document-card shadow-lg">
-                    <div class="document-card-content">
-                        <h3>Pusat Dokumen & Laporan</h3>
-                        <p>Akses terpusat ke seluruh dokumen inventaris, SOP, dan sertifikat kalibrasi instrumen MCI.</p>
-                        <a href="/portal/document" class="btn-document">
-                            Buka Ruang Dokumen <i class='bx bx-right-arrow-alt fs-5'></i>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="card border-0">
-                    <div class="card-header">
-                        <h3><i class='bx bx-grid-alt'></i> Akses Cepat</h3>
-                    </div>
-                    <div class="quick">
-                        <div class="item" onclick="location.href='/schedule'">
-                            <div class="icon"><i class='bx bx-calendar'></i></div>
-                            <span>Jadwal</span>
-                        </div>
-                        <div class="item" onclick="location.href='/kalibrasi'">
-                            <div class="icon"><i class='bx bx-wrench'></i></div>
-                            <span>Kalibrasi</span>
-                        </div>
-                        <div class="item" onclick="location.href='/portal/inventory'">
-                            <div class="icon"><i class='bx bx-package'></i></div>
-                            <span>Inventory</span>
-                        </div>
-                        <div class="item" onclick="location.href='/export'">
-                            <div class="icon"><i class='bx bx-export'></i></div>
-                            <span>Export Data</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card border-0">
-                    <div class="card-header">
-                        <h3><i class='bx bx-bell'></i> Pengumuman Internal</h3>
-                        <a href="{{ route('announcements.index') ?? '#' }}" class="btn-action btn-action-primary"
-                            style="padding: 0.4rem 1rem;">Lihat Semua</a>
-                    </div>
-                    <div class="ann-list">
-                        @forelse($announcements ?? [] as $a)
-                            @php
-                                $prio = strtolower($a->priority ?? 'low');
-                                $prioClass =
-                                    $prio === 'high' ? 'prio-high' : ($prio === 'medium' ? 'prio-medium' : 'prio-low');
-                                $author = optional($a->author)->name ?? 'Admin';
-                            @endphp
-                            <article class="ann {{ $prioClass }}"
-                                onclick="window.location='{{ url('pengumuman/show/' . \Illuminate\Support\Str::slug($a->title)) }}'">
-                                <div class="avatar">{{ strtoupper(substr($author, 0, 1)) }}</div>
-                                <div class="body">
-                                    <h4 class="title">{{ $a->title }}</h4>
-                                    <div class="excerpt">{{ \Illuminate\Support\Str::limit(strip_tags($a->content), 80) }}
-                                    </div>
-                                </div>
-                            </article>
-                        @empty
-                            <div class="text-center py-5 text-muted border rounded-lg"
-                                style="background:#f8fafc; border-style: dashed !important;"><i
-                                    class='bx bx-message-rounded-dots fs-1 mb-2'></i><br>Belum ada pengumuman terbaru.
-                            </div>
-                        @endforelse
                     </div>
                 </div>
 
@@ -1584,7 +1910,7 @@
             try {
                 const resWeather = await fetch(
                     `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`
-                    );
+                );
                 const dataW = await resWeather.json();
                 if (dataW?.current_weather) {
                     const cw = dataW.current_weather;

@@ -8,6 +8,10 @@ use App\ActivityItemResult;
 use App\Material;
 use App\MaterialIn;
 use App\MaterialOut;
+use App\Inventory;
+use App\InventoryTransaction;
+use App\Document;
+use App\Ncr;
 use App\CalibrationHistory;
 use App\Tool;
 use Carbon\Carbon;
@@ -195,6 +199,32 @@ class HomeController extends Controller
             ];
         })->values()->all();
 
+        $today = Carbon::today();
+        $thisMonth = Carbon::now()->month;
+        $thisYear = Carbon::now()->year;
+
+        // --- ALAT ---
+        $totalTools = CalibrationHistory::count();
+        // Contoh: Mencari alat yang jadwal kalibrasinya 30 hari ke depan
+        $toolsNeedCalibration = CalibrationHistory::whereBetween('tgl_kalibrasi_ulang', [now(), now()->addDays(15)])->latest()->get();
+
+        // --- NCR ---
+        $totalNcrAll = Ncr::count();
+        $ncrThisMonth = Ncr::whereMonth('created_at', $thisMonth)
+            ->whereYear('created_at', $thisYear)
+            ->count();
+
+        // // --- INVENTORY ---
+        $totalStock = Material::all()->sum('current_stock');
+        $inventoryInToday = MaterialIn::whereDate('created_at', $thisMonth)
+            ->sum('qty_in');
+        $inventoryOutToday = MaterialOut::whereDate('created_at', $thisMonth)
+            ->sum('qty_out');
+
+        // --- DOKUMEN ---
+        $totalDocument = Document::count();
+        $documentInToday = Document::whereDate('created_at', $thisMonth)->count();
+
         // Finally return view with all variables used by the home blade
         return view('pages.home', compact(
             'announcements',
@@ -211,7 +241,16 @@ class HomeController extends Controller
             'statusProses',
             'dueSoon',
             'pieData',
-            'trend'
+            'trend',
+            'totalTools',
+            'toolsNeedCalibration',
+            'totalNcrAll',
+            'ncrThisMonth',
+            'totalStock',
+            'inventoryInToday',
+            'inventoryOutToday',
+            'totalDocument',
+            'documentInToday'
         ));
     }
 
