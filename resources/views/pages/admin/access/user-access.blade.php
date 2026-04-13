@@ -3,98 +3,206 @@
 
 @push('css')
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap"
         rel="stylesheet">
+
     <style>
+        /* ========== ULTRA PREMIUM BENTO SYSTEM ========== */
         :root {
             --primary: #3b82f6;
             --primary-hover: #2563eb;
-            --primary-light: #eff6ff;
-            --surface: #ffffff;
+            --primary-soft: #eff6ff;
+            --success: #10b981;
+            --surface: rgba(255, 255, 255, 0.95);
             --bg-body: #f8fafc;
             --text-main: #0f172a;
             --text-muted: #64748b;
-            --border-light: #e2e8f0;
-            --radius-md: 12px;
-            --radius-lg: 20px;
-            --shadow-sm: 0 2px 4px rgba(15, 23, 42, 0.04);
-            --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
+            --border-light: rgba(226, 232, 240, 0.8);
+
+            --radius-bento: 24px;
+            --radius-md: 16px;
+
+            --shadow-bento: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 20px 40px -10px rgba(59, 130, 246, 0.15);
+            --shadow-floating: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-body);
             color: var(--text-main);
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 32px 32px;
+            -webkit-font-smoothing: antialiased;
         }
 
+        .container-p-y {
+            padding-top: 2.5rem !important;
+            padding-bottom: 6rem !important;
+        }
+
+        /* ================= PAGE HEADER ================= */
         .page-header {
             margin-bottom: 2rem;
         }
 
         .header-title {
-            font-size: 1.75rem;
-            font-weight: 800;
+            font-size: 2rem;
+            font-weight: 900;
             color: var(--text-main);
-            letter-spacing: -0.5px;
+            letter-spacing: -0.04em;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            margin: 0;
         }
 
-        /* ================= USER SELECTION CARD ================= */
-        .user-select-card {
+        .header-desc {
+            color: var(--text-muted);
+            font-size: 1rem;
+            font-weight: 500;
+            margin-top: 6px;
+        }
+
+        /* ================= BENTO GRID LAYOUT ================= */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1.5rem;
+        }
+
+        .bento-card {
             background: var(--surface);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border-light);
-            border-radius: var(--radius-lg);
-            padding: 1.5rem;
-            box-shadow: var(--shadow-sm);
-            margin-bottom: 1.5rem;
+            border-radius: var(--radius-bento);
+            padding: 2rem;
+            box-shadow: var(--shadow-bento);
+            transition: var(--transition);
         }
 
-        .stat-badge {
-            background: var(--bg-body);
+        .col-span-4 {
+            grid-column: span 4;
+        }
+
+        .col-span-8 {
+            grid-column: span 8;
+        }
+
+        /* ================= USER CONTEXT CARD ================= */
+        .user-card {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            position: sticky;
+            top: 2rem;
+            /* Membuatnya tetap terlihat saat scroll ke bawah */
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .stat-box {
+            background: #f8fafc;
             border: 1px solid var(--border-light);
-            padding: 0.75rem 1.25rem;
             border-radius: var(--radius-md);
+            padding: 1.25rem;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            min-width: 120px;
+            text-align: center;
         }
 
-        .stat-badge .label {
+        .stat-box .label {
             font-size: 0.7rem;
-            font-weight: 700;
+            font-weight: 800;
             text-transform: uppercase;
             color: var(--text-muted);
-            letter-spacing: 0.5px;
-            margin-bottom: 4px;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
         }
 
-        .stat-badge .val {
-            font-size: 1.1rem;
-            font-weight: 800;
+        .stat-box .val {
+            font-size: 1.75rem;
+            font-weight: 900;
             color: var(--primary);
+            line-height: 1;
         }
 
-        /* ================= MODULES GRID ================= */
-        .controls-wrapper {
+        /* ================= MODULES WORKSPACE ================= */
+        .toolbar-bento {
             display: flex;
-            flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
             gap: 1rem;
             margin-bottom: 1.5rem;
-            padding: 0 0.5rem;
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-light);
         }
 
+        .search-wrapper {
+            background: white;
+            border-radius: 12px;
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            max-width: 300px;
+            border: 1px solid var(--border-light);
+            transition: var(--transition);
+        }
+
+        .search-wrapper:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-soft);
+        }
+
+        .search-wrapper input {
+            border: none;
+            outline: none;
+            background: transparent;
+            width: 100%;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .btn-toolbar {
+            padding: 0.6rem 1.25rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-toolbar-outline {
+            border: 1px solid var(--border-light);
+            background: white;
+            color: var(--text-main);
+        }
+
+        .btn-toolbar-outline:hover {
+            background: var(--bg-body);
+            border-color: #cbd5e1;
+        }
+
+        /* Module Grid */
         .module-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
             gap: 1.25rem;
-            padding-bottom: 80px;
-            /* Space for sticky footer */
         }
 
         .module-checkbox {
@@ -103,45 +211,42 @@
 
         .module-tile {
             cursor: pointer;
-            padding: 1.25rem;
-            border-radius: var(--radius-md);
-            border: 1.5px solid var(--border-light);
-            background: var(--surface);
+            padding: 1.5rem;
+            border-radius: 1.5rem;
+            border: 2px solid var(--border-light);
+            background: white;
             display: flex;
-            align-items: flex-start;
+            flex-direction: column;
             gap: 1rem;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: var(--transition);
             position: relative;
-            box-shadow: var(--shadow-sm);
             height: 100%;
-        }
-
-        /* Checkmark Icon (Hidden by default) */
-        .module-tile::after {
-            content: '\eb7a';
-            /* Boxicon Check */
-            font-family: 'boxicons';
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            font-size: 1.2rem;
-            color: var(--primary);
-            opacity: 0;
-            transform: scale(0.5);
-            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
         }
 
         .module-tile:hover {
+            transform: translateY(-3px);
             border-color: #cbd5e1;
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-md);
+            box-shadow: var(--shadow-hover);
         }
 
-        /* Checked State */
+        .module-tile::after {
+            content: '\eb7a';
+            font-family: 'boxicons';
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            font-size: 1.5rem;
+            color: var(--primary);
+            opacity: 0;
+            transform: scale(0.5);
+            transition: var(--transition);
+        }
+
         .module-checkbox:checked+.module-tile {
             border-color: var(--primary);
-            background-color: var(--primary-light);
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.15);
+            background-color: var(--primary-soft);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.1);
         }
 
         .module-checkbox:checked+.module-tile::after {
@@ -155,30 +260,23 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 12px;
-            background: var(--bg-body);
+            border-radius: 14px;
+            background: #f1f5f9;
             color: var(--text-muted);
-            font-weight: 800;
+            font-weight: 900;
             font-size: 1.2rem;
-            transition: all 0.3s ease;
-            flex-shrink: 0;
+            transition: var(--transition);
         }
 
         .module-checkbox:checked+.module-tile .module-icon {
-            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
-            color: #fff;
-            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
-        }
-
-        .module-meta {
-            flex: 1;
-            min-width: 0;
-            padding-right: 10px;
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
 
         .module-title {
             font-weight: 800;
-            font-size: 0.95rem;
+            font-size: 1rem;
             color: var(--text-main);
             margin-bottom: 4px;
         }
@@ -190,133 +288,165 @@
             font-weight: 500;
         }
 
-        /* ================= STICKY ACTION BAR ================= */
-        .sticky-action {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: calc(100% - 40px);
-            max-width: 800px;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 1rem 1.5rem;
-            border-radius: var(--radius-lg);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-            z-index: 100;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s ease;
-        }
-
-        .btn-custom {
-            padding: 0.7rem 1.5rem;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
-        }
-
-        .btn-save {
-            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
-            color: white;
-            border: none;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-        }
-
-        .btn-save:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(59, 130, 246, 0.4);
-            color: white;
-        }
-
-        .btn-save:disabled {
-            background: var(--text-muted);
-            box-shadow: none;
-            transform: none;
-        }
-
-        /* Override Select2 Styling */
+        /* ================= SELECT2 MODERNIZATION ================= */
         .select2-container--default .select2-selection--single {
-            height: 48px;
-            border: 1.5px solid var(--border-light);
-            border-radius: var(--radius-md);
+            height: 54px;
+            border: 2px solid var(--border-light);
+            border-radius: 16px;
             display: flex;
             align-items: center;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-weight: 600;
+            font-family: inherit;
+            font-weight: 700;
             color: var(--text-main);
+            padding-left: 0.5rem;
+            transition: var(--transition);
         }
 
         .select2-container--default .select2-selection--single:focus,
         .select2-container--default.select2-container--open .select2-selection--single {
             border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            box-shadow: 0 0 0 4px var(--primary-soft);
         }
 
         .select2-container--default .select2-selection--single .select2-selection__arrow {
-            height: 46px;
+            height: 52px;
+            right: 10px;
         }
 
-        /* Search Input */
-        .search-box {
-            position: relative;
-            width: 100%;
-            max-width: 300px;
+        /* ================= FLOATING DYNAMIC ISLAND ================= */
+        .floating-island {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            padding: 1rem;
+            border-radius: 99px;
+            box-shadow: var(--shadow-floating);
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+            width: auto;
+            min-width: 500px;
+            transition: var(--transition);
         }
 
-        .search-box input {
-            width: 100%;
-            padding: 0.6rem 1rem 0.6rem 2.5rem;
-            border: 1px solid var(--border-light);
-            border-radius: 10px;
+        .island-text {
+            display: flex;
+            flex-direction: column;
+            margin-left: 1rem;
+        }
+
+        .island-title {
+            font-weight: 800;
+            color: var(--text-main);
             font-size: 0.9rem;
-            font-family: inherit;
-            outline: none;
-            transition: all 0.2s;
         }
 
-        .search-box input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        .search-box i {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
+        .island-subtitle {
+            font-size: 0.75rem;
             color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .btn-island {
+            padding: 0.8rem 1.5rem;
+            border-radius: 99px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            transition: var(--transition);
+        }
+
+        .btn-island-preview {
+            background: #f1f5f9;
+            color: var(--text-main);
+        }
+
+        .btn-island-preview:hover:not(:disabled) {
+            background: #e2e8f0;
+        }
+
+        .btn-island-save {
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-island-save:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.5);
+        }
+
+        .btn-island:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1024px) {
+            .col-span-4 {
+                grid-column: span 5;
+            }
+
+            .col-span-8 {
+                grid-column: span 7;
+            }
         }
 
         @media (max-width: 768px) {
-            .sticky-action {
-                flex-direction: column;
-                gap: 1rem;
-                padding: 1rem;
+
+            .col-span-4,
+            .col-span-8 {
+                grid-column: span 12;
             }
 
-            .sticky-action .d-flex {
-                width: 100%;
+            .user-card {
+                position: relative;
+                top: 0;
             }
 
-            .sticky-action button {
-                flex: 1;
-                justify-content: center;
-            }
-
-            .controls-wrapper {
+            .toolbar-bento {
                 flex-direction: column;
                 align-items: stretch;
             }
 
-            .search-box {
+            .search-wrapper {
                 max-width: 100%;
+            }
+
+            .floating-island {
+                width: calc(100% - 40px);
+                min-width: 0;
+                flex-direction: column;
+                border-radius: 24px;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .island-text {
+                margin-left: 0;
+            }
+
+            .island-actions {
+                display: flex;
+                width: 100%;
+                gap: 10px;
+            }
+
+            .btn-island {
+                flex: 1;
+                justify-content: center;
             }
         }
     </style>
@@ -327,104 +457,127 @@
 
         <div class="page-header">
             <h4 class="header-title">
-                <i class="bx bx-shield-quarter text-primary fs-2"></i> User Access Control
+                <i class="bx bx-shield-quarter text-primary"></i> Access Control
             </h4>
-            <p class="text-muted mb-0 mt-1">Kelola hak akses modul untuk setiap pengguna sistem.</p>
+            <p class="header-desc">Manajemen hak akses modul eksklusif untuk setiap pengguna sistem.</p>
         </div>
 
         <form id="accessForm" action="{{ route('access.user.update') }}" method="POST">
             @csrf
 
-            {{-- USER SELECTION CARD --}}
-            <div class="user-select-card">
-                <div class="row align-items-center g-4">
-                    <div class="col-md-7 col-lg-8">
-                        <label class="form-label fw-bold text-muted text-uppercase"
-                            style="font-size: 0.75rem; letter-spacing: 0.5px;">Target Pengguna</label>
-                        <select name="user_id" id="user_id" class="form-select select2" required>
-                            <option value="">Cari Nama Pengguna...</option>
-                            @foreach ($users as $user)
-                                <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->role ?? 'User' }})
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-5 col-lg-4 d-flex justify-content-md-end gap-3">
-                        <div class="stat-badge">
-                            <span class="label">Level Akses</span>
-                            <span class="val" id="selectedRole">-</span>
-                        </div>
-                        <div class="stat-badge">
-                            <span class="label">Modul Aktif</span>
-                            <span class="val" id="selectedCount">0</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div class="bento-grid">
 
-            {{-- CONTROLS & SEARCH --}}
-            <div class="controls-wrapper">
-                <div class="d-flex gap-2">
-                    <button type="button" id="selectAllBtn"
-                        class="btn btn-outline-primary btn-sm fw-bold px-3 rounded-pill">Pilih Semua</button>
-                    <button type="button" id="clearAllBtn"
-                        class="btn btn-outline-secondary btn-sm fw-bold px-3 rounded-pill">Bersihkan</button>
-                </div>
-                <div class="search-box">
-                    <i class='bx bx-search'></i>
-                    <input id="moduleSearch" type="search" placeholder="Cari nama modul...">
-                </div>
-            </div>
-
-            {{-- MODULES GRID --}}
-            <div id="moduleContainer" class="module-grid">
-                @foreach ($modules as $module)
-                    <div class="module-wrapper">
-                        <input class="module-checkbox" type="checkbox" name="modules[]" value="{{ $module->id }}"
-                            id="mod{{ $module->id }}">
-                        <label class="module-tile" for="mod{{ $module->id }}">
-                            <div class="module-icon">{{ strtoupper(substr($module->name, 0, 1)) }}</div>
-                            <div class="module-meta">
-                                <div class="module-title">{{ $module->name }}</div>
-                                <div class="module-desc">
-                                    {{ Str::limit($module->description ?? 'Tidak ada deskripsi tersedia.', 60) }}</div>
+                <div class="col-span-4">
+                    <div class="bento-card user-card">
+                        <div>
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <label class="fw-bolder text-muted text-uppercase"
+                                    style="font-size: 0.75rem; letter-spacing: 1px;">Target Pengguna</label>
+                                <i class="bx bx-user-circle text-muted fs-4"></i>
                             </div>
-                        </label>
+                            <select name="user_id" id="user_id" class="form-select select2" required>
+                                <option value="">Pilih Pengguna...</option>
+                                @foreach ($users as $user)
+                                    <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->role ?? 'User' }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <hr class="my-1 border-light">
+
+                        <div class="stat-grid">
+                            <div class="stat-box">
+                                <span class="label">Level Akses</span>
+                                <span class="val" id="selectedRole">-</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="label">Modul Aktif</span>
+                                <span class="val" id="selectedCount">0</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-light p-3 rounded-4 mt-2 border border-light">
+                            <p class="text-muted mb-0" style="font-size: 0.75rem; font-weight: 600;">
+                                <i class="bx bx-info-circle text-primary"></i> Pilih pengguna dari dropdown di atas untuk
+                                memuat konfigurasi hak akses saat ini.
+                            </p>
+                        </div>
                     </div>
-                @endforeach
+                </div>
+
+                <div class="col-span-8">
+                    <div class="bento-card">
+
+                        <div class="toolbar-bento">
+                            <div class="search-wrapper shadow-sm">
+                                <i class='bx bx-search text-muted fs-5'></i>
+                                <input id="moduleSearch" type="search" placeholder="Cari modul spesifik...">
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button type="button" id="selectAllBtn" class="btn-toolbar btn-toolbar-outline shadow-sm">
+                                    <i class="bx bx-check-double text-success"></i> Select All
+                                </button>
+                                <button type="button" id="clearAllBtn" class="btn-toolbar btn-toolbar-outline shadow-sm">
+                                    <i class="bx bx-reset text-danger"></i> Clear All
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="moduleContainer" class="module-grid">
+                            @foreach ($modules as $module)
+                                <div class="module-wrapper">
+                                    <input class="module-checkbox" type="checkbox" name="modules[]"
+                                        value="{{ $module->id }}" id="mod{{ $module->id }}">
+                                    <label class="module-tile" for="mod{{ $module->id }}">
+                                        <div class="module-icon">{{ strtoupper(substr($module->name, 0, 2)) }}</div>
+                                        <div class="module-meta">
+                                            <div class="module-title">{{ $module->name }}</div>
+                                            <div class="module-desc">
+                                                {{ Str::limit($module->description ?? 'Tidak ada deskripsi tersedia.', 60) }}
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                            @endforeach
+                        </div>
+
+                    </div>
+                </div>
+
             </div>
 
-            {{-- STICKY ACTION BAR --}}
-            <div class="sticky-action">
-                <div class="d-none d-md-block">
-                    <div class="fw-bold text-dark" style="font-size: 0.95rem;">Perubahan Akses</div>
-                    <div class="text-muted" style="font-size: 0.8rem;">Jangan lupa simpan perubahan yang Anda buat.</div>
+            <div class="floating-island">
+                <div class="island-text d-none d-md-flex">
+                    <span class="island-title"><i class="bx bx-cog text-primary me-1"></i> Perubahan Terdeteksi</span>
+                    <span class="island-subtitle">Tinjau atau simpan pembaruan akses.</span>
                 </div>
-                <div class="d-flex gap-3">
-                    <button id="previewBtn" type="button" class="btn-custom btn-back"
-                        style="background: #f8fafc; border: 1px solid #e2e8f0; color: #475569;" data-bs-toggle="modal"
+                <div class="island-actions d-flex gap-3">
+                    <button id="previewBtn" type="button" class="btn-island btn-island-preview" data-bs-toggle="modal"
                         data-bs-target="#previewModal" disabled>
-                        <i class='bx bx-list-check'></i> Pratinjau
+                        <i class='bx bx-list-ul'></i> Preview
                     </button>
-                    <button id="submitBtn" type="submit" class="btn-custom btn-save" disabled>
-                        <i class="bx bx-save"></i> Simpan Akses
+                    <button id="submitBtn" type="submit" class="btn-island btn-island-save" disabled>
+                        <i class="bx bx-save"></i> Save Changes
                     </button>
                 </div>
             </div>
+
         </form>
     </div>
 
-    {{-- PREVIEW MODAL --}}
     <div class="modal fade" id="previewModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-sm">
-            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 24px; overflow: hidden;">
                 <div class="modal-header bg-light border-0 p-4 pb-3">
-                    <h5 class="modal-title fw-bolder fs-5 text-dark">Review Akses</h5>
+                    <h5 class="modal-title fw-bolder fs-5 text-dark"><i
+                            class="bx bx-check-shield text-success me-2"></i>Review Akses</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body p-4 pt-2">
-                    <p class="text-muted small fw-bold mb-3 text-uppercase border-bottom pb-2">Modul yang akan Aktif:</p>
-                    <ul id="pvModules" class="list-unstyled mb-0" style="max-height: 250px; overflow-y: auto;">
+                <div class="modal-body p-4 pt-2 bg-white">
+                    <p class="text-muted small fw-bolder mb-3 text-uppercase tracking-wider border-bottom pb-2">Modul yang
+                        akan Diberikan:</p>
+                    <ul id="pvModules" class="list-unstyled mb-0" style="max-height: 300px; overflow-y: auto;">
                     </ul>
                 </div>
             </div>
@@ -438,7 +591,7 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     @php
-        // Membersihkan data ke format JSON agar aman dibaca JS
+        // PHP 7.4 Safe Data Parsing
         $jsonUsers = [];
         foreach ($users as $u) {
             $jsonUsers[] = [
@@ -454,7 +607,7 @@
         $(function() {
             const usersData = {!! json_encode($jsonUsers) !!};
 
-            // Inisialisasi Select2
+            // Select2 Init
             $('.select2').select2({
                 placeholder: "Cari Nama Pengguna...",
                 allowClear: true,
@@ -469,7 +622,7 @@
 
             let originalSelection = [];
 
-            // Fungsi untuk update status Tombol & Counter
+            // Update State Logic
             function updateState() {
                 const selectedIds = $('.module-checkbox:checked').map(function() {
                     return Number($(this).val());
@@ -477,18 +630,15 @@
 
                 $selectedCount.text(selectedIds.length);
 
-                // Cek apakah ada perubahan dari aslinya
                 const hasChanged = JSON.stringify(selectedIds) !== JSON.stringify(originalSelection);
 
                 $submitBtn.prop('disabled', !$userSelect.val() || !hasChanged);
                 $previewBtn.prop('disabled', !$userSelect.val());
             }
 
-            // Saat User Dipilih
+            // User Selection Event
             $userSelect.on('change', function() {
                 const userId = $(this).val();
-
-                // Reset semua centang
                 $('.module-checkbox').prop('checked', false);
                 originalSelection = [];
 
@@ -508,22 +658,19 @@
                 updateState();
             });
 
-            // Pantau setiap kali checkbox diklik
             $(document).on('change', '.module-checkbox', updateState);
 
-            // Tombol Pilih Semua
+            // Select All / Clear All
             $('#selectAllBtn').on('click', () => {
                 $('.module-checkbox').prop('checked', true);
                 updateState();
             });
-
-            // Tombol Bersihkan
             $('#clearAllBtn').on('click', () => {
                 $('.module-checkbox').prop('checked', false);
                 updateState();
             });
 
-            // Fitur Live Search Modul
+            // Live Search Modules
             $('#moduleSearch').on('input', function() {
                 const q = $(this).val().toLowerCase().trim();
                 $('.module-wrapper').each(function() {
@@ -532,14 +679,14 @@
                 });
             });
 
-            // Fitur Preview Modul
+            // Preview Logic
             $('#previewBtn').on('click', () => {
                 const list = $('#pvModules').empty();
                 const checked = $('.module-checkbox:checked');
 
                 if (checked.length === 0) {
                     list.append(
-                        '<li class="text-danger fw-bold py-2"><i class="bx bx-x-circle me-2"></i>Tidak ada akses modul.</li>'
+                        '<li class="text-danger fw-bold py-3 text-center"><i class="bx bx-x-circle fs-3 d-block mb-1"></i>Akses Kosong</li>'
                         );
                     return;
                 }
@@ -547,31 +694,31 @@
                 checked.each(function() {
                     const title = $(this).closest('.module-wrapper').find('.module-title').text();
                     list.append(
-                        `<li class="py-2 text-dark fw-semibold d-flex align-items-center border-bottom border-light"><i class="bx bxs-check-circle text-primary me-2 fs-5"></i> ${title}</li>`
+                        `<li class="py-2 text-dark fw-bold d-flex align-items-center border-bottom border-light"><div class="bg-primary-subtle text-primary rounded-circle p-1 me-3 d-flex"><i class="bx bx-check"></i></div> ${title}</li>`
                         );
                 });
             });
 
-            // Konfirmasi Simpan
+            // Save Confirmation
             $('#accessForm').on('submit', function(e) {
                 e.preventDefault();
                 Swal.fire({
-                    title: 'Simpan Hak Akses?',
-                    text: "Sistem akan segera memperbarui akses untuk pengguna ini.",
-                    icon: 'question',
+                    title: 'Terapkan Akses?',
+                    text: "Sistem akan memperbarui izin modul untuk pengguna ini.",
+                    icon: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'Ya, Simpan!',
                     cancelButtonText: 'Batal',
                     confirmButtonColor: '#3b82f6',
                     customClass: {
-                        popup: 'rounded-4'
+                        popup: 'rounded-[2rem]'
                     }
                 }).then(res => {
                     if (res.isConfirmed) this.submit();
                 });
             });
 
-            // Notifikasi Sukses dari Controller
+            // Success Flash Message
             @if (session('success'))
                 Swal.fire({
                     icon: 'success',
@@ -580,7 +727,7 @@
                     showConfirmButton: false,
                     timer: 2000,
                     customClass: {
-                        popup: 'rounded-4'
+                        popup: 'rounded-[2rem]'
                     }
                 });
             @endif

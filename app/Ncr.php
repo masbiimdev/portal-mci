@@ -22,10 +22,14 @@ class Ncr extends Model
     protected $fillable = [
         'no_ncr',
         'issue_date',
-        'issue',
+        'no_po',         // Tambahan baru
+        'qty',           // Tambahan baru
+        'report_reff',   // Tambahan baru
         'audit_scope',
         'severity',
         'status',
+        'issue',
+        'tindakan',      // Tambahan baru
     ];
 
     /**
@@ -35,5 +39,6 @@ class Ncr extends Model
      */
     protected $casts = [
         'issue_date' => 'date',
+        'qty'        => 'integer', // Opsional: Memastikan qty selalu berbentuk angka (integer)
     ];
 }

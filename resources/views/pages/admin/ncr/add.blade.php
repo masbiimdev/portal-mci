@@ -256,6 +256,39 @@
                             </div>
                         </div>
 
+                        <div class="col-md-4 position-relative">
+                            <label class="form-label-premium">Nomor PO <span class="text-danger">*</span></label>
+                            <div class="position-relative">
+                                <i class="bi bi-receipt input-group-text-premium"></i>
+                                <input type="text" name="no_po" class="form-control-premium has-icon"
+                                    placeholder="Contoh: PO-2023-..." required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 position-relative">
+                            <label class="form-label-premium">Qty Barang <span class="text-danger">*</span></label>
+                            <div class="position-relative">
+                                <i class="bi bi-boxes input-group-text-premium"></i>
+                                <input type="number" name="qty" class="form-control-premium has-icon"
+                                    placeholder="Jumlah item" min="1" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label-premium">Report Reff</label>
+                            <select name="report_reff" class="form-select-premium">
+                                <option value="" disabled selected>-- Pilih Referensi --</option>
+                                <option value="Laporan Internal">PBM</option>
+                                <option value="Laporan Eksternal">IVD</option>
+                                <option value="Audit Supplier">MCH</option>
+                                <option value="Inspeksi Lapangan">WLD</option>
+                                <option value="Keluhan Pelanggan">DPT</option>
+                                <option value="Keluhan Pelanggan">MPT</option>
+                                <option value="Keluhan Pelanggan">ASSY</option>
+                                <option value="Lainnya">Others</option>
+                            </select>
+                        </div>
+
                         <div class="col-md-4">
                             <label class="form-label-premium">Audit Scope <span class="text-danger">*</span></label>
                             <select name="audit_scope" class="form-select-premium" required>
@@ -294,6 +327,15 @@
                             <small class="text-muted fw-semibold mt-2 d-block"><i class="bi bi-info-circle me-1"></i>
                                 Berikan deskripsi yang spesifik agar memudahkan proses RCA (Root Cause Analysis).</small>
                         </div>
+
+                        <div class="col-12">
+                            <label class="form-label-premium">Tindakan / Correction <span
+                                    class="text-danger">*</span></label>
+                            <textarea name="tindakan" class="form-control-premium"
+                                placeholder="Jelaskan tindakan perbaikan atau penanganan awal yang dilakukan terhadap temuan di atas..." required></textarea>
+                            <small class="text-muted fw-semibold mt-2 d-block"><i class="bi bi-check2-square me-1"></i>
+                                Tuliskan koreksi langsung yang sudah dilakukan di lapangan.</small>
+                        </div>
                     </div>
 
                     <hr class="my-4 border-light">
@@ -309,7 +351,8 @@
 
             <div class="bento-box bento-span-4 guideline-card">
                 <div class="position-relative z-1">
-                    <h5 class="fw-bolder text-white mb-2"><i class="bi bi-shield-exclamation text-warning me-2"></i>Panduan
+                    <h5 class="fw-bolder text-white mb-2"><i
+                            class="bi bi-shield-exclamation text-warning me-2"></i>Panduan
                         Severity</h5>
                     <p class="text-white-50 small fw-medium mb-4">Gunakan panduan berikut untuk menentukan Tingkat
                         Keparahan (Severity) NCR secara akurat.</p>

@@ -20,18 +20,23 @@
 
     <style>
         :root {
-            --primary: #1d4ed8;
-            --primary-light: #60a5fa;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --primary-light: #eff6ff;
             --secondary: #0ea5e9;
             --text-dark: #0f172a;
             --text-gray: #64748b;
-            --glass-bg: rgba(255, 255, 255, 0.6);
-            --glass-border: rgba(255, 255, 255, 0.7);
-            --glass-blur: blur(35px);
-            --radius-large: 32px;
-            --radius-medium: 24px;
-            --gap: 20px;
-            /* Cubic bezier untuk animasi membal yang premium */
+
+            /* Enhanced Glass Variables */
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            --glass-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+            --glass-inner-glow: inset 0 1px 2px rgba(255, 255, 255, 0.9);
+
+            --radius-large: 28px;
+            --radius-medium: 20px;
+            --gap: 24px;
+
             --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
             --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
         }
@@ -39,13 +44,14 @@
         * {
             box-sizing: border-box;
             outline: none;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
             min-height: 100vh;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #f1f5f9;
+            background-color: #f8fafc;
             color: var(--text-dark);
             display: flex;
             align-items: center;
@@ -61,14 +67,14 @@
             position: fixed;
             inset: 0;
             z-index: -1;
-            background-color: #f1f5f9;
+            background-color: #f8fafc;
             overflow: hidden;
         }
 
         .bg-mesh .blob {
             position: absolute;
-            filter: blur(100px);
-            opacity: 0.7;
+            filter: blur(120px);
+            opacity: 0.6;
             animation: moveBlob 25s infinite alternate ease-in-out;
             border-radius: 50%;
         }
@@ -78,26 +84,26 @@
             left: -10%;
             width: 50vw;
             height: 50vw;
-            background: #c7d2fe;
+            background: #93c5fd;
             animation-delay: 0s;
         }
 
         .blob-2 {
-            bottom: -15%;
+            bottom: -10%;
             right: -10%;
             width: 60vw;
             height: 60vw;
-            background: #bae6fd;
-            animation-delay: -7s;
+            background: #e0e7ff;
+            animation-delay: -5s;
         }
 
         .blob-3 {
-            top: 30%;
-            left: 30%;
-            width: 35vw;
-            height: 35vw;
-            background: #dbeafe;
-            animation-delay: -14s;
+            top: 20%;
+            left: 40%;
+            width: 40vw;
+            height: 40vw;
+            background: #bfdbfe;
+            animation-delay: -12s;
         }
 
         @keyframes moveBlob {
@@ -121,20 +127,20 @@
         /* ============== BENTO GRID ARCHITECTURE ============== */
         .bento-wrapper {
             width: 100%;
-            max-width: 1100px;
+            max-width: 1150px;
             display: grid;
             grid-template-columns: 1fr;
             gap: var(--gap);
             z-index: 10;
             perspective: 2000px;
-            /* Penting untuk efek 3D Tilt JS */
         }
 
         @media (min-width: 1024px) {
             .bento-wrapper {
-                grid-template-columns: 1.25fr 0.75fr;
-                grid-template-rows: repeat(2, minmax(0, 1fr));
-                height: 650px;
+                grid-template-columns: 1.3fr 0.8fr;
+                grid-template-rows: auto auto;
+                min-height: 600px;
+                /* Diubah ke min-height agar fleksibel */
             }
 
             .bento-brand {
@@ -159,53 +165,39 @@
         /* ============== 2. ACTIVE GLASSMORPHISM CARD ============== */
         .glass-card {
             background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--glass-border);
             border-radius: var(--radius-large);
-            padding: 2.5rem;
-            box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            padding: 3rem;
+            box-shadow: var(--glass-shadow), var(--glass-inner-glow);
             display: flex;
             flex-direction: column;
-
-            /* Animasi Masuk CSS (Fade-in-up) */
             opacity: 0;
-            transform: translateY(40px);
+            transform: translateY(30px);
             animation: bentoEntrance 0.8s var(--ease-out-expo) forwards;
-
-            /* Transisi untuk Hover & JS Tilt */
-            transition:
-                box-shadow 0.4s ease,
-                border-color 0.4s ease,
-                transform 0.1s ease-out;
-            /* Tip: transform JS harus cepat */
-
-            /* Agar konten tidak keluar saat miring */
+            transition: box-shadow 0.4s ease, transform 0.1s ease-out;
             transform-style: preserve-3d;
         }
 
-        /* Efek terangkat saat hover (CSS Fallback jika JS gagal/lambat) */
         .glass-card:not(.tilting):hover {
-            transform: translateY(-8px);
-            box-shadow: 0 40px 80px -20px rgba(29, 78, 216, 0.15), inset 0 1px 0 rgba(255, 255, 255, 1);
-            border-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 35px 60px -15px rgba(29, 78, 216, 0.15), var(--glass-inner-glow);
         }
 
-        /* Staggered Delay Animasi Masuk */
         .bento-brand {
             animation-delay: 0.1s;
         }
 
         .bento-form {
-            animation-delay: 0.25s;
+            animation-delay: 0.2s;
         }
 
         .bento-split .card-1 {
-            animation-delay: 0.4s;
+            animation-delay: 0.3s;
         }
 
         .bento-split .card-2 {
-            animation-delay: 0.55s;
+            animation-delay: 0.4s;
         }
 
         @keyframes bentoEntrance {
@@ -217,65 +209,51 @@
 
         /* ============== 3. BRAND HERO BOX ============== */
         .bento-brand {
-            justify-content: space-between;
+            justify-content: center;
             position: relative;
             overflow: hidden;
         }
 
         .bento-brand * {
             transform: translateZ(30px);
-            /* Efek Paralaks dalam 3D Tilt */
-        }
-
-        .bento-brand::after {
-            content: '';
-            position: absolute;
-            bottom: -80px;
-            left: -80px;
-            width: 250px;
-            height: 250px;
-            background: radial-gradient(circle, var(--secondary) 0%, transparent 70%);
-            opacity: 0.15;
-            filter: blur(40px);
-            transform: translateZ(10px);
         }
 
         .header-top {
             display: flex;
             align-items: center;
             gap: 16px;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
         }
 
         .logo-wrap {
-            width: 60px;
-            height: 60px;
-            border-radius: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
             background: white;
-            padding: 8px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            padding: 6px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
         }
 
         .logo-wrap img {
             width: 100%;
             height: 100%;
             object-fit: contain;
-            border-radius: 12px;
+            border-radius: 10px;
         }
 
         .header-top h2 {
             margin: 0;
             font-weight: 800;
-            font-size: 1.6rem;
-            letter-spacing: -0.5px;
+            font-size: 1.5rem;
+            color: var(--text-dark);
         }
 
         .brand-content h1 {
-            font-size: clamp(2.4rem, 3.8vw, 3.2rem);
+            font-size: clamp(2rem, 3.5vw, 3.5rem);
             font-weight: 800;
             margin: 0 0 1rem 0;
-            line-height: 1.1;
-            letter-spacing: -1.5px;
+            line-height: 1.15;
+            letter-spacing: -1px;
             color: var(--text-dark);
         }
 
@@ -294,44 +272,31 @@
             font-weight: 500;
         }
 
-        /* ============== 4. FORM BOX WITH ACTIVE INPUTS ============== */
+        /* ============== 4. FORM BOX ============== */
         .bento-form {
             background: rgba(255, 255, 255, 0.85);
             justify-content: center;
-            transform-origin: right center;
+            padding: 3rem 2.5rem;
         }
 
         .bento-form h3 {
-            font-size: 1.8rem;
+            font-size: 1.75rem;
             font-weight: 800;
             margin: 0 0 2rem 0;
-            text-align: center;
             letter-spacing: -0.5px;
         }
 
-        /* Alert Pulse Animation */
+        /* Alert Box Refined */
         .alert-box {
             background: #fff1f2;
             border: 1px solid #fecdd3;
-            padding: 1rem;
-            border-radius: 20px;
+            padding: 1rem 1.25rem;
+            border-radius: 16px;
             display: flex;
             gap: 12px;
             margin-bottom: 2rem;
             align-items: flex-start;
             animation: alertPulse 2s infinite var(--ease-out-expo);
-        }
-
-        @keyframes alertPulse {
-
-            0%,
-            100% {
-                box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.1);
-            }
-
-            50% {
-                box-shadow: 0 0 0 8px rgba(225, 29, 72, 0);
-            }
         }
 
         .alert-box i {
@@ -344,7 +309,7 @@
             color: #be123c;
             display: block;
             font-size: 0.95rem;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
             font-weight: 700;
         }
 
@@ -356,73 +321,59 @@
             font-weight: 500;
         }
 
-        /* Input Group dengan Garis Aktif Gradasi Bergerak */
+        /* SaaS Style Enclosed Inputs */
         .input-group {
             position: relative;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         .input-control {
             width: 100%;
-            padding: 1rem 0 0.6rem 0;
-            font-size: 1.05rem;
+            padding: 1.4rem 1rem 0.6rem;
+            font-size: 1rem;
             font-family: inherit;
             color: var(--text-dark);
-            background: transparent;
-            border: none;
-            border-bottom: 2px solid #e2e8f0;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
             font-weight: 600;
-            transition: border-color 0.3s ease;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
         }
 
-        /* Label Melayang Smooth */
         .input-label {
             position: absolute;
-            left: 0;
-            top: 1rem;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
             color: var(--text-gray);
-            font-size: 1.05rem;
+            font-size: 1rem;
             font-weight: 500;
             pointer-events: none;
-            transition: all 0.3s var(--ease-out-expo);
+            transition: all 0.2s var(--ease-out-expo);
         }
 
-        /* Pseudo-element Garis Gradasi Bergerak saat Focus */
-        .input-group::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--secondary), var(--primary), var(--secondary));
-            background-size: 200% auto;
-            transition: width 0.4s var(--ease-out-expo), left 0.4s var(--ease-out-expo);
+        .input-control:focus,
+        .input-control:hover {
+            background: #ffffff;
+            border-color: var(--primary);
+        }
+
+        .input-control:focus {
+            box-shadow: 0 0 0 4px var(--primary-light), inset 0 2px 4px rgba(0, 0, 0, 0.02);
         }
 
         .input-control:focus~.input-label,
         .input-control:not(:placeholder-shown)~.input-label {
-            top: -12px;
+            top: 1rem;
             font-size: 0.75rem;
-            font-weight: 800;
+            font-weight: 700;
             color: var(--primary);
         }
 
-        /* State Focus & Invalid */
-        .input-control:focus~ ::after {
-            width: 100%;
-            left: 0;
-            animation: gradientMove 1.5s linear infinite;
-        }
-
-        @keyframes gradientMove {
-            to {
-                background-position: 200% center;
-            }
-        }
-
         .input-control.is-invalid {
-            border-bottom-color: #ef4444;
+            border-color: #ef4444;
+            background: #fef2f2;
         }
 
         .input-control.is-invalid~.input-label {
@@ -431,29 +382,33 @@
 
         .pw-toggle-btn {
             position: absolute;
-            right: 0;
-            top: 12px;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
             background: transparent;
             border: none;
             color: var(--text-gray);
             cursor: pointer;
             font-size: 1.3rem;
             transition: 0.2s;
+            padding: 0;
+            display: flex;
+            align-items: center;
         }
 
         .pw-toggle-btn:hover {
             color: var(--primary);
-            transform: scale(1.1);
         }
 
         .error-msg {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #ef4444;
-            margin-top: 8px;
+            margin-top: 6px;
             display: flex;
             align-items: center;
             gap: 6px;
             font-weight: 600;
+            padding-left: 0.5rem;
         }
 
         .form-options {
@@ -461,7 +416,7 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 2.5rem;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
 
         .checkbox-wrap {
@@ -479,9 +434,9 @@
         }
 
         .checkbox-wrap input {
-            width: 19px;
-            height: 19px;
-            border-radius: 7px;
+            width: 18px;
+            height: 18px;
+            border-radius: 6px;
             accent-color: var(--primary);
             cursor: pointer;
         }
@@ -495,7 +450,6 @@
 
         .link-forgot:hover {
             color: var(--primary-hover);
-            text-decoration: underline;
         }
 
         /* ============== 5. SHINE & PARTICLE BUTTON ============== */
@@ -506,15 +460,15 @@
 
         .btn-submit {
             width: 100%;
-            padding: 1.2rem;
+            padding: 1.1rem;
             border: none;
-            border-radius: 18px;
+            border-radius: 16px;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            font-size: 1.1rem;
-            font-weight: 800;
+            font-size: 1.05rem;
+            font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 10px 30px -5px rgba(29, 78, 216, 0.4);
+            box-shadow: 0 8px 20px -6px rgba(29, 78, 216, 0.4);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -524,7 +478,6 @@
             overflow: hidden;
         }
 
-        /* Efek Kilatan Cahaya (Shine) otomatis */
         .btn-submit::after {
             content: '';
             position: absolute;
@@ -532,9 +485,9 @@
             left: -100%;
             width: 50%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
             transform: skewX(-20deg);
-            animation: btnShine 5s infinite;
+            animation: btnShine 4s infinite;
         }
 
         @keyframes btnShine {
@@ -549,16 +502,14 @@
         }
 
         .btn-submit:hover {
-            transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 15px 40px -5px rgba(29, 78, 216, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px -5px rgba(29, 78, 216, 0.5);
         }
 
         .btn-submit:active {
-            transform: translateY(1px) scale(0.99);
-            transition: 0.1s;
+            transform: translateY(1px) scale(0.98);
         }
 
-        /* Container untuk partikel JS */
         .btn-particles {
             position: absolute;
             inset: 0;
@@ -568,12 +519,12 @@
 
         .spinner {
             display: none;
-            width: 22px;
-            height: 22px;
+            width: 20px;
+            height: 20px;
             border: 3px solid rgba(255, 255, 255, 0.3);
             border-top-color: white;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            animation: spin 0.8s linear infinite;
         }
 
         @keyframes spin {
@@ -583,87 +534,68 @@
         }
 
         /* ============== BOTTOM SPLIT BOXES ============== */
-        @media (max-width: 1023px) {
-            .bento-split {
-                display: grid;
-                grid-template-columns: 1fr;
-                gap: var(--gap);
-            }
-        }
-
         .bento-small {
             border-radius: var(--radius-medium);
             padding: 2rem;
             justify-content: center;
         }
 
-        /* Feature Box - Dark Gradient */
         .box-feature {
             background: linear-gradient(135deg, #1e293b, #0f172a);
             color: white;
             border: none;
-            overflow: hidden;
+            box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.4);
         }
 
         .box-feature i {
-            font-size: 2.2rem;
+            font-size: 2rem;
             color: var(--secondary);
             margin-bottom: 1rem;
-            animation: iconPulse 2s infinite var(--ease-out-expo);
-        }
-
-        @keyframes iconPulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-
-            50% {
-                transform: scale(1.1);
-                opacity: 0.8;
-            }
+            display: inline-block;
         }
 
         .box-feature h4 {
-            margin: 0 0 0.6rem 0;
-            font-size: 1.3rem;
+            margin: 0 0 0.5rem 0;
+            font-size: 1.2rem;
             font-weight: 700;
         }
 
         .box-feature p {
             margin: 0;
-            font-size: 0.95rem;
-            color: #cbd5e1;
+            font-size: 0.9rem;
+            color: #94a3b8;
             line-height: 1.5;
             font-weight: 500;
         }
 
-        /* Register Box - Dashed Outline */
         .box-register {
-            background: var(--glass-bg);
-            border: 2px dashed #cbd5e0;
+            background: rgba(255, 255, 255, 0.5);
+            border: 2px dashed rgba(148, 163, 184, 0.4);
             align-items: center;
             text-align: center;
+            box-shadow: none;
+        }
+
+        .box-register:hover {
+            border-color: var(--primary);
         }
 
         .box-register i {
-            font-size: 2.2rem;
+            font-size: 2rem;
             color: var(--primary);
-            margin-bottom: 0.6rem;
+            margin-bottom: 0.5rem;
         }
 
         .box-register h4 {
-            margin: 0 0 0.5rem 0;
-            font-size: 1.15rem;
+            margin: 0 0 0.4rem 0;
+            font-size: 1.1rem;
             font-weight: 700;
             color: var(--text-dark);
         }
 
         .box-register p {
-            margin: 0 0 1.25rem 0;
-            font-size: 0.9rem;
+            margin: 0 0 1.2rem 0;
+            font-size: 0.85rem;
             color: var(--text-gray);
             font-weight: 500;
         }
@@ -671,29 +603,37 @@
         .btn-outline {
             display: inline-block;
             width: 100%;
-            padding: 0.9rem;
-            border-radius: 14px;
+            padding: 0.8rem;
+            border-radius: 12px;
             background: white;
             color: var(--text-dark);
             font-weight: 700;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             text-decoration: none;
             border: 1px solid #e2e8f0;
-            transition: all 0.3s var(--ease-out-back);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+            transition: all 0.3s ease;
         }
 
         .btn-outline:hover {
             border-color: var(--primary);
             color: var(--primary);
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 10px 20px rgba(29, 78, 216, 0.05);
+            box-shadow: 0 8px 15px rgba(29, 78, 216, 0.08);
+            transform: translateY(-2px);
         }
 
         /* Responsive Layout Fix */
         @media (max-width: 1023px) {
             .bento-wrapper {
-                max-width: 550px;
+                max-width: 500px;
+                padding: 1rem 0;
+            }
+
+            .bento-brand {
+                padding: 2.5rem 2rem;
+            }
+
+            .brand-content h1 {
+                font-size: 2rem;
             }
         }
     </style>
@@ -709,7 +649,7 @@
 
     <main class="bento-wrapper" id="bentoGrid">
 
-        <div class="glass-card bento-brand js-tilt" data-tilt-max="10" data-tilt-speed="1000"
+        <div class="glass-card bento-brand js-tilt" data-tilt-max="5" data-tilt-speed="1000"
             data-tilt-perspective="2000">
             <div class="header-top">
                 <div class="logo-wrap">
@@ -724,8 +664,8 @@
             </div>
         </div>
 
-        <div class="glass-card bento-form js-tilt" data-tilt-max="7" data-tilt-speed="1000" data-tilt-perspective="2000"
-            data-tilt-startX="5">
+        <div class="glass-card bento-form js-tilt" data-tilt-max="3" data-tilt-speed="1000"
+            data-tilt-perspective="2000">
             <h3>Account Login</h3>
 
             @if ($errors->has('login') || $errors->has('session_expired'))
@@ -790,14 +730,13 @@
         </div>
 
         <div class="bento-split">
-            <div class="glass-card bento-small box-feature card-1 js-tilt" data-tilt-max="15" data-tilt-scale="1.05">
+            <div class="glass-card bento-small box-feature card-1 js-tilt" data-tilt-max="8" data-tilt-scale="1.02">
                 <i class='bx bx-shield-quarter'></i>
                 <h4>Keamanan Berlapis</h4>
                 <p>Proteksi data end-to-end dan pemantauan sesi aktif.</p>
             </div>
 
-            <div class="glass-card bento-small box-register card-2 js-tilt" data-tilt-max="15"
-                data-tilt-scale="1.05">
+            <div class="glass-card bento-small box-register card-2 js-tilt" data-tilt-max="8" data-tilt-scale="1.02">
                 <i class='bx bx-user-plus'></i>
                 <h4>Akses Baru</h4>
                 <p>Belum memiliki kredensial?</p>
@@ -805,8 +744,9 @@
                     <a href="{{ route('register') }}" class="btn-outline">Daftar Akun</a>
                 @else
                     <div
-                        style="font-size: 0.85rem; color: var(--text-gray); font-weight: 600; border: 1px dashed #e2e8f0; padding: 8px; border-radius: 10px; background: white;">
-                        Hubungi Admin IT</div>
+                        style="font-size: 0.8rem; color: var(--text-gray); font-weight: 600; border: 1px dashed #cbd5e1; padding: 8px; border-radius: 10px; background: white;">
+                        Hubungi Admin IT
+                    </div>
                 @endif
             </div>
         </div>
@@ -819,15 +759,15 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // --- A. Inisialisasi VanillaTilt (Efek 3D Mouse) ---
+            // --- A. VanillaTilt Init ---
             const tiltElements = document.querySelectorAll(".js-tilt");
-            if (window.innerWidth > 1024) { // Hanya aktif di desktop
+            if (window.innerWidth > 1024) {
                 VanillaTilt.init(tiltElements, {
-                    gyroscope: false, // Matikan gyro agar tidak aneh di mobile jika aktif
+                    gyroscope: false,
                     "full-page-listening": false,
+                    glare: false // Matikan glare agar glassmorphism tetap natural
                 });
 
-                // Tambahkan class saat tilting untuk mematikan transisi CSS transisi sementara agar mulus
                 tiltElements.forEach(el => {
                     el.addEventListener("tiltChange", () => el.classList.add('tilting'));
                     el.addEventListener("blur", () => el.classList.remove('tilting'));
@@ -840,7 +780,8 @@
             if (invalidInput) {
                 invalidInput.focus();
             } else {
-                document.getElementById('email').focus();
+                const emailInput = document.getElementById('email');
+                if (emailInput) emailInput.focus();
             }
 
             // --- C. Password Toggle UX ---
@@ -849,19 +790,17 @@
             const pwIcon = document.getElementById('pwIcon');
 
             if (pwToggleBtn && pwInput) {
-                pwToggleBtn.addEventListener('click', function() {
+                pwToggleBtn.addEventListener('click', function(e) {
+                    e.preventDefault(); // Mencegah form tersubmit tak sengaja
                     const isPassword = pwInput.type === 'password';
                     pwInput.type = isPassword ? 'text' : 'password';
 
-                    // Ganti icon & animasi pop
                     pwIcon.className = isPassword ? 'bx bx-show' : 'bx bx-hide';
-                    pwToggleBtn.style.transform = 'scale(1.2)';
-                    setTimeout(() => pwToggleBtn.style.transform = 'scale(1)', 200);
                     pwInput.focus();
                 });
             }
 
-            // --- D. Form Loading & Particle Effect saat Klik ---
+            // --- D. Form Loading & Particle Effect ---
             const loginForm = document.getElementById('loginForm');
             const submitBtn = document.getElementById('submitBtn');
             const btnSpinner = document.getElementById('btnSpinner');
@@ -870,48 +809,43 @@
 
             if (loginForm) {
                 loginForm.addEventListener('submit', function(e) {
-                    // 1. Matikan tombol (UX)
+                    // Cek form validasi dasar HTML5 sebelum animasi jalan
+                    if (!this.checkValidity()) return;
+
                     submitBtn.style.pointerEvents = 'none';
                     btnSpinner.style.display = 'block';
-                    btnText.innerText = 'Memverifikasi...';
+                    btnText.innerHTML = 'Memverifikasi...';
 
-                    // 2. Efek Partikel Ledakan Aurora (JS)
                     createParticles(particleContainer);
-
-                    // (Laravel akan menangani sisanya)
                 });
             }
 
-            // Fungsi untuk membuat partikel ledakan transparan
             function createParticles(container) {
-                container.innerHTML = ''; // Reset
-                const colors = ['#60a5fa', '#0ea5e9', '#ffffff']; // Warna aurora
+                container.innerHTML = '';
+                const colors = ['#eff6ff', '#bfdbfe', '#ffffff'];
 
-                for (let i = 0; i < 30; i++) {
+                for (let i = 0; i < 25; i++) {
                     const particle = document.createElement('div');
                     const color = colors[Math.floor(Math.random() * colors.length)];
 
-                    // Styling partikel dasar
                     particle.style.cssText = `
                         position: absolute;
                         top: 50%; left: 50%;
-                        width: ${Math.random() * 8 + 4}px;
+                        width: ${Math.random() * 6 + 4}px;
                         height: ${particle.style.width};
                         background: ${color};
                         border-radius: 50%;
-                        opacity: 0.8;
+                        opacity: 0.9;
                         pointer-events: none;
-                        transition: all ${Math.random() * 0.5 + 0.5}s var(--ease-out-expo);
+                        transition: all ${Math.random() * 0.4 + 0.4}s var(--ease-out-expo);
                         transform: translate(-50%, -50%);
                     `;
 
                     container.appendChild(particle);
 
-                    // Hitung arah ledakan acak
-                    const destinationX = (Math.random() - 0.5) * 300; // Jarak sebar X
-                    const destinationY = (Math.random() - 0.5) * 150; // Jarak sebar Y
+                    const destinationX = (Math.random() - 0.5) * 250;
+                    const destinationY = (Math.random() - 0.5) * 100;
 
-                    // Animasikan partikel (pindah & hilang)
                     setTimeout(() => {
                         particle.style.transform =
                             `translate(calc(-50% + ${destinationX}px), calc(-50% + ${destinationY}px)) scale(0)`;

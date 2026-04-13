@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Ncr; // Model Ncr sudah diaktifkan
+use App\Ncr; // Pastikan model Ncr sudah menggunakan $fillable yang baru
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -119,14 +119,18 @@ class NcrController extends Controller
      */
     public function store(Request $request)
     {
-        // 1. Validasi Input ketat sesuai migration
+        // 1. Validasi Input ketat sesuai migration baru
         $validatedData = $request->validate([
             'no_ncr'      => 'required|string|max:255|unique:ncrs,no_ncr',
             'issue_date'  => 'required|date',
-            'issue'       => 'required|string',
+            'no_po'       => 'required|string|max:255',
+            'qty'         => 'required|integer|min:1',
+            'report_reff' => 'nullable|string|max:255',
             'audit_scope' => 'required|in:Internal,External,Supplier',
             'severity'    => 'required|in:Critical,High,Medium,Low',
             'status'      => 'required|in:Open,Monitoring,Closed',
+            'issue'       => 'required|string',
+            'tindakan'    => 'required|string',
         ], [
             // Kustomisasi pesan error (opsional)
             'no_ncr.unique' => 'Nomor NCR ini sudah digunakan, silakan masukkan nomor lain.'
@@ -168,10 +172,14 @@ class NcrController extends Controller
         $validatedData = $request->validate([
             'no_ncr'      => 'required|string|max:255|unique:ncrs,no_ncr,' . $id,
             'issue_date'  => 'required|date',
-            'issue'       => 'required|string',
+            'no_po'       => 'required|string|max:255',
+            'qty'         => 'required|integer|min:1',
+            'report_reff' => 'nullable|string|max:255',
             'audit_scope' => 'required|in:Internal,External,Supplier',
             'severity'    => 'required|in:Critical,High,Medium,Low',
             'status'      => 'required|in:Open,Monitoring,Closed',
+            'issue'       => 'required|string',
+            'tindakan'    => 'required|string',
         ]);
 
         // 2. Update Database

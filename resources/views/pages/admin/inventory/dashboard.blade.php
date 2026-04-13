@@ -4,9 +4,11 @@
 @push('css')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap"
         rel="stylesheet">
+
     <style>
+        /* ========== ULTRA PREMIUM BENTO SYSTEM ========== */
         :root {
             --primary: #2563eb;
             --primary-dark: #1d4ed8;
@@ -19,262 +21,346 @@
             --danger-light: #fee2e2;
             --info: #0ea5e9;
             --info-light: #e0f2fe;
+
             --bg-body: #f8fafc;
-            --surface: #ffffff;
+            --surface: rgba(255, 255, 255, 0.9);
             --text-main: #0f172a;
             --text-muted: #64748b;
-            --border-color: #e2e8f0;
-            --radius-sm: 8px;
-            --radius-md: 12px;
-            --radius-lg: 16px;
-            --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
-            --shadow-hover: 0 12px 25px -5px rgba(37, 99, 235, 0.1);
-            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --border-color: rgba(226, 232, 240, 0.8);
+
+            --radius-bento: 2rem;
+            /* Extreme rounded for Bento */
+            --radius-md: 1rem;
+            --radius-sm: 0.75rem;
+
+            --shadow-bento: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 20px 40px -10px rgba(37, 99, 235, 0.1);
+            --inner-glow: inset 0 1px 0 0 rgba(255, 255, 255, 1);
+
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-body);
             color: var(--text-main);
+            /* Premium Mesh/Dot Pattern */
+            background-image: radial-gradient(#cbd5e1 1.2px, transparent 1.2px);
+            background-size: 32px 32px;
             -webkit-font-smoothing: antialiased;
         }
 
         .container-p-y {
-            padding-top: 2rem !important;
-            padding-bottom: 2rem !important;
+            padding-top: 2.5rem !important;
+            padding-bottom: 2.5rem !important;
         }
 
-        /* ============== PAGE HEADER ============== */
-        .page-title h4 {
-            font-weight: 800;
-            color: var(--text-main);
-            letter-spacing: -0.02em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        /* ============== BENTO GRID LAYOUT ============== */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
         }
 
-        .page-title .small-muted {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            margin-top: 4px;
-            font-weight: 500;
-        }
-
-        .action-btns .btn {
-            border-radius: 999px;
-            font-weight: 700;
-            font-size: 0.85rem;
-            padding: 0.5rem 1.25rem;
-            box-shadow: var(--shadow-sm);
-            transition: var(--transition);
-            border: none;
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-        }
-
-        .btn-outline-secondary {
+        .bento-card {
             background: var(--surface);
-            color: var(--text-main);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: var(--radius-bento);
             border: 1px solid var(--border-color);
-        }
-
-        .action-btns .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
-        }
-
-        /* ============== KPI CARDS ============== */
-        .card-hero {
-            background: var(--surface);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow-sm);
+            box-shadow: var(--shadow-bento), var(--inner-glow);
+            padding: 1.75rem;
             transition: var(--transition);
             position: relative;
             overflow: hidden;
         }
 
-        .card-hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
+        .bento-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover), var(--inner-glow);
+            border-color: rgba(255, 255, 255, 0.9);
         }
 
-        .card-hero.total::before {
-            background: var(--primary);
+        /* Span Helpers */
+        .col-span-3 {
+            grid-column: span 3;
         }
 
-        .card-hero.stock::before {
-            background: var(--success);
+        .col-span-4 {
+            grid-column: span 4;
         }
 
-        .card-hero.in::before {
-            background: var(--info);
+        .col-span-8 {
+            grid-column: span 8;
         }
 
-        .card-hero.out::before {
-            background: var(--danger);
+        .col-span-12 {
+            grid-column: span 12;
         }
 
-        .card-hero:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-hover);
-            border-color: #bfdbfe;
+        /* ============== PAGE HEADER ============== */
+        .page-title h2 {
+            font-weight: 900;
+            color: var(--text-main);
+            letter-spacing: -0.04em;
+            font-size: 2.2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 0.5rem;
         }
 
-        .stat-icon {
+        .page-title .subtitle {
+            color: var(--text-muted);
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        /* ============== KPI CARDS ============== */
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .kpi-icon {
             width: 48px;
             height: 48px;
-            border-radius: var(--radius-md);
+            border-radius: 1rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.4rem;
-            flex-shrink: 0;
+            font-size: 1.5rem;
+            color: white;
+            box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.3);
         }
 
-        .card-hero.total .stat-icon {
-            background: #eff6ff;
-            color: var(--primary);
+        .icon-primary {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
         }
 
-        .card-hero.stock .stat-icon {
-            background: var(--success-light);
-            color: var(--success);
+        .icon-success {
+            background: linear-gradient(135deg, #10b981, #047857);
         }
 
-        .card-hero.in .stat-icon {
-            background: var(--info-light);
-            color: var(--info);
+        .icon-info {
+            background: linear-gradient(135deg, #0ea5e9, #0369a1);
         }
 
-        .card-hero.out .stat-icon {
-            background: var(--danger-light);
-            color: var(--danger);
+        .icon-danger {
+            background: linear-gradient(135deg, #ef4444, #b91c1c);
         }
 
         .kpi-title {
-            font-size: 0.75rem;
-            font-weight: 700;
+            font-size: 0.7rem;
+            font-weight: 800;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 4px;
+            letter-spacing: 1.5px;
         }
 
         .kpi-value {
-            font-size: 1.75rem;
-            font-weight: 800;
+            font-size: 2.2rem;
+            font-weight: 900;
             color: var(--text-main);
+            letter-spacing: -0.03em;
             line-height: 1;
-            margin: 0;
-            font-family: 'JetBrains Mono', monospace;
+            margin: 0.5rem 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
-        .kpi-desc {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-top: 4px;
+        .kpi-spark-container {
+            height: 40px;
+            width: 100%;
+            margin-top: auto;
         }
 
-        .kpi-spark {
-            width: 60px;
-            height: 30px;
+        /* ============== ACTION TILE (QUICK ACTIONS) ============== */
+        .action-tile {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
-        /* ============== CARDS & TABLES ============== */
-        .modern-card {
-            background: var(--surface);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow-sm);
-            margin-bottom: 1.5rem;
-            overflow: hidden;
+        .action-tile::after {
+            content: '\F1B2';
+            /* Box icon code */
+            font-family: "bootstrap-icons";
+            position: absolute;
+            right: -20px;
+            bottom: -30px;
+            font-size: 12rem;
+            opacity: 0.05;
+            pointer-events: none;
         }
 
-        .modern-card-header {
-            background: #ffffff;
-            padding: 1.25rem 1.5rem;
-            border-bottom: 1px solid var(--border-color);
+        .btn-bento {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 1rem;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: var(--transition);
+            border: none;
+            z-index: 2;
+        }
+
+        .btn-bento-success {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-bento-success:hover {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-bento-danger {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-bento-danger:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-bento-white {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-bento-white:hover {
+            background: white;
+            color: #0f172a;
+        }
+
+        /* ============== CHART & HISTORY ============== */
+        .bento-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 1rem;
+            margin-bottom: 1.5rem;
         }
 
-        .modern-card-title {
-            font-size: 1.05rem;
-            font-weight: 800;
+        .bento-title {
+            font-size: 1.1rem;
+            font-weight: 900;
             color: var(--text-main);
             margin: 0;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
-        .modern-card-subtitle {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            font-weight: 500;
-            margin-top: 2px;
+        /* Search Input */
+        .search-pill {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f1f5f9;
+            border-radius: 999px;
+            padding: 0.6rem 1.2rem;
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+
+        .search-pill:focus-within {
+            background: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-soft);
+        }
+
+        .search-pill input {
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            width: 200px;
         }
 
         /* Table Resets */
+        .table-responsive {
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
         .table {
             margin-bottom: 0;
         }
 
         .table th {
             background: #f8fafc;
-            font-size: 0.75rem;
-            font-weight: 700;
+            font-size: 0.7rem;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 1px;
             color: var(--text-muted);
+            padding: 1.2rem 1.5rem;
             border-bottom: 1px solid var(--border-color);
-            padding: 1rem 1.25rem;
-            border-top: none;
         }
 
         .table td {
-            padding: 1rem 1.25rem;
+            padding: 1.2rem 1.5rem;
             vertical-align: middle;
             font-size: 0.9rem;
-            color: var(--text-main);
+            font-weight: 600;
             border-bottom: 1px solid #f1f5f9;
         }
 
-        .table tbody tr {
-            transition: background 0.2s;
+        /* History Day Group */
+        .history-day {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 1.5rem;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
         }
 
-        .table tbody tr:hover {
+        .hd-header {
             background: #f8fafc;
+            padding: 1.2rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        /* Badges */
-        .badge-soft {
-            padding: 0.35rem 0.75rem;
-            border-radius: 8px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            display: inline-flex;
+        .hd-date {
+            font-weight: 800;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 8px;
+        }
+
+        /* Badges & Stock Boxes */
+        .badge-soft {
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .badge-in {
@@ -287,136 +373,79 @@
             color: #dc2626;
         }
 
-        /* Stock Info Boxes */
         .stock-box {
-            display: inline-block;
-            padding: 0.4rem 0.8rem;
-            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 12px;
+            border-radius: 10px;
             font-family: 'JetBrains Mono', monospace;
             font-weight: 800;
             font-size: 0.9rem;
             min-width: 65px;
-            text-align: center;
         }
 
         .stock-box.before {
             background: #f1f5f9;
             color: #475569;
-            border: 1px solid #cbd5e1;
         }
 
         .stock-box.change.in {
             background: var(--success-light);
             color: #059669;
-            border: 1px solid #a7f3d0;
         }
 
         .stock-box.change.out {
             background: var(--danger-light);
             color: #dc2626;
-            border: 1px solid #fecaca;
         }
 
         .stock-box.after {
             background: var(--primary-soft);
             color: var(--primary-dark);
+            font-size: 1rem;
             border: 1px solid #bfdbfe;
-            font-size: 0.95rem;
         }
 
-        /* Custom Progress Bar */
-        .progress-custom {
-            height: 8px;
-            border-radius: 999px;
-            background: var(--border-color);
-            overflow: hidden;
-            width: 100px;
-        }
+        /* Responsive Breakpoints */
+        @media (max-width: 1024px) {
+            .col-span-3 {
+                grid-column: span 6;
+            }
 
-        .progress-custom .progress-bar {
-            border-radius: 999px;
-        }
+            .col-span-4 {
+                grid-column: span 12;
+            }
 
-        .low-stock-row td {
-            background: #fffbeb !important;
-        }
-
-        .low-stock-row:hover td {
-            background: #fef3c7 !important;
-        }
-
-        /* ============== HISTORY TIMELINE ============== */
-        .history-day {
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            margin-bottom: 1.5rem;
-            background: var(--surface);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
-            overflow: hidden;
-        }
-
-        .hd-header {
-            background: #f8fafc;
-            padding: 1rem 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .hd-date {
-            font-weight: 800;
-            color: var(--text-main);
-            font-size: 0.95rem;
-        }
-
-        /* ============== SEARCH INPUT ============== */
-        .search-input-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: white;
-            border: 1px solid var(--border-color);
-            border-radius: 999px;
-            padding: 6px 16px;
-            transition: var(--transition);
-        }
-
-        .search-input-wrapper:focus-within {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        .search-input-wrapper input {
-            border: none;
-            outline: none;
-            background: transparent;
-            font-size: 0.85rem;
-            width: 220px;
+            .col-span-8 {
+                grid-column: span 12;
+            }
         }
 
         @media (max-width: 768px) {
-            .page-title h4 {
-                font-size: 1.5rem;
+
+            .col-span-3,
+            .col-span-4,
+            .col-span-8,
+            .col-span-12 {
+                grid-column: span 12;
             }
 
-            .action-btns {
-                flex-wrap: wrap;
+            .page-title h2 {
+                font-size: 1.75rem;
+            }
+
+            .hd-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .search-pill {
                 width: 100%;
             }
 
-            .action-btns .btn {
-                flex: 1;
-                justify-content: center;
-            }
-
-            .modern-card-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .search-input-wrapper,
-            .search-input-wrapper input {
+            .search-pill input {
                 width: 100%;
             }
         }
@@ -426,342 +455,230 @@
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
 
-        <div
-            class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+        <div class="mb-5">
             <div class="page-title">
-                <h4 class="mb-0">📦 Dashboard Inventory</h4>
-                <div class="small-muted">Ringkasan stok, visualisasi mutasi barang, dan peringatan batas minimum.</div>
-            </div>
-
-            <div class="d-flex gap-2 action-btns">
-                <a href="{{ route('material_in.create') }}" class="btn btn-success d-flex align-items-center gap-2">
-                    <i class="bi bi-box-arrow-in-down"></i> Material Masuk
-                </a>
-                <a href="{{ route('material_out.create') }}" class="btn btn-danger d-flex align-items-center gap-2">
-                    <i class="bi bi-box-arrow-up"></i> Material Keluar
-                </a>
-                <a href="{{ route('materials.index') }}" class="btn btn-outline-secondary d-flex align-items-center gap-2">
-                    <i class="bi bi-boxes"></i> Master Data
-                </a>
+                <h2><i class="bi bi-box-seam text-primary"></i> Dashboard Inventory</h2>
+                <div class="subtitle">Pantau stok material, visualisasi mutasi barang, dan kelola aktivitas gudang secara
+                    *real-time*.</div>
             </div>
         </div>
 
-        <div class="row g-3 mb-4">
-            <div class="col-12 col-sm-6 col-md-3">
-                <div class="card-hero total h-100 p-3">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="stat-icon"><i class="bi bi-stack"></i></div>
-                        <div class="flex-grow-1">
-                            <div class="kpi-title">Total Material</div>
-                            <div class="d-flex align-items-end justify-content-between">
-                                <h5 class="kpi-value">{{ number_format($totalMaterials ?? 0) }}</h5>
-                                <canvas class="kpi-spark" id="sparkTotalMaterial"></canvas>
-                            </div>
-                            <div class="kpi-desc">Item unik terdaftar</div>
-                        </div>
-                    </div>
+        <div class="bento-grid">
+
+            <div class="bento-card col-span-3 d-flex flex-column">
+                <div class="kpi-header">
+                    <div class="kpi-title">Total Material</div>
+                    <div class="kpi-icon icon-primary"><i class="bi bi-boxes"></i></div>
                 </div>
+                <h5 class="kpi-value">{{ number_format($totalMaterials ?? 0) }}</h5>
+                <div class="kpi-spark-container"><canvas id="sparkTotalMaterial"></canvas></div>
             </div>
 
-            <div class="col-12 col-sm-6 col-md-3">
-                <div class="card-hero stock h-100 p-3">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="stat-icon"><i class="bi bi-box-seam"></i></div>
-                        <div class="flex-grow-1">
-                            <div class="kpi-title">Total Stok Fisik</div>
-                            <div class="d-flex align-items-end justify-content-between">
-                                <h5 class="kpi-value text-success">{{ number_format($totalStock ?? 0) }}</h5>
-                                <canvas class="kpi-spark" id="sparkTotalStock"></canvas>
-                            </div>
-                            <div class="kpi-desc">Seluruh unit di gudang</div>
-                        </div>
-                    </div>
+            <div class="bento-card col-span-3 d-flex flex-column">
+                <div class="kpi-header">
+                    <div class="kpi-title">Total Stok Fisik</div>
+                    <div class="kpi-icon icon-success"><i class="bi bi-layers"></i></div>
                 </div>
+                <h5 class="kpi-value text-success">{{ number_format($totalStock ?? 0) }}</h5>
+                <div class="kpi-spark-container"><canvas id="sparkTotalStock"></canvas></div>
             </div>
 
-            <div class="col-12 col-sm-6 col-md-3">
-                <div class="card-hero in h-100 p-3">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="stat-icon"><i class="bi bi-arrow-down-square"></i></div>
-                        <div class="flex-grow-1">
-                            <div class="kpi-title">Masuk (Bulan Ini)</div>
-                            <div class="d-flex align-items-end justify-content-between">
-                                <h5 class="kpi-value text-info">{{ number_format($totalIn ?? 0) }}</h5>
-                                <canvas class="kpi-spark" id="sparkIn"></canvas>
-                            </div>
-                            <div class="kpi-desc">Penambahan unit baru</div>
-                        </div>
-                    </div>
+            <div class="bento-card col-span-3 d-flex flex-column">
+                <div class="kpi-header">
+                    <div class="kpi-title">Masuk (Bulan Ini)</div>
+                    <div class="kpi-icon icon-info"><i class="bi bi-arrow-down-left-square"></i></div>
                 </div>
+                <h5 class="kpi-value text-info">{{ number_format($totalIn ?? 0) }}</h5>
+                <div class="kpi-spark-container"><canvas id="sparkIn"></canvas></div>
             </div>
 
-            <div class="col-12 col-sm-6 col-md-3">
-                <div class="card-hero out h-100 p-3">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="stat-icon"><i class="bi bi-arrow-up-square"></i></div>
-                        <div class="flex-grow-1">
-                            <div class="kpi-title">Keluar (Bulan Ini)</div>
-                            <div class="d-flex align-items-end justify-content-between">
-                                <h5 class="kpi-value text-danger">{{ number_format($totalOut ?? 0) }}</h5>
-                                <canvas class="kpi-spark" id="sparkOut"></canvas>
-                            </div>
-                            <div class="kpi-desc">Unit yang telah dipakai</div>
-                        </div>
-                    </div>
+            <div class="bento-card col-span-3 d-flex flex-column">
+                <div class="kpi-header">
+                    <div class="kpi-title">Keluar (Bulan Ini)</div>
+                    <div class="kpi-icon icon-danger"><i class="bi bi-arrow-up-right-square"></i></div>
                 </div>
+                <h5 class="kpi-value text-danger">{{ number_format($totalOut ?? 0) }}</h5>
+                <div class="kpi-spark-container"><canvas id="sparkOut"></canvas></div>
             </div>
-        </div>
 
-        <div class="modern-card">
-            <div class="modern-card-header">
-                <div>
-                    <h5 class="modern-card-title">📊 Grafik Alur Barang Bulanan</h5>
-                    <div class="modern-card-subtitle">Perbandingan barang masuk, keluar, dan selisih bersih.</div>
-                </div>
-                <button id="downloadChart" class="btn btn-outline-secondary btn-sm"
-                    style="border-radius:8px; font-weight:600;">
-                    <i class="bi bi-download me-1"></i> Unduh Laporan
-                </button>
-            </div>
-            <div class="card-body p-4">
-                <canvas id="monthlyChart" height="100"></canvas>
-            </div>
-        </div>
-
-        {{-- <div class="modern-card border-warning">
-            <div class="modern-card-header" style="background: #fffbeb; border-bottom-color: #fde68a;">
-                <div>
-                    <h5 class="modern-card-title text-warning" style="color: #d97706 !important;">
-                        <i class="bi bi-exclamation-triangle-fill"></i> Peringatan Stok Rendah
+            <div class="bento-card col-span-8">
+                <div class="bento-header">
+                    <h5 class="bento-title"><i class="bi bi-bar-chart-line text-primary"></i> Grafik Alur Mutasi Bulanan
                     </h5>
-                    <div class="modern-card-subtitle" style="color: #92400e;">Item yang jumlah fisiknya mendekati atau di
-                        bawah batas minimum.</div>
+                    <button id="downloadChart" class="btn btn-light btn-sm fw-bold rounded-pill border shadow-sm px-3">
+                        <i class="bi bi-download me-1"></i> Unduh PDF
+                    </button>
+                </div>
+                <div style="position: relative; height: 320px; width: 100%;">
+                    <canvas id="monthlyChart"></canvas>
                 </div>
             </div>
 
-            <div class="card-body p-0">
-                @if ($lowStock->isEmpty())
-                    <div class="p-5 text-center text-muted">
-                        <div
-                            style="width: 80px; height: 80px; background: #dcfce7; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto;">
-                            <i class="bi bi-check-circle-fill text-success" style="font-size: 2.5rem;"></i>
-                        </div>
-                        <h6 class="fw-bold text-dark">Kondisi Stok Aman</h6>
-                        <p class="mb-0 font-size-sm">Semua material saat ini berada di atas batas minimum persediaan.</p>
-                    </div>
-                @else
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th width="45%">Item Material / Spare Part</th>
-                                    <th class="text-center" width="15%">Batas Min</th>
-                                    <th class="text-center" width="15%">Sisa Stok</th>
-                                    <th class="text-end" width="25%">Kapasitas</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($lowStock as $m)
-                                    @php
-                                        $pct =
-                                            $m->min_stock > 0 ? min(100, round(($m->stock / $m->min_stock) * 100)) : 0;
-                                        $isCritical = $m->stock <= $m->min_stock / 2;
-                                        $barColor = $isCritical ? 'bg-danger' : 'bg-warning';
-                                        $textColor = $isCritical ? 'text-danger' : 'text-warning';
-                                    @endphp
-                                    <tr class="low-stock-row">
-                                        <td>
-                                            <div class="fw-bold text-dark">{{ $m->material_code ?? $m->spare_part_name }}
-                                            </div>
-                                            <div class="text-muted" style="font-size: 0.8rem;">
-                                                {{ Str::limit($m->description ?? $m->spare_part_name, 70) }}</div>
-                                        </td>
-                                        <td class="text-center text-muted fw-semibold">{{ number_format($m->min_stock) }}
-                                        </td>
-                                        <td class="text-center">
-                                            <span
-                                                class="fs-6 fw-bolder {{ $textColor }}">{{ number_format($m->stock) }}</span>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center gap-3 justify-content-end">
-                                                <div class="fw-bold {{ $textColor }}" style="font-size:0.8rem;">
-                                                    {{ $pct }}%</div>
-                                                <div class="progress-custom">
-                                                    <div class="progress-bar {{ $barColor }}" role="progressbar"
-                                                        style="width:{{ $pct }}%"></div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="p-3 border-top d-flex justify-content-between align-items-center bg-light">
-                        <div class="text-muted" style="font-size: 0.85rem; font-weight:600;">Menampilkan
-                            {{ $lowStock->count() }} item kritis.</div>
-                        <a href="{{ route('materials.restock') ?? '#' }}"
-                            class="btn btn-warning btn-sm rounded-pill fw-bold px-4" style="color: #92400e;">Buat PO
-                            Restock</a>
-                    </div>
-                @endif
-            </div>
-        </div> --}}
-
-        <div class="modern-card">
-            <div class="modern-card-header">
+            <div class="bento-card action-tile col-span-4">
                 <div>
-                    <h5 class="modern-card-title"><i class="bi bi-clock-history text-primary"></i> Riwayat Transaksi Stok
-                    </h5>
-                    <div class="modern-card-subtitle">Lacak perubahan stok sebelum dan sesudah transaksi secara jelas.
-                    </div>
+                    <h5 class="bento-title text-white mb-2"><i class="bi bi-lightning-charge-fill text-warning"></i> Quick
+                        Actions</h5>
+                    <p class="text-white-50" style="font-size: 0.85rem;">Akses cepat untuk pencatatan transaksi dan master
+                        data.</p>
                 </div>
-                <div class="search-input-wrapper">
-                    <i class="bi bi-search text-muted"></i>
-                    <input id="historySearch" type="search" placeholder="Cari material/sparepart...">
+                <div class="d-flex flex-column gap-3 mt-4">
+                    <a href="{{ route('material_in.create') }}" class="btn-bento btn-bento-success">
+                        <i class="bi bi-box-arrow-in-down fs-5"></i> Input Barang Masuk
+                    </a>
+                    <a href="{{ route('material_out.create') }}" class="btn-bento btn-bento-danger">
+                        <i class="bi bi-box-arrow-up fs-5"></i> Input Barang Keluar
+                    </a>
+                    <a href="{{ route('materials.index') }}" class="btn-bento btn-bento-white">
+                        <i class="bi bi-database fs-5"></i> Kelola Master Data
+                    </a>
                 </div>
             </div>
 
-            <div class="card-body p-4 bg-light">
-                @if ($history->isEmpty())
-                    <div class="text-center text-muted py-5 mb-0">
-                        <i class="bi bi-inbox" style="font-size: 3rem; opacity:0.5;"></i>
-                        <h6 class="mt-3 fw-bold">Belum ada transaksi</h6>
-                        <p class="small">Lakukan penerimaan atau pengeluaran barang untuk melihat riwayat mutasi.</p>
+            <div class="bento-card col-span-12">
+                <div class="bento-header">
+                    <h5 class="bento-title"><i class="bi bi-clock-history text-primary"></i> Riwayat Transaksi Stok</h5>
+                    <div class="search-pill shadow-sm">
+                        <i class="bi bi-search"></i>
+                        <input id="historySearch" type="search" placeholder="Cari nama material/part...">
                     </div>
-                @else
-                    @php
-                        $groupedHistory = $history->groupBy(function ($item) {
-                            return \Carbon\Carbon::parse($item->date_in)->translatedFormat('d F Y');
-                        });
-                    @endphp
+                </div>
 
-                    <div id="historyList">
-                        @foreach ($groupedHistory as $date => $items)
-                            @php
-                                $totalIn = $items->where('jenis', 'in')->sum('qty');
-                                $totalOut = $items->where('jenis', 'out')->sum('qty');
-                                $safeId = 'grp-' . \Illuminate\Support\Str::slug($date);
-                            @endphp
+                <div class="mt-3">
+                    @if ($history->isEmpty())
+                        <div class="text-center text-muted py-5 mb-0 bg-light rounded-4">
+                            <i class="bi bi-inbox text-secondary" style="font-size: 3.5rem; opacity:0.3;"></i>
+                            <h6 class="mt-3 fw-bolder">Belum Ada Transaksi</h6>
+                            <p class="small">Lakukan penerimaan atau pengeluaran barang untuk melihat riwayat mutasi.</p>
+                        </div>
+                    @else
+                        @php
+                            // Grouping by Date (Aman untuk PHP 7.4)
+                            $groupedHistory = $history->groupBy(function ($item) {
+                                return \Carbon\Carbon::parse($item->date_in)->translatedFormat('d F Y');
+                            });
+                        @endphp
 
-                            <div class="history-day" data-date-group="{{ $safeId }}">
-                                <div class="hd-header">
-                                    <div class="hd-date"><i
-                                            class="bi bi-calendar2-day-fill text-primary me-2"></i>{{ $date }}
+                        <div id="historyList">
+                            @foreach ($groupedHistory as $date => $items)
+                                @php
+                                    $totalIn = $items->where('jenis', 'in')->sum('qty');
+                                    $totalOut = $items->where('jenis', 'out')->sum('qty');
+                                    $safeId = 'grp-' . \Illuminate\Support\Str::slug($date);
+                                @endphp
+
+                                <div class="history-day" data-date-group="{{ $safeId }}">
+                                    <div class="hd-header">
+                                        <div class="hd-date">
+                                            <div
+                                                style="width:36px; height:36px; background:white; border-radius:10px; display:flex; align-items:center; justify-content:center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                                <i class="bi bi-calendar-event text-primary"></i></div>
+                                            {{ $date }}
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <span class="badge-soft badge-in"><i class="bi bi-plus"></i>
+                                                {{ number_format($totalIn) }} Masuk</span>
+                                            <span class="badge-soft badge-out"><i class="bi bi-dash"></i>
+                                                {{ number_format($totalOut) }} Keluar</span>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <span
-                                            class="badge bg-success-subtle text-success border border-success-subtle me-2 px-2 py-1 rounded-pill">+{{ number_format($totalIn) }}
-                                            Masuk</span>
-                                        <span
-                                            class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1 rounded-pill">-{{ number_format($totalOut) }}
-                                            Keluar</span>
-                                    </div>
-                                </div>
 
-                                <div class="table-responsive bg-white">
-                                    <table class="table table-hover mb-0 history-table" data-group="{{ $safeId }}">
-                                        <thead>
-                                            <tr>
-                                                <th width="8%">Jam</th>
-                                                <th width="12%">Aksi</th>
-                                                <th width="35%">Item / Spare Part</th>
-                                                <th width="15%" class="text-center">Stok Sebelumnya</th>
-                                                <th width="15%" class="text-center">Mutasi (Qty)</th>
-                                                <th width="15%" class="text-center">Stok Akhir</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($items as $item)
-                                                @php
-                                                    $time = \Carbon\Carbon::parse($item->date_in)->format('H:i');
-                                                    $isIn = strtolower($item->jenis) === 'in';
-
-                                                    $valveList = optional($item->material->valves)
-                                                        ->pluck('valve_name')
-                                                        ->join(', ');
-                                                    $spareName =
-                                                        optional($item->material->sparePart)->spare_part_name ??
-                                                        ($item->material->material_code ?? '-');
-
-                                                    $qty = isset($item->qty) ? (int) $item->qty : 0;
-
-                                                    // LOGIKA PENCARIAN STOK SEBELUMNYA
-                                                    // Jika ada kolom 'stock_before' atau 'stok_awal' di database, pakai itu
-                                                    if (isset($item->stock_before)) {
-                                                        $stockBefore = (int) $item->stock_before;
-                                                        $stockAfter = isset($item->stock_after)
-                                                            ? (int) $item->stock_after
-                                                            : ($isIn
-                                                                ? $stockBefore + $qty
-                                                                : $stockBefore - $qty);
-                                                    }
-                                                    // Jika cuma ada 'stock_after', hitung mundur
-                                                    elseif (isset($item->stock_after)) {
-                                                        $stockAfter = (int) $item->stock_after;
-                                                        $stockBefore = $isIn ? $stockAfter - $qty : $stockAfter + $qty;
-                                                    }
-                                                    // Fallback murni
-                                                    else {
-                                                        $stockBefore = 0;
-                                                        $stockAfter = $qty;
-                                                    }
-
-                                                    // Mencegah nilai negatif jika ada anomali database
-                                                    $stockBefore = max(0, $stockBefore);
-                                                    $stockAfter = max(0, $stockAfter);
-                                                @endphp
-
+                                    <div class="table-responsive border-0 rounded-0">
+                                        <table class="table table-hover mb-0 history-table"
+                                            data-group="{{ $safeId }}">
+                                            <thead>
                                                 <tr>
-                                                    <td class="text-muted fw-bold"
-                                                        style="font-family: 'JetBrains Mono', monospace;">
-                                                        {{ $time }}</td>
-                                                    <td>
-                                                        <span class="badge-soft {{ $isIn ? 'badge-in' : 'badge-out' }}">
-                                                            <i
-                                                                class="bi {{ $isIn ? 'bi-box-arrow-in-down' : 'bi-box-arrow-up' }}"></i>
-                                                            {{ strtoupper($item->jenis) }}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <div class="fw-bold text-dark">{{ $spareName }}</div>
-                                                        <div class="text-muted"
-                                                            style="font-size: 0.75rem; max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
-                                                            title="{{ $valveList }}">
-                                                            {{ $valveList ?: 'Tidak ada referensi valve' }}</div>
-                                                    </td>
-
-                                                    {{-- KOLOM STOK TERPISAH DENGAN BADGE --}}
-                                                    <td class="text-center">
-                                                        <div class="stock-box before" title="Stok Sebelum Transaksi">
-                                                            {{ number_format($stockBefore) }}
-                                                        </div>
-                                                    </td>
-
-                                                    <td class="text-center">
-                                                        <div class="stock-box change {{ $isIn ? 'in' : 'out' }}"
-                                                            title="Jumlah Perubahan">
-                                                            {{ $isIn ? '+' : '-' }}{{ number_format($qty) }}
-                                                        </div>
-                                                    </td>
-
-                                                    <td class="text-center">
-                                                        <div class="stock-box after" title="Stok Setelah Transaksi">
-                                                            {{ number_format($stockAfter) }}
-                                                        </div>
-                                                    </td>
+                                                    <th width="8%">Jam</th>
+                                                    <th width="12%">Aksi</th>
+                                                    <th width="35%">Item / Spare Part</th>
+                                                    <th width="15%" class="text-center">Stok Awal</th>
+                                                    <th width="15%" class="text-center">Mutasi</th>
+                                                    <th width="15%" class="text-center">Stok Akhir</th>
                                                 </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                @endif
-            </div>
-        </div>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($items as $item)
+                                                    @php
+                                                        $time = \Carbon\Carbon::parse($item->date_in)->format('H:i');
+                                                        $isIn = strtolower($item->jenis) === 'in';
 
+                                                        $valveList = optional($item->material->valves)
+                                                            ->pluck('valve_name')
+                                                            ->join(', ');
+                                                        $spareName =
+                                                            optional($item->material->sparePart)->spare_part_name ??
+                                                            ($item->material->material_code ?? '-');
+
+                                                        $qty = isset($item->qty) ? (int) $item->qty : 0;
+
+                                                        // LOGIKA PENCARIAN STOK SEBELUMNYA (PHP 7.4 SAFE)
+                                                        if (isset($item->stock_before)) {
+                                                            $stockBefore = (int) $item->stock_before;
+                                                            $stockAfter = isset($item->stock_after)
+                                                                ? (int) $item->stock_after
+                                                                : ($isIn
+                                                                    ? $stockBefore + $qty
+                                                                    : $stockBefore - $qty);
+                                                        } elseif (isset($item->stock_after)) {
+                                                            $stockAfter = (int) $item->stock_after;
+                                                            $stockBefore = $isIn
+                                                                ? $stockAfter - $qty
+                                                                : $stockAfter + $qty;
+                                                        } else {
+                                                            $stockBefore = 0;
+                                                            $stockAfter = $qty;
+                                                        }
+
+                                                        $stockBefore = max(0, $stockBefore);
+                                                        $stockAfter = max(0, $stockAfter);
+                                                    @endphp
+
+                                                    <tr>
+                                                        <td class="text-muted fw-bold"
+                                                            style="font-family: 'JetBrains Mono', monospace;">
+                                                            {{ $time }}</td>
+                                                        <td>
+                                                            <span
+                                                                class="badge-soft {{ $isIn ? 'badge-in' : 'badge-out' }}">
+                                                                <i
+                                                                    class="bi {{ $isIn ? 'bi-box-arrow-in-down' : 'bi-box-arrow-up' }}"></i>
+                                                                {{ strtoupper($item->jenis) }}
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <div class="fw-bolder text-dark">{{ $spareName }}</div>
+                                                            <div class="text-muted"
+                                                                style="font-size: 0.75rem; max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                                                                title="{{ $valveList }}">
+                                                                <i class="bi bi-tag me-1"></i>
+                                                                {{ $valveList ?: 'Tidak ada referensi valve' }}
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <div class="stock-box before" title="Stok Sebelum Transaksi">
+                                                                {{ number_format($stockBefore) }}</div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <div class="stock-box change {{ $isIn ? 'in' : 'out' }}"
+                                                                title="Jumlah Perubahan">
+                                                                {{ $isIn ? '+' : '-' }}{{ number_format($qty) }}</div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <div class="stock-box after" title="Stok Setelah Transaksi">
+                                                                {{ number_format($stockAfter) }}</div>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+        </div>
     </div>
 @endsection
 
@@ -769,6 +686,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     @php
+        // Persiapan Data Chart & Sparkline
         $sparkIn = [0, 0, 0, 0, 0];
         $sparkOut = [0, 0, 0, 0, 0];
 
@@ -790,6 +708,7 @@
                 $sparkOut = $sOut;
             }
         }
+
         $sparkTotalMaterial = $sparkIn;
         $sparkTotalStock = $sparkOut;
     @endphp
@@ -798,26 +717,43 @@
         document.addEventListener('DOMContentLoaded', function() {
             Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
 
-            // 1. Sparklines for KPI Cards
-            function createSpark(id, data = [], color = 'rgba(37,99,235,0.9)') {
+            // 1. Fungsi Pembuat Sparkline untuk Bento Card
+            function createSpark(id, data = [], color = 'rgba(37,99,235,0.9)', fill = false) {
                 const el = document.getElementById(id);
                 if (!el) return;
-                new Chart(el.getContext('2d'), {
+
+                const ctx = el.getContext('2d');
+                let gradient = 'transparent';
+
+                if (fill) {
+                    gradient = ctx.createLinearGradient(0, 0, 0, 40);
+                    gradient.addColorStop(0, color.replace('1)', '0.2)'));
+                    gradient.addColorStop(1, 'rgba(255,255,255,0)');
+                }
+
+                new Chart(ctx, {
                     type: 'line',
                     data: {
                         labels: data.map((_, i) => i + 1),
                         datasets: [{
                             data,
                             borderColor: color,
-                            backgroundColor: 'transparent',
+                            backgroundColor: gradient,
                             tension: 0.4,
-                            borderWidth: 2,
-                            pointRadius: 0
+                            borderWidth: 2.5,
+                            pointRadius: 0,
+                            fill: fill
                         }]
                     },
                     options: {
-                        responsive: false,
+                        responsive: true,
                         maintainAspectRatio: false,
+                        layout: {
+                            padding: {
+                                top: 5,
+                                bottom: 5
+                            }
+                        },
                         scales: {
                             x: {
                                 display: false
@@ -838,10 +774,10 @@
                 });
             }
 
-            createSpark('sparkTotalMaterial', @json($sparkTotalMaterial), '#2563eb');
-            createSpark('sparkTotalStock', @json($sparkTotalStock), '#10b981');
-            createSpark('sparkIn', @json($sparkIn), '#0ea5e9');
-            createSpark('sparkOut', @json($sparkOut), '#ef4444');
+            createSpark('sparkTotalMaterial', @json($sparkTotalMaterial), '#2563eb', true);
+            createSpark('sparkTotalStock', @json($sparkTotalStock), '#10b981', true);
+            createSpark('sparkIn', @json($sparkIn), '#0ea5e9', true);
+            createSpark('sparkOut', @json($sparkOut), '#ef4444', true);
 
             // 2. Main Monthly Chart
             const ctx = document.getElementById('monthlyChart');
@@ -852,8 +788,8 @@
                 const dataOut = chartData.map(i => i.out || 0);
                 const dataNet = chartData.map(i => (i.in || 0) - (i.out || 0));
 
-                const gradientBlue = ctx.getContext('2d').createLinearGradient(0, 0, 0, 200);
-                gradientBlue.addColorStop(0, 'rgba(37, 99, 235, 0.2)');
+                const gradientBlue = ctx.getContext('2d').createLinearGradient(0, 0, 0, 300);
+                gradientBlue.addColorStop(0, 'rgba(37, 99, 235, 0.15)');
                 gradientBlue.addColorStop(1, 'rgba(37, 99, 235, 0)');
 
                 const formatNumber = (v) => new Intl.NumberFormat('id-ID').format(v);
@@ -867,18 +803,18 @@
                                 label: 'Barang Masuk',
                                 data: dataIn,
                                 backgroundColor: '#10b981',
-                                borderRadius: 6,
+                                borderRadius: 8,
                                 barThickness: 'flex',
-                                maxBarThickness: 20
+                                maxBarThickness: 24
                             },
                             {
                                 type: 'bar',
                                 label: 'Barang Keluar',
                                 data: dataOut,
                                 backgroundColor: '#ef4444',
-                                borderRadius: 6,
+                                borderRadius: 8,
                                 barThickness: 'flex',
-                                maxBarThickness: 20
+                                maxBarThickness: 24
                             },
                             {
                                 type: 'line',
@@ -888,11 +824,11 @@
                                 backgroundColor: gradientBlue,
                                 tension: 0.4,
                                 fill: true,
-                                pointRadius: 4,
-                                pointBackgroundColor: '#fff',
+                                pointRadius: 5,
+                                pointBackgroundColor: '#ffffff',
                                 pointBorderColor: '#2563eb',
                                 pointBorderWidth: 2,
-                                borderWidth: 2
+                                borderWidth: 3
                             }
                         ]
                     },
@@ -910,17 +846,26 @@
                                 },
                                 ticks: {
                                     font: {
-                                        weight: 600
-                                    }
+                                        weight: 700,
+                                        size: 11
+                                    },
+                                    color: '#64748b'
                                 }
                             },
                             y: {
                                 beginAtZero: true,
                                 grid: {
-                                    color: '#e2e8f0',
+                                    color: '#f1f5f9',
                                     borderDash: [5, 5]
                                 },
+                                border: {
+                                    display: false
+                                },
                                 ticks: {
+                                    font: {
+                                        weight: 600
+                                    },
+                                    color: '#94a3b8',
                                     callback: value => formatNumber(value)
                                 }
                             }
@@ -931,16 +876,24 @@
                                 align: 'end',
                                 labels: {
                                     usePointStyle: true,
-                                    boxWidth: 8,
+                                    boxWidth: 10,
                                     font: {
-                                        weight: 600
+                                        weight: 700
                                     }
                                 }
                             },
                             tooltip: {
-                                backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                                padding: 10,
-                                cornerRadius: 8,
+                                backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                                titleFont: {
+                                    size: 13,
+                                    weight: 800
+                                },
+                                bodyFont: {
+                                    size: 12,
+                                    weight: 600
+                                },
+                                padding: 12,
+                                cornerRadius: 12,
                                 callbacks: {
                                     label: (context) => {
                                         let label = context.dataset.label || '';
@@ -958,12 +911,12 @@
                 document.getElementById('downloadChart')?.addEventListener('click', function() {
                     const link = document.createElement('a');
                     link.href = myChart.toBase64Image('image/png', 1);
-                    link.download = 'Laporan_Mutasi_Bulanan.png';
+                    link.download = 'Grafik_Mutasi_Inventory.png';
                     link.click();
                 });
             }
 
-            // 3. Smart Search History Client-side
+            // 3. Smart Search History (Client-side)
             const searchInput = document.getElementById('historySearch');
             const historyList = document.getElementById('historyList');
 
@@ -983,6 +936,7 @@
                         if (matches) anyVisible = true;
                     });
 
+                    // Hide full card if no rows match inside it
                     card.style.display = anyVisible ? '' : 'none';
                 });
             });

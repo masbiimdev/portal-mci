@@ -235,7 +235,7 @@
             $ncrs->where('audit_scope', 'Supplier')->count(),
         ];
 
-        // 3. Data Grafik Severity (Menggantikan Produk)
+        // 3. Data Grafik Severity
         $severityData = [
             $ncrs->where('severity', 'Critical')->count(),
             $ncrs->where('severity', 'High')->count(),
@@ -370,11 +370,24 @@
                             $sevClass = $urgent->severity == 'Critical' ? 'bg-soft-danger' : 'bg-soft-warning';
                         @endphp
                         <a href="{{ route('ncr.show', $urgent->id ?? '#') }}" class="urgent-item">
-                            <div class="me-3">
-                                <div class="fw-bolder text-dark mb-1">{{ $urgent->no_ncr }}</div>
+                            <div class="me-3 w-100">
+                                <div class="fw-bolder text-dark mb-1 d-flex align-items-center gap-2">
+                                    {{ $urgent->no_ncr }}
+                                    @if ($urgent->no_po)
+                                        <span class="badge bg-light text-secondary border fw-bold"
+                                            style="font-size: 0.65rem;">
+                                            <i class="bi bi-receipt"></i> {{ $urgent->no_po }}
+                                        </span>
+                                    @endif
+                                </div>
                                 <div class="text-muted"
                                     style="font-size: 0.8rem; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden;">
                                     {{ $urgent->issue }}</div>
+                                @if ($urgent->report_reff)
+                                    <div class="mt-1 text-primary fw-bold" style="font-size: 0.7rem;">
+                                        <i class="bi bi-link-45deg"></i> {{ $urgent->report_reff }}
+                                    </div>
+                                @endif
                             </div>
                             <div class="d-flex flex-column align-items-end gap-2 flex-shrink-0">
                                 <span class="badge-soft {{ $sevClass }}">{{ $urgent->severity }}</span>
@@ -508,8 +521,7 @@
                     datasets: [{
                         label: 'Total NCR',
                         data: @json($severityData),
-                        backgroundColor: ['#ef4444', '#f59e0b', '#4f46e5',
-                        '#10b981'], // Merah, Kuning, Biru, Hijau
+                        backgroundColor: ['#ef4444', '#f59e0b', '#4f46e5', '#10b981'],
                         borderRadius: 6,
                         barThickness: 25
                     }]

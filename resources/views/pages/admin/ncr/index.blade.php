@@ -228,6 +228,16 @@
             max-width: 320px;
         }
 
+        .tindakan-text {
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            color: #64748b;
+            font-size: 0.75rem;
+            margin-top: 6px;
+        }
+
         /* --- BADGES & DOTS --- */
         .bento-badge {
             padding: 0.4rem 0.85rem;
@@ -460,10 +470,10 @@
                     <table id="ncrTable" class="table table-bento">
                         <thead>
                             <tr>
-                                <th width="16%">No. Dokumen</th>
-                                <th width="33%">Deskripsi Temuan</th>
-                                <th width="12%">Audit Scope</th>
-                                <th width="15%">Severity</th>
+                                <th width="18%">No. Dokumen & PO</th>
+                                <th width="32%">Detail Temuan</th>
+                                <th width="14%">Scope & Reff</th>
+                                <th width="12%">Severity</th>
                                 <th width="12%">Status</th>
                                 <th width="12%" class="text-center">Aksi</th>
                             </tr>
@@ -508,8 +518,13 @@
                                     }
                                 @endphp
                                 <tr>
-                                    <td>
+                                    {{-- Menggunakan data-sort agar sorting DataTables akurat berdasarkan tanggal (Y-m-d) --}}
+                                    <td data-sort="{{ $issueDate->format('Y-m-d H:i:s') }}">
                                         <div class="fw-bolder text-dark" style="font-size: 0.95rem;">{{ $ncr->no_ncr }}
+                                        </div>
+                                        <div class="text-muted fw-bold mt-1" style="font-size: 0.75rem;">
+                                            <i class="bi bi-receipt me-1"></i> {{ $ncr->no_po ?? '-' }} &bull;
+                                            {{ $ncr->qty ?? 0 }} Pcs
                                         </div>
                                         <div class="text-muted fw-bold mt-1" style="font-size: 0.75rem;">
                                             <i class="bi bi-calendar2-event me-1"></i> {{ $issueDate->format('d M Y') }}
@@ -519,11 +534,20 @@
                                         <div class="issue-text" title="{{ $ncr->issue }}">
                                             {{ $ncr->issue }}
                                         </div>
+                                        <div class="tindakan-text" title="Tindakan: {{ $ncr->tindakan }}">
+                                            <span class="text-primary fw-bold">Act:</span>
+                                            {{ $ncr->tindakan ?? 'Belum ada tindakan' }}
+                                        </div>
                                     </td>
                                     <td>
-                                        <span class="bento-badge bg-soft-dark text-muted">
+                                        <span class="bento-badge bg-soft-dark text-muted mb-1 w-100 justify-content-center">
                                             <i class="bi {{ $scopeIcon }}"></i> {{ $ncr->audit_scope }}
                                         </span>
+                                        <div class="text-center text-muted fw-bold mt-1"
+                                            style="font-size: 0.7rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                                            title="{{ $ncr->report_reff }}">
+                                            <i class="bi bi-link-45deg"></i> {{ $ncr->report_reff ?? '-' }}
+                                        </div>
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center gap-2 fw-bolder {{ $sevColor }}"
@@ -583,12 +607,13 @@
                 pageLength: 10,
                 ordering: true,
                 order: [
-                    [1, 'desc'] // Mengurutkan Tanggal (kolom index ke-1) secara menurun (terbaru)
+                    // Kolom 0 adalah No. Dokumen (sekarang kita sorting berdasarkan data-sort tanggal terbit)
+                    [0, 'desc']
                 ],
                 dom: '<"row mt-1 mb-4"<"col-md-6"l><"col-md-6 d-flex justify-content-end"f>>t<"row mt-4 mb-2"<"col-md-6 text-muted"i><"col-md-6 d-flex justify-content-end"p>>',
                 language: {
                     search: "",
-                    searchPlaceholder: "Cari No. NCR, Issue...",
+                    searchPlaceholder: "Cari No. NCR, PO, Issue...",
                     lengthMenu: "Tampil _MENU_ baris",
                     info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
                     infoEmpty: "Tidak ada data tersedia",

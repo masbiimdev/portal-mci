@@ -107,6 +107,8 @@
         }
 
         /* Disabled Input Style */
+        .form-control-premium:readonly,
+        .form-control-premium[readonly],
         .form-control-premium:disabled,
         .form-select-premium:disabled {
             background-color: #f1f5f9;
@@ -209,7 +211,7 @@
 
 @section('content')
 
-    {{-- ==== DATA SIMULASI SESUAI MIGRATION (Dummy untuk Preview) ==== --}}
+    {{-- ==== DATA SIMULASI SESUAI MIGRATION BARU ==== --}}
     @php
         // Dalam Laravel nyata, data ini akan dikirim dari Controller: view('...', compact('ncr'))
         if (!isset($ncr)) {
@@ -217,8 +219,11 @@
                 'id' => 123,
                 'no_ncr' => 'NCR-2601-001',
                 'issue_date' => '2026-01-10',
-                'issue' =>
-                    'Dimensi body Gate Valve 4" tidak masuk toleransi gambar teknik pada area seat pocket, berisiko mengganggu proses perakitan akhir.',
+                'no_po' => 'PO-2023-1029',
+                'qty' => 50,
+                'report_reff' => 'Laporan Eksternal',
+                'issue' => 'Dimensi body Gate Valve 4" tidak masuk toleransi gambar teknik pada area seat pocket.',
+                'tindakan' => 'Melakukan machining ulang pada area seat pocket dan kalibrasi ulang alat ukur.',
                 'audit_scope' => 'Supplier',
                 'severity' => 'High',
                 'status' => 'Monitoring',
@@ -243,7 +248,7 @@
                 </nav>
             </div>
             <div>
-                <a href="#" class="btn btn-bento-outline text-decoration-none">
+                <a href="{{ route('ncr.index') }}" class="btn btn-bento-outline text-decoration-none">
                     <i class="bi bi-arrow-left me-1"></i> Batal / Kembali
                 </a>
             </div>
@@ -260,7 +265,7 @@
                             atau perubahan status.</p>
                     </div>
                     <span
-                        class="badge bg-soft-dark p-2 rounded-3 fw-bold text-muted font-monospace">{{ $ncr->no_ncr }}</span>
+                        class="badge bg-light border p-2 rounded-3 fw-bold text-muted font-monospace">{{ $ncr->no_ncr }}</span>
                 </div>
 
                 <form action="{{ route('ncr.update', $ncr->id) }}" method="POST">
@@ -276,8 +281,8 @@
                                     value="{{ old('no_ncr', $ncr->no_ncr) }}" required>
                             </div>
                             <small class="text-muted fw-semibold mt-1 d-block" style="font-size: 0.7rem;"><i
-                                    class="bi bi-exclamation-triangle-fill text-warning me-1"></i> Perubahan No. NCR akan
-                                mempengaruhi histori dokumen.</small>
+                                    class="bi bi-exclamation-triangle-fill text-warning me-1"></i> Nomor dokumen tidak dapat
+                                diubah.</small>
                         </div>
 
                         <div class="col-md-6 position-relative">
@@ -289,6 +294,38 @@
                                     value="{{ old('issue_date', \Carbon\Carbon::parse($ncr->issue_date)->format('Y-m-d')) }}"
                                     required>
                             </div>
+                        </div>
+
+                        <div class="col-md-4 position-relative">
+                            <label class="form-label-premium">Nomor PO <span class="text-danger">*</span></label>
+                            <div class="position-relative">
+                                <i class="bi bi-receipt input-group-text-premium"></i>
+                                <input type="text" name="no_po" class="form-control-premium has-icon"
+                                    value="{{ old('no_po', $ncr->no_po) }}" placeholder="Contoh: PO-2023-..." required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 position-relative">
+                            <label class="form-label-premium">Qty Barang <span class="text-danger">*</span></label>
+                            <div class="position-relative">
+                                <i class="bi bi-boxes input-group-text-premium"></i>
+                                <input type="number" name="qty" class="form-control-premium has-icon"
+                                    value="{{ old('qty', $ncr->qty) }}" placeholder="Jumlah item" min="1" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label-premium">Report Reff</label>
+                            <select name="report_reff" class="form-select-premium">
+                                <option value="" disabled
+                                    {{ empty(old('report_reff', $ncr->report_reff)) ? 'selected' : '' }}>-- Pilih Referensi
+                                    --</option>
+                                @foreach (['PBM','IVD','MCH','WLD','DPT','MPT','ASSY','Others'] as $reff)
+                                    <option value="{{ $reff }}"
+                                        {{ old('report_reff', $ncr->report_reff) == $reff ? 'selected' : '' }}>
+                                        {{ $reff }}</option>
+                                @endforeach
+                            </select>
                         </div>
 
                         <div class="col-md-4">
@@ -311,9 +348,11 @@
                             <label class="form-label-premium">Tingkat Keparahan (Severity) <span
                                     class="text-danger">*</span></label>
                             <select name="severity" class="form-select-premium" required>
-                                <option value="Low" {{ old('severity', $ncr->severity) == 'Low' ? 'selected' : '' }}>Low
+                                <option value="Low" {{ old('severity', $ncr->severity) == 'Low' ? 'selected' : '' }}>
+                                    Low
                                 </option>
-                                <option value="Medium" {{ old('severity', $ncr->severity) == 'Medium' ? 'selected' : '' }}>
+                                <option value="Medium"
+                                    {{ old('severity', $ncr->severity) == 'Medium' ? 'selected' : '' }}>
                                     Medium</option>
                                 <option value="High" {{ old('severity', $ncr->severity) == 'High' ? 'selected' : '' }}>
                                     High</option>
@@ -337,16 +376,26 @@
                         <div class="col-12">
                             <label class="form-label-premium">Deskripsi Temuan (Issue) <span
                                     class="text-danger">*</span></label>
-                            <textarea name="issue" class="form-control-premium" placeholder="Jelaskan secara detail ketidaksesuaian..." required>{{ old('issue', $ncr->issue) }}</textarea>
+                            <textarea name="issue" class="form-control-premium" placeholder="Jelaskan secara detail ketidaksesuaian..."
+                                required>{{ old('issue', $ncr->issue) }}</textarea>
                             <small class="text-muted fw-semibold mt-2 d-block"><i class="bi bi-info-circle me-1"></i>
                                 Pastikan deskripsi mencakup lokasi, dampak, dan standar yang dilanggar.</small>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label-premium">Tindakan / Correction <span
+                                    class="text-danger">*</span></label>
+                            <textarea name="tindakan" class="form-control-premium"
+                                placeholder="Jelaskan tindakan perbaikan atau penanganan awal..." required>{{ old('tindakan', $ncr->tindakan) }}</textarea>
+                            <small class="text-muted fw-semibold mt-2 d-block"><i class="bi bi-check2-square me-1"></i>
+                                Tuliskan koreksi langsung yang sudah dilakukan di lapangan.</small>
                         </div>
                     </div>
 
                     <hr class="my-4 border-light">
 
                     <div class="d-flex justify-content-end gap-3">
-                        <a href="#" class="btn-bento-outline text-decoration-none">Batal</a>
+                        <a href="{{ route('ncr.index') }}" class="btn-bento-outline text-decoration-none">Batal</a>
                         <button type="submit" class="btn-bento-primary">
                             <i class="bi bi-check2-all fs-5"></i> Simpan Perubahan
                         </button>

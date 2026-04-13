@@ -76,23 +76,33 @@
 
                             <input type="hidden" name="redirect_to" value="{{ request('from') ?? 'show' }}">
 
+                            {{-- Set tipe otomatis menjadi production --}}
+                            <input type="hidden" name="type" value="production">
+
                             <div class="form-section-title">
                                 <i class="bx bx-info-circle text-primary"></i> Informasi Dasar
                             </div>
 
                             <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Tipe Kegiatan</label>
+                                <div class="col-md-12 mb-3">
+                                    <label class="form-label">Nama Kegiatan</label>
                                     <div class="input-group input-group-merge">
-                                        <span class="input-group-text"><i class="bx bx-category"></i></span>
-                                        <select name="type" id="type" class="form-select" required>
-                                            @foreach (['meeting', 'production', 'other'] as $type)
-                                                <option value="{{ $type }}"
-                                                    {{ old('type', $activity->type ?? '') == $type ? 'selected' : '' }}>
-                                                    {{ ucfirst($type) }}
-                                                </option>
-                                            @endforeach
-                                        </select>
+                                        <span class="input-group-text"><i class="bx bx-task"></i></span>
+                                        <input type="text" name="kegiatan" class="form-control"
+                                            placeholder="Contoh: Witness Testing Gate Valve 10 Inch"
+                                            value="{{ old('kegiatan', $activity->kegiatan ?? '') }}" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Customer / Klien</label>
+                                    <div class="input-group input-group-merge">
+                                        <span class="input-group-text"><i class="bx bx-user"></i></span>
+                                        <input type="text" name="customer" class="form-control"
+                                            placeholder="Contoh: PT. PLN Persero"
+                                            value="{{ old('customer', $activity->customer ?? '') }}" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
@@ -121,92 +131,70 @@
                                     <small class="text-muted mt-1 d-block"><i class="bx bx-help-circle"></i> Jika hanya 1
                                         hari, isi kedua tanggal dengan nilai yang sama.</small>
                                 </div>
+                            </div>
+
+                            <div class="form-section-title mt-2">
+                                <i class="bx bx-box text-warning"></i> Detail Produksi & Parts
+                            </div>
+
+                            <div class="mb-4 row">
                                 <div class="col-md-6">
-                                    <label class="form-label">Customer / Klien</label>
-                                    <div class="input-group input-group-merge">
-                                        <span class="input-group-text"><i class="bx bx-user"></i></span>
-                                        <input type="text" name="customer" class="form-control"
-                                            placeholder="Contoh: PT. PLN Persero"
-                                            value="{{ old('customer', $activity->customer ?? '') }}" required>
-                                    </div>
+                                    <label class="form-label">Nomor PO (Purchase Order)</label>
+                                    <input type="text" name="po" class="form-control"
+                                        placeholder="Contoh: PO-2023-XXXX" value="{{ old('po', $activity->po ?? '') }}">
                                 </div>
                             </div>
 
-                            <div class="mb-4">
-                                <label class="form-label">Nama Kegiatan</label>
-                                <div class="input-group input-group-merge">
-                                    <span class="input-group-text"><i class="bx bx-task"></i></span>
-                                    <input type="text" name="kegiatan" class="form-control"
-                                        placeholder="Contoh: Witness Testing Gate Valve 10 Inch"
-                                        value="{{ old('kegiatan', $activity->kegiatan ?? '') }}" required>
-                                </div>
-                            </div>
-
-                            <div class="production-only">
-                                <div class="form-section-title">
-                                    <i class="bx bx-box text-warning"></i> Detail Produksi & Parts
-                                </div>
-
-                                <div class="mb-4 row">
-                                    <div class="col-md-6">
-                                        <label class="form-label">Nomor PO (Purchase Order)</label>
-                                        <input type="text" name="po" class="form-control"
-                                            placeholder="Contoh: PO-2023-XXXX"
-                                            value="{{ old('po', $activity->po ?? '') }}">
-                                    </div>
-                                </div>
-
-                                <div class="table-responsive border rounded mb-4">
-                                    <table class="table table-hover mb-0" id="dynamicTable">
-                                        <thead>
+                            <div class="table-responsive border rounded mb-4">
+                                <table class="table table-hover mb-0" id="dynamicTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Part Name</th>
+                                            <th>Material</th>
+                                            <th width="100">Qty</th>
+                                            <th>Heat No</th>
+                                            <th>Remarks</th>
+                                            <th width="50">#</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @php
+                                            $items =
+                                                isset($activity) && $activity->items
+                                                    ? json_decode($activity->items, true)
+                                                    : [[]];
+                                        @endphp
+                                        @foreach ($items as $i => $item)
                                             <tr>
-                                                <th>Part Name</th>
-                                                <th>Material</th>
-                                                <th width="100">Qty</th>
-                                                <th>Heat No</th>
-                                                <th>Remarks</th>
-                                                <th width="50">#</th>
+                                                <td><input type="text" name="part_name[]"
+                                                        class="form-control form-control-sm"
+                                                        value="{{ $item['part_name'] ?? '' }}"></td>
+                                                <td><input type="text" name="material[]"
+                                                        class="form-control form-control-sm"
+                                                        value="{{ $item['material'] ?? '' }}"></td>
+                                                <td><input type="number" name="qty[]"
+                                                        class="form-control form-control-sm"
+                                                        value="{{ $item['qty'] ?? '' }}"></td>
+                                                <td><input type="text" name="heat_no[]"
+                                                        class="form-control form-control-sm"
+                                                        value="{{ $item['heat_no'] ?? '' }}"></td>
+                                                <td><input type="text" name="remarks[]"
+                                                        class="form-control form-control-sm"
+                                                        value="{{ $item['remarks'] ?? '' }}"></td>
+                                                <td>
+                                                    @if ($i === 0)
+                                                        <button type="button" class="btn btn-sm btn-icon btn-primary"
+                                                            id="addRow"><i class="bx bx-plus"></i></button>
+                                                    @else
+                                                        <button type="button"
+                                                            class="btn btn-sm btn-icon btn-danger removeRow"><i
+                                                                class="bx bx-trash"></i></button>
+                                                    @endif
+                                                </td>
                                             </tr>
-                                        </thead>
-                                        <tbody>
-                                            @php
-                                                $items =
-                                                    isset($activity) && $activity->items
-                                                        ? json_decode($activity->items, true)
-                                                        : [[]];
-                                            @endphp
-                                            @foreach ($items as $i => $item)
-                                                <tr>
-                                                    <td><input type="text" name="part_name[]"
-                                                            class="form-control form-control-sm"
-                                                            value="{{ $item['part_name'] ?? '' }}"></td>
-                                                    <td><input type="text" name="material[]"
-                                                            class="form-control form-control-sm"
-                                                            value="{{ $item['material'] ?? '' }}"></td>
-                                                    <td><input type="number" name="qty[]"
-                                                            class="form-control form-control-sm"
-                                                            value="{{ $item['qty'] ?? '' }}"></td>
-                                                    <td><input type="text" name="heat_no[]"
-                                                            class="form-control form-control-sm"
-                                                            value="{{ $item['heat_no'] ?? '' }}"></td>
-                                                    <td><input type="text" name="remarks[]"
-                                                            class="form-control form-control-sm"
-                                                            value="{{ $item['remarks'] ?? '' }}"></td>
-                                                    <td>
-                                                        @if ($i === 0)
-                                                            <button type="button" class="btn btn-sm btn-icon btn-primary"
-                                                                id="addRow"><i class="bx bx-plus"></i></button>
-                                                        @else
-                                                            <button type="button"
-                                                                class="btn btn-sm btn-icon btn-danger removeRow"><i
-                                                                    class="bx bx-trash"></i></button>
-                                                        @endif
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
+                                        @endforeach
+                                    </tbody>
+                                </table>
                             </div>
 
                             <hr class="my-4">
@@ -226,20 +214,6 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const typeSelect = document.getElementById("type");
-            const productionFields = document.querySelectorAll(".production-only");
-
-            function toggleFields() {
-                if (typeSelect.value === "production") {
-                    productionFields.forEach(el => el.classList.remove('d-none'));
-                } else {
-                    productionFields.forEach(el => el.classList.add('d-none'));
-                }
-            }
-
-            toggleFields();
-            typeSelect.addEventListener("change", toggleFields);
-
             // Dynamic Table Logic
             const tableBody = document.querySelector("#dynamicTable tbody");
             const addBtn = document.getElementById("addRow");
