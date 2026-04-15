@@ -54,7 +54,6 @@
             box-shadow: var(--bento-shadow-hover);
         }
 
-        /* Span Helpers */
         .bento-span-12 {
             grid-column: span 12;
         }
@@ -194,7 +193,7 @@
             text-transform: uppercase;
             letter-spacing: 0.05em;
             padding: 1rem 1.5rem;
-            border-bottom: 1px dashed var(--border-light);
+            border-bottom: 1px dashed var(--bento-border);
         }
 
         .table-bento td {
@@ -270,6 +269,11 @@
             color: #475569;
         }
 
+        .bg-soft-primary {
+            background-color: #e0e7ff;
+            color: #4f46e5;
+        }
+
         .sev-dot {
             width: 8px;
             height: 8px;
@@ -301,7 +305,7 @@
         }
 
         div.dataTables_wrapper div.dataTables_filter input {
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--bento-border);
             border-radius: 99px;
             padding: 0.5rem 1.25rem;
             font-size: 0.875rem;
@@ -320,7 +324,7 @@
         }
 
         div.dataTables_wrapper div.dataTables_length select {
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--bento-border);
             border-radius: 12px;
             padding: 0.4rem 2rem 0.4rem 1rem;
             font-size: 0.875rem;
@@ -373,7 +377,7 @@
 
         .dropdown-menu {
             border-radius: 16px;
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--bento-border);
             box-shadow: var(--bento-shadow-hover);
             padding: 0.5rem;
         }
@@ -395,10 +399,8 @@
 @endpush
 
 @section('content')
-
     {{-- ==== PERHITUNGAN STATISTIK DARI DATABASE ==== --}}
     @php
-        // $ncrs sudah dilempar dari NcrController@index
         $totalNcr = $ncrs->count();
         $statusOpen = $ncrs->where('status', 'Open')->count();
         $criticalOpen = $ncrs->where('severity', 'Critical')->where('status', 'Open')->count();
@@ -470,8 +472,8 @@
                     <table id="ncrTable" class="table table-bento">
                         <thead>
                             <tr>
-                                <th width="18%">No. Dokumen & PO</th>
-                                <th width="32%">Detail Temuan</th>
+                                <th width="20%">Dokumen & Kode</th>
+                                <th width="30%">Detail Temuan</th>
                                 <th width="14%">Scope & Reff</th>
                                 <th width="12%">Severity</th>
                                 <th width="12%">Status</th>
@@ -518,11 +520,15 @@
                                     }
                                 @endphp
                                 <tr>
-                                    {{-- Menggunakan data-sort agar sorting DataTables akurat berdasarkan tanggal (Y-m-d) --}}
                                     <td data-sort="{{ $issueDate->format('Y-m-d H:i:s') }}">
-                                        <div class="fw-bolder text-dark" style="font-size: 0.95rem;">{{ $ncr->no_ncr }}
+                                        <div class="fw-bolder text-dark" style="font-size: 0.95rem;">
+                                            {{ $ncr->no_ncr }}
                                         </div>
-                                        <div class="text-muted fw-bold mt-1" style="font-size: 0.75rem;">
+                                        <div class="text-primary fw-bold mt-1 d-inline-block px-2 py-1 rounded-2 bg-soft-primary"
+                                            style="font-size: 0.7rem;">
+                                            <i class="bi bi-upc-scan me-1"></i> {{ $ncr->id_ncr ?? '-' }}
+                                        </div>
+                                        <div class="text-muted fw-bold mt-2" style="font-size: 0.75rem;">
                                             <i class="bi bi-receipt me-1"></i> {{ $ncr->no_po ?? '-' }} &bull;
                                             {{ $ncr->qty ?? 0 }} Pcs
                                         </div>
@@ -568,10 +574,27 @@
                                                 <i class="bi bi-three-dots-vertical"></i>
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-end mt-2">
-                                                <a class="dropdown-item" href="{{ route('ncr.show', $ncr->id) }}"><i
-                                                        class="bi bi-eye text-primary me-2"></i> Lihat Detail</a>
-                                                <a class="dropdown-item" href="{{ route('ncr.edit', $ncr->id) }}"><i
-                                                        class="bi bi-pencil-square text-warning me-2"></i> Edit Laporan</a>
+                                                {{-- Tombol Lihat Detail yang sudah diubah menjadi trigger Modal --}}
+                                                <button type="button"
+                                                    class="dropdown-item btn-show-modal text-start w-100 border-0 bg-transparent"
+                                                    data-bs-toggle="modal" data-bs-target="#ncrDetailModal"
+                                                    data-id_ncr="{{ $ncr->id_ncr ?? '-' }}"
+                                                    data-no_ncr="{{ $ncr->no_ncr }}"
+                                                    data-no_po="{{ $ncr->no_po ?? '-' }}"
+                                                    data-issue="{{ $ncr->issue }}"
+                                                    data-tindakan="{{ $ncr->tindakan ?? 'Belum ada tindakan' }}"
+                                                    data-audit_scope="{{ $ncr->audit_scope }}"
+                                                    data-report_reff="{{ $ncr->report_reff ?? '-' }}"
+                                                    data-severity="{{ $ncr->severity }}"
+                                                    data-status="{{ $ncr->status }}"
+                                                    data-issue_date="{{ $issueDate->format('d M Y') }}"
+                                                    data-qty="{{ $ncr->qty ?? 0 }}">
+                                                    <i class="bi bi-eye text-primary me-2"></i> Lihat Detail
+                                                </button>
+
+                                                <a class="dropdown-item" href="{{ route('ncr.edit', $ncr->id) }}">
+                                                    <i class="bi bi-pencil-square text-warning me-2"></i> Edit Laporan
+                                                </a>
                                                 <div class="dropdown-divider"></div>
                                                 <form action="{{ route('ncr.destroy', $ncr->id) }}" method="POST"
                                                     class="m-0"
@@ -579,8 +602,9 @@
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit"
-                                                        class="dropdown-item text-danger border-0 bg-transparent w-100 text-start"><i
-                                                            class="bi bi-trash me-2"></i> Hapus</button>
+                                                        class="dropdown-item text-danger border-0 bg-transparent w-100 text-start">
+                                                        <i class="bi bi-trash me-2"></i> Hapus
+                                                    </button>
                                                 </form>
                                             </div>
                                         </div>
@@ -594,6 +618,94 @@
 
         </div>
     </div>
+
+    {{-- ==== MODAL DETAIL NCR ==== --}}
+    <div class="modal fade" id="ncrDetailModal" tabindex="-1" aria-labelledby="ncrDetailModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content"
+                style="border-radius: var(--bento-radius); border: none; box-shadow: var(--bento-shadow-hover);">
+                <div class="modal-header border-bottom-0 pt-4 px-4 pb-0">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="stat-icon bg-soft-dark text-dark m-0" style="width: 48px; height: 48px;">
+                            <i class="bi bi-file-earmark-text fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title fw-bolder mb-1" id="ncrDetailModalLabel" style="font-size: 1.25rem;">
+                                Detail Laporan NCR</h5>
+                            <span class="text-muted fw-bold" style="font-size: 0.8rem;">
+                                <i class="bi bi-upc-scan"></i> <span id="modal-id_ncr"></span> &bull; Doc: <span
+                                    id="modal-no_ncr"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body px-4 py-4">
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <span class="text-muted fw-bold d-block mb-1"
+                                style="font-size: 0.75rem; text-transform: uppercase;">Tanggal Issue</span>
+                            <div class="fw-bolder text-dark" style="font-size: 0.95rem;" id="modal-issue_date"></div>
+                        </div>
+                        <div class="col-md-4">
+                            <span class="text-muted fw-bold d-block mb-1"
+                                style="font-size: 0.75rem; text-transform: uppercase;">No. PO</span>
+                            <div class="fw-bolder text-dark" style="font-size: 0.95rem;" id="modal-no_po"></div>
+                        </div>
+                        <div class="col-md-4">
+                            <span class="text-muted fw-bold d-block mb-1"
+                                style="font-size: 0.75rem; text-transform: uppercase;">Quantity</span>
+                            <div class="fw-bolder text-dark" style="font-size: 0.95rem;" id="modal-qty"></div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <span class="text-muted fw-bold d-block mb-1"
+                                style="font-size: 0.75rem; text-transform: uppercase;">Scope Audit</span>
+                            <div class="fw-bolder text-dark" style="font-size: 0.95rem;" id="modal-audit_scope"></div>
+                        </div>
+                        <div class="col-md-4">
+                            <span class="text-muted fw-bold d-block mb-1"
+                                style="font-size: 0.75rem; text-transform: uppercase;">Severity</span>
+                            <div class="fw-bolder" style="font-size: 0.95rem;" id="modal-severity"></div>
+                        </div>
+                        <div class="col-md-4">
+                            <span class="text-muted fw-bold d-block mb-1"
+                                style="font-size: 0.75rem; text-transform: uppercase;">Status</span>
+                            <div class="fw-bolder text-dark" style="font-size: 0.95rem;" id="modal-status"></div>
+                        </div>
+
+                        <div class="col-12">
+                            <span class="text-muted fw-bold d-block mb-2"
+                                style="font-size: 0.75rem; text-transform: uppercase;">Report Reference</span>
+                            <div class="p-3 bg-light rounded-3 fw-medium text-dark" style="font-size: 0.85rem;"
+                                id="modal-report_reff"></div>
+                        </div>
+
+                        <div class="col-12">
+                            <span class="text-muted fw-bold d-block mb-2"
+                                style="font-size: 0.75rem; text-transform: uppercase;">Detail Temuan (Issue)</span>
+                            <div class="p-3 bg-soft-danger bg-opacity-10 border rounded-3 fw-medium text-dark"
+                                style="font-size: 0.9rem; line-height: 1.6;" id="modal-issue"></div>
+                        </div>
+
+                        <div class="col-12">
+                            <span class="text-muted fw-bold d-block mb-2"
+                                style="font-size: 0.75rem; text-transform: uppercase;">Tindakan Perbaikan</span>
+                            <div class="p-3 bg-soft-success bg-opacity-10 border rounded-3 fw-medium text-dark"
+                                style="font-size: 0.9rem; line-height: 1.6;" id="modal-tindakan"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer border-top-0 pb-4 px-4">
+                    <button type="button" class="btn btn-light rounded-pill fw-bold px-4 border"
+                        data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('js')
@@ -603,17 +715,17 @@
 
     <script>
         $(document).ready(function() {
+            // Inisialisasi DataTables
             $('#ncrTable').DataTable({
                 pageLength: 10,
                 ordering: true,
                 order: [
-                    // Kolom 0 adalah No. Dokumen (sekarang kita sorting berdasarkan data-sort tanggal terbit)
                     [0, 'desc']
                 ],
                 dom: '<"row mt-1 mb-4"<"col-md-6"l><"col-md-6 d-flex justify-content-end"f>>t<"row mt-4 mb-2"<"col-md-6 text-muted"i><"col-md-6 d-flex justify-content-end"p>>',
                 language: {
                     search: "",
-                    searchPlaceholder: "Cari No. NCR, PO, Issue...",
+                    searchPlaceholder: "Cari ID NCR, Dokumen, PO...",
                     lengthMenu: "Tampil _MENU_ baris",
                     info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
                     infoEmpty: "Tidak ada data tersedia",
@@ -625,6 +737,49 @@
                 },
                 drawCallback: function() {
                     $('.dataTables_paginate .pagination').addClass('gap-1');
+                }
+            });
+
+            // Event listener untuk tombol "Lihat Detail" memunculkan Modal
+            $(document).on('click', '.btn-show-modal', function() {
+                // Ambil data dari atribut data-*
+                let id_ncr = $(this).data('id_ncr');
+                let no_ncr = $(this).data('no_ncr');
+                let no_po = $(this).data('no_po');
+                let issue = $(this).data('issue');
+                let tindakan = $(this).data('tindakan');
+                let audit_scope = $(this).data('audit_scope');
+                let report_reff = $(this).data('report_reff');
+                let severity = $(this).data('severity');
+                let status = $(this).data('status');
+                let issue_date = $(this).data('issue_date');
+                let qty = $(this).data('qty');
+
+                // Masukkan data ke dalam elemen Modal
+                $('#modal-id_ncr').text(id_ncr);
+                $('#modal-no_ncr').text(no_ncr);
+                $('#modal-no_po').text(no_po);
+                $('#modal-qty').text(qty + ' Pcs');
+                $('#modal-issue_date').text(issue_date);
+                $('#modal-audit_scope').text(audit_scope);
+                $('#modal-report_reff').text(report_reff);
+                $('#modal-issue').text(issue);
+                $('#modal-tindakan').text(tindakan);
+                $('#modal-status').text(status);
+
+                // Styling khusus untuk teks Severity di dalam modal
+                let modalSev = $('#modal-severity');
+                modalSev.text(severity);
+                modalSev.removeClass('text-danger text-warning text-primary text-success'); // reset class
+
+                if (severity === 'Critical') {
+                    modalSev.addClass('text-danger');
+                } else if (severity === 'High') {
+                    modalSev.addClass('text-warning');
+                } else if (severity === 'Medium') {
+                    modalSev.addClass('text-primary');
+                } else {
+                    modalSev.addClass('text-success');
                 }
             });
         });

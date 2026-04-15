@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Ncr; // Pastikan model Ncr sudah menggunakan $fillable yang baru
+use App\Ncr; // Sesuaikan dengan path model Anda (App\Ncr atau App\Models\Ncr)
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -13,9 +13,6 @@ class NcrController extends Controller
     // 1. HALAMAN CUSTOM (PORTAL & DASHBOARD)
     // =========================================================
 
-    /**
-     * Menampilkan halaman portal public/user biasa
-     */
     public function indexHome()
     {
         $ncrs = Ncr::orderBy('issue_date', 'desc')->get();
@@ -25,7 +22,6 @@ class NcrController extends Controller
         $statusMonitoring = $ncrs->where('status', 'Monitoring')->count();
         $statusClosed = $ncrs->where('status', 'Closed')->count();
 
-        // Persiapan data pie chart
         $pieData = [
             'open' => $statusOpen,
             'monitoring' => $statusMonitoring,
@@ -35,28 +31,22 @@ class NcrController extends Controller
         return view('pages.ncr', compact('ncrs', 'totalNcr', 'statusOpen', 'statusMonitoring', 'statusClosed', 'pieData'));
     }
 
-    /**
-     * Menampilkan halaman dashboard analytics admin
-     */
     public function dashboard()
     {
         $ncrs = Ncr::orderBy('issue_date', 'desc')->get();
 
-        // Metrik KPI
         $totalNcr = $ncrs->count();
         $statusOpen = $ncrs->where('status', 'Open')->count();
         $statusMonitoring = $ncrs->where('status', 'Monitoring')->count();
         $statusClosed = $ncrs->where('status', 'Closed')->count();
         $criticalOpen = $ncrs->where('status', 'Open')->where('severity', 'Critical')->count();
 
-        // Data untuk Grafik Audit Scope (Doughnut)
         $scopeData = [
             $ncrs->where('audit_scope', 'Internal')->count(),
             $ncrs->where('audit_scope', 'External')->count(),
             $ncrs->where('audit_scope', 'Supplier')->count(),
         ];
 
-        // Data untuk Grafik Severity (Bar)
         $sevData = [
             $ncrs->where('severity', 'Critical')->count(),
             $ncrs->where('severity', 'High')->count(),
@@ -64,7 +54,6 @@ class NcrController extends Controller
             $ncrs->where('severity', 'Low')->count(),
         ];
 
-        // Data untuk Grafik Tren Bulanan (Tahun Berjalan)
         $currentYear = date('Y');
         $trendData = Ncr::select(DB::raw('MONTH(issue_date) as month'), DB::raw('COUNT(*) as total'))
             ->whereYear('issue_date', $currentYear)
@@ -75,7 +64,7 @@ class NcrController extends Controller
         $barLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
         $barValues = [];
         for ($i = 1; $i <= 12; $i++) {
-            $barValues[] = $trendData[$i] ?? 0; // Jika bulan kosong, isi dengan 0
+            $barValues[] = $trendData[$i] ?? 0;
         }
 
         return view('pages.admin.ncr.dashboard', compact(
@@ -97,101 +86,87 @@ class NcrController extends Controller
     // 2. FUNGSI CRUD STANDAR (ADMIN)
     // =========================================================
 
-    /**
-     * Display a listing of the resource. (READ - Menampilkan tabel)
-     */
     public function index()
     {
         $ncrs = Ncr::orderBy('issue_date', 'desc')->get();
         return view('pages.admin.ncr.index', compact('ncrs'));
     }
 
-    /**
-     * Show the form for creating a new resource. (Form Tambah Data)
-     */
     public function create()
     {
         return view('pages.admin.ncr.add');
     }
 
-    /**
-     * Store a newly created resource in storage. (CREATE - Simpan Data Baru)
-     */
     public function store(Request $request)
     {
-        // 1. Validasi Input ketat sesuai migration baru
+        // 1. Validasi Input (id_ncr tidak perlu divalidasi karena digenerate otomatis)
         $validatedData = $request->validate([
-            'no_ncr'      => 'required|string|max:255|unique:ncrs,no_ncr',
+            'no_ncr'      => 'required|string|max:255',
             'issue_date'  => 'required|date',
-            'no_po'       => 'required|string|max:255',
-            'qty'         => 'required|integer|min:1',
+            'no_po'       => 'nullable|string|max:255',
+            'qty'         => 'nullable|integer|min:1',
             'report_reff' => 'nullable|string|max:255',
             'audit_scope' => 'required|in:Internal,External,Supplier',
             'severity'    => 'required|in:Critical,High,Medium,Low',
             'status'      => 'required|in:Open,Monitoring,Closed',
             'issue'       => 'required|string',
-            'tindakan'    => 'required|string',
-        ], [
-            // Kustomisasi pesan error (opsional)
-            'no_ncr.unique' => 'Nomor NCR ini sudah digunakan, silakan masukkan nomor lain.'
+            'tindakan'    => 'nullable|string',
         ]);
 
-        // 2. Simpan ke Database
+        // 2. Auto-Generate id_ncr (Format: NCR-XXXXXX)
+        do {
+            // Menghasilkan angka acak 6 digit
+            $randomNumber = mt_rand(100000, 999999);
+            $generateId = 'NCR-' . $randomNumber;
+
+            // Cek ke database apakah ID tersebut sudah pernah terpakai
+            $idExists = Ncr::where('id_ncr', $generateId)->exists();
+        } while ($idExists); // Akan terus mengulang jika kebetulan angka acaknya sama
+
+        // 3. Masukkan ID yang sudah unik ke dalam array data yang akan disimpan
+        $validatedData['id_ncr'] = $generateId;
+
+        // 4. Simpan ke Database
         Ncr::create($validatedData);
 
-        // 3. Redirect kembali ke index dengan pesan sukses
         return redirect()->route('ncr.index')->with('success', 'Data NCR berhasil ditambahkan.');
     }
 
-    /**
-     * Display the specified resource. (READ - Detail Satu Data)
-     */
     public function show(string $id)
     {
         $ncr = Ncr::findOrFail($id);
         return view('pages.admin.ncr.show', compact('ncr'));
     }
 
-    /**
-     * Show the form for editing the specified resource. (Form Edit Data)
-     */
     public function edit(string $id)
     {
         $ncr = Ncr::findOrFail($id);
         return view('pages.admin.ncr.update', compact('ncr'));
     }
 
-    /**
-     * Update the specified resource in storage. (UPDATE - Simpan Perubahan Data)
-     */
     public function update(Request $request, string $id)
     {
         $ncr = Ncr::findOrFail($id);
 
-        // 1. Validasi Input (mengabaikan unique rule untuk ID yang sedang di-edit)
+        // Validasi saat update (id_ncr tidak diubah)
         $validatedData = $request->validate([
-            'no_ncr'      => 'required|string|max:255|unique:ncrs,no_ncr,' . $id,
+            'no_ncr'      => 'required|string|max:255',
             'issue_date'  => 'required|date',
-            'no_po'       => 'required|string|max:255',
-            'qty'         => 'required|integer|min:1',
+            'no_po'       => 'nullable|string|max:255',
+            'qty'         => 'nullable|integer|min:1',
             'report_reff' => 'nullable|string|max:255',
             'audit_scope' => 'required|in:Internal,External,Supplier',
             'severity'    => 'required|in:Critical,High,Medium,Low',
             'status'      => 'required|in:Open,Monitoring,Closed',
             'issue'       => 'required|string',
-            'tindakan'    => 'required|string',
+            'tindakan'    => 'nullable|string',
         ]);
 
-        // 2. Update Database
         $ncr->update($validatedData);
 
-        // 3. Redirect
         return redirect()->route('ncr.index')->with('success', 'Data NCR berhasil diperbarui.');
     }
 
-    /**
-     * Remove the specified resource from storage. (DELETE - Hapus Data)
-     */
     public function destroy(string $id)
     {
         $ncr = Ncr::findOrFail($id);

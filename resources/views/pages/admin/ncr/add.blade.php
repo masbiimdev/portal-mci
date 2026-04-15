@@ -106,6 +106,18 @@
             outline: none;
         }
 
+        /* CSS Tambahan untuk Error Validasi */
+        .form-control-premium.is-invalid,
+        .form-select-premium.is-invalid {
+            border-color: #ef4444;
+            background-color: #fef2f2;
+        }
+
+        .form-control-premium.is-invalid:focus,
+        .form-select-premium.is-invalid:focus {
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15);
+        }
+
         textarea.form-control-premium {
             min-height: 120px;
             resize: vertical;
@@ -202,6 +214,22 @@
 
     <div class="container-xxl flex-grow-1 container-p-y pb-4">
 
+        {{-- Alert Notifikasi --}}
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 16px;">
+                <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 16px;">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>Terdapat kesalahan pada isian form. Silakan periksa
+                kembali kolom berwarna merah.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
             <div>
                 <h4 class="fw-bolder text-dark mb-1" style="font-size: 1.5rem; letter-spacing: -0.5px;">Formulir NCR Baru
@@ -210,14 +238,15 @@
                     <ol class="breadcrumb mb-0" style="font-size: 0.85rem; font-weight: 600;">
                         <li class="breadcrumb-item"><a href="#"
                                 class="text-primary text-decoration-none">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="#" class="text-primary text-decoration-none">Log NCR</a>
+                        <li class="breadcrumb-item"><a href="{{ route('ncr.index') }}"
+                                class="text-primary text-decoration-none">Log NCR</a>
                         </li>
                         <li class="breadcrumb-item text-muted active" aria-current="page">Tambah Laporan</li>
                     </ol>
                 </nav>
             </div>
             <div>
-                <a href="#" class="btn btn-bento-outline text-decoration-none">
+                <a href="{{ route('ncr.index') }}" class="btn btn-bento-outline text-decoration-none">
                     <i class="bi bi-arrow-left me-1"></i> Kembali
                 </a>
             </div>
@@ -237,104 +266,153 @@
                     @csrf
 
                     <div class="row g-4 mb-4">
+                        {{-- Menggunakan col-md-6 agar baris pertama terisi penuh dengan 2 kolom ini --}}
                         <div class="col-md-6 position-relative">
-                            <label class="form-label-premium">Nomor Dokumen NCR <span class="text-danger">*</span></label>
+                            <label class="form-label-premium">Nomor Dokumen <span class="text-danger">*</span></label>
                             <div class="position-relative">
                                 <i class="bi bi-hash input-group-text-premium"></i>
-                                <input type="text" name="no_ncr" class="form-control-premium has-icon"
-                                    placeholder="Contoh: NCR-2601-001" required>
+                                <input type="text" name="no_ncr"
+                                    class="form-control-premium has-icon @error('no_ncr') is-invalid @enderror"
+                                    placeholder="Contoh: NCR-2601-001" value="{{ old('no_ncr') }}" required>
                             </div>
+                            @error('no_ncr')
+                                <small class="text-danger fw-semibold mt-1 d-block">{{ $message }}</small>
+                            @enderror
                         </div>
 
                         <div class="col-md-6 position-relative">
-                            <label class="form-label-premium">Tanggal Terbit (Issue Date) <span
-                                    class="text-danger">*</span></label>
+                            <label class="form-label-premium">Tanggal Terbit <span class="text-danger">*</span></label>
                             <div class="position-relative">
                                 <i class="bi bi-calendar-event input-group-text-premium"></i>
-                                <input type="date" name="issue_date" class="form-control-premium has-icon"
-                                    value="{{ date('Y-m-d') }}" required>
+                                <input type="date" name="issue_date"
+                                    class="form-control-premium has-icon @error('issue_date') is-invalid @enderror"
+                                    value="{{ old('issue_date', date('Y-m-d')) }}" required>
                             </div>
+                            @error('issue_date')
+                                <small class="text-danger fw-semibold mt-1 d-block">{{ $message }}</small>
+                            @enderror
                         </div>
 
+                        {{-- Baris kedua tetap col-md-4 agar terbagi 3 secara rapi --}}
                         <div class="col-md-4 position-relative">
-                            <label class="form-label-premium">Nomor PO <span class="text-danger">*</span></label>
+                            <label class="form-label-premium">Nomor PO</label>
                             <div class="position-relative">
                                 <i class="bi bi-receipt input-group-text-premium"></i>
-                                <input type="text" name="no_po" class="form-control-premium has-icon"
-                                    placeholder="Contoh: PO-2023-..." required>
+                                <input type="text" name="no_po"
+                                    class="form-control-premium has-icon @error('no_po') is-invalid @enderror"
+                                    placeholder="Contoh: PO-2023-..." value="{{ old('no_po') }}">
                             </div>
+                            @error('no_po')
+                                <small class="text-danger fw-semibold mt-1 d-block">{{ $message }}</small>
+                            @enderror
                         </div>
 
                         <div class="col-md-4 position-relative">
                             <label class="form-label-premium">Qty Barang <span class="text-danger">*</span></label>
                             <div class="position-relative">
                                 <i class="bi bi-boxes input-group-text-premium"></i>
-                                <input type="number" name="qty" class="form-control-premium has-icon"
-                                    placeholder="Jumlah item" min="1" required>
+                                <input type="number" name="qty"
+                                    class="form-control-premium has-icon @error('qty') is-invalid @enderror"
+                                    placeholder="Jumlah item" min="1" value="{{ old('qty') }}" required>
                             </div>
+                            @error('qty')
+                                <small class="text-danger fw-semibold mt-1 d-block">{{ $message }}</small>
+                            @enderror
                         </div>
 
                         <div class="col-md-4">
                             <label class="form-label-premium">Report Reff</label>
-                            <select name="report_reff" class="form-select-premium">
-                                <option value="" disabled selected>-- Pilih Referensi --</option>
-                                <option value="Laporan Internal">PBM</option>
-                                <option value="Laporan Eksternal">IVD</option>
-                                <option value="Audit Supplier">MCH</option>
-                                <option value="Inspeksi Lapangan">WLD</option>
-                                <option value="Keluhan Pelanggan">DPT</option>
-                                <option value="Keluhan Pelanggan">MPT</option>
-                                <option value="Keluhan Pelanggan">ASSY</option>
-                                <option value="Lainnya">Others</option>
+                            <select name="report_reff"
+                                class="form-select-premium @error('report_reff') is-invalid @enderror">
+                                <option value="" disabled {{ old('report_reff') ? '' : 'selected' }}>-- Pilih
+                                    Referensi --</option>
+                                <option value="PBM" {{ old('report_reff') == 'PBM' ? 'selected' : '' }}>PBM</option>
+                                <option value="IVD" {{ old('report_reff') == 'IVD' ? 'selected' : '' }}>IVD</option>
+                                <option value="MCH" {{ old('report_reff') == 'MCH' ? 'selected' : '' }}>MCH</option>
+                                <option value="WLD" {{ old('report_reff') == 'WLD' ? 'selected' : '' }}>WLD</option>
+                                <option value="DPT" {{ old('report_reff') == 'DPT' ? 'selected' : '' }}>DPT</option>
+                                <option value="MPT" {{ old('report_reff') == 'MPT' ? 'selected' : '' }}>MPT</option>
+                                <option value="ASSY" {{ old('report_reff') == 'ASSY' ? 'selected' : '' }}>ASSY</option>
+                                <option value="Others" {{ old('report_reff') == 'Others' ? 'selected' : '' }}>Others</option>
                             </select>
+                            @error('report_reff')
+                                <small class="text-danger fw-semibold mt-1 d-block">{{ $message }}</small>
+                            @enderror
                         </div>
 
                         <div class="col-md-4">
                             <label class="form-label-premium">Audit Scope <span class="text-danger">*</span></label>
-                            <select name="audit_scope" class="form-select-premium" required>
-                                <option value="" disabled selected>-- Pilih Scope --</option>
-                                <option value="Internal">Internal</option>
-                                <option value="External">External</option>
-                                <option value="Supplier">Supplier</option>
+                            <select name="audit_scope"
+                                class="form-select-premium @error('audit_scope') is-invalid @enderror" required>
+                                <option value="" disabled {{ old('audit_scope') ? '' : 'selected' }}>-- Pilih Scope
+                                    --</option>
+                                <option value="Internal" {{ old('audit_scope') == 'Internal' ? 'selected' : '' }}>Internal
+                                </option>
+                                <option value="External" {{ old('audit_scope') == 'External' ? 'selected' : '' }}>External
+                                </option>
+                                <option value="Supplier" {{ old('audit_scope') == 'Supplier' ? 'selected' : '' }}>Supplier
+                                </option>
                             </select>
+                            @error('audit_scope')
+                                <small class="text-danger fw-semibold mt-1 d-block">{{ $message }}</small>
+                            @enderror
                         </div>
 
                         <div class="col-md-4">
-                            <label class="form-label-premium">Tingkat Keparahan (Severity) <span
-                                    class="text-danger">*</span></label>
-                            <select name="severity" class="form-select-premium" required>
-                                <option value="Medium" selected>Medium (Default)</option>
-                                <option value="Low">Low</option>
-                                <option value="High">High</option>
-                                <option value="Critical">Critical</option>
+                            <label class="form-label-premium">Severity <span class="text-danger">*</span></label>
+                            <select name="severity" class="form-select-premium @error('severity') is-invalid @enderror"
+                                required>
+                                <option value="Medium" {{ old('severity', 'Medium') == 'Medium' ? 'selected' : '' }}>
+                                    Medium (Default)</option>
+                                <option value="Low" {{ old('severity') == 'Low' ? 'selected' : '' }}>Low</option>
+                                <option value="High" {{ old('severity') == 'High' ? 'selected' : '' }}>High</option>
+                                <option value="Critical" {{ old('severity') == 'Critical' ? 'selected' : '' }}>Critical
+                                </option>
                             </select>
+                            @error('severity')
+                                <small class="text-danger fw-semibold mt-1 d-block">{{ $message }}</small>
+                            @enderror
                         </div>
 
                         <div class="col-md-4">
                             <label class="form-label-premium">Status Awal <span class="text-danger">*</span></label>
-                            <select name="status" class="form-select-premium" required>
-                                <option value="Open" selected>Open</option>
-                                <option value="Monitoring">Monitoring</option>
-                                <option value="Closed">Closed</option>
+                            <select name="status" class="form-select-premium @error('status') is-invalid @enderror"
+                                required>
+                                <option value="Open" {{ old('status', 'Open') == 'Open' ? 'selected' : '' }}>Open
+                                </option>
+                                <option value="Monitoring" {{ old('status') == 'Monitoring' ? 'selected' : '' }}>
+                                    Monitoring</option>
+                                <option value="Closed" {{ old('status') == 'Closed' ? 'selected' : '' }}>Closed</option>
                             </select>
+                            @error('status')
+                                <small class="text-danger fw-semibold mt-1 d-block">{{ $message }}</small>
+                            @enderror
                         </div>
 
                         <div class="col-12">
                             <label class="form-label-premium">Deskripsi Temuan (Issue) <span
                                     class="text-danger">*</span></label>
-                            <textarea name="issue" class="form-control-premium"
-                                placeholder="Jelaskan secara detail ketidaksesuaian yang ditemukan, lokasi, dan dampaknya..." required></textarea>
-                            <small class="text-muted fw-semibold mt-2 d-block"><i class="bi bi-info-circle me-1"></i>
-                                Berikan deskripsi yang spesifik agar memudahkan proses RCA (Root Cause Analysis).</small>
+                            <textarea name="issue" class="form-control-premium @error('issue') is-invalid @enderror"
+                                placeholder="Jelaskan secara detail ketidaksesuaian yang ditemukan, lokasi, dan dampaknya..." required>{{ old('issue') }}</textarea>
+                            @error('issue')
+                                <small class="text-danger fw-semibold mt-1 d-block">{{ $message }}</small>
+                            @else
+                                <small class="text-muted fw-semibold mt-2 d-block"><i class="bi bi-info-circle me-1"></i>
+                                    Berikan deskripsi yang spesifik agar memudahkan proses RCA (Root Cause Analysis).</small>
+                            @enderror
                         </div>
 
                         <div class="col-12">
                             <label class="form-label-premium">Tindakan / Correction <span
                                     class="text-danger">*</span></label>
-                            <textarea name="tindakan" class="form-control-premium"
-                                placeholder="Jelaskan tindakan perbaikan atau penanganan awal yang dilakukan terhadap temuan di atas..." required></textarea>
-                            <small class="text-muted fw-semibold mt-2 d-block"><i class="bi bi-check2-square me-1"></i>
-                                Tuliskan koreksi langsung yang sudah dilakukan di lapangan.</small>
+                            <textarea name="tindakan" class="form-control-premium @error('tindakan') is-invalid @enderror"
+                                placeholder="Jelaskan tindakan perbaikan atau penanganan awal yang dilakukan terhadap temuan di atas..." required>{{ old('tindakan') }}</textarea>
+                            @error('tindakan')
+                                <small class="text-danger fw-semibold mt-1 d-block">{{ $message }}</small>
+                            @else
+                                <small class="text-muted fw-semibold mt-2 d-block"><i class="bi bi-check2-square me-1"></i>
+                                    Tuliskan koreksi langsung yang sudah dilakukan di lapangan.</small>
+                            @enderror
                         </div>
                     </div>
 

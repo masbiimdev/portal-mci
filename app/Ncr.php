@@ -20,6 +20,7 @@ class Ncr extends Model
      * Sangat penting untuk keamanan agar user tidak bisa memanipulasi kolom lain.
      */
     protected $fillable = [
+        'id_ncr',        // Tambahan baru: Kode unik untuk upload NCR
         'no_ncr',
         'issue_date',
         'no_po',         // Tambahan baru
