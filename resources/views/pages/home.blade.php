@@ -10,6 +10,9 @@
 
     <style>
         /* ============== CSS VARIABLES (PREMIUM BENTO) ============== */
+        .main-content {
+            min-width: 0;
+        }
         :root {
             --bg-main: #f4f7fb;
             --panel: #ffffff;
@@ -761,8 +764,10 @@
             display: flex;
             flex-direction: column;
             gap: 0.3rem;
-            max-width: 70%;
+            flex: 1; /* Mengambil sisa ruang */
+            min-width: 0; /* Mencegah flexbox blowout */
             padding-left: 0.5rem;
+            padding-right: 1rem;
         }
 
         .ncr-id {
@@ -779,11 +784,12 @@
             font-size: 0.95rem;
             font-weight: 600;
             color: var(--text-dark);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            white-space: nowrap; /* Mencegah teks turun baris */
+            overflow: hidden; /* Menyembunyikan teks yang meluber */
+            text-overflow: ellipsis; /* Menambahkan titik-titik (...) */
+            display: block; /* Wajib karena elemen aslinya adalah <span> */
+            max-width: 100%;
         }
-
         .status-dot {
             width: 8px;
             height: 8px;
@@ -1646,8 +1652,7 @@
                                                 {{ $ncr->no_ncr }}</span>
                                             <span class="ncr-issue">{{ $ncr->issue }}</span>
                                         </div>
-                                        <div><span class="badge {{ $statusClass }}"><span class="status-dot"></span>
-                                                {{ $ncr->status }}</span></div>
+                                        <div style="flex-shrink: 0;"><span class="badge {{ $statusClass }}"><span class="status-dot"></span> {{ $ncr->status }}</span></div>
                                     </a>
                                 @empty
                                     <div
