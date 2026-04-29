@@ -59,9 +59,9 @@ class CalibrationHistoryController extends Controller
             'file_sertifikat'   => 'nullable|mimes:pdf|max:5000',
         ]);
 
-        $file = null;
         if ($r->hasFile('file_sertifikat')) {
-            $file = $r->file('file_sertifikat')->store('sertifikat-kalibrasi', 'public');
+            // Ubah parameter pertama menjadi 'uploads'
+            $file = $r->file('file_sertifikat')->store('uploads', 'public');
         }
 
         // Mutator akan mengatur status_kalibrasi & keterangan
