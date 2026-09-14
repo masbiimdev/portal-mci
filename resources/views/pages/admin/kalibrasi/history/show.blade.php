@@ -342,18 +342,30 @@
             });
         });
 
-        // Fungsi buka modal PDF
+        // Fungsi buka modal PDF (Support PC & HP)
         function openPDFModal(url) {
-            const pdfFrame = document.getElementById('pdfFrame');
-            pdfFrame.src = url;
-            const pdfModal = new bootstrap.Modal(document.getElementById('pdfModal'));
-            pdfModal.show();
+            // Deteksi apakah pengguna mengakses via perangkat mobile (HP/Tablet)
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+            if (isMobile) {
+                // Pada HP, buka PDF di tab baru agar dibaca oleh PDF viewer bawaan HP
+                window.open(url, '_blank');
+            } else {
+                // Pada PC/Laptop, tampilkan di dalam Modal Bootstrap
+                const pdfFrame = document.getElementById('pdfFrame');
+                pdfFrame.src = url;
+
+                const pdfModal = new bootstrap.Modal(document.getElementById('pdfModal'));
+                pdfModal.show();
+            }
         }
 
         // Reset iframe saat modal ditutup agar tidak membebani memori
         const pdfModalEl = document.getElementById('pdfModal');
-        pdfModalEl.addEventListener('hidden.bs.modal', function() {
-            document.getElementById('pdfFrame').src = '';
-        });
+        if (pdfModalEl) {
+            pdfModalEl.addEventListener('hidden.bs.modal', function() {
+                document.getElementById('pdfFrame').src = '';
+            });
+        }
     </script>
 @endpush
