@@ -262,10 +262,12 @@
                                         <div class="d-flex justify-content-center gap-2">
                                             @if ($h->file_sertifikat)
                                                 <button type="button" class="icon-btn icon-blue"
-                                                    onclick="openPDFModal('{{ asset('storage/' . $h->file_sertifikat) }}')"
+                                                    onclick="openPDFModal('{{ route('sertifikat.preview', $h->id) }}')"
                                                     title="Lihat Sertifikat">
                                                     <i class="bx bxs-file-pdf"></i>
                                                 </button>
+                                            @else
+                                                <span class="text-muted">-</span>
                                             @endif
 
                                             <a href="{{ route('histories.edit', $h->id) }}" class="icon-btn icon-orange"

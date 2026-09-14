@@ -55,26 +55,28 @@ class CalibrationHistoryController extends Controller
     public function store(Request $r)
     {
         $r->validate([
-            'tool_id'           => 'required',
-            'file_sertifikat'   => 'nullable|mimes:pdf|max:5000',
+            'tool_id'         => 'required|exists:tools,id',
+            'file_sertifikat' => 'nullable|mimes:pdf|max:5000',
         ]);
 
+        // Inisialisasi variabel file dengan null secara default
+        $file = null;
+
         if ($r->hasFile('file_sertifikat')) {
-            // Ubah parameter pertama menjadi 'uploads'
+            // Menyimpan file ke storage/app/public/uploads
             $file = $r->file('file_sertifikat')->store('uploads', 'public');
         }
 
-        // Mutator akan mengatur status_kalibrasi & keterangan
         CalibrationHistory::create([
-            'tool_id'               => $r->tool_id,
-            'tgl_kalibrasi'         => $r->tgl_kalibrasi,
-            'tgl_kalibrasi_ulang'   => $r->tgl_kalibrasi_ulang,
-            'no_sertifikat'         => $r->no_sertifikat,
-            'file_sertifikat'       => $file,
-            'lembaga_kalibrasi'     => $r->lembaga_kalibrasi,
-            'interval_kalibrasi'    => $r->interval_kalibrasi,
-            'eksternal_kalibrasi'   => $r->eksternal_kalibrasi,
-            'status_kalibrasi'      => $r->status_kalibrasi, // MUTATOR yang mengolah
+            'tool_id'             => $r->tool_id,
+            'tgl_kalibrasi'       => $r->tgl_kalibrasi,
+            'tgl_kalibrasi_ulang' => $r->tgl_kalibrasi_ulang,
+            'no_sertifikat'       => $r->no_sertifikat,
+            'file_sertifikat'     => $file, // Tidak akan error lagi jika bernilai null
+            'lembaga_kalibrasi'   => $r->lembaga_kalibrasi,
+            'interval_kalibrasi'  => $r->interval_kalibrasi,
+            'eksternal_kalibrasi' => $r->eksternal_kalibrasi,
+            'status_kalibrasi'    => $r->status_kalibrasi,
         ]);
 
         $redirectTo = $r->input('redirect_to', 'show');
@@ -86,7 +88,6 @@ class CalibrationHistoryController extends Controller
         return redirect()->route('histories.show', $r->tool_id)
             ->with('success', 'History berhasil ditambahkan');
     }
-
 
     public function edit($id)
     {
@@ -145,5 +146,29 @@ class CalibrationHistoryController extends Controller
     {
         $tool = Tool::with('histories')->findOrFail($tool_id);
         return view('pages.admin.kalibrasi.history.show', compact('tool'));
+    }
+
+    public function previewSertifikat($id)
+    {
+        $history = CalibrationHistory::findOrFail($id);
+
+        // 1. Cek apakah ada record file di database
+        if (!$history->file_sertifikat) {
+            abort(404, 'Data sertifikat tidak memiliki file.');
+        }
+
+        // 2. Cek apakah file fisik BENAR-BENAR ada di folder storage/app/public/
+        if (!Storage::disk('public')->exists($history->file_sertifikat)) {
+            // Tampilkan pesan yang informatif jika file fisik hilang
+            abort(404, 'File PDF fisik (' . $history->file_sertifikat . ') tidak ditemukan di folder storage. Silakan upload ulang file.');
+        }
+
+        // 3. Ambil path absolut fisik secara otomatis
+        $fullPath = Storage::disk('public')->path($history->file_sertifikat);
+
+        return response()->file($fullPath, [
+            'Content-Type'        => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . basename($fullPath) . '"'
+        ]);
     }
 }

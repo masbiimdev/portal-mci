@@ -23,6 +23,7 @@ use App\Http\Controllers\ProjectDocController;
 use App\Http\Controllers\AiChatController;
 use App\Http\Controllers\NcrController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -323,3 +324,6 @@ Route::middleware(['auth', 'module.access:ncr'])
         Route::delete('/{history}', [NcrController::class, 'destroy'])->name('destroy');
         Route::get('/{history}/download', [NcrController::class, 'downloadCertificate'])->name('download');
     });
+// Menggunakan sintaks Controller (Bukan Closure)
+Route::get('/view-sertifikat/{id}', [App\Http\Controllers\CalibrationHistoryController::class, 'previewSertifikat'])
+    ->name('sertifikat.preview');
