@@ -157,7 +157,6 @@
             content: "";
             position: absolute;
             left: 22px;
-            /* Disesuaikan agar pas di tengah bullet */
             top: 24px;
             bottom: 24px;
             width: 3px;
@@ -175,7 +174,6 @@
         .timeline-bullet {
             position: absolute;
             left: -88px;
-            /* Ditarik ke garis */
             top: 16px;
             width: 48px;
             height: 48px;
@@ -187,7 +185,6 @@
             color: #fff;
             font-weight: 800;
             border: 4px solid var(--bg-body);
-            /* Memberi efek terpotong pada garis */
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             z-index: 2;
         }
@@ -309,6 +306,7 @@
             gap: 6px;
             width: 100%;
             justify-content: center;
+            cursor: pointer;
         }
 
         .btn-pdf:hover {
@@ -381,7 +379,6 @@
 
             .timeline-bullet span {
                 display: none;
-                /* Sembunyikan teks di bullet saat mobile */
             }
 
             .history-header {
@@ -452,7 +449,8 @@
                 @foreach ($histories as $h)
                     @php
                         $isLatest = $loop->first;
-                        $certUrl = $h->file_sertifikat ? asset('storage/' . $h->file_sertifikat) : null;
+                        // MENGGUNAKAN ROUTE PREVIEW UNTUK MENGHINDARI ERROR 404
+                        $certUrl = $h->file_sertifikat ? route('sertifikat.preview', $h->id) : null;
                         $statusRaw = strtoupper($h->status_kalibrasi ?? '');
 
                         // Menentukan UI berdasarkan status
@@ -532,6 +530,7 @@
         </div>
     </div>
 
+    <!-- Modal Bootstrap untuk Viewer PDF -->
     <div class="modal fade" id="pdfModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content shadow-lg">
@@ -563,13 +562,13 @@
                     keyboard: true
                 });
 
-                // Bersihkan iframe saat ditutup agar RAM ringan
+                // Bersihkan iframe saat modal ditutup agar RAM ringan
                 pdfModalEl.addEventListener('hidden.bs.modal', function() {
                     if (pdfFrame) pdfFrame.src = '';
                 });
             }
 
-            // Event listener untuk semua tombol "Lihat Sertifikat"
+            // Event listener untuk tombol "Lihat Sertifikat PDF"
             document.addEventListener('click', function(ev) {
                 const btn = ev.target.closest(".btn-pdf");
                 if (!btn) return;
@@ -578,8 +577,17 @@
                 const url = btn.getAttribute("data-pdf");
                 if (!url) return;
 
-                pdfFrame.src = url;
-                if (bsModal) bsModal.show();
+                // Deteksi Perangkat Mobile (HP/Tablet)
+                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+                if (isMobile) {
+                    // Di HP: Buka langsung di tab baru agar dibaca PDF viewer bawaan HP
+                    window.open(url, '_blank');
+                } else {
+                    // Di PC: Tampilkan di Modal Pop-up Bootstrap
+                    if (pdfFrame) pdfFrame.src = url;
+                    if (bsModal) bsModal.show();
+                }
             });
         });
     </script>
